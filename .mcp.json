@@ -1,0 +1,45 @@
+{
+  "mcpServers": {
+    "_setup_instructions": {
+      "note": "Remove this key and uncomment the services you want to activate. Each service enables additional agents and skills.",
+      "indeed": {
+        "setup": [
+          "1. Register at https://publisher.indeed.com/publisher/ (free for personal use)",
+          "2. Receive your Publisher ID from Indeed",
+          "3. Uncomment the 'indeed' entry below and replace YOUR_PUBLISHER_ID",
+          "4. The search-jobs command will switch from assisted-manual to API mode automatically"
+        ]
+      },
+      "google_drive": {
+        "setup": [
+          "1. Go to https://console.cloud.google.com/ and create a project",
+          "2. Enable the Google Drive API",
+          "3. Create OAuth 2.0 credentials (Desktop app type)",
+          "4. Download credentials.json and place it in services/connectors/google-drive/",
+          "5. Uncomment the 'google-drive' entry below",
+          "6. On first use, Claude will prompt you to authorize access"
+        ]
+      }
+    }
+  },
+  "_inactive_services": {
+    "indeed": {
+      "comment": "Indeed Publisher API — uncomment to enable automated job search",
+      "type": "stdio",
+      "command": "node",
+      "args": ["services/connectors/indeed/server.js"],
+      "env": {
+        "INDEED_PUBLISHER_ID": "YOUR_PUBLISHER_ID"
+      }
+    },
+    "google-drive": {
+      "comment": "Google Drive storage connector — uncomment to enable cloud artifact storage",
+      "type": "stdio",
+      "command": "node",
+      "args": ["services/connectors/google-drive/server.js"],
+      "env": {
+        "GOOGLE_CREDENTIALS_PATH": "services/connectors/google-drive/credentials.json"
+      }
+    }
+  }
+}

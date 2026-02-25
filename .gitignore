@@ -1,0 +1,21 @@
+# User data — gitignored to protect privacy
+data/corpus/*
+data/applications/*
+data/artifacts/*
+
+# Keep directory scaffolding and templates
+!data/corpus/.gitignore
+!data/corpus/*.template
+!data/applications/.gitignore
+!data/applications/*.template
+!data/artifacts/.gitignore
+!data/artifacts/*.template
+
+# Dependencies and environment
+node_modules/
+.env
+.env.local
+
+# OS artifacts
+.DS_Store
+Thumbs.db

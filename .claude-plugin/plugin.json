@@ -1,0 +1,13 @@
+{
+  "name": "career-navigator",
+  "version": "1.0.0",
+  "description": "AI-powered end-to-end job search companion. Combines recruiter, career coach, reverse recruiter, and market analyst into a single intelligent platform with a feedback loop that learns what works for you.",
+  "author": {
+    "name": "Career Navigator"
+  },
+  "commands_dir": "commands",
+  "agents_dir": "agents",
+  "skills_dir": "skills",
+  "hooks_file": "hooks/hooks.json",
+  "command_prefix": "cn:"
+}
