@@ -32,7 +32,7 @@ Career Navigator has completed **Phase 1A implementation**. The plugin scaffold,
 
 ## What This Is
 
-A **Claude Code plugin** (also compatible with Claude Cowork) that serves as an AI-powered end-to-end job search companion. It replaces the functions of a recruiter, career coach, reverse recruiter, and market analyst in a single platform.
+A **Claude Cowork plugin** (also compatible with Claude Code) that serves as an AI-powered end-to-end job search companion. It replaces the functions of a recruiter, career coach, reverse recruiter, and market analyst in a single platform.
 
 ## Design Principles
 

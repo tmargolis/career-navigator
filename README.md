@@ -1,6 +1,6 @@
 # Career Navigator
 
-An AI-powered end-to-end job search companion built as a Claude Code plugin. Combines the functions of a recruiter, career coach, reverse recruiter, and market analyst into a single intelligent platform that learns what works for you over time.
+An AI-powered end-to-end job search companion built as a Claude Cowork plugin (also compatible with Claude Code). Combines the functions of a recruiter, career coach, reverse recruiter, and market analyst into a single intelligent platform that learns what works for you over time.
 
 ## What It Does
 
@@ -19,7 +19,7 @@ The core differentiator: every application outcome feeds back into the system. O
 
 ### Prerequisites
 
-- [Claude Code](https://claude.ai/code) installed and running
+- [Claude Cowork](https://claude.ai/download) (or Claude Code) installed and running
 - Git (to clone this repository)
 
 ### Install the plugin
@@ -29,13 +29,13 @@ git clone https://github.com/your-username/career-navigator.git
 cd career-navigator
 ```
 
-Then in Claude Code, install the plugin:
+Then install the plugin in Claude Cowork or Claude Code:
 
 ```
 /plugin install /path/to/career-navigator
 ```
 
-Or if Claude Code supports automatic plugin discovery, place the `career-navigator/` directory in your Claude plugins folder.
+Or place the `career-navigator/` directory in your Claude plugins folder for automatic discovery.
 
 ---
 
@@ -121,7 +121,7 @@ To enable fully automated job search:
    - Move the `indeed` entry from `_inactive_services` into `mcpServers`
    - Replace `YOUR_PUBLISHER_ID` with your actual Publisher ID
 
-3. **Restart Claude Code**
+3. **Restart Claude Cowork (or Claude Code)**
    - The Indeed connector activates on next session start
    - `/cn:search-jobs` switches to automated mode automatically
 
@@ -138,7 +138,7 @@ To store artifacts and tracker data in Google Drive instead of locally:
 3. Create OAuth 2.0 credentials (Desktop app type)
 4. Download `credentials.json` and place it in `services/connectors/google-drive/`
 5. In `.mcp.json`, move `google-drive` from `_inactive_services` to `mcpServers`
-6. Restart Claude Code — on first use, you'll be prompted to authorize access
+6. Restart Claude Cowork (or Claude Code) — on first use, you'll be prompted to authorize access
 
 See [CONNECTORS.md](CONNECTORS.md) for full details on the connector interface and available backends.
 
@@ -146,7 +146,7 @@ See [CONNECTORS.md](CONNECTORS.md) for full details on the connector interface a
 
 ## Session Start Hook
 
-Every time you open Claude Code with this plugin active, Career Navigator runs a brief session-start check. If you have application data, it surfaces:
+Every time you open Claude Cowork (or Claude Code) with this plugin active, Career Navigator runs a brief session-start check. If you have application data, it surfaces:
 
 - Pipeline status counts by stage
 - Applications overdue for follow-up (>7 days without a status change)

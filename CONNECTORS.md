@@ -32,7 +32,7 @@ The `~~storage` placeholder in commands refers to the active connector's `save_a
 To activate Google Drive:
 1. Complete the setup steps in `.mcp.json` under `_inactive_services.google-drive`
 2. Move the `google-drive` entry from `_inactive_services` to `mcpServers`
-3. Restart Claude Code — the connector activates automatically on next session
+3. Restart Claude Cowork (or Claude Code) — the connector activates automatically on next session
 
 Local data in `data/` is not automatically migrated to cloud storage. You can manually upload existing artifacts to your Drive folder after switching.
 

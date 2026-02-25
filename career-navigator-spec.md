@@ -1,6 +1,6 @@
 **CAREER NAVIGATOR**
 
-Claude Code Plugin — Full Product Specification
+Claude Cowork Plugin — Full Product Specification
 
 Version 0.2 — February 2026
 
@@ -163,7 +163,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 # **3\. Slash Commands**
 
-All commands are namespaced under career-navigator: and accessible via Claude Code's slash command interface. Commands can also be triggered conversationally — the plugin recognizes natural language prompts that match command intent and invokes the appropriate command automatically.
+All commands are namespaced under career-navigator: and accessible via Claude Cowork's slash command interface (and Claude Code). Commands can also be triggered conversationally — the plugin recognizes natural language prompts that match command intent and invokes the appropriate command automatically.
 
 ## **3.1 Resume & Cover Letter Commands**
 
@@ -238,7 +238,7 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **SessionStart** | Hook | On every Claude Code session start, checks for: interviews scheduled today (triggers morning-brief), applications requiring follow-up (notifies user), and any pending daily insights from the insight engine. |
+| **SessionStart** | Hook | On every Claude Cowork (or Claude Code) session start, checks for: interviews scheduled today (triggers morning-brief), applications requiring follow-up (notifies user), and any pending daily insights from the insight engine. |
 | **DailySchedule** | Hook | Triggered by node-cron at user-configured time. Delivers daily pipeline digest, market brief summary, and prompts for any application updates needed. Sends cross-platform notification via node-notifier. |
 | **ApplicationUpdate** | Hook | Fires whenever an application record is updated. Triggers the insight engine to re-evaluate patterns and updates job-scout scoring weights if outcome data has been added. |
 | **ArtifactSaved** | Hook | Fires when a new artifact is saved. Logs metadata to the artifact inventory and pushes the record to the configured analytics connector. |

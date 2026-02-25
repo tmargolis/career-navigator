@@ -124,6 +124,6 @@ This command operates in assisted-manual mode until an Indeed Publisher ID is co
 
 1. Register at the Indeed Publisher Program (link in README.md)
 2. Add your Publisher ID to `.mcp.json` per the setup instructions there
-3. Restart Claude Code — automated mode activates on next session
+3. Restart Claude Cowork (or Claude Code) — automated mode activates on next session
 
 Automated mode will fetch and rank results directly without the copy-paste step.
