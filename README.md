@@ -1,3 +1,4 @@
+```markdown
 # Career Navigator
 
 An AI-powered end-to-end job search companion built as a Claude Cowork plugin (also compatible with Claude Code). Combines the functions of a recruiter, career coach, reverse recruiter, and market analyst into a single intelligent platform that learns what works for you over time.
@@ -17,19 +18,21 @@ The core differentiator: every application outcome feeds back into the system. O
 
 ## Installation
 
-### Prerequisites
+### Install via Claude Desktop (GUI)
 
-- [Claude Cowork](https://claude.ai/download) (or Claude Code) installed and running
-- Git (to clone this repository)
+1. Open **Claude Desktop**
+2. Go to **Settings → Plugins**
+3. Click **Add Plugin**
+4. Enter the repository URL: `https://github.com/your-username/career-navigator`
+5. Click **Install** — Career Navigator activates on next session start
 
-### Install the plugin
+### Install via Git
 
 ```bash
 git clone https://github.com/your-username/career-navigator.git
-cd career-navigator
 ```
 
-Then install the plugin in Claude Cowork or Claude Code:
+Then point Claude Cowork or Claude Code at the directory:
 
 ```
 /plugin install /path/to/career-navigator
@@ -92,11 +95,15 @@ All your data lives locally in the `data/` directory and is gitignored:
 ```
 data/
 ├── corpus/
-│   └── index.json          — Your experience corpus
+│   └── index.json              — Your experience corpus
 ├── applications/
-│   └── tracker.json        — All application records
+│   └── tracker.json            — All application records
 └── artifacts/
-    └── index.json           — Artifact inventory + generated files
+    ├── index.json              — Artifact inventory and metadata
+    ├── resume-acme-pm-2026-02.md          — Tailored resume, Acme Corp PM role
+    ├── cover-letter-acme-pm-2026-02.md    — Matching cover letter
+    ├── resume-stripe-eng-mgr-2026-02.md   — Tailored resume, Stripe EM role
+    └── resume-score-stripe-eng-mgr.json   — ATS score report
 ```
 
 No data leaves your machine unless you configure a cloud connector (see [CONNECTORS.md](CONNECTORS.md)).
@@ -105,27 +112,33 @@ No data leaves your machine unless you configure a cloud connector (see [CONNECT
 
 ---
 
-## Indeed API Setup
+## Indeed Job Search Setup
 
-By default, `/cn:search-jobs` runs in assisted-manual mode: it generates optimized search strings you paste into job boards, then ranks the results you bring back.
+By default, `/cn:search-jobs` runs in **assisted-manual mode**: it generates optimized search strings you paste into job boards, then ranks the results you bring back. This works well out of the box and requires no setup.
 
-To enable fully automated job search:
+To enable **fully automated job search**, you have a few options:
 
-1. **Register for the Indeed Publisher Program**
-   - Go to [https://publisher.indeed.com/publisher/](https://publisher.indeed.com/publisher/)
-   - Registration is free for personal/non-commercial use
-   - You will receive a **Publisher ID** (a numeric string, not a traditional API key)
+### Option 1: Indeed Publisher API (Official)
 
-2. **Add your Publisher ID to `.mcp.json`**
-   - Open `.mcp.json` in the project root
-   - Move the `indeed` entry from `_inactive_services` into `mcpServers`
-   - Replace `YOUR_PUBLISHER_ID` with your actual Publisher ID
+Indeed's Publisher Program provides free API access for personal and non-commercial use.
 
-3. **Restart Claude Cowork (or Claude Code)**
-   - The Indeed connector activates on next session start
-   - `/cn:search-jobs` switches to automated mode automatically
+1. Register at [https://publisher.indeed.com/publisher/](https://publisher.indeed.com/publisher/)
+2. You'll receive a **Publisher ID** (a numeric string, not a traditional API key)
+3. Open `.mcp.json`, move the `indeed` entry from `_inactive_services` into `mcpServers`, and replace `YOUR_PUBLISHER_ID` with your actual ID
+4. Restart Claude Cowork — `/cn:search-jobs` switches to automated mode automatically
 
-**Note on the Indeed API**: Indeed's Publisher API uses a search endpoint at `api.indeed.com/ads/apisearch`. It does not have an official MCP server yet. Phase 2 will include a local stdio MCP wrapper for richer integration. For Phase 1A, the assisted-manual workflow covers all the core use cases.
+**Note**: Indeed's Publisher API uses a search endpoint at `api.indeed.com/ads/apisearch`. It does not have an official MCP server yet. A local stdio MCP wrapper is planned for Phase 2 for richer integration.
+
+### Option 2: Third-Party Job Scraping APIs
+
+If the Publisher Program isn't available in your region or you want richer data, several third-party services provide structured Indeed data via API:
+
+- **[HasData](https://hasdata.com/)** — Indeed scraping API with structured results, job details, and company data. Paid, with a free tier.
+- **[Bright Data](https://brightdata.com/)** — Enterprise-grade web scraping with Indeed dataset support.
+- **[Apify Indeed Scraper](https://apify.com/misceres/indeed-scraper)** — Open-source actor for Indeed scraping, pay-per-use.
+- **[ScrapingBee](https://www.scrapingbee.com/)** — General scraping API that handles Indeed well.
+
+To configure a third-party provider, add its credentials to `.mcp.json` under the `indeed` service block. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
 
 ---
 
@@ -138,7 +151,7 @@ To store artifacts and tracker data in Google Drive instead of locally:
 3. Create OAuth 2.0 credentials (Desktop app type)
 4. Download `credentials.json` and place it in `services/connectors/google-drive/`
 5. In `.mcp.json`, move `google-drive` from `_inactive_services` to `mcpServers`
-6. Restart Claude Cowork (or Claude Code) — on first use, you'll be prompted to authorize access
+6. Restart Claude Cowork — on first use, you'll be prompted to authorize access
 
 See [CONNECTORS.md](CONNECTORS.md) for full details on the connector interface and available backends.
 
@@ -169,13 +182,49 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 
 ## Roadmap
 
-Phase 1A (current): Resume corpus, application tracker, ATS scoring, job search, session hook.
+### Phase 1 — Core Platform
 
-Coming next:
-- **Phase 1B**: Insight engine, feedback loop, pipeline dashboard (`/cn:pipeline`), follow-up intelligence
-- **Phase 1C**: Market researcher, skills gap analysis, honest advisor agent
-- **Phase 1D**: Proactive job alerts, non-obvious role suggestions
-- **Phase 1E**: Mock interviews, morning brief, interview debrief
-- **Phase 1F**: Networking strategy, LinkedIn content advisor, event radar
+**Phase 1A (current):** Resume corpus, artifact inventory, application tracker, ATS scoring, job search, session hook.
 
-See [career-navigator-spec.md](career-navigator-spec.md) for the full product specification.
+**Phase 1B:** Insight engine and feedback loop. Benchmarking against industry norms by role, level, and geography. Follow-up timeline intelligence. D3 pipeline dashboard (`/cn:pipeline`, `/cn:follow-up`, `/cn:market-brief`).
+
+**Phase 1C:** Honest advisor agent with three-step norm/exception/strategy pattern. Market researcher tracking role demand trends and AI/automation displacement. Skills self-assessment, gap analysis, and training ROI engine (`/cn:suggest-roles`).
+
+**Phase 1D:** Job scout with full outcome-driven scoring and proactive opportunity alerts. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
+
+**Phase 1E:** Full mock interview system — guided, random, and adaptive modes across all stages (recruiter screen, hiring manager, technical, panel, executive) and vibes (supportive, neutral, challenging, antagonistic, bored). Morning brief with company news and interviewer research. Post-interview debrief flow. (`/cn:prep-interview`, `/cn:mock-interview`, `/cn:morning-brief`, `/cn:interview-debrief`).
+
+**Phase 1F:** Networking strategy agent and network map. Event radar with local, national, and international discovery. LinkedIn content advisor and post evaluator with cultural risk assessment. (`/cn:network-map`, `/cn:draft-outreach`, `/cn:content-suggest`, `/cn:evaluate-post`, `/cn:event-radar`).
+
+### Phase 2 — Integrations
+
+**Phase 2A:** Gmail and Outlook connectors (read-only, OAuth). Google Calendar and Outlook Calendar integration. Contact correspondence history for warm outreach context.
+
+**Phase 2B:** Interview audio capture via Whisper transcription. Full privacy framework, consent model, and cross-jurisdiction recording guidance. Local processing option for privacy-sensitive users.
+
+**Phase 2C:** OneDrive, Dropbox, and local filesystem storage connectors. IllinoisJobLink job board connector. ATS read-only connectors for Greenhouse, Workday, and Lever.
+
+**Phase 2D:** Power BI streaming dataset connector. Qlik Engine API connector. D3 data export. LinkedIn automation for job search and connection graph access.
+
+### Phase 3 — Platform Expansion
+
+Multi-user and team mode for staffing agencies and career coaches. Plugin marketplace publication. Mobile companion app for on-the-go tracker updates. Salary negotiation and offer evaluation module. Skills gap training integrations with Coursera and LinkedIn Learning.
+
+### Phase 4 — Enterprise & Ecosystem
+
+White-label version for career coaching practices and staffing agencies. API for third-party integrations. Anonymized aggregate benchmarking data. Government employment program integrations and American Job Center partnerships. Veteran and disability-specific pathway modules.
+
+---
+
+## Specification
+
+See [career-navigator-spec.md](career-navigator-spec.md) for the full product specification covering all agents, skills, hooks, data model, and design philosophy.
+
+## Contributing
+
+Contributions welcome. Please open an issue before submitting a pull request for significant changes. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+```
