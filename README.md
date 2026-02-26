@@ -26,6 +26,8 @@ The core differentiator: every application outcome feeds back into the system. O
 5. Click **Upload a plugin** and select the downloaded zip
 6. Career Navigator activates on next session start
 
+After installing, click the **Customize** button on the Career Navigator plugin card — this automatically launches the setup wizard to configure your integrations.
+
 ### Install via Claude Code (CLI)
 
 ```bash
@@ -42,6 +44,8 @@ Career Navigator will be submitted to the official Claude plugin marketplace at 
 ---
 
 ## Quick Start
+
+After installing, click **Customize** on the plugin card — it launches the setup wizard automatically. Or run it manually any time:
 
 ### 1. Run setup
 

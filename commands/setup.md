@@ -6,6 +6,12 @@ description: >
   optionally sets up Google Drive for cloud storage. Handles all file writes
   automatically — no manual JSON editing required. Re-runnable at any time to
   update keys or switch connectors.
+triggers:
+  - "Customize the career-navigator plugin"
+  - "customize career navigator"
+  - "set up career navigator"
+  - "configure career navigator"
+  - "get started with career navigator"
 ---
 
 # /cn:setup
