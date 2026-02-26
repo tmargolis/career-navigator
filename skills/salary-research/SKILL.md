@@ -15,6 +15,12 @@ description: >
 
 This skill fires when compensation is mentioned in any context. Pull the most relevant data for the specific role, level, and geography being discussed, then apply the guidance below.
 
+## User Context
+
+Before applying any guidance, read `data/profile/profile.md` if it exists. Use the compensation floor, expected ranges by company type, and any search notes there as the baseline — they reflect what the user has already researched about their own market. Do not contradict or ignore the profile's compensation section; supplement it with current market data instead.
+
+Do not modify this skill file to add user-specific data. User-specific compensation context belongs in `data/profile/profile.md`.
+
 ## 1. How to Research Salary Ranges
 
 Use the following sources in priority order. Cite the source and note when data was last updated.
