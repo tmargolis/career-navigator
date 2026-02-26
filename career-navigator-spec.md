@@ -462,7 +462,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Resume corpus management and artifact inventory
 
-* /cn:setup conversational configuration wizard (HasData, Google Drive)
+* /cn:setup conversational configuration wizard — builds user profile from Google Drive if connected, auto-imports existing resumes into corpus, auto-imports past application history into tracker; falls back to conversational Q&A if no Drive access
 
 * /cn:tailor-resume, /cn:cover-letter, /cn:resume-score, /cn:add-source, /cn:list-artifacts
 

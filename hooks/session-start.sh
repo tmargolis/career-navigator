@@ -16,12 +16,9 @@ if [ ! -f "$TRACKER" ] && [ ! -f "$PROFILE" ]; then
 
 Welcome to Career Navigator. No job search data exists yet.
 
-To get started:
-  1. Run /cn:setup — creates your profile and configures integrations
-  2. Run /cn:add-source — add your resume or CV to the corpus
-  3. Run /cn:search-jobs — find roles matched to your skills
-
-I'm ready when you are. What would you like to work on today?
+Run /cn:setup to get started — it will build your profile, import your
+resumes and past applications from Google Drive if connected, and configure
+job search integrations. Takes about 2 minutes.
 ONBOARDING
   exit 0
 fi

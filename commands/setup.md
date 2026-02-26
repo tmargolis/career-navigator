@@ -159,21 +159,49 @@ If a profile already exists, show a summary and ask: "Would you like to update a
 
 ---
 
-### 5. Completion summary
+### 5. Build corpus from existing resumes
+
+**If Google Drive is connected and resumes were found during profile building**: Do not ask the user to run `/cn:add-source` separately. Import the resumes now.
+
+- Identify the most current and complete resume(s) found in Drive. If there are role-specific tailored versions (e.g., "Resume — Anthropic"), import those too.
+- For each, run the full `/cn:add-source` extraction: parse experience units, assign skill tags, set default performance weights, append to `data/corpus/index.json`.
+- Confirm: "I've added [N] resumes to your corpus — [X] experience units extracted across [Y] skills."
+
+**If no Drive access**: Skip this step. Remind the user once at the end to run `/cn:add-source`.
+
+---
+
+### 6. Import application history
+
+**If Google Drive is connected**: Search for evidence of existing applications — job hunt folders, tracking spreadsheets, cover letters addressed to specific companies, or any document that implies an application was submitted.
+
+For each application found:
+- Extract: company, role title, approximate date applied, any status signals (offer, rejection, interview notes)
+- Create a record in `data/applications/tracker.json` using the standard schema
+- Set `source_board` to "imported from Google Drive" and `status` to the best available inference (default: "Applied" if uncertain)
+
+Ask before writing: "I found evidence of [N] past applications in your Drive. Want me to import them into your tracker? I'll flag anything I'm uncertain about."
+
+**If no Drive access or no application history found**: Skip this step silently.
+
+---
+
+### 7. Completion summary
 
 ```
 SETUP COMPLETE
 ──────────────────────────────────────────
 Profile                  [✓] Created
-HasData (job search)     [✓] Active
-Google Drive (storage)   [✓] Active   (or [ ] Using local storage)
+Corpus                   [✓] [N] experience units from [X] resumes
+Applications             [✓] [N] imported  (or [ ] None found)
+HasData (job search)     [✓] Active        (or [ ] Not configured)
+Google Drive (storage)   [✓] Active        (or [ ] Using local storage)
 ──────────────────────────────────────────
 ```
 
-Suggest the natural next step — never suggest running `/cn:setup` again, it just finished:
-- If corpus is empty: "Run `/cn:add-source` to load your resume into the corpus — I can pull it directly from your Google Drive if it's connected."
-- If corpus exists but no searches run: "Run `/cn:search-jobs` to find matching roles."
-- If corpus exists and searches have run: "You're all set. What would you like to work on?"
+Suggest the natural next step — never suggest running `/cn:setup` again:
+- If HasData is not yet configured: "Run `/cn:setup` again to add your HasData key, or run `/cn:search-jobs` now to use assisted-manual search."
+- Otherwise: "Run `/cn:search-jobs` to find matching roles, or `/cn:tailor-resume` with a job description to build your first targeted resume."
 
 ---
 
