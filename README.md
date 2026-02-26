@@ -17,13 +17,13 @@ The core differentiator: every application outcome feeds back into the system. O
 
 ## Installation
 
-### Install via Claude Desktop (upload)
+### Install via Claude Desktop
 
-1. Download or clone this repository to your machine
+1. Download the zip: **Code → Download ZIP** on this page (or [direct link](https://github.com/tmargolis/career-navigator/archive/refs/heads/main.zip))
 2. Open **Claude Desktop**
 3. Click the **Customize** button
 4. Click **Browse plugins → Personal**
-5. Click **Upload a plugin** and select the `career-navigator/` folder
+5. Click **Upload a plugin** and select the downloaded zip
 6. Career Navigator activates on next session start
 
 ### Install via Claude Code (CLI)
