@@ -17,27 +17,27 @@ The core differentiator: every application outcome feeds back into the system. O
 
 ## Installation
 
-### Install via Claude Desktop (GUI)
+### Install via Claude Desktop (upload)
 
-1. Open **Claude Desktop**
-2. Go to **Settings → Plugins**
-3. Click **Add Plugin**
-4. Enter the repository URL: `https://github.com/tmargolis/career-navigator`
-5. Click **Install** — Career Navigator activates on next session start
+1. Download or clone this repository to your machine
+2. Open **Claude Desktop**
+3. Click the **Customize** button
+4. Click **Browse plugins → Personal**
+5. Click **Upload a plugin** and select the `career-navigator/` folder
+6. Career Navigator activates on next session start
 
-### Install via Git
+### Install via Claude Code (CLI)
 
 ```bash
 git clone https://github.com/tmargolis/career-navigator.git
+claude plugin install /path/to/career-navigator
 ```
 
-Then point Claude Cowork or Claude Code at the directory:
+---
 
-```
-/plugin install /path/to/career-navigator
-```
+## Plugin Marketplace
 
-Or place the `career-navigator/` directory in your Claude plugins folder for automatic discovery.
+Career Navigator will be submitted to the official Claude plugin marketplace at [claude.com/plugins](https://claude.com/plugins) at the end of Phase 1. Once listed, installation will be a single click from the Browse plugins directory — no download required.
 
 ---
 
