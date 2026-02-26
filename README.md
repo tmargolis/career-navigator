@@ -43,9 +43,15 @@ Or place the `career-navigator/` directory in your Claude plugins folder for aut
 
 ## Quick Start
 
-Run these three commands to get fully set up:
+### 1. Run setup
 
-### 1. Add your resume to the corpus
+```
+/cn:setup
+```
+
+Walks you through configuring HasData (for automated job search) and optionally Google Drive (for cloud storage). Opens signup pages, validates your credentials, and writes all config automatically — no file editing required. Skip this and everything still works in assisted-manual mode.
+
+### 2. Add your resume to the corpus
 
 ```
 /cn:add-source
@@ -53,15 +59,15 @@ Run these three commands to get fully set up:
 
 Paste your existing resume or provide a file path. Career Navigator extracts your experience into a structured corpus of reusable units.
 
-### 2. Search for matching roles
+### 3. Search for matching roles
 
 ```
 /cn:search-jobs
 ```
 
-Describe your target role and location. Career Navigator generates optimized search strings for Indeed, LinkedIn, and Google Jobs, then ranks the results you bring back.
+With HasData configured: searches live job listings automatically and returns ranked results. Without it: generates optimized search strings for Indeed, LinkedIn, and Google Jobs, then ranks the results you bring back.
 
-### 3. Tailor your first resume
+### 4. Tailor your first resume
 
 ```
 /cn:tailor-resume
@@ -75,6 +81,7 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 | Command | Purpose |
 |---------|---------|
+| `/cn:setup` | Configure HasData and Google Drive (run first) |
 | `/cn:add-source` | Add a resume or CV to your experience corpus |
 | `/cn:tailor-resume` | Build an optimized resume for a specific role |
 | `/cn:cover-letter` | Generate a targeted cover letter |
@@ -111,48 +118,13 @@ No data leaves your machine unless you configure a cloud connector (see [CONNECT
 
 ---
 
-## Indeed Job Search Setup
+## Job Search & Storage Setup
 
-By default, `/cn:search-jobs` runs in **assisted-manual mode**: it generates optimized search strings you paste into job boards, then ranks the results you bring back. This works well out of the box and requires no setup.
+Run `/cn:setup` to configure integrations. The wizard handles everything conversationally — no file editing required.
 
-To enable **fully automated job search**, you have a few options:
+**Job search (HasData):** Career Navigator uses [HasData](https://hasdata.com/) to fetch live job listings from Indeed, LinkedIn, and other boards. A free tier is available. `/cn:setup` opens the signup page, waits for you to paste your API key, validates it, and writes the config automatically. Without a key, `/cn:search-jobs` works in assisted-manual mode (you paste in search results; Career Navigator ranks them).
 
-### Option 1: Indeed Publisher API (Official)
-
-Indeed's Publisher Program provides free API access for personal and non-commercial use.
-
-1. Register at [https://publisher.indeed.com/publisher/](https://publisher.indeed.com/publisher/)
-2. You'll receive a **Publisher ID** (a numeric string, not a traditional API key)
-3. Open `.mcp.json`, move the `indeed` entry from `_inactive_services` into `mcpServers`, and replace `YOUR_PUBLISHER_ID` with your actual ID
-4. Restart Claude Cowork — `/cn:search-jobs` switches to automated mode automatically
-
-**Note**: Indeed's Publisher API uses a search endpoint at `api.indeed.com/ads/apisearch`. It does not have an official MCP server yet. A local stdio MCP wrapper is planned for Phase 2 for richer integration.
-
-### Option 2: Third-Party Job Scraping APIs
-
-If the Publisher Program isn't available in your region or you want richer data, several third-party services provide structured Indeed data via API:
-
-- **[HasData](https://hasdata.com/)** — Indeed scraping API with structured results, job details, and company data. Paid, with a free tier.
-- **[Bright Data](https://brightdata.com/)** — Enterprise-grade web scraping with Indeed dataset support.
-- **[Apify Indeed Scraper](https://apify.com/misceres/indeed-scraper)** — Open-source actor for Indeed scraping, pay-per-use.
-- **[ScrapingBee](https://www.scrapingbee.com/)** — General scraping API that handles Indeed well.
-
-To configure a third-party provider, add its credentials to `.mcp.json` under the `indeed` service block. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
-
----
-
-## Google Drive Setup
-
-To store artifacts and tracker data in Google Drive instead of locally:
-
-1. Go to [https://console.cloud.google.com/](https://console.cloud.google.com/) and create a project
-2. Enable the Google Drive API
-3. Create OAuth 2.0 credentials (Desktop app type)
-4. Download `credentials.json` and place it in `services/connectors/google-drive/`
-5. In `.mcp.json`, move `google-drive` from `_inactive_services` to `mcpServers`
-6. Restart Claude Cowork — on first use, you'll be prompted to authorize access
-
-See [CONNECTORS.md](CONNECTORS.md) for full details on the connector interface and available backends.
+**Cloud storage (Google Drive):** By default, all data is stored locally in `data/`. To sync to Google Drive, run `/cn:setup` — it walks through creating OAuth credentials and handles all configuration. See [CONNECTORS.md](CONNECTORS.md) for details on the connector interface.
 
 ---
 
@@ -207,7 +179,7 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 
 ### Phase 3 — Platform Expansion
 
-Multi-user and team mode for staffing agencies and career coaches. Plugin marketplace publication. Mobile companion app for on-the-go tracker updates. Salary negotiation and offer evaluation module. Skills gap training integrations with Coursera and LinkedIn Learning.
+Hosted API proxy with per-user key management and usage tracking (removes the need for each user to obtain their own HasData key; enables monetization). Multi-user and team mode for staffing agencies and career coaches. Plugin marketplace publication. Mobile companion app for on-the-go tracker updates. Salary negotiation and offer evaluation module. Skills gap training integrations with Coursera and LinkedIn Learning.
 
 ### Phase 4 — Enterprise & Ecosystem
 

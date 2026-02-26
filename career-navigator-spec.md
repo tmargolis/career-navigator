@@ -165,6 +165,12 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 All commands are namespaced under career-navigator: and accessible via Claude Cowork's slash command interface (and Claude Code). Commands can also be triggered conversationally — the plugin recognizes natural language prompts that match command intent and invokes the appropriate command automatically.
 
+## **3.0 Setup & Configuration**
+
+| Name | Type | Description |
+| :---- | :---- | :---- |
+| **/cn:setup** | Command | Conversational setup wizard. Configures HasData for automated job search and optionally sets up Google Drive for cloud storage. Validates credentials before saving, writes all config automatically. Re-runnable to update keys or switch connectors. |
+
 ## **3.1 Resume & Cover Letter Commands**
 
 | Name | Type | Description |
@@ -279,12 +285,12 @@ The analytics layer consumes structured event data from the storage connector an
 
 # **9\. External Service Integrations (.mcp.json)**
 
-External services are configured via the plugin's .mcp.json file. Each integration is optional and activates the relevant agents and skills when configured.
+External services are configured via the plugin's .mcp.json file. Run `/cn:setup` to configure integrations — the wizard handles all file edits automatically. Each integration is optional and activates the relevant agents and skills when configured.
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
 | **LinkedIn** | MCP | Job posting search, connection graph access, InMail drafting, post publishing and analytics. Required for networking strategy features. |
-| **Indeed** | MCP | Job board search and application tracking. Primary source for broad job discovery. |
+| **HasData** | MCP | Web scraping API providing live job listings from Indeed, LinkedIn, and other boards. Free tier available. Primary source for broad job discovery in Phase 1A. Configured via `/cn:setup`. |
 | **Glassdoor** | MCP | Company culture research, interview experience data, salary benchmarks, and recruiter process timelines. |
 | **CareerOneStop** | MCP | U.S. Department of Labor API. Free. Provides labor market data, salary ranges, occupation outlook, and American Job Center locations. |
 | **IllinoisJobLink** | MCP | Illinois-specific job board. State employment resources and local posting discovery. |
@@ -443,13 +449,15 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Resume corpus management and artifact inventory
 
+* /cn:setup conversational configuration wizard (HasData, Google Drive)
+
 * /cn:tailor-resume, /cn:cover-letter, /cn:resume-score, /cn:add-source, /cn:list-artifacts
 
 * Basic conversational application tracker with /cn:track-application
 
-* Indeed job search with assisted-manual LinkedIn workflow
+* HasData job search (automated); assisted-manual fallback for LinkedIn
 
-* Google Drive storage connector, SQLite data storage
+* Google Drive storage connector, local file storage default, SQLite data storage
 
 * SessionStart hook with daily digest
 
@@ -575,6 +583,8 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 ## **Phase 3 — Platform Expansion**
 
+* Hosted API proxy with per-user key management and usage tracking — enables monetization and removes the need for each user to obtain their own HasData key
+
 * Multi-user and team mode for staffing agencies and career coaches
 
 * Plugin marketplace publication
@@ -613,6 +623,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 | Command | Purpose |
 | :---- | :---- |
+| **/cn:setup** | Configure HasData and Google Drive (run first) |
 | **/cn:tailor-resume** | Assemble optimal resume for a specific role from corpus |
 | **/cn:cover-letter** | Generate targeted cover letter |
 | **/cn:resume-score** | Score resume against a job description |

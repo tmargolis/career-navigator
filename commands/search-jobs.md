@@ -2,17 +2,17 @@
 name: search-jobs
 command: /cn:search-jobs
 description: >
-  Phase 1A assisted-manual job search. Generates optimized search strings for
-  Indeed, LinkedIn, and Google Jobs. User supplies results; job-scout ranks them
-  against the corpus and flags risks. Prompts to track promising roles.
+  Job search across Indeed, LinkedIn, and other boards. Automated when HasData
+  is configured via /cn:setup; falls back to assisted-manual mode otherwise.
+  job-scout ranks results against the corpus and flags risks.
 agent: job-scout
 ---
 
 # /cn:search-jobs
 
-Finds job opportunities matched to your skills and targets. In Phase 1A, this uses an assisted-manual workflow: Career Navigator generates optimized search strings you paste into job boards, then ranks the results you bring back against your corpus.
+Finds job opportunities matched to your skills and targets. With HasData configured, this searches live job listings automatically. Without it, Career Navigator generates optimized search strings you paste into job boards and ranks the results you bring back.
 
-> **Indeed API**: Automated job search (without copy-pasting) requires an Indeed Publisher ID. See the **Indeed API Setup** section in README.md for instructions. Once configured in `.mcp.json`, this command switches to automated mode automatically.
+> **Setup**: Run `/cn:setup` to configure HasData for automated search — it takes about 2 minutes and requires no manual file editing.
 
 ## Usage
 
@@ -118,12 +118,6 @@ If the user wants to expand the search manually:
 - Roles posted on company career pages before job boards often have less applicant volume
 - Google Jobs aggregates from all boards — a single search catches most of them
 
-## Indeed API Setup Note
+## Enabling Automated Search
 
-This command operates in assisted-manual mode until an Indeed Publisher ID is configured. To enable automated search:
-
-1. Register at the Indeed Publisher Program (link in README.md)
-2. Add your Publisher ID to `.mcp.json` per the setup instructions there
-3. Restart Claude Cowork (or Claude Code) — automated mode activates on next session
-
-Automated mode will fetch and rank results directly without the copy-paste step.
+Run `/cn:setup` to configure HasData. The wizard opens the signup page, validates your key, and writes the config automatically — no file editing required. Once active, this command fetches and ranks live job listings directly.

@@ -21,12 +21,13 @@ Career Navigator has completed **Phase 1A implementation**. The plugin scaffold,
 
 **Agents**: `agents/resume-coach.md`, `agents/job-scout.md`
 
-**Commands** (7): `add-source`, `tailor-resume`, `cover-letter`, `resume-score`, `list-artifacts`, `track-application`, `search-jobs`
+**Commands** (8): `setup`, `add-source`, `tailor-resume`, `cover-letter`, `resume-score`, `list-artifacts`, `track-application`, `search-jobs`
 
 ### Phase 1A Decisions Locked
 
-- **Storage**: Local file storage in `data/` (gitignored). Google Drive connector placeholder in `.mcp.json`; activate per README.
-- **Job search**: Assisted-manual workflow (user pastes search results; job-scout ranks them). Indeed API automated mode available once Publisher ID is configured in `.mcp.json`.
+- **Setup**: `/cn:setup` wizard handles all integration configuration (HasData, Google Drive). No manual `.mcp.json` editing required.
+- **Storage**: Local file storage in `data/` (gitignored) by default. Google Drive configurable via `/cn:setup`.
+- **Job search**: HasData for automated live job listings (configured via `/cn:setup`). Falls back to assisted-manual mode without a key.
 - **Scheduling**: SessionStart hook only. node-cron DailySchedule deferred to Phase 1B.
 - **Analytics**: No SQLite yet. Phase 1B adds insight engine and `/cn:pipeline` dashboard.
 
@@ -52,6 +53,7 @@ These are non-negotiable and must be preserved in all implementation decisions:
 career-navigator/
 ├── .claude-plugin/plugin.json     # Plugin manifest
 ├── commands/                      # Slash commands (/cn:* namespace)
+│   ├── setup.md
 │   ├── add-source.md
 │   ├── tailor-resume.md
 │   ├── cover-letter.md
