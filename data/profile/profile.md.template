@@ -1,0 +1,87 @@
+# [Your Name] — Job Search Profile
+
+This file is read automatically by Career Navigator agents at the start of every job-search and resume operation. Update it any time by editing this file directly or by running `/cn:setup`.
+
+---
+
+## Who I Am
+
+**Name**: [Your name]
+**Location**: [City, State] ([relocation preferences])
+**Email**: [your@email.com]
+
+[2–4 sentence professional summary. Include what makes you distinctive — not just your title and years of experience, but the combination that makes you unusual at your level.]
+
+**Core differentiator**: [One sentence describing what sets you apart from others with similar titles. This should appear in every resume and cover letter.]
+
+---
+
+## Target Roles
+
+Search for and prioritize roles with these titles (or equivalents):
+
+- [Role title 1]
+- [Role title 2]
+- [Role title 3]
+
+**Seniority**: [e.g., Director and above only. Flag and deprioritize IC, manager, and mid-level roles.]
+
+---
+
+## Target Industries & Companies
+
+**Primary targets**:
+- [Company 1]
+- [Company 2]
+
+**Secondary targets**:
+- [Company 3]
+- [Company 4]
+
+**Industries to prioritize**: [e.g., AI/ML, Enterprise SaaS, Analytics]
+**Industries to deprioritize**: [e.g., Consumer apps, pure infrastructure]
+
+---
+
+## Compensation Floor
+
+**Minimum total comp**: $[amount] (base + bonus + equity annualized)
+Flag any role below this threshold. For equity-heavy startup offers, calculate annualized equity value conservatively (use last 409A or recent round price ÷ 4-year vest).
+
+**Expected ranges by company type**:
+- [Company type 1]: $[range] TC
+- [Company type 2]: $[range] base + equity
+
+---
+
+## Location
+
+[Geographic preferences and constraints. Note remote/hybrid/in-office preference.]
+
+---
+
+## Key Skills (for ATS keyword matching and corpus tagging)
+
+**[Category 1]**:
+- [Skill]
+- [Skill]
+
+**[Category 2]**:
+- [Skill]
+- [Skill]
+
+---
+
+## Unique Differentiators to Preserve
+
+When assembling or scoring resumes, these elements must appear in every tailored resume:
+
+1. **[Differentiator name]**: [Description of why this is distinctive and how to present it.]
+2. **[Differentiator name]**: [Description.]
+3. **[Differentiator name]**: [Description.]
+
+---
+
+## Search Notes
+
+- [Any specific notes about your search strategy, preferred channels, or standing instructions for agents.]

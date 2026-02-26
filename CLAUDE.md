@@ -11,6 +11,7 @@ Career Navigator has completed **Phase 1A implementation**. The plugin scaffold,
 **Plugin scaffold**: `.claude-plugin/plugin.json`, `.mcp.json`, `.gitignore`, `CONNECTORS.md`
 
 **Data layer** (all gitignored user data with template scaffolding):
+- `data/profile/` — user profile (`profile.md.template`); read by all agents at session start
 - `data/corpus/` — resume corpus (`index.json.template`)
 - `data/applications/` — application tracker (`tracker.json.template`)
 - `data/artifacts/` — artifact inventory (`index.json.template`)
@@ -71,6 +72,7 @@ career-navigator/
 │   ├── hooks.json
 │   └── session-start.sh
 ├── data/                          # Gitignored user data
+│   ├── profile/                   # profile.md (created by /cn:setup)
 │   ├── corpus/                    # index.json (created on first /cn:add-source)
 │   ├── applications/              # tracker.json (created on first /cn:track-application)
 │   └── artifacts/                 # index.json + artifact files

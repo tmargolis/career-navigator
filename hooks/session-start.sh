@@ -4,21 +4,22 @@
 # Claude receives this as context and delivers a natural morning digest.
 
 PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PROFILE="$PLUGIN_ROOT/data/profile/profile.md"
 TRACKER="$PLUGIN_ROOT/data/applications/tracker.json"
 ARTIFACTS_INDEX="$PLUGIN_ROOT/data/artifacts/index.json"
 CORPUS_INDEX="$PLUGIN_ROOT/data/corpus/index.json"
 
 # --- First-run detection ---
-if [ ! -f "$TRACKER" ]; then
+if [ ! -f "$TRACKER" ] && [ ! -f "$PROFILE" ]; then
   cat <<'ONBOARDING'
 [CAREER NAVIGATOR — FIRST RUN]
 
 Welcome to Career Navigator. No job search data exists yet.
 
 To get started:
-  1. Run /cn:add-source — add your resume or CV to the corpus
-  2. Run /cn:search-jobs — find roles matched to your skills
-  3. Run /cn:track-application — log your first application
+  1. Run /cn:setup — creates your profile and configures integrations
+  2. Run /cn:add-source — add your resume or CV to the corpus
+  3. Run /cn:search-jobs — find roles matched to your skills
 
 I'm ready when you are. What would you like to work on today?
 ONBOARDING
@@ -36,6 +37,14 @@ Please surface the following as a concise, natural morning brief — no headers,
 
 TRACKER DATA:
 DIGEST_HEADER
+
+# Output profile summary for Claude to use as context
+if [ -f "$PROFILE" ]; then
+  echo "=== USER PROFILE ==="
+  # Output just the first 40 lines — enough for target roles, companies, comp floor
+  head -40 "$PROFILE"
+  echo ""
+fi
 
 # Output tracker contents for Claude to parse
 if [ -f "$TRACKER" ]; then

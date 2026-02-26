@@ -137,11 +137,34 @@ If the user skips Google Drive:
 
 ---
 
-### 4. Completion summary
+### 4. Build user profile
+
+Create or update `data/profile/profile.md` — the permanent reference file all agents read before every operation.
+
+**If Google Drive is connected**: Search Drive for resumes, CVs, and any existing job search materials before asking questions. Extract what you can find, then ask only for what you couldn't determine.
+
+**If no Drive access**: Ask the following conversationally (not as a form):
+- Brief professional summary and what makes you distinctive at your level
+- Target role titles and minimum seniority
+- Target companies (primary, secondary, and types to avoid)
+- Industries to prioritize and deprioritize
+- Minimum total compensation (base + bonus + equity annualized)
+- Location preferences and relocation openness
+- Key skills to prioritize for ATS matching
+- Any unique differentiators that must appear in every resume
+
+Write the profile using `data/profile/profile.md.template` as the schema. Save to `data/profile/profile.md`.
+
+If a profile already exists, show a summary and ask: "Would you like to update anything, or does this still look right?"
+
+---
+
+### 5. Completion summary
 
 ```
 SETUP COMPLETE
 ──────────────────────────────────────────
+Profile                  [✓] Created
 HasData (job search)     [✓] Active
 Google Drive (storage)   [✓] Active   (or [ ] Using local storage)
 ──────────────────────────────────────────

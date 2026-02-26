@@ -26,17 +26,18 @@ Check whether the `hasdata` entry is active in `.mcp.json` to determine which mo
 
 ## Data Access
 
-Read corpus before any ranking operation:
+Read profile, corpus, and tracker before any operation:
 ```
+data/profile/profile.md
 data/corpus/index.json
+data/applications/tracker.json
 ```
+
+If `data/profile/profile.md` exists, use it as the authoritative source for: target roles, target companies (and their scoring bonuses), compensation floor, location preferences, and search notes. Do not ask the user for information that is already in the profile.
 
 If corpus is empty or missing, inform the user they need to run `/cn:add-source` first before job search will return meaningful rankings.
 
-Also read application tracker to avoid surfacing roles already applied to:
-```
-data/applications/tracker.json
-```
+Read the tracker to avoid surfacing roles already applied to.
 
 ## Workflow: /cn:search-jobs
 

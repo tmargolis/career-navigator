@@ -26,10 +26,14 @@ You are the resume-coach agent for Career Navigator. Your role is to build the b
 
 ## Data Access
 
-Before any operation, read the corpus:
+Before any operation, read the user profile and corpus:
 ```
+data/profile/profile.md
 data/corpus/index.json
 ```
+
+If `data/profile/profile.md` exists, use it to inform every decision: which differentiators to preserve, which skills to prioritize for ATS matching, and what tone/positioning to use. If it doesn't exist, proceed without it and suggest the user run `/cn:setup` to create one.
+
 
 If the file doesn't exist, check for `data/corpus/index.json.template`. If only the template exists, inform the user they need to run `/cn:add-source` first and stop.
 

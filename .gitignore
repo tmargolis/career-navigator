@@ -2,6 +2,7 @@
 data/corpus/*
 data/applications/*
 data/artifacts/*
+data/profile/*
 
 # Keep directory scaffolding and templates
 !data/corpus/.gitignore
@@ -10,6 +11,8 @@ data/artifacts/*
 !data/applications/*.template
 !data/artifacts/.gitignore
 !data/artifacts/*.template
+!data/profile/.gitignore
+!data/profile/*.template
 
 # Dependencies and environment
 node_modules/

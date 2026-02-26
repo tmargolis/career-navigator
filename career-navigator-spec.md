@@ -302,6 +302,19 @@ External services are configured via the plugin's .mcp.json file. Run `/cn:setup
 
 # **10\. Core Data Model**
 
+## **10.0 User Profile**
+
+Stored at `data/profile/profile.md`. Created by `/cn:setup` (using Google Drive resume data if connected, otherwise conversationally). Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
+
+* **identity** — name, location, contact info, professional summary, core differentiator
+* **target\_roles** — preferred titles, minimum seniority level
+* **target\_companies** — primary, secondary, and tertiary targets; industries to prioritize and avoid
+* **compensation\_floor** — minimum total comp (base + bonus + equity annualized); expected ranges by company type
+* **location** — geographic preferences, relocation openness, remote/hybrid preference
+* **key\_skills** — prioritized skill list for ATS matching and corpus tagging
+* **differentiators** — named, high-value elements that must appear in every tailored resume
+* **search\_notes** — standing instructions for agents: preferred channels, company-specific notes, anything static that should inform every search and application
+
 ## **10.1 Resume Corpus**
 
 The corpus is not a collection of discrete resumes — it is a structured pool of experience units that can be recombined. Each unit has metadata indicating source document, role type relevance, industry tags, and performance history.
