@@ -131,7 +131,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Storage Layer (Phase 1\)** | Google Drive (additional connectors in Phase 2C) |
 | **Analytics Layer (Phase 1\)** | SQLite \+ D3 visualization (additional connectors in Phase 2D) |
 | **AI Services** | Claude API (via MCP), Whisper (audio transcription — Phase 2B) |
-| **Job Search (Phase 1\)** | Indeed Publisher API (primary) \+ assisted-manual LinkedIn workflow |
+| **Job Search (Phase 1\)** | HasData (primary, via `/cn:setup`) \+ assisted-manual fallback |
 
 # **2\. Plugin File Structure**
 

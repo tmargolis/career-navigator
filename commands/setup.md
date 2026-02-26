@@ -170,10 +170,10 @@ Google Drive (storage)   [✓] Active   (or [ ] Using local storage)
 ──────────────────────────────────────────
 ```
 
-Suggest the natural next step:
-- If corpus is empty: "Run `/cn:add-source` to add your resume and get started."
-- If corpus exists but no searches run: "Run `/cn:search-jobs` to find matching roles — it's now fully automated."
-- If fully active: "You're all set. What would you like to work on?"
+Suggest the natural next step — never suggest running `/cn:setup` again, it just finished:
+- If corpus is empty: "Run `/cn:add-source` to load your resume into the corpus — I can pull it directly from your Google Drive if it's connected."
+- If corpus exists but no searches run: "Run `/cn:search-jobs` to find matching roles."
+- If corpus exists and searches have run: "You're all set. What would you like to work on?"
 
 ---
 
