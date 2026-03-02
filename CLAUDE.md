@@ -26,11 +26,11 @@ Career Navigator has completed **Phase 1A implementation**. The plugin scaffold,
 
 ### Phase 1A Decisions Locked
 
-- **Setup**: `/cn:setup` wizard handles all integration configuration (HasData, Google Drive). No manual `.mcp.json` editing required.
-- **Storage**: Local file storage in `data/` (gitignored) by default. Google Drive configurable via `/cn:setup`.
-- **Job search**: HasData for automated live job listings (configured via `/cn:setup`). Falls back to assisted-manual mode without a key.
+- **Setup**: `/career:setup` wizard handles all integration configuration (HasData, Google Drive). No manual `.mcp.json` editing required.
+- **Storage**: Local file storage in `data/` (gitignored) by default. Google Drive configurable via `/career:setup`.
+- **Job search**: HasData for automated live job listings (configured via `/career:setup`). Falls back to assisted-manual mode without a key.
 - **Scheduling**: SessionStart hook only. node-cron DailySchedule deferred to Phase 1B.
-- **Analytics**: No SQLite yet. Phase 1B adds insight engine and `/cn:pipeline` dashboard.
+- **Analytics**: No SQLite yet. Phase 1B adds insight engine and `/career:pipeline` dashboard.
 
 ## What This Is
 
@@ -53,7 +53,7 @@ These are non-negotiable and must be preserved in all implementation decisions:
 ```
 career-navigator/
 ├── .claude-plugin/plugin.json     # Plugin manifest
-├── commands/                      # Slash commands (/cn:* namespace)
+├── commands/                      # Slash commands (/career:* namespace)
 │   ├── setup.md
 │   ├── add-source.md
 │   ├── tailor-resume.md
@@ -72,9 +72,9 @@ career-navigator/
 │   ├── hooks.json
 │   └── session-start.sh
 ├── data/                          # Gitignored user data
-│   ├── profile/                   # profile.md (created by /cn:setup)
-│   ├── corpus/                    # index.json (created on first /cn:add-source)
-│   ├── applications/              # tracker.json (created on first /cn:track-application)
+│   ├── profile/                   # profile.md (created by /career:setup)
+│   ├── corpus/                    # index.json (created on first /career:add-source)
+│   ├── applications/              # tracker.json (created on first /career:track-application)
 │   └── artifacts/                 # index.json + artifact files
 ├── services/
 │   ├── scheduler/                 # node-cron jobs (Phase 1B)
@@ -94,11 +94,11 @@ career-navigator/
 
 **Storage Connectors** implement a standard interface (`save_artifact`, `list_artifacts`, `get_artifact`, `save_event`, `query_events`). Phase 1 default: Google Drive. All plugin components call the interface — never the specific backend directly.
 
-**Analytics Connectors** consume structured event data. Phase 1 default: SQLite with built-in query engine powering the `/cn:pipeline` dashboard.
+**Analytics Connectors** consume structured event data. Phase 1 default: SQLite with built-in query engine powering the `/career:pipeline` dashboard.
 
 ### Command Namespace
 
-All slash commands are prefixed `/cn:`. See `career-navigator-spec.md` Section 3 for the full command list and their descriptions. Commands also fire when Claude recognizes matching natural language intent.
+All slash commands are prefixed `/career:`. See `career-navigator-spec.md` Section 3 for the full command list and their descriptions. Commands also fire when Claude recognizes matching natural language intent.
 
 ### Core Data Model
 
@@ -112,7 +112,7 @@ The core differentiator: every application outcome feeds back into `performance_
 
 ## Phased Delivery
 
-Implementation follows the phased plan in `career-navigator-spec.md` Section 15. **Phase 1A is complete.** Next target: **Phase 1B** — insight engine, feedback loop, `/cn:pipeline` dashboard, follow-up intelligence, and DailySchedule hook via node-cron.
+Implementation follows the phased plan in `career-navigator-spec.md` Section 15. **Phase 1A is complete.** Next target: **Phase 1B** — insight engine, feedback loop, `/career:pipeline` dashboard, follow-up intelligence, and DailySchedule hook via node-cron.
 
 ## External Integrations
 

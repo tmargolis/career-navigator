@@ -1,22 +1,22 @@
 ---
 name: list-artifacts
-command: /cn:list-artifacts
+command: /career:list-artifacts
 description: >
   Lists all generated artifacts (resumes, cover letters) in the inventory
   with metadata. Supports filtering by type, date range, or outcome.
 ---
 
-# /cn:list-artifacts
+# /career:list-artifacts
 
 Lists all resumes, cover letters, and other generated documents in your artifact inventory with metadata. Shows ATS scores at time of generation and links outcomes where known.
 
 ## Usage
 
 ```
-/cn:list-artifacts
-/cn:list-artifacts resumes
-/cn:list-artifacts [company name]
-/cn:list-artifacts since [date]
+/career:list-artifacts
+/career:list-artifacts resumes
+/career:list-artifacts [company name]
+/career:list-artifacts since [date]
 ```
 
 ## Workflow
@@ -24,7 +24,7 @@ Lists all resumes, cover letters, and other generated documents in your artifact
 ### 1. Read the artifact inventory
 
 Read `data/artifacts/index.json`. If it doesn't exist or has no artifacts:
-> "No artifacts yet. Run /cn:tailor-resume or /cn:cover-letter to generate your first one."
+> "No artifacts yet. Run /career:tailor-resume or /career:cover-letter to generate your first one."
 
 ### 2. Cross-reference with application tracker
 
@@ -68,7 +68,7 @@ After the table, offer:
 > - View a specific artifact: tell me the number or filename
 > - Compare two resume versions side-by-side
 > - See which experience units have the best track record across artifacts
-> - Score an artifact against a new JD (/cn:resume-score)"
+> - Score an artifact against a new JD (/career:resume-score)"
 
 ### 6. Performance insight (if outcome data exists)
 
@@ -81,4 +81,4 @@ Resumes scoring 85+: [N] generated, [X]% reached phone screen
 Resumes scoring 70–84: [N] generated, [X]% reached phone screen
 ```
 
-This is an early version of the intelligence feedback loop — more detailed analytics come in Phase 1B with the insight engine and `/cn:pipeline`.
+This is an early version of the intelligence feedback loop — more detailed analytics come in Phase 1B with the insight engine and `/career:pipeline`.

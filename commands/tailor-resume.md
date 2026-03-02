@@ -1,6 +1,6 @@
 ---
 name: tailor-resume
-command: /cn:tailor-resume
+command: /career:tailor-resume
 description: >
   Assembles the optimal resume for a specific role from the corpus, scores it
   for ATS compatibility, saves it to the artifact inventory, and optionally
@@ -9,15 +9,15 @@ agent: resume-coach
 skill: ats-optimization
 ---
 
-# /cn:tailor-resume
+# /career:tailor-resume
 
 Builds the best possible resume for a specific job from your experience corpus. Each resume is assembled — not copied — from the experience units most relevant to the target role, weighted by outcome history.
 
 ## Usage
 
 ```
-/cn:tailor-resume
-/cn:tailor-resume [company] [role title]
+/career:tailor-resume
+/career:tailor-resume [company] [role title]
 ```
 
 ## Workflow
@@ -35,7 +35,7 @@ The more complete the JD, the better the keyword targeting. If only partial info
 ### 2. Confirm corpus is ready
 
 Check that `data/corpus/index.json` exists and has at least one experience unit. If not:
-> "Your corpus is empty. Run /cn:add-source first to add your resume or experience."
+> "Your corpus is empty. Run /career:add-source first to add your resume or experience."
 
 ### 3. Invoke resume-coach agent
 
@@ -73,8 +73,8 @@ Experience units used: [N] of [total in corpus]
 ### 5. Offer next steps
 
 > "What would you like to do next?
-> - Track this as an application (/cn:track-application)
-> - Generate a cover letter (/cn:cover-letter)
+> - Track this as an application (/career:track-application)
+> - Generate a cover letter (/career:cover-letter)
 > - Review the resume with me before submitting
 > - Save to cloud storage (requires connector — see CONNECTORS.md)"
 

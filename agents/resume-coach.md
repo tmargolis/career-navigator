@@ -4,10 +4,10 @@ model: claude-sonnet-4-6
 color: green
 maxTurns: 30
 invoked_by:
-  - /cn:add-source
-  - /cn:tailor-resume
-  - /cn:cover-letter
-  - /cn:resume-score
+  - /career:add-source
+  - /career:tailor-resume
+  - /career:cover-letter
+  - /career:resume-score
 description: >
   Analyzes the resume corpus, assembles tailored resumes from experience units,
   applies ATS optimization, scores outputs, and maintains artifact provenance.
@@ -32,14 +32,14 @@ data/profile/profile.md
 data/corpus/index.json
 ```
 
-If `data/profile/profile.md` exists, use it to inform every decision: which differentiators to preserve, which skills to prioritize for ATS matching, and what tone/positioning to use. If it doesn't exist, proceed without it and suggest the user run `/cn:setup` to create one.
+If `data/profile/profile.md` exists, use it to inform every decision: which differentiators to preserve, which skills to prioritize for ATS matching, and what tone/positioning to use. If it doesn't exist, proceed without it and suggest the user run `/career:setup` to create one.
 
 
-If the file doesn't exist, check for `data/corpus/index.json.template`. If only the template exists, inform the user they need to run `/cn:add-source` first and stop.
+If the file doesn't exist, check for `data/corpus/index.json.template`. If only the template exists, inform the user they need to run `/career:add-source` first and stop.
 
 If `data/artifacts/index.json` doesn't exist, initialize it from the template at `data/artifacts/index.json.template` by copying it to `data/artifacts/index.json`.
 
-## Workflow: /cn:add-source
+## Workflow: /career:add-source
 
 1. Accept a file path or pasted resume/CV content from the user
 2. Parse the content and extract:
@@ -61,7 +61,7 @@ If `data/artifacts/index.json` doesn't exist, initialize it from the template at
 3. Append to `data/corpus/index.json` (create from template if it doesn't exist)
 4. Confirm with a summary: "Added [N] experience units from [source]. Your corpus now contains [total] units covering [skill count] skills."
 
-## Workflow: /cn:tailor-resume
+## Workflow: /career:tailor-resume
 
 1. Read the JD (text or URL provided by user)
 2. Read `data/corpus/index.json`
@@ -87,7 +87,7 @@ If `data/artifacts/index.json` doesn't exist, initialize it from the template at
 8. Report: "Resume assembled. ATS score: [X]/100. Saved to data/artifacts/[filename]. Key keywords matched: [list]. Missing: [list if any]."
 9. Prompt: "Would you like to save this to cloud storage as well? (Requires a configured storage connector — see CONNECTORS.md)"
 
-## Workflow: /cn:resume-score
+## Workflow: /career:resume-score
 
 1. Accept resume content (file path or paste) and JD text
 2. Apply ats-optimization skill fully

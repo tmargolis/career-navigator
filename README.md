@@ -50,7 +50,7 @@ After installing, click **Customize** on the plugin card — it launches the set
 ### 1. Run setup
 
 ```
-/cn:setup
+/career:setup
 ```
 
 Walks you through configuring HasData (for automated job search) and optionally Google Drive (for cloud storage). Opens signup pages, validates your credentials, and writes all config automatically — no file editing required. Skip this and everything still works in assisted-manual mode.
@@ -58,7 +58,7 @@ Walks you through configuring HasData (for automated job search) and optionally 
 ### 2. Add your resume to the corpus
 
 ```
-/cn:add-source
+/career:add-source
 ```
 
 Paste your existing resume or provide a file path. Career Navigator extracts your experience into a structured corpus of reusable units.
@@ -66,7 +66,7 @@ Paste your existing resume or provide a file path. Career Navigator extracts you
 ### 3. Search for matching roles
 
 ```
-/cn:search-jobs
+/career:search-jobs
 ```
 
 With HasData configured: searches live job listings automatically and returns ranked results. Without it: generates optimized search strings for Indeed, LinkedIn, and Google Jobs, then ranks the results you bring back.
@@ -74,7 +74,7 @@ With HasData configured: searches live job listings automatically and returns ra
 ### 4. Tailor your first resume
 
 ```
-/cn:tailor-resume
+/career:tailor-resume
 ```
 
 Paste a job description. Career Navigator assembles the optimal resume from your corpus, scores it for ATS compatibility, and saves it to your artifact inventory.
@@ -85,14 +85,14 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 | Command | Purpose |
 |---------|---------|
-| `/cn:setup` | Configure HasData and Google Drive (run first) |
-| `/cn:add-source` | Add a resume or CV to your experience corpus |
-| `/cn:tailor-resume` | Build an optimized resume for a specific role |
-| `/cn:cover-letter` | Generate a targeted cover letter |
-| `/cn:resume-score` | Score any resume against a job description |
-| `/cn:list-artifacts` | View all generated resumes and cover letters |
-| `/cn:search-jobs` | Find and rank job opportunities |
-| `/cn:track-application` | Log or update a job application |
+| `/career:setup` | Configure HasData and Google Drive (run first) |
+| `/career:add-source` | Add a resume or CV to your experience corpus |
+| `/career:tailor-resume` | Build an optimized resume for a specific role |
+| `/career:cover-letter` | Generate a targeted cover letter |
+| `/career:resume-score` | Score any resume against a job description |
+| `/career:list-artifacts` | View all generated resumes and cover letters |
+| `/career:search-jobs` | Find and rank job opportunities |
+| `/career:track-application` | Log or update a job application |
 
 You can also trigger commands conversationally — if you say "I just applied to Acme for a PM role," Career Navigator recognizes the intent and logs it automatically.
 
@@ -124,11 +124,11 @@ No data leaves your machine unless you configure a cloud connector (see [CONNECT
 
 ## Job Search & Storage Setup
 
-Run `/cn:setup` to configure integrations. The wizard handles everything conversationally — no file editing required.
+Run `/career:setup` to configure integrations. The wizard handles everything conversationally — no file editing required.
 
-**Job search (HasData):** Career Navigator uses [HasData](https://hasdata.com/) to fetch live job listings from Indeed, LinkedIn, and other boards. A free tier is available. `/cn:setup` opens the signup page, waits for you to paste your API key, validates it, and writes the config automatically. Without a key, `/cn:search-jobs` works in assisted-manual mode (you paste in search results; Career Navigator ranks them).
+**Job search (HasData):** Career Navigator uses [HasData](https://hasdata.com/) to fetch live job listings from Indeed, LinkedIn, and other boards. A free tier is available. `/career:setup` opens the signup page, waits for you to paste your API key, validates it, and writes the config automatically. Without a key, `/career:search-jobs` works in assisted-manual mode (you paste in search results; Career Navigator ranks them).
 
-**Cloud storage (Google Drive):** By default, all data is stored locally in `data/`. To sync to Google Drive, run `/cn:setup` — it walks through creating OAuth credentials and handles all configuration. See [CONNECTORS.md](CONNECTORS.md) for details on the connector interface.
+**Cloud storage (Google Drive):** By default, all data is stored locally in `data/`. To sync to Google Drive, run `/career:setup` — it walks through creating OAuth credentials and handles all configuration. See [CONNECTORS.md](CONNECTORS.md) for details on the connector interface.
 
 ---
 
@@ -161,15 +161,15 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 
 **Phase 1A (current):** Resume corpus, artifact inventory, application tracker, ATS scoring, job search, session hook.
 
-**Phase 1B:** Insight engine and feedback loop. Benchmarking against industry norms by role, level, and geography. Follow-up timeline intelligence. D3 pipeline dashboard (`/cn:pipeline`, `/cn:follow-up`, `/cn:market-brief`).
+**Phase 1B:** Insight engine and feedback loop. Benchmarking against industry norms by role, level, and geography. Follow-up timeline intelligence. D3 pipeline dashboard (`/career:pipeline`, `/career:follow-up`, `/career:market-brief`).
 
-**Phase 1C:** Honest advisor agent with three-step norm/exception/strategy pattern. Market researcher tracking role demand trends and AI/automation displacement. Skills self-assessment, gap analysis, and training ROI engine (`/cn:suggest-roles`).
+**Phase 1C:** Honest advisor agent with three-step norm/exception/strategy pattern. Market researcher tracking role demand trends and AI/automation displacement. Skills self-assessment, gap analysis, and training ROI engine (`/career:suggest-roles`).
 
 **Phase 1D:** Job scout with full outcome-driven scoring and proactive opportunity alerts. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
-**Phase 1E:** Full mock interview system — guided, random, and adaptive modes across all stages (recruiter screen, hiring manager, technical, panel, executive) and vibes (supportive, neutral, challenging, antagonistic, bored). Morning brief with company news and interviewer research. Post-interview debrief flow. (`/cn:prep-interview`, `/cn:mock-interview`, `/cn:morning-brief`, `/cn:interview-debrief`).
+**Phase 1E:** Full mock interview system — guided, random, and adaptive modes across all stages (recruiter screen, hiring manager, technical, panel, executive) and vibes (supportive, neutral, challenging, antagonistic, bored). Morning brief with company news and interviewer research. Post-interview debrief flow. (`/career:prep-interview`, `/career:mock-interview`, `/career:morning-brief`, `/career:interview-debrief`).
 
-**Phase 1F:** Networking strategy agent and network map. Event radar with local, national, and international discovery. LinkedIn content advisor and post evaluator with cultural risk assessment. (`/cn:network-map`, `/cn:draft-outreach`, `/cn:content-suggest`, `/cn:evaluate-post`, `/cn:event-radar`).
+**Phase 1F:** Networking strategy agent and network map. Event radar with local, national, and international discovery. LinkedIn content advisor and post evaluator with cultural risk assessment. (`/career:network-map`, `/career:draft-outreach`, `/career:content-suggest`, `/career:evaluate-post`, `/career:event-radar`).
 
 ### Phase 2 — Integrations
 

@@ -16,7 +16,7 @@ if [ ! -f "$TRACKER" ] && [ ! -f "$PROFILE" ]; then
 
 Welcome to Career Navigator. No job search data exists yet.
 
-Run /cn:setup to get started — it will build your profile, import your
+Run /career:setup to get started — it will build your profile, import your
 resumes and past applications from Google Drive if connected, and configure
 job search integrations. Takes about 2 minutes.
 ONBOARDING
@@ -75,7 +75,7 @@ Based on the data above, deliver a brief morning digest covering:
 
 2. FOLLOW-UP NEEDED — flag any applications where status has not changed in more than 7 days and current stage is not a terminal state (Rejected/Withdrawn/Ghosted/Hired). List company + role + days since last update.
 
-3. INTERVIEWS TODAY — scan application notes for any interview scheduled today ($TODAY). If found, mention it and note that /cn:prep-interview is available.
+3. INTERVIEWS TODAY — scan application notes for any interview scheduled today ($TODAY). If found, mention it and note that /career:prep-interview is available.
 
 4. ARTIFACT SUMMARY — brief count of resumes and cover letters generated. If none, skip.
 

@@ -4,8 +4,8 @@ trigger: auto
 fires_when:
   - A resume is being generated or assembled
   - A resume is being edited or reviewed
-  - The /cn:tailor-resume command is active
-  - The /cn:resume-score command is active
+  - The /career:tailor-resume command is active
+  - The /career:resume-score command is active
   - The user pastes resume content for feedback
 description: >
   Automatically checks resumes for ATS compatibility issues, keyword alignment,

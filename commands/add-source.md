@@ -1,6 +1,6 @@
 ---
 name: add-source
-command: /cn:add-source
+command: /career:add-source
 description: >
   Adds a source document (resume, CV, portfolio) to the resume corpus.
   Extracts experience units, normalizes skill tags, and makes the content
@@ -8,15 +8,15 @@ description: >
 agent: resume-coach
 ---
 
-# /cn:add-source
+# /career:add-source
 
 Adds a source document to your resume corpus. The corpus is not a collection of resumes — it's a structured pool of experience units that can be recombined to build the optimal resume for any specific role.
 
 ## Usage
 
 ```
-/cn:add-source
-/cn:add-source [file path]
+/career:add-source
+/career:add-source [file path]
 ```
 
 ## Workflow
@@ -54,7 +54,7 @@ Example confirmation:
 ### 4. Suggest next step
 
 If this is the first source document:
-> "Your corpus is ready. You can now run /cn:tailor-resume with a job description to generate your first targeted resume."
+> "Your corpus is ready. You can now run /career:tailor-resume with a job description to generate your first targeted resume."
 
 If corpus already had content:
 > "Corpus updated. If any of the new content is more recent than existing units for the same roles, it will be preferred in future assemblies."

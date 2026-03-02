@@ -1,24 +1,24 @@
 ---
 name: search-jobs
-command: /cn:search-jobs
+command: /career:search-jobs
 description: >
   Job search across Indeed, LinkedIn, and other boards. Automated when HasData
-  is configured via /cn:setup; falls back to assisted-manual mode otherwise.
+  is configured via /career:setup; falls back to assisted-manual mode otherwise.
   job-scout ranks results against the corpus and flags risks.
 agent: job-scout
 ---
 
-# /cn:search-jobs
+# /career:search-jobs
 
 Finds job opportunities matched to your skills and targets. With HasData configured, this searches live job listings automatically. Without it, Career Navigator generates optimized search strings you paste into job boards and ranks the results you bring back.
 
-> **Setup**: Run `/cn:setup` to configure HasData for automated search — it takes about 2 minutes and requires no manual file editing.
+> **Setup**: Run `/career:setup` to configure HasData for automated search — it takes about 2 minutes and requires no manual file editing.
 
 ## Usage
 
 ```
-/cn:search-jobs
-/cn:search-jobs [role title] [location]
+/career:search-jobs
+/career:search-jobs [role title] [location]
 ```
 
 ## Workflow
@@ -99,7 +99,7 @@ RANKED RESULTS
 **Step 5 — Next step prompts**
 
 For high-scoring roles (≥ 70):
-> "Want to track any of these? Tell me which ones and I'll log them — or run /cn:track-application."
+> "Want to track any of these? Tell me which ones and I'll log them — or run /career:track-application."
 
 For flagged risks:
 > "The equity-heavy structure at StartupX is worth a closer look. Want to discuss before deciding whether to pursue it?"
@@ -120,4 +120,4 @@ If the user wants to expand the search manually:
 
 ## Enabling Automated Search
 
-Run `/cn:setup` to configure HasData. The wizard opens the signup page, validates your key, and writes the config automatically — no file editing required. Once active, this command fetches and ranks live job listings directly.
+Run `/career:setup` to configure HasData. The wizard opens the signup page, validates your key, and writes the config automatically — no file editing required. Once active, this command fetches and ranks live job listings directly.

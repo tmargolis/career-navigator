@@ -1,6 +1,6 @@
 ---
 name: cover-letter
-command: /cn:cover-letter
+command: /career:cover-letter
 description: >
   Generates a targeted cover letter for a specific role. Draws on the tailored
   resume artifact if it exists, conducts company research, and links to the
@@ -8,15 +8,15 @@ description: >
 agent: resume-coach
 ---
 
-# /cn:cover-letter
+# /career:cover-letter
 
 Generates a targeted cover letter for a specific role. A good cover letter does not summarize the resume — it makes a specific argument for why you are the right person for this role, in this company, at this moment.
 
 ## Usage
 
 ```
-/cn:cover-letter
-/cn:cover-letter [company] [role title]
+/career:cover-letter
+/career:cover-letter [company] [role title]
 ```
 
 ## Workflow
@@ -89,7 +89,7 @@ Note: Cover letters are not ATS-scored (most ATS systems parse resumes only). `a
 If an application record exists for this company + role in `tracker.json`, add this artifact's ID to `artifacts_used[]`.
 
 If no application record exists:
-> "Would you like to log this as an application? Run /cn:track-application to track it."
+> "Would you like to log this as an application? Run /career:track-application to track it."
 
 ### 6. Review prompt
 
