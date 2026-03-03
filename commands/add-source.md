@@ -41,7 +41,26 @@ Hand off to the **resume-coach** agent with the source content. The agent will:
 
 If `data/corpus/index.json` doesn't exist, the agent initializes it from `data/corpus/index.json.template`.
 
-### 3. Confirm addition
+### 3. Save the source document as an artifact
+
+Save the source document content to `data/artifacts/[source-filename]-[timestamp].md`.
+
+Append to `data/artifacts/index.json` (initializing from template if needed):
+```json
+{
+  "artifact_id": "[uuid]",
+  "type": "Source Resume",
+  "application_id": null,
+  "source_units": ["[all unit IDs extracted from this document]"],
+  "jd_keywords": null,
+  "ats_score": null,
+  "created_at": "[timestamp]",
+  "storage_path": "data/artifacts/[filename]",
+  "source_filename": "[original filename, or 'pasted-content' if pasted]"
+}
+```
+
+### 4. Confirm addition
 
 Report back with:
 - Number of experience units extracted
@@ -51,7 +70,7 @@ Report back with:
 Example confirmation:
 > "Added 23 experience units from resume.pdf. I found skills including: Python, data analysis, stakeholder management, Agile, SQL, Tableau, cross-functional leadership, and 14 others. Your corpus now contains 23 units covering 21 skills."
 
-### 4. Suggest next step
+### 5. Suggest next step
 
 If this is the first source document:
 > "Your corpus is ready. You can now run /career-navigator:tailor-resume with a job description to generate your first targeted resume."
