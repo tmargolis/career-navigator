@@ -131,7 +131,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Storage Layer (Phase 1\)** | Google Drive (additional connectors in Phase 2C) |
 | **Analytics Layer (Phase 1\)** | SQLite \+ D3 visualization (additional connectors in Phase 2D) |
 | **AI Services** | Claude API (via MCP), Whisper (audio transcription — Phase 2B) |
-| **Job Search (Phase 1\)** | HasData (primary, via `/career:setup`) \+ assisted-manual fallback |
+| **Job Search (Phase 1\)** | HasData (primary, via `/career-navigator:setup`) \+ assisted-manual fallback |
 
 # **2\. Plugin File Structure**
 
@@ -169,47 +169,47 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career:setup** | Command | Conversational setup wizard. Configures HasData for automated job search and optionally sets up Google Drive for cloud storage. Validates credentials before saving, writes all config automatically. Re-runnable to update keys or switch connectors. |
+| **/career-navigator:setup** | Command | Conversational setup wizard. Configures HasData for automated job search and optionally sets up Google Drive for cloud storage. Validates credentials before saving, writes all config automatically. Re-runnable to update keys or switch connectors. |
 
 ## **3.1 Resume & Cover Letter Commands**
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career:tailor-resume** | Command | Takes one or more source documents from the corpus and a job description, assembles and rewrites the best possible resume for that specific role, scores it for ATS compatibility, and saves it to the artifact inventory. |
-| **/career:cover-letter** | Command | Generates a targeted cover letter for a specific role, drawing on the tailored resume, company research, and any known contact context. Saves to artifact inventory. |
-| **/career:resume-score** | Command | Scores an existing resume or cover letter against a job description for ATS keyword match, formatting compliance, and narrative strength. |
-| **/career:add-source** | Command | Adds a new source document (resume, CV, portfolio) to the resume corpus for use in future tailoring. |
-| **/career:list-artifacts** | Command | Lists all generated artifacts in the inventory with metadata: date created, job applied for, outcome if known. |
+| **/career-navigator:tailor-resume** | Command | Takes one or more source documents from the corpus and a job description, assembles and rewrites the best possible resume for that specific role, scores it for ATS compatibility, and saves it to the artifact inventory. |
+| **/career-navigator:cover-letter** | Command | Generates a targeted cover letter for a specific role, drawing on the tailored resume, company research, and any known contact context. Saves to artifact inventory. |
+| **/career-navigator:resume-score** | Command | Scores an existing resume or cover letter against a job description for ATS keyword match, formatting compliance, and narrative strength. |
+| **/career-navigator:add-source** | Command | Adds a new source document (resume, CV, portfolio) to the resume corpus for use in future tailoring. |
+| **/career-navigator:list-artifacts** | Command | Lists all generated artifacts in the inventory with metadata: date created, job applied for, outcome if known. |
 
 ## **3.2 Job Search & Tracking Commands**
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career:search-jobs** | Command | Searches configured job boards and returns ranked results. Ranking incorporates skill match, outcome history, and market intelligence. Supports filters for role, location, company size, industry, and salary range. |
-| **/career:track-application** | Command | Logs a new application or updates an existing one. Accepts conversational input and structures it automatically into the tracker database. |
-| **/career:pipeline** | Command | Displays the full application pipeline dashboard with timeline view, benchmark comparisons, and action items flagged by stage age. |
-| **/career:follow-up** | Command | Generates a contextual follow-up message for a specific application based on elapsed time, last communication, and company norms. |
-| **/career:market-brief** | Command | Generates a current market intelligence report for the user's target roles and industries, including trend data, competition levels, and AI/automation impact assessment. |
-| **/career:suggest-roles** | Command | Analyzes the user's full experience corpus and suggests non-obvious role types their skills could be applied to, with rationale for each suggestion. |
+| **/career-navigator:search-jobs** | Command | Searches configured job boards and returns ranked results. Ranking incorporates skill match, outcome history, and market intelligence. Supports filters for role, location, company size, industry, and salary range. |
+| **/career-navigator:track-application** | Command | Logs a new application or updates an existing one. Accepts conversational input and structures it automatically into the tracker database. |
+| **/career-navigator:pipeline** | Command | Displays the full application pipeline dashboard with timeline view, benchmark comparisons, and action items flagged by stage age. |
+| **/career-navigator:follow-up** | Command | Generates a contextual follow-up message for a specific application based on elapsed time, last communication, and company norms. |
+| **/career-navigator:market-brief** | Command | Generates a current market intelligence report for the user's target roles and industries, including trend data, competition levels, and AI/automation impact assessment. |
+| **/career-navigator:suggest-roles** | Command | Analyzes the user's full experience corpus and suggests non-obvious role types their skills could be applied to, with rationale for each suggestion. |
 
 ## **3.3 Interview Prep Commands**
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career:prep-interview** | Command | Launches a full interview preparation session for a specific role. Pulls in company research, generates predicted questions, and optionally launches a mock interview. |
-| **/career:mock-interview** | Command | Starts a mock interview session. Accepts mode (guided/random/adaptive), stage (recruiter/HM/technical/panel/executive), and vibe (supportive/neutral/challenging/antagonistic/bored) parameters. |
-| **/career:interview-debrief** | Command | Post-interview Q\&A flow that captures the candidate's experience conversationally and structures it into the tracker. Fallback for users who do not use audio capture. |
-| **/career:morning-brief** | Command | Generates a pre-interview briefing for any interview scheduled today: company news, interviewer research, talking points, and current events likely to come up. |
+| **/career-navigator:prep-interview** | Command | Launches a full interview preparation session for a specific role. Pulls in company research, generates predicted questions, and optionally launches a mock interview. |
+| **/career-navigator:mock-interview** | Command | Starts a mock interview session. Accepts mode (guided/random/adaptive), stage (recruiter/HM/technical/panel/executive), and vibe (supportive/neutral/challenging/antagonistic/bored) parameters. |
+| **/career-navigator:interview-debrief** | Command | Post-interview Q\&A flow that captures the candidate's experience conversationally and structures it into the tracker. Fallback for users who do not use audio capture. |
+| **/career-navigator:morning-brief** | Command | Generates a pre-interview briefing for any interview scheduled today: company news, interviewer research, talking points, and current events likely to come up. |
 
 ## **3.4 Networking Commands**
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career:network-map** | Command | Visualizes the user's network relative to target companies, showing direct connections, second-degree paths, and identified gaps. |
-| **/career:draft-outreach** | Command | Drafts a LinkedIn message or email to a specific contact. Searches email and calendar history for prior context and incorporates it with user approval. |
-| **/career:content-suggest** | Command | Suggests LinkedIn post topics based on current industry trends, the user's target roles, and recent activity in their field. |
-| **/career:evaluate-post** | Command | Evaluates a draft LinkedIn post for audience fit, likely algorithmic performance, and cultural alignment with target companies. |
-| **/career:event-radar** | Command | Searches for relevant local, national, and international networking events and conferences. Returns ranked recommendations with ROI assessment and presentation opportunity flags. |
+| **/career-navigator:network-map** | Command | Visualizes the user's network relative to target companies, showing direct connections, second-degree paths, and identified gaps. |
+| **/career-navigator:draft-outreach** | Command | Drafts a LinkedIn message or email to a specific contact. Searches email and calendar history for prior context and incorporates it with user approval. |
+| **/career-navigator:content-suggest** | Command | Suggests LinkedIn post topics based on current industry trends, the user's target roles, and recent activity in their field. |
+| **/career-navigator:evaluate-post** | Command | Evaluates a draft LinkedIn post for audience fit, likely algorithmic performance, and cultural alignment with target companies. |
+| **/career-navigator:event-radar** | Command | Searches for relevant local, national, and international networking events and conferences. Returns ranked recommendations with ROI assessment and presentation opportunity flags. |
 
 # **4\. Agents**
 
@@ -278,19 +278,19 @@ The analytics layer consumes structured event data from the storage connector an
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **sqlite-builtin** | Connector | Default connector. Local SQLite database with built-in query engine. Powers the /career:pipeline dashboard and insight engine natively. |
+| **sqlite-builtin** | Connector | Default connector. Local SQLite database with built-in query engine. Powers the /career-navigator:pipeline dashboard and insight engine natively. |
 | **power-bi** | Connector | Pushes event data to a Power BI streaming dataset. Enables custom dashboard creation in Power BI Desktop or Service. |
 | **qlik** | Connector | Integrates with Qlik Sense or QlikView via the Qlik Engine API. Enables associative analysis across the full application dataset. |
 | **d3** | Connector | Exports structured event data in D3-compatible JSON format for custom visualization development. |
 
 # **9\. External Service Integrations (.mcp.json)**
 
-External services are configured via the plugin's .mcp.json file. Run `/career:setup` to configure integrations — the wizard handles all file edits automatically. Each integration is optional and activates the relevant agents and skills when configured.
+External services are configured via the plugin's .mcp.json file. Run `/career-navigator:setup` to configure integrations — the wizard handles all file edits automatically. Each integration is optional and activates the relevant agents and skills when configured.
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
 | **LinkedIn** | MCP | Job posting search, connection graph access, InMail drafting, post publishing and analytics. Required for networking strategy features. |
-| **HasData** | MCP | Web scraping API providing live job listings from Indeed, LinkedIn, and other boards. Free tier available. Primary source for broad job discovery in Phase 1A. Configured via `/career:setup`. |
+| **HasData** | MCP | Web scraping API providing live job listings from Indeed, LinkedIn, and other boards. Free tier available. Primary source for broad job discovery in Phase 1A. Configured via `/career-navigator:setup`. |
 | **Glassdoor** | MCP | Company culture research, interview experience data, salary benchmarks, and recruiter process timelines. |
 | **CareerOneStop** | MCP | U.S. Department of Labor API. Free. Provides labor market data, salary ranges, occupation outlook, and American Job Center locations. |
 | **IllinoisJobLink** | MCP | Illinois-specific job board. State employment resources and local posting discovery. |
@@ -304,7 +304,7 @@ External services are configured via the plugin's .mcp.json file. Run `/career:s
 
 ## **10.0 User Profile**
 
-Stored at `data/profile/profile.md`. Created by `/career:setup` (using Google Drive resume data if connected, otherwise conversationally). Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
+Stored at `data/profile/profile.md`. Created by `/career-navigator:setup` (using Google Drive resume data if connected, otherwise conversationally). Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
 
 * **identity** — name, location, contact info, professional summary, core differentiator
 * **target\_roles** — preferred titles, minimum seniority level
@@ -404,7 +404,7 @@ Over time, the system builds a personalized model of what works for this specifi
 
 # **13\. Interview Capture (Phase 2B)**
 
-Interview capture is an opt-in feature that uses local audio recording and Whisper transcription to automatically log interview content. It has been moved to Phase 2B to allow time for a full privacy framework, consent model design, and cross-jurisdiction legal review before implementation. The post-interview Q\&A debrief (/career:interview-debrief) serves as the Phase 1 alternative.
+Interview capture is an opt-in feature that uses local audio recording and Whisper transcription to automatically log interview content. It has been moved to Phase 2B to allow time for a full privacy framework, consent model design, and cross-jurisdiction legal review before implementation. The post-interview Q\&A debrief (/career-navigator:interview-debrief) serves as the Phase 1 alternative.
 
 ## **13.1 Privacy Considerations (To Be Discussed)**
 
@@ -462,11 +462,11 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Resume corpus management and artifact inventory
 
-* /career:setup conversational configuration wizard — builds user profile from Google Drive if connected, auto-imports existing resumes into corpus, auto-imports past application history into tracker; falls back to conversational Q&A if no Drive access
+* /career-navigator:setup conversational configuration wizard — builds user profile from Google Drive if connected, auto-imports existing resumes into corpus, auto-imports past application history into tracker; falls back to conversational Q&A if no Drive access
 
-* /career:tailor-resume, /career:cover-letter, /career:resume-score, /career:add-source, /career:list-artifacts
+* /career-navigator:tailor-resume, /career-navigator:cover-letter, /career-navigator:resume-score, /career-navigator:add-source, /career-navigator:list-artifacts
 
-* Basic conversational application tracker with /career:track-application
+* Basic conversational application tracker with /career-navigator:track-application
 
 * HasData job search (automated); assisted-manual fallback for LinkedIn
 
@@ -484,7 +484,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * D3 pipeline dashboard with timeline view and benchmark comparisons
 
-* /career:pipeline, /career:follow-up, /career:market-brief
+* /career-navigator:pipeline, /career-navigator:follow-up, /career-navigator:market-brief
 
 ## **Phase 1C — "It now gives you an honest assessment of your skills, your gaps, and exactly what training is worth your time and money"**
 
@@ -496,7 +496,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Training recommendation engine with cost-benefit-time ROI analysis (certifications, degrees, bootcamps, self-study)
 
-* /career:suggest-roles, job scout scoring improvements driven by outcome data
+* /career-navigator:suggest-roles, job scout scoring improvements driven by outcome data
 
 * Note: skills assessment becomes significantly richer once Phase 1E mock interview performance data feeds back into the profile
 
@@ -522,15 +522,15 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Morning brief with company news, interviewer research, and talking points
 
-* Post-interview Q\&A debrief flow (/career:interview-debrief) — structured conversational capture
+* Post-interview Q\&A debrief flow (/career-navigator:interview-debrief) — structured conversational capture
 
-* /career:prep-interview, /career:mock-interview, /career:morning-brief
+* /career-navigator:prep-interview, /career-navigator:mock-interview, /career-navigator:morning-brief
 
 * Mock interview performance feeds back into Phase 1C skills profile
 
 ## **Phase 1F — "It now builds your professional brand while you search"**
 
-* Networking strategy agent and /career:network-map
+* Networking strategy agent and /career-navigator:network-map
 
 * Event radar with local, national, and international discovery
 
@@ -540,7 +540,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Post evaluator with cultural/political risk assessment against target company profiles
 
-* /career:draft-outreach, /career:content-suggest, /career:evaluate-post, /career:event-radar
+* /career-navigator:draft-outreach, /career-navigator:content-suggest, /career-navigator:evaluate-post, /career-navigator:event-radar
 
 * Note: outreach enrichment with email/calendar history deferred to Phase 2A
 
@@ -636,25 +636,25 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 | Command | Purpose |
 | :---- | :---- |
-| **/career:setup** | Configure HasData and Google Drive (run first) |
-| **/career:tailor-resume** | Assemble optimal resume for a specific role from corpus |
-| **/career:cover-letter** | Generate targeted cover letter |
-| **/career:resume-score** | Score resume against a job description |
-| **/career:add-source** | Add source document to corpus |
-| **/career:list-artifacts** | List all generated artifacts |
-| **/career:search-jobs** | Search and rank job opportunities |
-| **/career:track-application** | Log or update an application |
-| **/career:pipeline** | View full application dashboard |
-| **/career:follow-up** | Generate contextual follow-up message |
-| **/career:market-brief** | Current market intelligence report |
-| **/career:suggest-roles** | Discover non-obvious role opportunities |
-| **/career:prep-interview** | Full interview preparation session |
-| **/career:mock-interview** | Mock interview (guided/random/adaptive) |
-| **/career:interview-debrief** | Post-interview Q\&A capture |
-| **/career:morning-brief** | Day-of interview briefing |
-| **/career:network-map** | Visualize network relative to targets |
-| **/career:draft-outreach** | Draft LinkedIn/email outreach message |
-| **/career:content-suggest** | Suggest LinkedIn post topics |
-| **/career:evaluate-post** | Evaluate LinkedIn post before publishing |
-| **/career:event-radar** | Discover relevant networking events |
+| **/career-navigator:setup** | Configure HasData and Google Drive (run first) |
+| **/career-navigator:tailor-resume** | Assemble optimal resume for a specific role from corpus |
+| **/career-navigator:cover-letter** | Generate targeted cover letter |
+| **/career-navigator:resume-score** | Score resume against a job description |
+| **/career-navigator:add-source** | Add source document to corpus |
+| **/career-navigator:list-artifacts** | List all generated artifacts |
+| **/career-navigator:search-jobs** | Search and rank job opportunities |
+| **/career-navigator:track-application** | Log or update an application |
+| **/career-navigator:pipeline** | View full application dashboard |
+| **/career-navigator:follow-up** | Generate contextual follow-up message |
+| **/career-navigator:market-brief** | Current market intelligence report |
+| **/career-navigator:suggest-roles** | Discover non-obvious role opportunities |
+| **/career-navigator:prep-interview** | Full interview preparation session |
+| **/career-navigator:mock-interview** | Mock interview (guided/random/adaptive) |
+| **/career-navigator:interview-debrief** | Post-interview Q\&A capture |
+| **/career-navigator:morning-brief** | Day-of interview briefing |
+| **/career-navigator:network-map** | Visualize network relative to targets |
+| **/career-navigator:draft-outreach** | Draft LinkedIn/email outreach message |
+| **/career-navigator:content-suggest** | Suggest LinkedIn post topics |
+| **/career-navigator:evaluate-post** | Evaluate LinkedIn post before publishing |
+| **/career-navigator:event-radar** | Discover relevant networking events |
 

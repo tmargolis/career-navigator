@@ -1,6 +1,6 @@
 ---
 name: track-application
-command: /career:track-application
+command: /career-navigator:track-application
 description: >
   Logs a new application or updates an existing one. Accepts conversational
   input and structures it into the tracker. Triggers insight check when
@@ -8,15 +8,15 @@ description: >
 agent: job-scout
 ---
 
-# /career:track-application
+# /career-navigator:track-application
 
 Logs a new job application or updates an existing one. Just talk — you don't need to fill out a form. Describe what happened and Career Navigator structures it automatically.
 
 ## Usage
 
 ```
-/career:track-application
-/career:track-application [company] [role] [status]
+/career-navigator:track-application
+/career-navigator:track-application [company] [role] [status]
 ```
 
 You can also trigger this conversationally. If you say "I just applied to Google for a Product Manager role" or "I heard back from Acme — I'm moving to the final round," Career Navigator will recognize the intent and invoke this command automatically.

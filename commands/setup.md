@@ -1,6 +1,6 @@
 ---
 name: setup
-command: /career:setup
+command: /career-navigator:setup
 description: >
   Conversational setup wizard. Configures HasData for automated job search and
   optionally sets up Google Drive for cloud storage. Handles all file writes
@@ -14,14 +14,14 @@ triggers:
   - "get started with career navigator"
 ---
 
-# /career:setup
+# /career-navigator:setup
 
-First-run configuration wizard. Walks through each integration step-by-step, validates credentials before saving, and writes everything to config automatically. Run this before using `/career:search-jobs` (for automated mode) or to switch storage connectors.
+First-run configuration wizard. Walks through each integration step-by-step, validates credentials before saving, and writes everything to config automatically. Run this before using `/career-navigator:search-jobs` (for automated mode) or to switch storage connectors.
 
 ## Usage
 
 ```
-/career:setup
+/career-navigator:setup
 ```
 
 Re-run any time to update a key, re-validate a connector, or add a new integration.
@@ -93,7 +93,7 @@ Update `.mcp.json`:
 - Set `HASDATA_API_KEY` to the validated key in the `env` block
 
 Confirm:
-> "HasData configured. `/career:search-jobs` will now search live job listings automatically."
+> "HasData configured. `/career-navigator:search-jobs` will now search live job listings automatically."
 
 ---
 
@@ -133,7 +133,7 @@ Update `.mcp.json`:
 > "Google Drive configured. On your next command that saves an artifact, you'll be prompted to authorize access — this only happens once."
 
 If the user skips Google Drive:
-> "No problem. Everything saves to `data/` locally. You can run `/career:setup` any time to add Google Drive later."
+> "No problem. Everything saves to `data/` locally. You can run `/career-navigator:setup` any time to add Google Drive later."
 
 ---
 
@@ -161,13 +161,13 @@ If a profile already exists, show a summary and ask: "Would you like to update a
 
 ### 5. Build corpus from existing resumes
 
-**If Google Drive is connected and resumes were found during profile building**: Do not ask the user to run `/career:add-source` separately. Import the resumes now.
+**If Google Drive is connected and resumes were found during profile building**: Do not ask the user to run `/career-navigator:add-source` separately. Import the resumes now.
 
 - Identify the most current and complete resume(s) found in Drive. If there are role-specific tailored versions (e.g., "Resume — Anthropic"), import those too.
-- For each, run the full `/career:add-source` extraction: parse experience units, assign skill tags, set default performance weights, append to `data/corpus/index.json`.
+- For each, run the full `/career-navigator:add-source` extraction: parse experience units, assign skill tags, set default performance weights, append to `data/corpus/index.json`.
 - Confirm: "I've added [N] resumes to your corpus — [X] experience units extracted across [Y] skills."
 
-**If no Drive access**: Skip this step. Remind the user once at the end to run `/career:add-source`.
+**If no Drive access**: Skip this step. Remind the user once at the end to run `/career-navigator:add-source`.
 
 ---
 
@@ -199,9 +199,9 @@ Google Drive (storage)   [✓] Active        (or [ ] Using local storage)
 ──────────────────────────────────────────
 ```
 
-Suggest the natural next step — never suggest running `/career:setup` again:
-- If HasData is not yet configured: "Run `/career:setup` again to add your HasData key, or run `/career:search-jobs` now to use assisted-manual search."
-- Otherwise: "Run `/career:search-jobs` to find matching roles, or `/career:tailor-resume` with a job description to build your first targeted resume."
+Suggest the natural next step — never suggest running `/career-navigator:setup` again:
+- If HasData is not yet configured: "Run `/career-navigator:setup` again to add your HasData key, or run `/career-navigator:search-jobs` now to use assisted-manual search."
+- Otherwise: "Run `/career-navigator:search-jobs` to find matching roles, or `/career-navigator:tailor-resume` with a job description to build your first targeted resume."
 
 ---
 
