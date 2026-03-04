@@ -9,7 +9,7 @@
   "commands_dir": "commands",
   "agents_dir": "agents",
   "skills_dir": "skills",
-  "hooks_file": "hooks/hooks.json"
+  "hooks_file": "hooks/hooks.json",
   "capabilities": {
     "connectors": {
       "local-files": {
