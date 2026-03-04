@@ -125,3 +125,12 @@ Before implementing these features, consult `career-navigator-spec.md` Section 1
 - LinkedIn automation approach is unresolved
 - Antagonistic interview mode calibration needs user testing
 - Training ROI data sources for Phase 1C are not yet identified
+
+## Setup & Customization
+When the user clicks 'Customize', ensure the 'data_path' is set. 
+- If 'data_path' is missing, ask the user to provide the absolute path to their resumes/applications folder.
+- Verify if the folder contains a 'resumes' subfolder; if not, offer to create one.
+
+## Workflow Rules
+- Always check the local filesystem via the `local-files` connector before giving career advice.
+- Read `applications.json` in the data folder to track
