@@ -4,10 +4,33 @@
   "version": "1.0.0",
   "description": "AI-powered end-to-end job search companion. Combines recruiter, career coach, reverse recruiter, and market analyst into a single intelligent platform with a feedback loop that learns what works for you.",
   "author": {
-    "name": "Career Navigator"
+    "name": "Todd Margolis"
   },
   "commands_dir": "commands",
   "agents_dir": "agents",
   "skills_dir": "skills",
   "hooks_file": "hooks/hooks.json"
+  "capabilities": {
+    "connectors": {
+      "local-files": {
+        "type": "mcp",
+        "config": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-filesystem",
+            "${user_config.data_path}"
+          ]
+        }
+      }
+    },
+    "user_config": {
+      "data_path": {
+        "type": "string",
+        "title": "Data Folder Path",
+        "description": "The absolute path to your job search data folder.",
+        "required": true
+      }
+    }
+  }
 }
