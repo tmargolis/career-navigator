@@ -206,15 +206,20 @@ Save the completed profile to `data/profile/profile.md`.
 
 ### 5. Build corpus from existing resumes
 
-Check `data/corpus/index.json` first. If it already has experience units, confirm the count and skip import.
+Every document discovered in step 4a that contains work history must be extracted into the corpus. Profile writing and corpus extraction are two outputs of the same discovery — they always happen together.
 
-If the corpus is empty:
+**For each resume or CV found or provided in step 4a:**
 
-- **If Drive is connected and resumes were found in step 4a**: Import them now without asking. For each, run the full `/career-navigator:add-source` extraction — parse experience units, assign skill tags, set default performance weights, append to `data/corpus/index.json`. Confirm: "I've added [N] resumes to your corpus — [X] experience units extracted across [Y] skills."
+1. Check `data/corpus/index.json` → `source_documents[]` to see if this specific document (by filename or path) has already been imported. If yes, skip it — do not re-import or double-count.
+2. If not already imported, run the full extraction: parse experience units, assign skill tags, set default performance weights (1.0), append units and the source document record to `data/corpus/index.json`. Initialize from template if the file doesn't exist yet.
 
-- **If a local file was provided in step 4a**: Import it the same way.
+After processing all documents, confirm:
+> "Corpus updated — [X] experience units extracted across [Y] skills from [N] resume(s)."
 
-- **If no source was found**: Note it once in the completion summary — do not ask again here. The user can run `/career-navigator:add-source` when ready.
+If some documents were already in the corpus:
+> "[N] resume(s) already in corpus, [M] new — [X] total experience units."
+
+**If no resume or CV was found or provided in step 4a**: Note it once in the completion summary. Do not ask again here — the user can run `/career-navigator:add-source` when ready.
 
 ---
 
