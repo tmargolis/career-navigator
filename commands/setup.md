@@ -28,6 +28,26 @@ Re-run any time to update a key, re-validate a connector, or add a new integrati
 
 ## Workflow
 
+### 0. Preflight: verify filesystem access
+
+Before doing anything else, attempt to read `data/profile/profile.md` or any file in `data/`. This confirms the filesystem MCP server is registered and Claude has write access to the plugin's data directory.
+
+If the read fails or the filesystem tool is unavailable:
+
+> "Career Navigator needs one-time filesystem access before it can save data. Run this from the plugin directory:
+>
+> ```
+> python3 scripts/init.py
+> ```
+>
+> Then restart Claude Desktop and run `/career-navigator:setup` again."
+>
+> Stop here — do not proceed with the rest of setup until filesystem access is confirmed.
+
+If the read succeeds, continue.
+
+---
+
 ### 1. Check current configuration
 
 Read `.mcp.json` and report what's already active vs. what's missing:

@@ -20,10 +20,14 @@ The core differentiator: every application outcome feeds back into the system. O
 ### Install via Claude Desktop
 
 1. Download the zip: **Code → Download ZIP** on this page (or [direct link](https://github.com/tmargolis/career-navigator/archive/refs/heads/main.zip))
-2. Open **Claude Desktop**
-3. Click the **Customize** button
-4. Click **Browse plugins → Personal**
-5. Click **Upload a plugin** and select the downloaded zip
+2. Extract the ZIP to a **permanent location** (not Downloads — the data directory lives here)
+3. Run the one-time init script from the extracted folder:
+   ```bash
+   python3 scripts/init.py
+   ```
+   This registers a filesystem MCP server in Claude Desktop's config so Career Navigator can read and write your data. Requires Python 3 and Node.js (for `npx`).
+4. **Restart Claude Desktop**
+5. Click the **Customize** button → **Browse plugins → Personal** → **Upload a plugin** → select the ZIP
 6. Career Navigator activates on next session start
 
 After installing, click the **Customize** button on the Career Navigator plugin card — this automatically launches the setup wizard to configure your integrations.
@@ -32,7 +36,9 @@ After installing, click the **Customize** button on the Career Navigator plugin 
 
 ```bash
 git clone https://github.com/tmargolis/career-navigator.git
-claude plugin install /path/to/career-navigator
+cd career-navigator
+python3 scripts/init.py   # register filesystem MCP — restart Claude Code after
+claude plugin install .
 ```
 
 ---
