@@ -161,33 +161,60 @@ If the user skips Google Drive:
 
 Create or update `data/profile/profile.md` — the permanent reference file all agents read before every operation.
 
-**If Google Drive is connected**: Search Drive for resumes, CVs, and any existing job search materials before asking questions. Extract what you can find, then ask only for what you couldn't determine.
+**Rule: Do not ask the user a single question until all available sources have been checked.** Discovery always comes first. Questions fill gaps, nothing more.
 
-**If no Drive access**: Ask the following conversationally (not as a form):
-- Brief professional summary and what makes you distinctive at your level
+#### 4a. Discover — check every available source
+
+Run all of the following in order before asking anything:
+
+1. **Existing profile**: Read `data/profile/profile.md` if it exists. If it's complete and recent, show a summary and skip to step 4c.
+
+2. **Existing corpus**: Read `data/corpus/index.json` if it exists. The skill tags, role titles, company names, and experience units already contain significant profile signal — extract what you can.
+
+3. **Google Drive** (if connected): Search for resumes, CVs, LinkedIn profile exports, and any job search materials. Don't prompt the user before searching — just search. Extract everything relevant.
+
+4. **Local file paths**: If the corpus is empty and Drive yielded nothing, ask once: "Do you have a resume file I can read? Share a file path or paste the content." Do not ask any other questions at this point.
+
+#### 4b. Consolidate
+
+After discovery, silently consolidate all sources into a draft profile using `data/profile/profile.md.template` as the schema. Prefer the most recent and specific data when sources conflict.
+
+Profile fields to populate:
+- Professional summary and level
 - Target role titles and minimum seniority
-- Target companies (primary, secondary, and types to avoid)
+- Target companies (primary list, secondary list, types to avoid)
 - Industries to prioritize and deprioritize
 - Minimum total compensation (base + bonus + equity annualized)
 - Location preferences and relocation openness
-- Key skills to prioritize for ATS matching
-- Any unique differentiators that must appear in every resume
+- Key skills (for ATS prioritization)
+- Unique differentiators that must appear in every resume
 
-Write the profile using `data/profile/profile.md.template` as the schema. Save to `data/profile/profile.md`.
+#### 4c. Present and fill gaps
 
-If a profile already exists, show a summary and ask: "Would you like to update anything, or does this still look right?"
+Show the draft profile in full and ask only about fields that are genuinely missing or uncertain:
+
+> "Here's what I've put together from your existing materials. Does this look right? Let me know what to change or add."
+
+If specific fields are missing:
+> "I couldn't determine [field] from your existing materials — what should I put there?"
+
+Never present a blank questionnaire. If discovery was thorough, there should be few or no gaps.
+
+Save the completed profile to `data/profile/profile.md`.
 
 ---
 
 ### 5. Build corpus from existing resumes
 
-**If Google Drive is connected and resumes were found during profile building**: Do not ask the user to run `/career-navigator:add-source` separately. Import the resumes now.
+Check `data/corpus/index.json` first. If it already has experience units, confirm the count and skip import.
 
-- Identify the most current and complete resume(s) found in Drive. If there are role-specific tailored versions (e.g., "Resume — Anthropic"), import those too.
-- For each, run the full `/career-navigator:add-source` extraction: parse experience units, assign skill tags, set default performance weights, append to `data/corpus/index.json`.
-- Confirm: "I've added [N] resumes to your corpus — [X] experience units extracted across [Y] skills."
+If the corpus is empty:
 
-**If no Drive access**: Skip this step. Remind the user once at the end to run `/career-navigator:add-source`.
+- **If Drive is connected and resumes were found in step 4a**: Import them now without asking. For each, run the full `/career-navigator:add-source` extraction — parse experience units, assign skill tags, set default performance weights, append to `data/corpus/index.json`. Confirm: "I've added [N] resumes to your corpus — [X] experience units extracted across [Y] skills."
+
+- **If a local file was provided in step 4a**: Import it the same way.
+
+- **If no source was found**: Note it once in the completion summary — do not ask again here. The user can run `/career-navigator:add-source` when ready.
 
 ---
 
