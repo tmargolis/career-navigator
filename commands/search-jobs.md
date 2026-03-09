@@ -2,7 +2,7 @@
 name: search-jobs
 command: /career-navigator:search-jobs
 description: >
-  Job search across Indeed, LinkedIn, and other boards. Automated when HasData
+  Job search across Indeed, LinkedIn, and other boards. Automated when JobSearch
   is configured via /career-navigator:setup; falls back to assisted-manual mode otherwise.
   job-scout ranks results against the corpus and flags risks.
 agent: job-scout
@@ -10,9 +10,9 @@ agent: job-scout
 
 # /career-navigator:search-jobs
 
-Finds job opportunities matched to your skills and targets. With HasData configured, this searches live job listings automatically. Without it, Career Navigator generates optimized search strings you paste into job boards and ranks the results you bring back.
+Finds job opportunities matched to your skills and targets. With JobSearch configured, this searches live job listings automatically. Without it, Career Navigator generates optimized search strings you paste into job boards and ranks the results you bring back.
 
-> **Setup**: Run `/career-navigator:setup` to configure HasData for automated search — it takes about 2 minutes and requires no manual file editing.
+> **Setup**: Run `/career-navigator:setup` to configure JobSearch for automated search — it takes about 2 minutes and requires no manual file editing.
 
 ## Usage
 
@@ -120,4 +120,4 @@ If the user wants to expand the search manually:
 
 ## Enabling Automated Search
 
-Run `/career-navigator:setup` to configure HasData. The wizard opens the signup page, validates your key, and writes the config automatically — no file editing required. Once active, this command fetches and ranks live job listings directly.
+Run `/career-navigator:setup` to configure JobSearch. The wizard opens the signup page, validates your key, and writes the config automatically — no file editing required. Once active, this command fetches and ranks live job listings directly.

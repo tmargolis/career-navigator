@@ -131,7 +131,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Storage Layer (Phase 1\)** | Google Drive (additional connectors in Phase 2C) |
 | **Analytics Layer (Phase 1\)** | SQLite \+ D3 visualization (additional connectors in Phase 2D) |
 | **AI Services** | Claude API (via MCP), Whisper (audio transcription — Phase 2B) |
-| **Job Search (Phase 1\)** | HasData (primary, via `/career-navigator:setup`) \+ assisted-manual fallback |
+| **Job Search (Phase 1\)** | JobSearch (primary, via `/career-navigator:setup`) \+ assisted-manual fallback |
 
 # **2\. Plugin File Structure**
 
@@ -169,7 +169,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career-navigator:setup** | Command | Conversational setup wizard. Configures HasData for automated job search and optionally sets up Google Drive for cloud storage. Validates credentials before saving, writes all config automatically. Re-runnable to update keys or switch connectors. |
+| **/career-navigator:setup** | Command | Conversational setup wizard. Configures JobSearch for automated job search and optionally sets up Google Drive for cloud storage. Validates credentials before saving, writes all config automatically. Re-runnable to update keys or switch connectors. |
 
 ## **3.1 Resume & Cover Letter Commands**
 
@@ -290,7 +290,7 @@ External services are configured via the plugin's .mcp.json file. Run `/career-n
 | Name | Type | Description |
 | :---- | :---- | :---- |
 | **LinkedIn** | MCP | Job posting search, connection graph access, InMail drafting, post publishing and analytics. Required for networking strategy features. |
-| **HasData** | MCP | Web scraping API providing live job listings from Indeed, LinkedIn, and other boards. Free tier available. Primary source for broad job discovery in Phase 1A. Configured via `/career-navigator:setup`. |
+| **JobSearch** | MCP | Web scraping API providing live job listings from Indeed, LinkedIn, and other boards. Free tier available. Primary source for broad job discovery in Phase 1A. Configured via `/career-navigator:setup`. |
 | **Glassdoor** | MCP | Company culture research, interview experience data, salary benchmarks, and recruiter process timelines. |
 | **CareerOneStop** | MCP | U.S. Department of Labor API. Free. Provides labor market data, salary ranges, occupation outlook, and American Job Center locations. |
 | **IllinoisJobLink** | MCP | Illinois-specific job board. State employment resources and local posting discovery. |
@@ -468,7 +468,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Basic conversational application tracker with /career-navigator:track-application
 
-* HasData job search (automated); assisted-manual fallback for LinkedIn
+* JobSearch job search (automated); assisted-manual fallback for LinkedIn
 
 * Google Drive storage connector, local file storage default, SQLite data storage
 
@@ -596,7 +596,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 ## **Phase 3 — Platform Expansion**
 
-* Hosted API proxy with per-user key management and usage tracking — enables monetization and removes the need for each user to obtain their own HasData key
+* Hosted API proxy with per-user key management and usage tracking — enables monetization and removes the need for each user to obtain their own JobSearch key
 
 * Multi-user and team mode for staffing agencies and career coaches
 
@@ -636,7 +636,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 | Command | Purpose |
 | :---- | :---- |
-| **/career-navigator:setup** | Configure HasData and Google Drive (run first) |
+| **/career-navigator:setup** | Configure JobSearch and Google Drive (run first) |
 | **/career-navigator:tailor-resume** | Assemble optimal resume for a specific role from corpus |
 | **/career-navigator:cover-letter** | Generate targeted cover letter |
 | **/career-navigator:resume-score** | Score resume against a job description |

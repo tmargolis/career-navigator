@@ -59,7 +59,7 @@ After installing, click **Customize** on the plugin card — it launches the set
 /career-navigator:setup
 ```
 
-Asks for your job search folder (or uses what you provided to `init.py`), then reads everything in it — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures HasData for live job search and optionally Google Drive.
+Asks for your job search folder (or uses what you provided to `init.py`), then reads everything in it — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures JobSearch for live job search and optionally Google Drive.
 
 ### 2. Drop documents in your folder
 
@@ -71,7 +71,7 @@ Career Navigator monitors your job search folder automatically. Add a resume or 
 /career-navigator:search-jobs
 ```
 
-With HasData configured: searches live job listings automatically and returns ranked results. Without it: generates optimized search strings for Indeed, LinkedIn, and Google Jobs, then ranks the results you bring back.
+With JobSearch configured: searches live job listings automatically and returns ranked results. Without it: generates optimized search strings for Indeed, LinkedIn, and Google Jobs, then ranks the results you bring back.
 
 ### 4. Tailor your first resume
 
@@ -87,7 +87,7 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 | Command | Purpose |
 |---------|---------|
-| `/career-navigator:setup` | Configure HasData and Google Drive (run first) |
+| `/career-navigator:setup` | Configure JobSearch and Google Drive (run first) |
 | `/career-navigator:add-source` | Add a resume or CV to your experience corpus |
 | `/career-navigator:tailor-resume` | Build an optimized resume for a specific role |
 | `/career-navigator:cover-letter` | Generate a targeted cover letter |
@@ -133,7 +133,7 @@ No data leaves your machine unless you configure a cloud connector (see [CONNECT
 
 Run `/career-navigator:setup` to configure integrations. The wizard handles everything conversationally — no file editing required.
 
-**Job search (HasData):** Career Navigator uses [HasData](https://hasdata.com/) to fetch live job listings from Indeed, LinkedIn, and other boards. A free tier is available. `/career-navigator:setup` opens the signup page, waits for you to paste your API key, validates it, and writes the config automatically. Without a key, `/career-navigator:search-jobs` works in assisted-manual mode (you paste in search results; Career Navigator ranks them).
+**Job search (JobSearch):** Career Navigator uses [JobSearch](https://jobsearch.com/) to fetch live job listings from Indeed, LinkedIn, and other boards. A free tier is available. `/career-navigator:setup` opens the signup page, waits for you to paste your API key, validates it, and writes the config automatically. Without a key, `/career-navigator:search-jobs` works in assisted-manual mode (you paste in search results; Career Navigator ranks them).
 
 **Cloud storage (Google Drive):** By default, all data is stored locally in `data/`. To sync to Google Drive, run `/career-navigator:setup` — it walks through creating OAuth credentials and handles all configuration. See [CONNECTORS.md](CONNECTORS.md) for details on the connector interface.
 
@@ -190,7 +190,7 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 
 ### Phase 3 — Platform Expansion
 
-Hosted API proxy with per-user key management and usage tracking (removes the need for each user to obtain their own HasData key; enables monetization). Multi-user and team mode for staffing agencies and career coaches. Plugin marketplace publication. Mobile companion app for on-the-go tracker updates. Salary negotiation and offer evaluation module. Skills gap training integrations with Coursera and LinkedIn Learning.
+Hosted API proxy with per-user key management and usage tracking (removes the need for each user to obtain their own JobSearch key; enables monetization). Multi-user and team mode for staffing agencies and career coaches. Plugin marketplace publication. Mobile companion app for on-the-go tracker updates. Salary negotiation and offer evaluation module. Skills gap training integrations with Coursera and LinkedIn Learning.
 
 ### Phase 4 — Enterprise & Ecosystem
 

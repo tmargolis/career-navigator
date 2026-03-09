@@ -1,13 +1,13 @@
 {
   "mcpServers": {
     "_note": "Run /career-navigator:setup to configure integrations. The wizard handles all file edits automatically.",
-    "hasdata": {
-      "comment": "HasData — job search across Indeed, LinkedIn, and other boards. Configured by /career-navigator:setup.",
+    "jobsearch": {
+      "comment": "JobSearch — job search across Indeed, LinkedIn, and other boards. Configured by /career-navigator:setup.",
       "type": "stdio",
       "command": "node",
-      "args": ["services/connectors/hasdata/server.js"],
+      "args": ["services/connectors/jobsearch/server.js"],
       "env": {
-        "HASDATA_API_KEY": "8e109f3d-6d33-4be1-8ce5-615eca066799"
+        "JOBSEARCH_API_KEY": "8e109f3d-6d33-4be1-8ce5-615eca066799"
       }
     }
   },

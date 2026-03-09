@@ -26,9 +26,9 @@ Career Navigator has completed **Phase 1A implementation**. The plugin scaffold,
 
 ### Phase 1A Decisions Locked
 
-- **Setup**: `/career-navigator:setup` wizard handles all integration configuration (HasData, Google Drive). No manual `.mcp.json` editing required.
+- **Setup**: `/career-navigator:setup` wizard handles all integration configuration (JobSearch, Google Drive). No manual `.mcp.json` editing required.
 - **Storage**: Local file storage in `data/` (gitignored) by default. Google Drive configurable via `/career-navigator:setup`.
-- **Job search**: HasData for automated live job listings (configured via `/career-navigator:setup`). Falls back to assisted-manual mode without a key.
+- **Job search**: JobSearch for automated live job listings (configured via `/career-navigator:setup`). Falls back to assisted-manual mode without a key.
 - **Scheduling**: SessionStart hook only. node-cron DailySchedule deferred to Phase 1B.
 - **Analytics**: No SQLite yet. Phase 1B adds insight engine and `/career-navigator:pipeline` dashboard.
 

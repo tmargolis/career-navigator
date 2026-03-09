@@ -2,7 +2,7 @@
 name: setup
 command: /career-navigator:setup
 description: >
-  Conversational setup wizard. Configures HasData for automated job search and
+  Conversational setup wizard. Configures JobSearch for automated job search and
   optionally sets up Google Drive for cloud storage. Handles all file writes
   automatically — no manual JSON editing required. Re-runnable at any time to
   update keys or switch connectors.
@@ -60,7 +60,7 @@ Read `.mcp.json` and report what's already active vs. what's missing:
 ```
 CAREER NAVIGATOR SETUP
 ──────────────────────────────────────────
-HasData (job search)     [ ] Not configured
+JobSearch (job search)     [ ] Not configured
 Google Drive (storage)   [ ] Not configured
 ──────────────────────────────────────────
 Let's get you set up. This will take about 2 minutes.
@@ -68,7 +68,7 @@ Let's get you set up. This will take about 2 minutes.
 
 If everything is already configured:
 ```
-HasData (job search)     [✓] Active
+JobSearch (job search)     [✓] Active
 Google Drive (storage)   [✓] Active
 ──────────────────────────────────────────
 Everything looks good. Want to re-validate a key or switch a connector?
@@ -78,25 +78,25 @@ Only walk through unconfigured items, or items the user explicitly asks to recon
 
 ---
 
-### 2. HasData setup (job search)
+### 2. JobSearch setup (job search)
 
-**Step 1 — Introduce HasData**
+**Step 1 — Introduce JobSearch**
 
-> "HasData gives Career Navigator access to live job listings from Indeed, LinkedIn, and other boards — no copy-pasting required. The free tier covers plenty of searches for an active job search."
+> "JobSearch gives Career Navigator access to live job listings from Indeed, LinkedIn, and other boards — no copy-pasting required. The free tier covers plenty of searches for an active job search."
 >
 > "Opening the signup page now — create a free account and then paste your API key back here."
 
 Open the signup page using a Bash call:
-- macOS: `open https://app.hasdata.com/sign-up`
-- Linux: `xdg-open https://app.hasdata.com/sign-up`
-- Windows: `start https://app.hasdata.com/sign-up`
+- macOS: `open https://app.jobsearch.com/sign-up`
+- Linux: `xdg-open https://app.jobsearch.com/sign-up`
+- Windows: `start https://app.jobsearch.com/sign-up`
 
 If the Bash tool is unavailable, display the URL directly:
-> "Please open this URL to create your free HasData account: https://app.hasdata.com/sign-up"
+> "Please open this URL to create your free JobSearch account: https://app.jobsearch.com/sign-up"
 
 **Step 2 — Wait for the key**
 
-> "Once you're signed in, copy your API key from the HasData dashboard and paste it here."
+> "Once you're signed in, copy your API key from the JobSearch dashboard and paste it here."
 
 Accept any string that looks like an API key (typically a long alphanumeric string). If the user pastes something clearly wrong (e.g., a URL, very short string), say so and ask again.
 
@@ -107,18 +107,18 @@ Before saving, make a test API call to confirm the key works. Use a minimal, low
 > "Key validated successfully."
 
 If the call fails:
-> "That key didn't work — the API returned [error]. Double-check you copied the full key from the HasData dashboard and try again."
+> "That key didn't work — the API returned [error]. Double-check you copied the full key from the JobSearch dashboard and try again."
 
 Do not save an invalid key.
 
 **Step 4 — Write to config**
 
 Update `.mcp.json`:
-- Move the `hasdata` entry from `_inactive_services` into `mcpServers`
-- Set `HASDATA_API_KEY` to the validated key in the `env` block
+- Move the `jobsearch` entry from `_inactive_services` into `mcpServers`
+- Set `JOBSEARCH_API_KEY` to the validated key in the `env` block
 
 Confirm:
-> "HasData configured. `/career-navigator:search-jobs` will now search live job listings automatically."
+> "JobSearch configured. `/career-navigator:search-jobs` will now search live job listings automatically."
 
 ---
 
@@ -239,13 +239,13 @@ SETUP COMPLETE
 Profile                  [✓] Created
 Corpus                   [✓] [N] experience units from [X] resumes
 Applications             [✓] [N] imported  (or [ ] None found)
-HasData (job search)     [✓] Active        (or [ ] Not configured)
+JobSearch (job search)     [✓] Active        (or [ ] Not configured)
 Google Drive (storage)   [✓] Active        (or [ ] Using local storage)
 ──────────────────────────────────────────
 ```
 
 Suggest the natural next step — never suggest running `/career-navigator:setup` again:
-- If HasData is not yet configured: "Run `/career-navigator:setup` again to add your HasData key, or run `/career-navigator:search-jobs` now to use assisted-manual search."
+- If JobSearch is not yet configured: "Run `/career-navigator:setup` again to add your JobSearch key, or run `/career-navigator:search-jobs` now to use assisted-manual search."
 - Otherwise: "Run `/career-navigator:search-jobs` to find matching roles, or `/career-navigator:tailor-resume` with a job description to build your first targeted resume."
 
 ---
@@ -254,7 +254,7 @@ Suggest the natural next step — never suggest running `/career-navigator:setup
 
 When invoked on an already-configured system, ask:
 > "What would you like to update?
-> 1. Replace my HasData key
+> 1. Replace my JobSearch key
 > 2. Set up or switch to Google Drive
 > 3. Switch back to local storage
 > 4. Re-validate all active connectors"
