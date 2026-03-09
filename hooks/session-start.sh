@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 # Career Navigator — SessionStart hook
-# 1. Resolves the user's job search directory from ~/.career-navigator
+# 1. Resolves the user's job search directory from the Career Navigator config
 # 2. Syncs new/modified documents from that directory
 # 3. Outputs a structured digest prompt for Claude to deliver as a morning brief
 
 PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CAREER_NAV_CONFIG="$HOME/.career-navigator"
 
-# --- Resolve user directory ---
+# --- Resolve config path (platform-aware) ---
+case "$(uname -s)" in
+  Darwin) CAREER_NAV_CONFIG="$HOME/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json" ;;
+  Linux)  CAREER_NAV_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/Claude/cowork_plugins/career-navigator/config.json" ;;
+  *)      CAREER_NAV_CONFIG="$APPDATA/Claude/cowork_plugins/career-navigator/config.json" ;;
+esac
+
 if [ ! -f "$CAREER_NAV_CONFIG" ]; then
   cat <<'SETUP_NEEDED'
 [CAREER NAVIGATOR — SETUP REQUIRED]
@@ -21,9 +26,9 @@ SETUP_NEEDED
   exit 0
 fi
 
-USER_DIR=$(cat "$CAREER_NAV_CONFIG" | tr -d '[:space:]')
+USER_DIR=$(python3 -c "import json; print(json.load(open('$CAREER_NAV_CONFIG'))['user_dir'])" 2>/dev/null | tr -d '[:space:]')
 
-if [ ! -d "$USER_DIR" ]; then
+if [ -z "$USER_DIR" ] || [ ! -d "$USER_DIR" ]; then
   echo "[CAREER NAVIGATOR] Job search directory not found: $USER_DIR"
   echo "Run: python3 scripts/init.py /new/path to update the configuration."
   exit 0
@@ -31,7 +36,7 @@ fi
 
 PROFILE="$USER_DIR/profile/profile.md"
 TRACKER="$USER_DIR/tracker/tracker.json"
-ARTIFACTS_INDEX="$USER_DIR/artifacts/index.json"
+ARTIFACTS_INDEX="$USER_DIR/artifacts-index.json"
 CORPUS_INDEX="$USER_DIR/corpus/index.json"
 
 # --- First-run detection ---

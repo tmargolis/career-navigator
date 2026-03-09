@@ -14,7 +14,7 @@ Career Navigator has completed **Phase 1A implementation**. The plugin scaffold,
 - `{user_dir}/profile/` — user profile (`profile.md.template`); read by all agents at session start
 - `{user_dir}/corpus/` — resume corpus (`index.json.template`)
 - `{user_dir}/tracker/` — application tracker (`tracker.json.template`)
-- `{user_dir}/artifacts/` — artifact inventory (`index.json.template`)
+- 
 
 **Hooks**: `hooks/hooks.json` + `hooks/session-start.sh` (SessionStart; DailySchedule deferred to Phase 1B)
 
@@ -75,7 +75,7 @@ career-navigator/
 │   ├── profile/                   # profile.md (created by /career-navigator:setup)
 │   ├── corpus/                    # index.json (created on first /career-navigator:add-source)
 │   ├── applications/              # tracker.json (created on first /career-navigator:track-application)
-│   └── artifacts/                 # index.json + artifact files
+
 ├── services/
 │   ├── scheduler/                 # node-cron jobs (Phase 1B)
 │   ├── connectors/                # Storage adapters (Phase 1B+)

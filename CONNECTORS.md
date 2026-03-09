@@ -4,7 +4,7 @@ Career Navigator uses a connector-based storage model. All plugin components cal
 
 ## Active Connector: Local (Phase 1A default)
 
-All artifacts are saved to `{user_dir}/artifacts/` locally. Application records are stored in `{user_dir}/tracker/tracker.json`. The corpus lives in `{user_dir}/corpus/index.json`. All user data directories are gitignored.
+Generated artifacts (tailored resumes, cover letters) are saved directly to `{user_dir}` alongside the user's raw documents. Application records are stored in `{user_dir}/tracker/tracker.json`. The corpus lives in `{user_dir}/corpus/index.json`. All user data directories are gitignored.
 
 The `~~storage` placeholder in commands refers to the active connector's `save_artifact()` method. In Phase 1A, this writes to the local `data/` tree.
 
@@ -44,7 +44,7 @@ data/
 │   └── index.json          — Resume corpus (experience units, skill tags, weights)
 ├── applications/
 │   └── tracker.json        — Application records and stage history
-└── artifacts/
+
     ├── index.json           — Artifact inventory with metadata
     └── [artifact files]    — Generated resumes, cover letters, etc.
 ```

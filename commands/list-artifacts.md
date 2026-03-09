@@ -23,7 +23,7 @@ Lists all resumes, cover letters, and other generated documents in your artifact
 
 ### 1. Read the artifact inventory
 
-Read `{user_dir}/artifacts/index.json`. If it doesn't exist or has no artifacts:
+Read `{user_dir}/artifacts-index.json`. If it doesn't exist or has no artifacts:
 > "No artifacts yet. Run /career-navigator:tailor-resume or /career-navigator:cover-letter to generate your first one."
 
 ### 2. Cross-reference with application tracker

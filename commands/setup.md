@@ -40,7 +40,7 @@ Throughout this command, `{user_dir}` refers to the user's configured job search
 #### 0b. Register and verify
 
 Run `python3 scripts/init.py {user_dir}` to:
-- Save the path to `~/.career-navigator` (used by hooks at startup)
+- Save the path to `~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json` (used by hooks at startup)
 - Register the directory with Claude Desktop's filesystem MCP server
 
 If the Bash tool is unavailable, instruct the user:

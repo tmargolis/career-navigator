@@ -41,11 +41,9 @@ Hand off to the **resume-coach** agent with the source content. The agent will:
 
 If `{user_dir}/corpus/index.json` doesn't exist, the agent initializes it from `templates/corpus.json.template`.
 
-### 3. Save the source document as an artifact
+### 3. Record the source document in the artifact index
 
-Save the source document content to `{user_dir}/artifacts/[source-filename]-[timestamp].md`.
-
-Append to `{user_dir}/artifacts/index.json` (initializing from template if needed):
+The source document is already in the user's job search directory — do not copy or re-save it. Just record it in `{user_dir}/artifacts-index.json` (initialize from `templates/artifacts.json.template` if the file doesn't exist yet):
 ```json
 {
   "artifact_id": "[uuid]",
@@ -55,7 +53,7 @@ Append to `{user_dir}/artifacts/index.json` (initializing from template if neede
   "jd_keywords": null,
   "ats_score": null,
   "created_at": "[timestamp]",
-  "storage_path": "{user_dir}/artifacts/[filename]",
+  "storage_path": "{user_dir}/[filename]",
   "source_filename": "[original filename, or 'pasted-content' if pasted]"
 }
 ```

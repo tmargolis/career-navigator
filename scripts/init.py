@@ -4,7 +4,7 @@ Career Navigator — One-time initialization script.
 
 Registers the filesystem MCP server in Claude Desktop's configuration,
 giving Career Navigator read/write access to your job search directory.
-Also saves the directory path to ~/.career-navigator for use by hooks.
+Also saves the directory path to ~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json for use by hooks.
 
 Usage:
     python3 scripts/init.py /path/to/your/job-search-folder
@@ -21,7 +21,20 @@ import platform
 from pathlib import Path
 
 MCP_SERVER_KEY = "career-navigator"
-CAREER_NAV_CONFIG = Path.home() / ".career-navigator"
+
+
+def get_career_nav_config_path():
+    """Return the platform-specific path to Career Navigator's config.json."""
+    home = Path.home()
+    system = platform.system()
+    if system == "Darwin":
+        return home / "Library/Application Support/Claude/cowork_plugins/career-navigator/config.json"
+    elif system == "Windows":
+        appdata = os.environ.get("APPDATA", str(home / "AppData/Roaming"))
+        return Path(appdata) / "Claude/cowork_plugins/career-navigator/config.json"
+    else:  # Linux
+        xdg = os.environ.get("XDG_CONFIG_HOME", str(home / ".config"))
+        return Path(xdg) / "Claude/cowork_plugins/career-navigator/config.json"
 
 
 def find_claude_config_path():
@@ -43,16 +56,20 @@ def find_claude_config_path():
         raise OSError(f"Unsupported operating system: {system}")
 
 
-def get_user_dir():
+def get_user_dir(career_nav_config):
     """Resolve the job search directory from args, saved config, or prompt."""
     if len(sys.argv) > 1:
         return Path(sys.argv[1]).expanduser().resolve()
 
-    if CAREER_NAV_CONFIG.exists():
-        stored = CAREER_NAV_CONFIG.read_text().strip()
-        if stored:
-            print(f"Using previously configured directory: {stored}")
-            return Path(stored)
+    if career_nav_config.exists():
+        try:
+            saved = json.loads(career_nav_config.read_text())
+            stored = saved.get("user_dir", "").strip()
+            if stored:
+                print(f"Using previously configured directory: {stored}")
+                return Path(stored)
+        except (json.JSONDecodeError, KeyError):
+            pass
 
     # Interactive fallback
     path_str = input("Enter the path to your job search folder: ").strip()
@@ -63,15 +80,25 @@ def get_user_dir():
 
 
 def setup_mcp_config():
+    career_nav_config = get_career_nav_config_path()
+
     # 1. Resolve and create the user's job search directory
-    user_dir = get_user_dir()
+    user_dir = get_user_dir(career_nav_config)
     user_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Job search directory: {user_dir}")
     print()
 
-    # 2. Save to ~/.career-navigator for hooks to read
-    CAREER_NAV_CONFIG.write_text(str(user_dir))
+    # 2. Save to Career Navigator config dir (accessible to hooks without MCP)
+    career_nav_config.parent.mkdir(parents=True, exist_ok=True)
+    existing_config = {}
+    if career_nav_config.exists():
+        try:
+            existing_config = json.loads(career_nav_config.read_text())
+        except json.JSONDecodeError:
+            pass
+    existing_config["user_dir"] = str(user_dir)
+    career_nav_config.write_text(json.dumps(existing_config, indent=2))
 
     # 3. Locate Claude Desktop config
     try:

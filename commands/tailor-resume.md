@@ -51,7 +51,7 @@ The agent will:
 5. Write a role-specific summary (2–3 sentences, keyword-targeted)
 6. Apply the **ats-optimization** skill — score the assembled resume
 7. Iterate if ATS score < 75 (adjust keywords and phrasing, re-score)
-8. Save the artifact to `{user_dir}/artifacts/`
+8. Save the artifact directly to `{user_dir}/`
 
 ### 4. Report results
 
@@ -62,7 +62,7 @@ RESUME ASSEMBLED
 ────────────────────────────────────────
 Role:         [Job title] at [Company]
 ATS score:    [X]/100
-Saved to:     {user_dir}/artifacts/[filename]
+Saved to:     {user_dir}/[filename]
 
 Keywords matched: [list]
 Keywords missing: [list — only show if any]

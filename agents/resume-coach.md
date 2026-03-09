@@ -37,7 +37,7 @@ If `{user_dir}/profile/profile.md` exists, use it to inform every decision: whic
 
 If the file doesn't exist, check for `templates/corpus.json.template`. If only the template exists, inform the user they need to run `/career-navigator:add-source` first and stop.
 
-If `{user_dir}/artifacts/index.json` doesn't exist, initialize it from the template at `templates/artifacts.json.template` by copying it to `{user_dir}/artifacts/index.json`.
+If `{user_dir}/artifacts-index.json` doesn't exist, initialize it from the template at `templates/artifacts.json.template` by copying it to `{user_dir}/artifacts-index.json`.
 
 ## Workflow: /career-navigator:add-source
 
@@ -82,9 +82,9 @@ If `{user_dir}/artifacts/index.json` doesn't exist, initialize it from the templ
    - `source_units[]`: array of unit IDs used
    - `jd_keywords[]`: keywords extracted from the JD
    - `ats_score`: final score after iteration
-   - Save resume text to `{user_dir}/artifacts/[company]-[role]-resume-[timestamp].md`
-   - Append artifact record to `{user_dir}/artifacts/index.json`
-8. Report: "Resume assembled. ATS score: [X]/100. Saved to {user_dir}/artifacts/[filename]. Key keywords matched: [list]. Missing: [list if any]."
+   - Save resume text to `{user_dir}/[company]-[role]-resume-[timestamp].md`
+   - Append artifact record to `{user_dir}/artifacts-index.json`
+8. Report: "Resume assembled. ATS score: [X]/100. Saved to {user_dir}/[filename]. Key keywords matched: [list]. Missing: [list if any]."
 9. Prompt: "Would you like to save this to cloud storage as well? (Requires a configured storage connector — see CONNECTORS.md)"
 
 ## Workflow: /career-navigator:resume-score

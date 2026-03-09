@@ -102,26 +102,25 @@ You can also trigger commands conversationally — if you say "I just applied to
 
 ## Data Storage
 
-Everything lives in one folder — the job search directory you provide. Career Navigator creates subdirectories inside it:
+Everything lives in one folder — the job search directory you provide. Career Navigator reads your documents from it and saves everything back into it:
 
 ```
 ~/Documents/Job Search/          ← your folder (wherever you choose)
 │
-├── resume-2026.pdf              ← your documents (Career Navigator reads these)
+├── resume-2026.pdf              ← your source documents
 ├── resume-staff-eng.docx
 ├── cover-letter-acme.pdf
 │
+├── resume-acme-pm-2026-03.md    ← Career Navigator outputs (saved here directly)
+├── cover-letter-acme-pm-2026-03.md
+│
+├── artifacts-index.json         — index of all generated documents
 ├── profile/
-│   └── profile.md              — Your profile: targets, comp floor, differentiators
+│   └── profile.md               — your profile: targets, comp floor, differentiators
 ├── corpus/
-│   └── index.json              — Experience units extracted from your resumes
-├── tracker/
-│   └── tracker.json            — All application records with full stage history
-└── artifacts/
-    ├── index.json              — Artifact inventory and metadata
-    ├── resume-acme-pm-2026-03.md          — Tailored resume, Acme Corp PM role
-    ├── cover-letter-acme-pm-2026-03.md    — Matching cover letter
-    └── resume-stripe-eng-mgr-2026-03.md   — Tailored resume, Stripe EM role
+│   └── index.json               — experience units extracted from your resumes
+└── tracker/
+    └── tracker.json             — all application records with full stage history
 ```
 
 No data leaves your machine unless you configure a cloud connector (see [CONNECTORS.md](CONNECTORS.md)).
