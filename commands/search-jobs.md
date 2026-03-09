@@ -36,7 +36,7 @@ The agent asks for (or reads from the conversation):
 - Industries to include or exclude
 - Company size preference
 
-If the corpus exists, the agent reads `data/corpus/index.json` and infers likely role types from `skill_tags` — but confirms before proceeding.
+If the corpus exists, the agent reads `{user_dir}/corpus/index.json` and infers likely role types from `skill_tags` — but confirms before proceeding.
 
 **Step 2 — Generate search strings**
 

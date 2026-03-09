@@ -1,37 +1,60 @@
 #!/usr/bin/env bash
 # Career Navigator — SessionStart hook
-# 1. Syncs the watch directory (new/modified files since last session)
-# 2. Outputs a structured digest prompt for Claude to surface as a morning brief.
+# 1. Resolves the user's job search directory from ~/.career-navigator
+# 2. Syncs new/modified documents from that directory
+# 3. Outputs a structured digest prompt for Claude to deliver as a morning brief
 
 PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PROFILE="$PLUGIN_ROOT/data/profile/profile.md"
-TRACKER="$PLUGIN_ROOT/data/tracker/tracker.json"
-ARTIFACTS_INDEX="$PLUGIN_ROOT/data/artifacts/index.json"
-CORPUS_INDEX="$PLUGIN_ROOT/data/corpus/index.json"
+CAREER_NAV_CONFIG="$HOME/.career-navigator"
+
+# --- Resolve user directory ---
+if [ ! -f "$CAREER_NAV_CONFIG" ]; then
+  cat <<'SETUP_NEEDED'
+[CAREER NAVIGATOR — SETUP REQUIRED]
+
+No job search directory configured. To get started:
+
+  1. Run: python3 scripts/init.py /path/to/your/job-search-folder
+  2. Restart Claude Desktop
+  3. Run /career-navigator:setup to finish configuration
+SETUP_NEEDED
+  exit 0
+fi
+
+USER_DIR=$(cat "$CAREER_NAV_CONFIG" | tr -d '[:space:]')
+
+if [ ! -d "$USER_DIR" ]; then
+  echo "[CAREER NAVIGATOR] Job search directory not found: $USER_DIR"
+  echo "Run: python3 scripts/init.py /new/path to update the configuration."
+  exit 0
+fi
+
+PROFILE="$USER_DIR/profile/profile.md"
+TRACKER="$USER_DIR/tracker/tracker.json"
+ARTIFACTS_INDEX="$USER_DIR/artifacts/index.json"
+CORPUS_INDEX="$USER_DIR/corpus/index.json"
 
 # --- First-run detection ---
 if [ ! -f "$TRACKER" ] && [ ! -f "$PROFILE" ]; then
-  cat <<'ONBOARDING'
+  cat <<ONBOARDING
 [CAREER NAVIGATOR — FIRST RUN]
+Job search directory: $USER_DIR
 
-Welcome to Career Navigator. No job search data exists yet.
-
-Run /career-navigator:setup to get started — it will build your profile, configure
-your watch directory, and import your existing resumes and applications automatically.
-Takes about 2 minutes.
+Welcome to Career Navigator. Run /career-navigator:setup to build your profile
+and import your existing resumes and applications. Takes about 2 minutes.
 ONBOARDING
   exit 0
 fi
 
-# --- Sync watch directory (new/modified files since last session) ---
+# --- Sync new/modified documents ---
 "$PLUGIN_ROOT/hooks/sync-watchdir.sh"
 
-# --- Returning session digest ---
+# --- Morning digest ---
 TODAY=$(date +%Y-%m-%d)
 
 cat <<DIGEST_HEADER
-[CAREER NAVIGATOR — SESSION START DIGEST]
-Date: $TODAY
+[CAREER NAVIGATOR — SESSION START: $TODAY]
+Job search directory: $USER_DIR
 
 Please surface the following as a concise, natural morning brief — no headers, just conversational:
 
@@ -69,13 +92,13 @@ cat <<DIGEST_INSTRUCTIONS
 === INSTRUCTIONS FOR CLAUDE ===
 Based on the data above, deliver a brief morning digest covering:
 
-1. PIPELINE STATUS — count of applications by stage (Applied, Phone Screen, HM Interview, Panel, Final, Offer, Rejected, Ghosted). Skip stages with zero. If no applications, say so briefly.
+1. PIPELINE STATUS — count of applications by stage (Applied, Phone Screen, HM Interview, Panel, Final, Offer, Rejected, Ghosted). Skip stages with zero.
 
-2. FOLLOW-UP NEEDED — flag any applications where status has not changed in more than 7 days and current stage is not a terminal state (Rejected/Withdrawn/Ghosted/Hired). List company + role + days since last update.
+2. FOLLOW-UP NEEDED — any applications where status has not changed in more than 7 days and stage is not terminal (Rejected/Withdrawn/Ghosted/Hired). List company + role + days since last update.
 
-3. INTERVIEWS TODAY — scan application notes for any interview scheduled today ($TODAY). If found, mention it and note that /career-navigator:prep-interview is available.
+3. INTERVIEWS TODAY — scan notes for any interview scheduled today ($TODAY). If found, note that /career-navigator:prep-interview is available.
 
-4. ARTIFACT SUMMARY — brief count of resumes and cover letters generated. If none, skip.
+4. ARTIFACT SUMMARY — brief count of resumes and cover letters. If none, skip.
 
-Keep the tone warm but direct. Lead with what requires action today. If nothing requires action, say so clearly and suggest a next productive step.
+Keep tone warm but direct. Lead with what needs action today.
 DIGEST_INSTRUCTIONS

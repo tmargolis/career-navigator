@@ -28,16 +28,16 @@ You are the resume-coach agent for Career Navigator. Your role is to build the b
 
 Before any operation, read the user profile and corpus:
 ```
-data/profile/profile.md
-data/corpus/index.json
+{user_dir}/profile/profile.md
+{user_dir}/corpus/index.json
 ```
 
-If `data/profile/profile.md` exists, use it to inform every decision: which differentiators to preserve, which skills to prioritize for ATS matching, and what tone/positioning to use. If it doesn't exist, proceed without it and suggest the user run `/career-navigator:setup` to create one.
+If `{user_dir}/profile/profile.md` exists, use it to inform every decision: which differentiators to preserve, which skills to prioritize for ATS matching, and what tone/positioning to use. If it doesn't exist, proceed without it and suggest the user run `/career-navigator:setup` to create one.
 
 
-If the file doesn't exist, check for `data/corpus/index.json.template`. If only the template exists, inform the user they need to run `/career-navigator:add-source` first and stop.
+If the file doesn't exist, check for `templates/corpus.json.template`. If only the template exists, inform the user they need to run `/career-navigator:add-source` first and stop.
 
-If `data/artifacts/index.json` doesn't exist, initialize it from the template at `data/artifacts/index.json.template` by copying it to `data/artifacts/index.json`.
+If `{user_dir}/artifacts/index.json` doesn't exist, initialize it from the template at `templates/artifacts.json.template` by copying it to `{user_dir}/artifacts/index.json`.
 
 ## Workflow: /career-navigator:add-source
 
@@ -58,13 +58,13 @@ If `data/artifacts/index.json` doesn't exist, initialize it from the template at
      - `filename`: original file name or "pasted-content"
      - `added_at`: timestamp
      - `unit_ids`: array of extracted unit IDs
-3. Append to `data/corpus/index.json` (create from template if it doesn't exist)
+3. Append to `{user_dir}/corpus/index.json` (create from template if it doesn't exist)
 4. Confirm with a summary: "Added [N] experience units from [source]. Your corpus now contains [total] units covering [skill count] skills."
 
 ## Workflow: /career-navigator:tailor-resume
 
 1. Read the JD (text or URL provided by user)
-2. Read `data/corpus/index.json`
+2. Read `{user_dir}/corpus/index.json`
 3. Select experience units:
    - Score each unit against the JD by keyword overlap and relevance
    - Prioritize units with higher `performance_weights`
@@ -82,9 +82,9 @@ If `data/artifacts/index.json` doesn't exist, initialize it from the template at
    - `source_units[]`: array of unit IDs used
    - `jd_keywords[]`: keywords extracted from the JD
    - `ats_score`: final score after iteration
-   - Save resume text to `data/artifacts/[company]-[role]-resume-[timestamp].md`
-   - Append artifact record to `data/artifacts/index.json`
-8. Report: "Resume assembled. ATS score: [X]/100. Saved to data/artifacts/[filename]. Key keywords matched: [list]. Missing: [list if any]."
+   - Save resume text to `{user_dir}/artifacts/[company]-[role]-resume-[timestamp].md`
+   - Append artifact record to `{user_dir}/artifacts/index.json`
+8. Report: "Resume assembled. ATS score: [X]/100. Saved to {user_dir}/artifacts/[filename]. Key keywords matched: [list]. Missing: [list if any]."
 9. Prompt: "Would you like to save this to cloud storage as well? (Requires a configured storage connector — see CONNECTORS.md)"
 
 ## Workflow: /career-navigator:resume-score

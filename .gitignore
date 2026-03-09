@@ -1,20 +1,3 @@
-# User data — gitignored to protect privacy
-data/corpus/*
-data/tracker/*
-data/artifacts/*
-data/profile/*
-data/.sync-state.json
-
-# Keep directory scaffolding and templates
-!data/corpus/.gitignore
-!data/corpus/*.template
-!data/tracker/.gitignore
-!data/tracker/*.template
-!data/artifacts/.gitignore
-!data/artifacts/*.template
-!data/profile/.gitignore
-!data/profile/*.template
-
 # Dependencies and environment
 node_modules/
 .env

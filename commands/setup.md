@@ -26,25 +26,30 @@ First-run configuration wizard. Walks through each integration step-by-step, val
 
 Re-run any time to update a key, re-validate a connector, or add a new integration.
 
+Throughout this command, `{user_dir}` refers to the user's configured job search directory. All data — profile, corpus, tracker, generated artifacts — lives in subdirectories of this single folder alongside the user's raw documents.
+
 ## Workflow
 
-### 0. Preflight: verify filesystem access
+### 0. Confirm job search directory
 
-Before doing anything else, attempt to read `data/profile/profile.md` or any file in `data/`. This confirms the filesystem MCP server is registered and Claude has write access to the plugin's data directory.
+**If the user provided a directory path in their message**: use it. Skip to step 0b.
 
-If the read fails or the filesystem tool is unavailable:
+**If no path was provided**: ask:
+> "What folder should Career Navigator use for your job search? This is where your resumes and cover letters live, and where I'll save everything I generate. Share the full path."
 
-> "Career Navigator needs one-time filesystem access before it can save data. Run this from the plugin directory:
->
+#### 0b. Register and verify
+
+Run `python3 scripts/init.py {user_dir}` to:
+- Save the path to `~/.career-navigator` (used by hooks at startup)
+- Register the directory with Claude Desktop's filesystem MCP server
+
+If the Bash tool is unavailable, instruct the user:
+> "Run this once from the plugin directory, then restart Claude Desktop:
 > ```
-> python3 scripts/init.py
-> ```
->
-> Then restart Claude Desktop and run `/career-navigator:setup` again."
->
-> Stop here — do not proceed with the rest of setup until filesystem access is confirmed.
+> python3 scripts/init.py /your/path/here
+> ```"
 
-If the read succeeds, continue.
+Attempt to read or list `{user_dir}` to confirm filesystem access. If it fails, stop and surface the above instructions.
 
 ---
 
@@ -119,7 +124,7 @@ Confirm:
 
 ### 3. Google Drive setup (optional)
 
-> "Would you like to store your resumes, cover letters, and application data in Google Drive? This keeps everything backed up and accessible from any device. (You can skip this and use local storage — your data stays in the `data/` folder.)"
+> "Would you like to store your resumes, cover letters, and application data in Google Drive? This keeps everything backed up and accessible from any device. (You can skip this and use local storage — your data stays in your job search folder.)"
 
 If the user says yes:
 
@@ -153,7 +158,7 @@ Update `.mcp.json`:
 > "Google Drive configured. On your next command that saves an artifact, you'll be prompted to authorize access — this only happens once."
 
 If the user skips Google Drive:
-> "No problem. Everything saves to `data/` locally. You can run `/career-navigator:setup` any time to add Google Drive later."
+> "No problem. Everything saves to your job search folder locally. You can run `/career-navigator:setup` any time to add Google Drive later."
 
 ---
 
@@ -167,7 +172,7 @@ Ask:
 Accept any valid directory path. Confirm it exists before saving. If the user doesn't have one yet:
 > "No problem — create a folder anywhere you'd like (for example, `~/Documents/Job Search/`) and paste any resumes or cover letters into it. Give me the path and we'll go from there."
 
-Save the path to the `## Watch Directory` section of `data/profile/profile.md`.
+Save the path to the `## Watch Directory` section of `{user_dir}/profile/profile.md`.
 
 ---
 
@@ -179,20 +184,20 @@ Save the path to the `## Watch Directory` section of `data/profile/profile.md`.
 
 Run all of the following before asking anything:
 
-1. **Existing profile**: Read `data/profile/profile.md` if it exists. If complete, show a summary and skip to 5c.
+1. **Existing profile**: Read `{user_dir}/profile/profile.md` if it exists. If complete, show a summary and skip to 5c.
 2. **Watch directory**: Read every resume, CV, and job search document in the configured watch directory. This is the primary source.
-3. **Existing corpus**: Read `data/corpus/index.json` — skill tags, titles, and company names already contain significant profile signal.
+3. **Existing corpus**: Read `{user_dir}/corpus/index.json` — skill tags, titles, and company names already contain significant profile signal.
 4. **Google Drive** (if connected): Search for resumes, CVs, and any additional job search materials not already in the watch directory.
 
 #### 5b. Extract into corpus
 
 For each resume or CV found in 5a:
-- Check `data/corpus/index.json` → `source_documents[]` — skip if already imported by filename/path.
-- If new: extract experience units, assign skill tags, set performance weights (1.0), append to `data/corpus/index.json`. Initialize from template if it doesn't exist.
+- Check `{user_dir}/corpus/index.json` → `source_documents[]` — skip if already imported by filename/path.
+- If new: extract experience units, assign skill tags, set performance weights (1.0), append to `{user_dir}/corpus/index.json`. Initialize from template if it doesn't exist.
 
 #### 5c. Build profile
 
-Consolidate all discovered sources into a draft profile using `data/profile/profile.md.template`. Prefer the most recent and specific data when sources conflict. Profile fields:
+Consolidate all discovered sources into a draft profile using `templates/profile.md.template`. Prefer the most recent and specific data when sources conflict. Profile fields:
 - Professional summary and level
 - Target role titles and minimum seniority
 - Target companies (primary, secondary, types to avoid)
@@ -205,7 +210,7 @@ Consolidate all discovered sources into a draft profile using `data/profile/prof
 Show the draft and ask only about fields that couldn't be determined:
 > "Here's what I've put together from your documents. Does this look right? Let me know what to change or add."
 
-Save to `data/profile/profile.md`. Confirm corpus:
+Save to `{user_dir}/profile/profile.md`. Confirm corpus:
 > "Corpus updated — [X] experience units across [Y] skills from [N] resume(s)."
 
 ---
@@ -216,7 +221,7 @@ Scan the watch directory and Google Drive (if connected) for evidence of existin
 
 For each application found:
 - Extract: company, role title, approximate date applied, any status signals
-- Create a record in `data/tracker/tracker.json` using the standard schema
+- Create a record in `{user_dir}/tracker/tracker.json` using the standard schema
 - Set `status` to the best available inference (default: "Applied" if uncertain)
 
 Ask before writing:

@@ -20,24 +20,24 @@ The core differentiator: every application outcome feeds back into the system. O
 ### Install via Claude Desktop
 
 1. Download the zip: **Code → Download ZIP** on this page (or [direct link](https://github.com/tmargolis/career-navigator/archive/refs/heads/main.zip))
-2. Extract the ZIP to a **permanent location** (not Downloads — the data directory lives here)
-3. Run the one-time init script from the extracted folder:
+2. Run the one-time init script, passing the folder where your job search documents live:
    ```bash
-   python3 scripts/init.py
+   python3 scripts/init.py /path/to/your/job-search-folder
    ```
-   This registers a filesystem MCP server in Claude Desktop's config so Career Navigator can read and write your data. Requires Python 3 and Node.js (for `npx`).
-4. **Restart Claude Desktop**
-5. Click the **Customize** button → **Browse plugins → Personal** → **Upload a plugin** → select the ZIP
-6. Career Navigator activates on next session start
+   This registers that folder with Claude Desktop's filesystem MCP server so Career Navigator can read and write files there. Requires Python 3 and Node.js (for `npx`).
+3. **Restart Claude Desktop**
+4. Click **Customize** → **Browse plugins → Personal** → **Upload a plugin** → select the ZIP
+5. Career Navigator activates on next session start
 
-After installing, click the **Customize** button on the Career Navigator plugin card — this automatically launches the setup wizard to configure your integrations.
+After installing, click the **Customize** button on the plugin card — this launches the setup wizard automatically.
 
 ### Install via Claude Code (CLI)
 
 ```bash
 git clone https://github.com/tmargolis/career-navigator.git
 cd career-navigator
-python3 scripts/init.py   # register filesystem MCP — restart Claude Code after
+python3 scripts/init.py /path/to/your/job-search-folder
+# restart Claude Code, then:
 claude plugin install .
 ```
 
@@ -59,15 +59,11 @@ After installing, click **Customize** on the plugin card — it launches the set
 /career-navigator:setup
 ```
 
-Walks you through configuring HasData (for automated job search) and optionally Google Drive (for cloud storage). Opens signup pages, validates your credentials, and writes all config automatically — no file editing required. Skip this and everything still works in assisted-manual mode.
+Asks for your job search folder (or uses what you provided to `init.py`), then reads everything in it — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures HasData for live job search and optionally Google Drive.
 
-### 2. Add your resume to the corpus
+### 2. Drop documents in your folder
 
-```
-/career-navigator:add-source
-```
-
-Paste your existing resume or provide a file path. Career Navigator extracts your experience into a structured corpus of reusable units.
+Career Navigator monitors your job search folder automatically. Add a resume or cover letter, and it's ingested at the next startup or midnight sync — no command needed.
 
 ### 3. Search for matching roles
 
@@ -106,26 +102,17 @@ You can also trigger commands conversationally — if you say "I just applied to
 
 ## Data Storage
 
-### Watch directory
-
-During setup you provide a folder where you keep your job search documents — resumes, cover letters, application notes, etc. Career Navigator monitors this folder automatically: new and modified files are ingested on every startup and at midnight, with no commands required.
+Everything lives in one folder — the job search directory you provide. Career Navigator creates subdirectories inside it:
 
 ```
-~/Documents/Job Search/        ← your watch directory (anywhere you choose)
-├── resume-2026.pdf
+~/Documents/Job Search/          ← your folder (wherever you choose)
+│
+├── resume-2026.pdf              ← your documents (Career Navigator reads these)
 ├── resume-staff-eng.docx
 ├── cover-letter-acme.pdf
-└── ...
-```
-
-### Plugin data directory
-
-Extracted and generated data lives locally in `data/` (gitignored):
-
-```
-data/
+│
 ├── profile/
-│   └── profile.md              — Your job search profile (targets, comp floor, differentiators)
+│   └── profile.md              — Your profile: targets, comp floor, differentiators
 ├── corpus/
 │   └── index.json              — Experience units extracted from your resumes
 ├── tracker/
@@ -139,7 +126,7 @@ data/
 
 No data leaves your machine unless you configure a cloud connector (see [CONNECTORS.md](CONNECTORS.md)).
 
-**To back up your data**: copy both your watch directory and the `data/` folder to a safe location.
+**To back up**: copy your entire job search folder.
 
 ---
 

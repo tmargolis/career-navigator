@@ -37,15 +37,15 @@ Hand off to the **resume-coach** agent with the source content. The agent will:
 - Extract individual experience units (roles, bullets, achievements, projects, education, certifications)
 - Assign normalized skill tags to each unit
 - Assign default performance weights (1.0)
-- Append all units and the source document record to `data/corpus/index.json`
+- Append all units and the source document record to `{user_dir}/corpus/index.json`
 
-If `data/corpus/index.json` doesn't exist, the agent initializes it from `data/corpus/index.json.template`.
+If `{user_dir}/corpus/index.json` doesn't exist, the agent initializes it from `templates/corpus.json.template`.
 
 ### 3. Save the source document as an artifact
 
-Save the source document content to `data/artifacts/[source-filename]-[timestamp].md`.
+Save the source document content to `{user_dir}/artifacts/[source-filename]-[timestamp].md`.
 
-Append to `data/artifacts/index.json` (initializing from template if needed):
+Append to `{user_dir}/artifacts/index.json` (initializing from template if needed):
 ```json
 {
   "artifact_id": "[uuid]",
@@ -55,7 +55,7 @@ Append to `data/artifacts/index.json` (initializing from template if needed):
   "jd_keywords": null,
   "ats_score": null,
   "created_at": "[timestamp]",
-  "storage_path": "data/artifacts/[filename]",
+  "storage_path": "{user_dir}/artifacts/[filename]",
   "source_filename": "[original filename, or 'pasted-content' if pasted]"
 }
 ```

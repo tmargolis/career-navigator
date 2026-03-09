@@ -34,7 +34,7 @@ The more complete the JD, the better the keyword targeting. If only partial info
 
 ### 2. Confirm corpus is ready
 
-Check that `data/corpus/index.json` exists and has at least one experience unit. If not:
+Check that `{user_dir}/corpus/index.json` exists and has at least one experience unit. If not:
 > "Your corpus is empty. Run /career-navigator:add-source first to add your resume or experience."
 
 ### 3. Invoke resume-coach agent
@@ -51,7 +51,7 @@ The agent will:
 5. Write a role-specific summary (2–3 sentences, keyword-targeted)
 6. Apply the **ats-optimization** skill — score the assembled resume
 7. Iterate if ATS score < 75 (adjust keywords and phrasing, re-score)
-8. Save the artifact to `data/artifacts/`
+8. Save the artifact to `{user_dir}/artifacts/`
 
 ### 4. Report results
 
@@ -62,7 +62,7 @@ RESUME ASSEMBLED
 ────────────────────────────────────────
 Role:         [Job title] at [Company]
 ATS score:    [X]/100
-Saved to:     data/artifacts/[filename]
+Saved to:     {user_dir}/artifacts/[filename]
 
 Keywords matched: [list]
 Keywords missing: [list — only show if any]

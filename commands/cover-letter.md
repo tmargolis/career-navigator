@@ -31,7 +31,7 @@ Ask for anything not already provided:
 > 3. Anything you know about the company, team, or role that isn't in the JD (optional but valuable)
 > 4. The name of the hiring manager or recruiter, if known"
 
-If a tailored resume artifact already exists for this role in `data/artifacts/index.json`, use it as the source of selected experience units. If not, assemble one first (runs tailor-resume workflow internally).
+If a tailored resume artifact already exists for this role in `{user_dir}/artifacts/index.json`, use it as the source of selected experience units. If not, assemble one first (runs tailor-resume workflow internally).
 
 ### 2. Research the company
 
@@ -66,9 +66,9 @@ Structure:
 
 ### 4. Save the artifact
 
-Save the cover letter to `data/artifacts/[company]-[role]-cover-letter-[timestamp].md`.
+Save the cover letter to `{user_dir}/artifacts/[company]-[role]-cover-letter-[timestamp].md`.
 
-Append to `data/artifacts/index.json`:
+Append to `{user_dir}/artifacts/index.json`:
 ```json
 {
   "artifact_id": "[uuid]",
@@ -78,7 +78,7 @@ Append to `data/artifacts/index.json`:
   "jd_keywords": ["[keywords targeted]"],
   "ats_score": null,
   "created_at": "[timestamp]",
-  "storage_path": "data/artifacts/[filename]"
+  "storage_path": "{user_dir}/artifacts/[filename]"
 }
 ```
 

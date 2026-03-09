@@ -46,7 +46,7 @@ Accept free-form input. Extract the following fields:
 
 ### 2. Check for existing record
 
-Read `data/tracker/tracker.json`. Check if an application for this company + role already exists (case-insensitive match).
+Read `{user_dir}/tracker/tracker.json`. Check if an application for this company + role already exists (case-insensitive match).
 
 **If existing record found:**
 - Show current state: "I have a record for [Role] at [Company], currently at [Stage] since [date]. What's the update?"
@@ -63,11 +63,11 @@ Read `data/tracker/tracker.json`. Check if an application for this company + rol
 - Set `outcome` to "Pending"
 - Append the new record to `applications[]` in `tracker.json`
 
-If `tracker.json` doesn't exist, initialize it from `data/tracker/tracker.json.template`.
+If `tracker.json` doesn't exist, initialize it from `templates/tracker.json.template`.
 
 ### 3. Save to tracker
 
-Write the updated `tracker.json` to `data/tracker/tracker.json`.
+Write the updated `tracker.json` to `{user_dir}/tracker/tracker.json`.
 
 ### 4. Confirm with summary
 

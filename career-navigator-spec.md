@@ -304,7 +304,7 @@ External services are configured via the plugin's .mcp.json file. Run `/career-n
 
 ## **10.0 User Profile**
 
-Stored at `data/profile/profile.md`. Created by `/career-navigator:setup` (using Google Drive resume data if connected, otherwise conversationally). Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
+Stored at `{user_dir}/profile/profile.md`. Created by `/career-navigator:setup` (using Google Drive resume data if connected, otherwise conversationally). Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
 
 * **identity** — name, location, contact info, professional summary, core differentiator
 * **target\_roles** — preferred titles, minimum seniority level

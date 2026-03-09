@@ -30,12 +30,12 @@ Check whether the `hasdata` entry is active in `.mcp.json` to determine which mo
 
 Read profile, corpus, and tracker before any operation:
 ```
-data/profile/profile.md
-data/corpus/index.json
-data/tracker/tracker.json
+{user_dir}/profile/profile.md
+{user_dir}/corpus/index.json
+{user_dir}/tracker/tracker.json
 ```
 
-If `data/profile/profile.md` exists, use it as the authoritative source for: target roles, target companies (and their scoring bonuses), compensation floor, location preferences, and search notes. Do not ask the user for information that is already in the profile.
+If `{user_dir}/profile/profile.md` exists, use it as the authoritative source for: target roles, target companies (and their scoring bonuses), compensation floor, location preferences, and search notes. Do not ask the user for information that is already in the profile.
 
 If corpus is empty or missing, inform the user they need to run `/career-navigator:add-source` first before job search will return meaningful rankings.
 
