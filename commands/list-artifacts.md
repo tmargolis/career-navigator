@@ -28,7 +28,7 @@ Read `data/artifacts/index.json`. If it doesn't exist or has no artifacts:
 
 ### 2. Cross-reference with application tracker
 
-Read `data/applications/tracker.json` to look up outcome data for any applications that used these artifacts. This enriches the artifact list with real-world outcomes.
+Read `data/tracker/tracker.json` to look up outcome data for any applications that used these artifacts. This enriches the artifact list with real-world outcomes.
 
 ### 3. Render the artifact table
 

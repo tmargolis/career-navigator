@@ -9,6 +9,17 @@
           }
         ]
       }
+    ],
+    "Schedule": [
+      {
+        "cron": "0 0 * * *",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/sync-watchdir.sh"
+          }
+        ]
+      }
     ]
   }
 }

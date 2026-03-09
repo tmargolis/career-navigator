@@ -32,7 +32,7 @@ Read profile, corpus, and tracker before any operation:
 ```
 data/profile/profile.md
 data/corpus/index.json
-data/applications/tracker.json
+data/tracker/tracker.json
 ```
 
 If `data/profile/profile.md` exists, use it as the authoritative source for: target roles, target companies (and their scoring bonuses), compensation floor, location preferences, and search notes. Do not ask the user for information that is already in the profile.

@@ -13,7 +13,7 @@ Career Navigator has completed **Phase 1A implementation**. The plugin scaffold,
 **Data layer** (all gitignored user data with template scaffolding):
 - `data/profile/` — user profile (`profile.md.template`); read by all agents at session start
 - `data/corpus/` — resume corpus (`index.json.template`)
-- `data/applications/` — application tracker (`tracker.json.template`)
+- `data/tracker/` — application tracker (`tracker.json.template`)
 - `data/artifacts/` — artifact inventory (`index.json.template`)
 
 **Hooks**: `hooks/hooks.json` + `hooks/session-start.sh` (SessionStart; DailySchedule deferred to Phase 1B)

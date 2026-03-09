@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Career Navigator — SessionStart hook
-# Outputs a structured digest prompt for Claude to surface at session start.
-# Claude receives this as context and delivers a natural morning digest.
+# 1. Syncs the watch directory (new/modified files since last session)
+# 2. Outputs a structured digest prompt for Claude to surface as a morning brief.
 
 PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROFILE="$PLUGIN_ROOT/data/profile/profile.md"
-TRACKER="$PLUGIN_ROOT/data/applications/tracker.json"
+TRACKER="$PLUGIN_ROOT/data/tracker/tracker.json"
 ARTIFACTS_INDEX="$PLUGIN_ROOT/data/artifacts/index.json"
 CORPUS_INDEX="$PLUGIN_ROOT/data/corpus/index.json"
 
@@ -16,12 +16,15 @@ if [ ! -f "$TRACKER" ] && [ ! -f "$PROFILE" ]; then
 
 Welcome to Career Navigator. No job search data exists yet.
 
-Run /career-navigator:setup to get started — it will build your profile, import your
-resumes and past applications from Google Drive if connected, and configure
-job search integrations. Takes about 2 minutes.
+Run /career-navigator:setup to get started — it will build your profile, configure
+your watch directory, and import your existing resumes and applications automatically.
+Takes about 2 minutes.
 ONBOARDING
   exit 0
 fi
+
+# --- Sync watch directory (new/modified files since last session) ---
+"$PLUGIN_ROOT/hooks/sync-watchdir.sh"
 
 # --- Returning session digest ---
 TODAY=$(date +%Y-%m-%d)
@@ -32,18 +35,14 @@ Date: $TODAY
 
 Please surface the following as a concise, natural morning brief — no headers, just conversational:
 
-TRACKER DATA:
 DIGEST_HEADER
 
-# Output profile summary for Claude to use as context
 if [ -f "$PROFILE" ]; then
   echo "=== USER PROFILE ==="
-  # Output just the first 40 lines — enough for target roles, companies, comp floor
   head -40 "$PROFILE"
   echo ""
 fi
 
-# Output tracker contents for Claude to parse
 if [ -f "$TRACKER" ]; then
   echo "=== APPLICATION TRACKER ==="
   cat "$TRACKER"
@@ -58,9 +57,8 @@ fi
 
 if [ -f "$CORPUS_INDEX" ]; then
   echo "=== CORPUS SUMMARY ==="
-  # Just output unit and tag counts, not the full corpus
-  UNIT_COUNT=$(python3 -c "import json,sys; d=json.load(open('$CORPUS_INDEX')); print(len(d.get('experience_units',[])))" 2>/dev/null || echo "unknown")
-  TAG_COUNT=$(python3 -c "import json,sys; d=json.load(open('$CORPUS_INDEX')); print(len(d.get('skill_tags',[])))" 2>/dev/null || echo "unknown")
+  UNIT_COUNT=$(python3 -c "import json; d=json.load(open('$CORPUS_INDEX')); print(len(d.get('experience_units',[])))" 2>/dev/null || echo "unknown")
+  TAG_COUNT=$(python3 -c "import json; d=json.load(open('$CORPUS_INDEX')); print(len(d.get('skill_tags',[])))" 2>/dev/null || echo "unknown")
   echo "Experience units in corpus: $UNIT_COUNT"
   echo "Skill tags indexed: $TAG_COUNT"
   echo ""

@@ -157,84 +157,72 @@ If the user skips Google Drive:
 
 ---
 
-### 4. Build user profile
+### 4. Configure watch directory
 
-Create or update `data/profile/profile.md` — the permanent reference file all agents read before every operation.
+The watch directory is where the user keeps their job search documents — resumes, cover letters, application notes, etc. Career Navigator reads it on startup and at midnight to automatically ingest new and updated files.
 
-**Rule: Do not ask the user a single question until all available sources have been checked.** Discovery always comes first. Questions fill gaps, nothing more.
+Ask:
+> "Where do you keep your job search documents? Share the folder path and I'll watch it for changes automatically — any resume or cover letter you add there will be imported without you having to run a command."
 
-#### 4a. Discover — check every available source
+Accept any valid directory path. Confirm it exists before saving. If the user doesn't have one yet:
+> "No problem — create a folder anywhere you'd like (for example, `~/Documents/Job Search/`) and paste any resumes or cover letters into it. Give me the path and we'll go from there."
 
-Run all of the following in order before asking anything:
+Save the path to the `## Watch Directory` section of `data/profile/profile.md`.
 
-1. **Existing profile**: Read `data/profile/profile.md` if it exists. If it's complete and recent, show a summary and skip to step 4c.
+---
 
-2. **Existing corpus**: Read `data/corpus/index.json` if it exists. The skill tags, role titles, company names, and experience units already contain significant profile signal — extract what you can.
+### 5. Build user profile and corpus
 
-3. **Google Drive** (if connected): Search for resumes, CVs, LinkedIn profile exports, and any job search materials. Don't prompt the user before searching — just search. Extract everything relevant.
+**Rule: Do not ask any questions until all available sources have been read.** Discovery first, questions only to fill genuine gaps.
 
-4. **Local file paths**: If the corpus is empty and Drive yielded nothing, ask once: "Do you have a resume file I can read? Share a file path or paste the content." Do not ask any other questions at this point.
+#### 5a. Discover
 
-#### 4b. Consolidate
+Run all of the following before asking anything:
 
-After discovery, silently consolidate all sources into a draft profile using `data/profile/profile.md.template` as the schema. Prefer the most recent and specific data when sources conflict.
+1. **Existing profile**: Read `data/profile/profile.md` if it exists. If complete, show a summary and skip to 5c.
+2. **Watch directory**: Read every resume, CV, and job search document in the configured watch directory. This is the primary source.
+3. **Existing corpus**: Read `data/corpus/index.json` — skill tags, titles, and company names already contain significant profile signal.
+4. **Google Drive** (if connected): Search for resumes, CVs, and any additional job search materials not already in the watch directory.
 
-Profile fields to populate:
+#### 5b. Extract into corpus
+
+For each resume or CV found in 5a:
+- Check `data/corpus/index.json` → `source_documents[]` — skip if already imported by filename/path.
+- If new: extract experience units, assign skill tags, set performance weights (1.0), append to `data/corpus/index.json`. Initialize from template if it doesn't exist.
+
+#### 5c. Build profile
+
+Consolidate all discovered sources into a draft profile using `data/profile/profile.md.template`. Prefer the most recent and specific data when sources conflict. Profile fields:
 - Professional summary and level
 - Target role titles and minimum seniority
-- Target companies (primary list, secondary list, types to avoid)
+- Target companies (primary, secondary, types to avoid)
 - Industries to prioritize and deprioritize
 - Minimum total compensation (base + bonus + equity annualized)
 - Location preferences and relocation openness
 - Key skills (for ATS prioritization)
 - Unique differentiators that must appear in every resume
 
-#### 4c. Present and fill gaps
+Show the draft and ask only about fields that couldn't be determined:
+> "Here's what I've put together from your documents. Does this look right? Let me know what to change or add."
 
-Show the draft profile in full and ask only about fields that are genuinely missing or uncertain:
-
-> "Here's what I've put together from your existing materials. Does this look right? Let me know what to change or add."
-
-If specific fields are missing:
-> "I couldn't determine [field] from your existing materials — what should I put there?"
-
-Never present a blank questionnaire. If discovery was thorough, there should be few or no gaps.
-
-Save the completed profile to `data/profile/profile.md`.
-
----
-
-### 5. Build corpus from existing resumes
-
-Every document discovered in step 4a that contains work history must be extracted into the corpus. Profile writing and corpus extraction are two outputs of the same discovery — they always happen together.
-
-**For each resume or CV found or provided in step 4a:**
-
-1. Check `data/corpus/index.json` → `source_documents[]` to see if this specific document (by filename or path) has already been imported. If yes, skip it — do not re-import or double-count.
-2. If not already imported, run the full extraction: parse experience units, assign skill tags, set default performance weights (1.0), append units and the source document record to `data/corpus/index.json`. Initialize from template if the file doesn't exist yet.
-
-After processing all documents, confirm:
-> "Corpus updated — [X] experience units extracted across [Y] skills from [N] resume(s)."
-
-If some documents were already in the corpus:
-> "[N] resume(s) already in corpus, [M] new — [X] total experience units."
-
-**If no resume or CV was found or provided in step 4a**: Note it once in the completion summary. Do not ask again here — the user can run `/career-navigator:add-source` when ready.
+Save to `data/profile/profile.md`. Confirm corpus:
+> "Corpus updated — [X] experience units across [Y] skills from [N] resume(s)."
 
 ---
 
 ### 6. Import application history
 
-**If Google Drive is connected**: Search for evidence of existing applications — job hunt folders, tracking spreadsheets, cover letters addressed to specific companies, or any document that implies an application was submitted.
+Scan the watch directory and Google Drive (if connected) for evidence of existing applications — cover letters addressed to specific companies, application confirmation emails, tracking spreadsheets, or any document implying a submission.
 
 For each application found:
-- Extract: company, role title, approximate date applied, any status signals (offer, rejection, interview notes)
-- Create a record in `data/applications/tracker.json` using the standard schema
-- Set `source_board` to "imported from Google Drive" and `status` to the best available inference (default: "Applied" if uncertain)
+- Extract: company, role title, approximate date applied, any status signals
+- Create a record in `data/tracker/tracker.json` using the standard schema
+- Set `status` to the best available inference (default: "Applied" if uncertain)
 
-Ask before writing: "I found evidence of [N] past applications in your Drive. Want me to import them into your tracker? I'll flag anything I'm uncertain about."
+Ask before writing:
+> "I found evidence of [N] past applications. Want me to import them into your tracker? I'll flag anything I'm uncertain about."
 
-**If no Drive access or no application history found**: Skip this step silently.
+If nothing found: skip silently.
 
 ---
 

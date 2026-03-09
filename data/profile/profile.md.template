@@ -84,6 +84,14 @@ When assembling or scoring resumes, these elements must appear in every tailored
 
 ---
 
+## Watch Directory
+
+**Path**: [/absolute/path/to/your/job-search-documents]
+
+Career Navigator monitors this directory for new and updated documents. Place resumes, cover letters, application notes, and any other job search materials here. New and modified files are automatically ingested on startup and at midnight.
+
+---
+
 ## Search Notes
 
 - [Any specific notes about your search strategy, preferred channels, or standing instructions for agents.]

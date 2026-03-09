@@ -1,14 +1,15 @@
 # User data — gitignored to protect privacy
 data/corpus/*
-data/applications/*
+data/tracker/*
 data/artifacts/*
 data/profile/*
+data/.sync-state.json
 
 # Keep directory scaffolding and templates
 !data/corpus/.gitignore
 !data/corpus/*.template
-!data/applications/.gitignore
-!data/applications/*.template
+!data/tracker/.gitignore
+!data/tracker/*.template
 !data/artifacts/.gitignore
 !data/artifacts/*.template
 !data/profile/.gitignore
