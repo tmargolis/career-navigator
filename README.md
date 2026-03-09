@@ -106,25 +106,40 @@ You can also trigger commands conversationally — if you say "I just applied to
 
 ## Data Storage
 
-All your data lives locally in the `data/` directory and is gitignored:
+### Watch directory
+
+During setup you provide a folder where you keep your job search documents — resumes, cover letters, application notes, etc. Career Navigator monitors this folder automatically: new and modified files are ingested on every startup and at midnight, with no commands required.
+
+```
+~/Documents/Job Search/        ← your watch directory (anywhere you choose)
+├── resume-2026.pdf
+├── resume-staff-eng.docx
+├── cover-letter-acme.pdf
+└── ...
+```
+
+### Plugin data directory
+
+Extracted and generated data lives locally in `data/` (gitignored):
 
 ```
 data/
+├── profile/
+│   └── profile.md              — Your job search profile (targets, comp floor, differentiators)
 ├── corpus/
-│   └── index.json              — Your experience corpus
-├── applications/
-│   └── tracker.json            — All application records
+│   └── index.json              — Experience units extracted from your resumes
+├── tracker/
+│   └── tracker.json            — All application records with full stage history
 └── artifacts/
     ├── index.json              — Artifact inventory and metadata
-    ├── resume-acme-pm-2026-02.md          — Tailored resume, Acme Corp PM role
-    ├── cover-letter-acme-pm-2026-02.md    — Matching cover letter
-    ├── resume-stripe-eng-mgr-2026-02.md   — Tailored resume, Stripe EM role
-    └── resume-score-stripe-eng-mgr.json   — ATS score report
+    ├── resume-acme-pm-2026-03.md          — Tailored resume, Acme Corp PM role
+    ├── cover-letter-acme-pm-2026-03.md    — Matching cover letter
+    └── resume-stripe-eng-mgr-2026-03.md   — Tailored resume, Stripe EM role
 ```
 
 No data leaves your machine unless you configure a cloud connector (see [CONNECTORS.md](CONNECTORS.md)).
 
-**To back up your data**: copy the `data/` directory to a safe location. These files are the heart of the system — back them up regularly.
+**To back up your data**: copy both your watch directory and the `data/` folder to a safe location.
 
 ---
 
