@@ -11,6 +11,14 @@ skill: ats-optimization
 
 # /career-navigator:tailor-resume
 
+## Preflight
+
+Before doing anything else, resolve `{user_dir}` by reading the Career Navigator config (`~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json` on macOS, `~/.config/Claude/cowork_plugins/career-navigator/config.json` on Linux). If the config is missing or `user_dir` is empty, ask:
+> "It looks like Career Navigator hasn't been set up yet. What folder would you like to use for your job search? Share the path and I'll get everything configured."
+Then run through `/career-navigator:setup` with that path before continuing.
+
+---
+
 Builds the best possible resume for a specific job from your experience corpus. Each resume is assembled — not copied — from the experience units most relevant to the target role, weighted by outcome history.
 
 ## Usage

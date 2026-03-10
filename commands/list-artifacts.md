@@ -8,6 +8,14 @@ description: >
 
 # /career-navigator:list-artifacts
 
+## Preflight
+
+Before doing anything else, resolve `{user_dir}` by reading the Career Navigator config (`~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json` on macOS, `~/.config/Claude/cowork_plugins/career-navigator/config.json` on Linux). If the config is missing or `user_dir` is empty, ask:
+> "It looks like Career Navigator hasn't been set up yet. What folder would you like to use for your job search? Share the path and I'll get everything configured."
+Then run through `/career-navigator:setup` with that path before continuing.
+
+---
+
 Lists all resumes, cover letters, and other generated documents in your artifact inventory with metadata. Shows ATS scores at time of generation and links outcomes where known.
 
 ## Usage

@@ -17,11 +17,7 @@ if [ ! -f "$CAREER_NAV_CONFIG" ]; then
   cat <<'SETUP_NEEDED'
 [CAREER NAVIGATOR — SETUP REQUIRED]
 
-No job search directory configured. To get started:
-
-  1. Run: python3 scripts/init.py /path/to/your/job-search-folder
-  2. Restart Claude Desktop
-  3. Run /career-navigator:setup to finish configuration
+No job search directory configured yet. Run /career-navigator:setup to get started.
 SETUP_NEEDED
   exit 0
 fi
@@ -29,8 +25,8 @@ fi
 USER_DIR=$(python3 -c "import json; print(json.load(open('$CAREER_NAV_CONFIG'))['user_dir'])" 2>/dev/null | tr -d '[:space:]')
 
 if [ -z "$USER_DIR" ] || [ ! -d "$USER_DIR" ]; then
-  echo "[CAREER NAVIGATOR] Job search directory not found: $USER_DIR"
-  echo "Run: python3 scripts/init.py /new/path to update the configuration."
+  echo "[CAREER NAVIGATOR — SETUP REQUIRED]"
+  echo "Job search directory not found or no longer exists. Run /career-navigator:setup to reconfigure."
   exit 0
 fi
 

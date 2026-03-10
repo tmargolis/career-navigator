@@ -10,6 +10,14 @@ agent: resume-coach
 
 # /career-navigator:add-source
 
+## Preflight
+
+Before doing anything else, resolve `{user_dir}` by reading the Career Navigator config (`~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json` on macOS, `~/.config/Claude/cowork_plugins/career-navigator/config.json` on Linux). If the config is missing or `user_dir` is empty, ask:
+> "It looks like Career Navigator hasn't been set up yet. What folder would you like to use for your job search? Share the path and I'll get everything configured."
+Then run through `/career-navigator:setup` with that path before continuing.
+
+---
+
 Adds a source document to your resume corpus. The corpus is not a collection of resumes — it's a structured pool of experience units that can be recombined to build the optimal resume for any specific role.
 
 ## Usage

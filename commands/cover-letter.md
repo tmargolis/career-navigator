@@ -10,6 +10,14 @@ agent: resume-coach
 
 # /career-navigator:cover-letter
 
+## Preflight
+
+Before doing anything else, resolve `{user_dir}` by reading the Career Navigator config (`~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json` on macOS, `~/.config/Claude/cowork_plugins/career-navigator/config.json` on Linux). If the config is missing or `user_dir` is empty, ask:
+> "It looks like Career Navigator hasn't been set up yet. What folder would you like to use for your job search? Share the path and I'll get everything configured."
+Then run through `/career-navigator:setup` with that path before continuing.
+
+---
+
 Generates a targeted cover letter for a specific role. A good cover letter does not summarize the resume — it makes a specific argument for why you are the right person for this role, in this company, at this moment.
 
 ## Usage

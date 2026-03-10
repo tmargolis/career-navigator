@@ -10,6 +10,14 @@ agent: job-scout
 
 # /career-navigator:search-jobs
 
+## Preflight
+
+Before doing anything else, resolve `{user_dir}` by reading the Career Navigator config (`~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json` on macOS, `~/.config/Claude/cowork_plugins/career-navigator/config.json` on Linux). If the config is missing or `user_dir` is empty, ask:
+> "It looks like Career Navigator hasn't been set up yet. What folder would you like to use for your job search? Share the path and I'll get everything configured."
+Then run through `/career-navigator:setup` with that path before continuing.
+
+---
+
 Finds job opportunities matched to your skills and targets. With JobSearch configured, this searches live job listings automatically. Without it, Career Navigator generates optimized search strings you paste into job boards and ranks the results you bring back.
 
 > **Setup**: Run `/career-navigator:setup` to configure JobSearch for automated search — it takes about 2 minutes and requires no manual file editing.

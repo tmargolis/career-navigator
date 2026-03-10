@@ -10,6 +10,14 @@ agent: job-scout
 
 # /career-navigator:track-application
 
+## Preflight
+
+Before doing anything else, resolve `{user_dir}` by reading the Career Navigator config (`~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json` on macOS, `~/.config/Claude/cowork_plugins/career-navigator/config.json` on Linux). If the config is missing or `user_dir` is empty, ask:
+> "It looks like Career Navigator hasn't been set up yet. What folder would you like to use for your job search? Share the path and I'll get everything configured."
+Then run through `/career-navigator:setup` with that path before continuing.
+
+---
+
 Logs a new job application or updates an existing one. Just talk — you don't need to fill out a form. Describe what happened and Career Navigator structures it automatically.
 
 ## Usage
