@@ -106,6 +106,6 @@ Before implementing anything beyond Phase 1A, read `career-navigator-spec.md` Se
 - Always check `{user_dir}/tracker/tracker.json` before referencing application status.
 - All plugin components must call the storage connector interface, never write to `{user_dir}` directly outside of the interface.
 
-## Customization
+## Setup
 
-When the user requests plugin customization or runs `/career-navigator:setup`, the wizard asks for the job search folder path and handles all configuration from there — it discovers resumes and prior applications from the folder and Google Drive before asking any questions.
+`/career-navigator:setup` is the single entry point for all configuration. There is no Customize button flow. The wizard asks for the job search folder path and handles everything from there — registering the directory, discovering resumes and prior applications, building the profile and corpus, and optionally configuring JobSearch and Google Drive.

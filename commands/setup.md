@@ -2,29 +2,26 @@
 name: setup
 command: /career-navigator:setup
 description: >
-  Conversational setup wizard. Configures JobSearch for automated job search and
-  optionally sets up Google Drive for cloud storage. Handles all file writes
-  automatically — no manual JSON editing required. Re-runnable at any time to
-  update keys or switch connectors.
+  The single entry point for all Career Navigator configuration. Sets up the
+  job search folder, builds the user profile and corpus from existing documents,
+  configures JobSearch for live job search, and optionally connects Google Drive.
+  No Customize button required — run this command to do everything.
 triggers:
-  - "Customize the career-navigator plugin"
-  - "customize career navigator"
   - "set up career navigator"
   - "configure career navigator"
   - "get started with career navigator"
+  - "career navigator setup"
 ---
 
 # /career-navigator:setup
 
-First-run configuration wizard. Walks through each integration step-by-step, validates credentials before saving, and writes everything to config automatically. Run this before using `/career-navigator:search-jobs` (for automated mode) or to switch storage connectors.
+**This is the only setup step.** There is no Customize button to click. Run this command once after installing the plugin — it handles everything: registering your job search folder, reading your existing documents, building your profile and corpus, and configuring integrations. Re-run any time to update a key, add Google Drive, or reconfigure from scratch.
 
 ## Usage
 
 ```
 /career-navigator:setup
 ```
-
-Re-run any time to update a key, re-validate a connector, or add a new integration.
 
 Throughout this command, `{user_dir}` refers to the user's configured job search directory. All data — profile, corpus, tracker, generated artifacts — lives in subdirectories of this single folder alongside the user's raw documents.
 
