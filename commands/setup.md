@@ -32,26 +32,29 @@ Throughout this command, `{user_dir}` refers to the user's configured job search
 
 ### 0. Confirm job search directory
 
-**If the user provided a directory path in their message**: use it. Skip to step 0b.
+**If the user provided a directory path in their message**: use it.
 
 **If no path was provided**: ask:
 > "What folder should Career Navigator use for your job search? This is where your resumes and cover letters live, and where I'll save everything I generate. Share the full path."
 
-#### 0b. Check init and register
+Once you have the path, expand `~` if present and confirm the directory exists. If it doesn't exist, offer to create it.
 
-**Before proceeding, verify that the one-time init script has been run.** This is a hard prerequisite — without it, Career Navigator cannot read or write any files and all subsequent steps will fail silently.
+#### 0b. Register the directory
 
-Check by attempting to read or list `{user_dir}`. If that fails, stop immediately and tell the user:
+Run `python3 scripts/init.py {user_dir}` via the Bash tool. This saves the path to the Career Navigator config (so hooks know where to look) and registers the folder with Claude Desktop's filesystem MCP server if needed.
 
-> "It looks like the init script hasn't been run yet — that's a required one-time step before Career Navigator can access your files. Run this from the terminal (from inside the career-navigator folder), then restart Claude:
-> ```
-> python3 scripts/init.py /path/to/your/job-search-folder
-> ```
-> After restarting, come back and run `/career-navigator:setup` again."
+**If the Bash tool runs init.py successfully**, check the output:
+- If it says "Restart Claude Desktop to apply changes" → tell the user:
+  > "Almost there — Career Navigator needs a one-time restart to finish registering your folder. Quit and reopen Claude Desktop, then run `/career-navigator:setup` again. This only happens once."
+  > Stop here. Do not proceed until the user confirms they've restarted.
+- If it says "Already configured" or succeeds silently → continue to step 1.
 
-Do not continue with any other setup steps until filesystem access is confirmed.
+**If the Bash tool is unavailable** (e.g., restricted permissions): attempt to write the Career Navigator config directly using the Write tool:
+- Path (macOS): `~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json`
+- Path (Linux): `~/.config/Claude/cowork_plugins/career-navigator/config.json`
+- Content: `{"user_dir": "{user_dir}"}`
 
-If filesystem access works, run `python3 scripts/init.py {user_dir}` to ensure the path is saved to the Career Navigator config (idempotent — safe to re-run). If the Bash tool is unavailable but filesystem access works, skip the init.py call — the config was already written when the user ran it from the terminal.
+Then continue — file access via Read/Write/Bash tools may still work even without MCP registration.
 
 ---
 
