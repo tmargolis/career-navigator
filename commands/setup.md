@@ -37,19 +37,21 @@ Throughout this command, `{user_dir}` refers to the user's configured job search
 **If no path was provided**: ask:
 > "What folder should Career Navigator use for your job search? This is where your resumes and cover letters live, and where I'll save everything I generate. Share the full path."
 
-#### 0b. Register and verify
+#### 0b. Check init and register
 
-Run `python3 scripts/init.py {user_dir}` to:
-- Save the path to `~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json` (used by hooks at startup)
-- Register the directory with Claude Desktop's filesystem MCP server
+**Before proceeding, verify that the one-time init script has been run.** This is a hard prerequisite — without it, Career Navigator cannot read or write any files and all subsequent steps will fail silently.
 
-If the Bash tool is unavailable, instruct the user:
-> "Run this once from the plugin directory, then restart Claude Desktop:
+Check by attempting to read or list `{user_dir}`. If that fails, stop immediately and tell the user:
+
+> "It looks like the init script hasn't been run yet — that's a required one-time step before Career Navigator can access your files. Run this from the terminal (from inside the career-navigator folder), then restart Claude:
 > ```
-> python3 scripts/init.py /your/path/here
-> ```"
+> python3 scripts/init.py /path/to/your/job-search-folder
+> ```
+> After restarting, come back and run `/career-navigator:setup` again."
 
-Attempt to read or list `{user_dir}` to confirm filesystem access. If it fails, stop and surface the above instructions.
+Do not continue with any other setup steps until filesystem access is confirmed.
+
+If filesystem access works, run `python3 scripts/init.py {user_dir}` to ensure the path is saved to the Career Navigator config (idempotent — safe to re-run). If the Bash tool is unavailable but filesystem access works, skip the init.py call — the config was already written when the user ran it from the terminal.
 
 ---
 
@@ -61,15 +63,13 @@ Read `.mcp.json` and report what's already active vs. what's missing:
 CAREER NAVIGATOR SETUP
 ──────────────────────────────────────────
 JobSearch (job search)     [ ] Not configured
-Google Drive (storage)   [ ] Not configured
 ──────────────────────────────────────────
 Let's get you set up. This will take about 2 minutes.
 ```
 
-If everything is already configured:
+If already configured:
 ```
 JobSearch (job search)     [✓] Active
-Google Drive (storage)   [✓] Active
 ──────────────────────────────────────────
 Everything looks good. Want to re-validate a key or switch a connector?
 ```
@@ -122,11 +122,44 @@ Confirm:
 
 ---
 
-### 3. Google Drive setup (optional)
+### 3. Scan local job search folder
 
-> "Would you like to store your resumes, cover letters, and application data in Google Drive? This keeps everything backed up and accessible from any device. (You can skip this and use local storage — your data stays in your job search folder.)"
+**Rule: Always scan the local folder before asking about any other source (Google Drive, Gmail, etc.).**
 
-If the user says yes:
+#### 3a. Get the folder path
+
+The job search directory was confirmed in step 0. That is the primary local source — read every resume, CV, cover letter, and job search document in it (recursively, skipping the `profile/`, `corpus/`, and `tracker/` managed subdirs).
+
+If the user hasn't provided a folder path yet, ask now before proceeding:
+> "Where do you keep your job search documents — resumes, cover letters, and anything else related to your search? Share the full folder path."
+
+Accept any valid directory path. Confirm it exists before continuing. If the user doesn't have one yet:
+> "No problem — create a folder anywhere you'd like (for example, `~/Documents/Job Search/`) and move any resumes or cover letters into it. Give me the path and we'll go from there."
+
+Save the path to the `## Watch Directory` section of `{user_dir}/profile/profile.md`.
+
+#### 3b. Discover locally
+
+**Do not ask any questions until all local sources have been read.**
+
+Run all of the following before asking anything:
+
+1. **Existing profile**: Read `{user_dir}/profile/profile.md` if it exists. If complete and recent, show a summary and skip to step 4.
+2. **Job search folder**: Read every resume, CV, and job search document in the folder. This is the primary source.
+3. **Existing corpus**: Read `{user_dir}/corpus/index.json` — skill tags, titles, and company names already contain significant profile signal.
+
+#### 3c. Extract into corpus
+
+For each resume or CV found:
+- Check `{user_dir}/corpus/index.json` → `source_documents[]` — skip if already imported by filename/path (per-document deduplication, not all-or-nothing).
+- If new: extract experience units, assign skill tags, set performance weights (1.0), append to `{user_dir}/corpus/index.json`. Initialize from template if it doesn't exist.
+
+#### 3d. Ask about additional sources
+
+After fully scanning the local folder, ask:
+> "I've read everything in your local folder. Would you also like me to check Google Drive, Gmail, or anywhere else for additional resumes or application history?"
+
+If the user says yes to **Google Drive**:
 
 **Step 1 — Create credentials**
 
@@ -147,7 +180,7 @@ Open the Cloud Console if possible:
 
 Read the file at that path to verify it's a valid Google OAuth credentials file (check for `client_id`, `client_secret`, `redirect_uris` fields). If invalid, say so.
 
-**Step 3 — Write to config**
+**Step 3 — Write to config and search**
 
 Copy the credentials file to `services/connectors/google-drive/credentials.json` (create the directory if needed).
 
@@ -155,47 +188,16 @@ Update `.mcp.json`:
 - Move the `google-drive` entry from `_inactive_services` into `mcpServers`
 - Set `GOOGLE_CREDENTIALS_PATH` in the `env` block
 
-> "Google Drive configured. On your next command that saves an artifact, you'll be prompted to authorize access — this only happens once."
+Search Google Drive for resumes, CVs, and job search materials not already found locally. Extract and add any new documents to the corpus (same deduplication rules as 3c).
 
-If the user skips Google Drive:
-> "No problem. Everything saves to your job search folder locally. You can run `/career-navigator:setup` any time to add Google Drive later."
+> "Google Drive connected and scanned."
 
----
-
-### 4. Configure watch directory
-
-The watch directory is where the user keeps their job search documents — resumes, cover letters, application notes, etc. Career Navigator reads it on startup and at midnight to automatically ingest new and updated files.
-
-Ask:
-> "Where do you keep your job search documents? Share the folder path and I'll watch it for changes automatically — any resume or cover letter you add there will be imported without you having to run a command."
-
-Accept any valid directory path. Confirm it exists before saving. If the user doesn't have one yet:
-> "No problem — create a folder anywhere you'd like (for example, `~/Documents/Job Search/`) and paste any resumes or cover letters into it. Give me the path and we'll go from there."
-
-Save the path to the `## Watch Directory` section of `{user_dir}/profile/profile.md`.
+If the user says no or skips:
+> "Got it — working from your local folder only. You can add Google Drive any time by running `/career-navigator:setup` again."
 
 ---
 
-### 5. Build user profile and corpus
-
-**Rule: Do not ask any questions until all available sources have been read.** Discovery first, questions only to fill genuine gaps.
-
-#### 5a. Discover
-
-Run all of the following before asking anything:
-
-1. **Existing profile**: Read `{user_dir}/profile/profile.md` if it exists. If complete, show a summary and skip to 5c.
-2. **Watch directory**: Read every resume, CV, and job search document in the configured watch directory. This is the primary source.
-3. **Existing corpus**: Read `{user_dir}/corpus/index.json` — skill tags, titles, and company names already contain significant profile signal.
-4. **Google Drive** (if connected): Search for resumes, CVs, and any additional job search materials not already in the watch directory.
-
-#### 5b. Extract into corpus
-
-For each resume or CV found in 5a:
-- Check `{user_dir}/corpus/index.json` → `source_documents[]` — skip if already imported by filename/path.
-- If new: extract experience units, assign skill tags, set performance weights (1.0), append to `{user_dir}/corpus/index.json`. Initialize from template if it doesn't exist.
-
-#### 5c. Build profile
+### 4. Build user profile
 
 Consolidate all discovered sources into a draft profile using `templates/profile.md.template`. Prefer the most recent and specific data when sources conflict. Profile fields:
 - Professional summary and level
@@ -215,9 +217,9 @@ Save to `{user_dir}/profile/profile.md`. Confirm corpus:
 
 ---
 
-### 6. Import application history
+### 5. Import application history
 
-Scan the watch directory and Google Drive (if connected) for evidence of existing applications — cover letters addressed to specific companies, application confirmation emails, tracking spreadsheets, or any document implying a submission.
+Scan the job search folder and Google Drive (if connected) for evidence of existing applications — cover letters addressed to specific companies, application confirmation emails, tracking spreadsheets, or any document implying a submission.
 
 For each application found:
 - Extract: company, role title, approximate date applied, any status signals
@@ -231,7 +233,7 @@ If nothing found: skip silently.
 
 ---
 
-### 7. Completion summary
+### 6. Completion summary
 
 ```
 SETUP COMPLETE

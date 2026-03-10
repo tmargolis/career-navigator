@@ -17,29 +17,83 @@ The core differentiator: every application outcome feeds back into the system. O
 
 ## Installation
 
+> **Before you can use any Career Navigator commands, you must run `init.py` from the terminal and restart Claude.** The plugin cannot read or write files until this step completes. If you skip it, `/career-navigator:setup` will fail silently.
+
 ### Install via Claude Desktop
 
-1. Download the zip: **Code → Download ZIP** on this page (or [direct link](https://github.com/tmargolis/career-navigator/archive/refs/heads/main.zip))
-2. Run the one-time init script, passing the folder where your job search documents live:
-   ```bash
-   python3 scripts/init.py /path/to/your/job-search-folder
-   ```
-   This registers that folder with Claude Desktop's filesystem MCP server so Career Navigator can read and write files there. Requires Python 3 and Node.js (for `npx`).
-3. **Restart Claude Desktop**
-4. Click **Customize** → **Browse plugins → Personal** → **Upload a plugin** → select the ZIP
-5. Career Navigator activates on next session start
+**Step 1 — Download**
 
-After installing, click the **Customize** button on the plugin card — this launches the setup wizard automatically.
+Download the zip: **Code → Download ZIP** on this page (or [direct link](https://github.com/tmargolis/career-navigator/archive/refs/heads/main.zip)) and unzip it somewhere permanent (e.g., `~/Claude/career-navigator/`).
+
+**Step 2 — Run init (required)**
+
+From inside the unzipped folder, run:
+
+```bash
+python3 scripts/init.py /path/to/your/job-search-folder
+```
+
+Replace `/path/to/your/job-search-folder` with the folder where your resumes and cover letters live (or where you want them). This does two things:
+- Saves that path so Career Navigator's hooks can find it at startup
+- Registers the folder with Claude Desktop's filesystem MCP server so the plugin can read and write files there
+
+Requires Python 3 and Node.js (for `npx`).
+
+**Step 3 — Restart Claude Desktop**
+
+Fully quit and reopen Claude Desktop. The MCP registration from step 2 does not take effect until restart.
+
+**Step 4 — Install the plugin**
+
+Click **Customize** → **Browse plugins → Personal** → **Upload a plugin** → select the ZIP file.
+
+**Step 5 — Run setup**
+
+Click the **Customize** button on the Career Navigator plugin card, or type:
+
+```
+/career-navigator:setup
+```
+
+The wizard reads your job search folder, builds your profile and corpus, and optionally configures JobSearch for live job search.
 
 ### Install via Claude Code (CLI)
 
 ```bash
 git clone https://github.com/tmargolis/career-navigator.git
 cd career-navigator
+
+# Step 1: register your job search folder (required before any commands work)
 python3 scripts/init.py /path/to/your/job-search-folder
-# restart Claude Code, then:
+
+# Step 2: install the plugin
 claude plugin install .
+
+# Step 3: run setup
+# /career-navigator:setup
 ```
+
+---
+
+## Troubleshooting
+
+**`/career-navigator:setup` runs but nothing happens / fails silently**
+
+The init script hasn't been run yet. From the terminal, inside the career-navigator folder:
+
+```bash
+python3 scripts/init.py /path/to/your/job-search-folder
+```
+
+Then **fully restart Claude** (quit and reopen — not just a new chat). Run `/career-navigator:setup` again.
+
+**"I don't know where the career-navigator folder is"**
+
+If you installed via ZIP: it's wherever you unzipped it. If via `git clone`: it's the directory you cloned into. You need to `cd` into that folder before running `init.py`.
+
+**init.py says "Already configured" but commands still fail**
+
+Restart Claude. The MCP server registration only takes effect after a full restart.
 
 ---
 
@@ -51,7 +105,7 @@ Career Navigator will be submitted to the official Claude plugin marketplace at 
 
 ## Quick Start
 
-After installing, click **Customize** on the plugin card — it launches the setup wizard automatically. Or run it manually any time:
+> **Prerequisite:** `python3 scripts/init.py /your/job-search-folder` must be run from the terminal and Claude restarted before any commands will work. See [Installation](#installation) above.
 
 ### 1. Run setup
 
@@ -59,7 +113,7 @@ After installing, click **Customize** on the plugin card — it launches the set
 /career-navigator:setup
 ```
 
-Asks for your job search folder (or uses what you provided to `init.py`), then reads everything in it — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures JobSearch for live job search and optionally Google Drive.
+Reads everything in your job search folder — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures JobSearch for live job search and optionally Google Drive.
 
 ### 2. Drop documents in your folder
 
