@@ -87,12 +87,12 @@ Only walk through unconfigured items, or items the user explicitly asks to recon
 > "Opening the signup page now — create a free account and then paste your API key back here."
 
 Open the signup page using a Bash call:
-- macOS: `open https://app.jobsearch.com/sign-up`
-- Linux: `xdg-open https://app.jobsearch.com/sign-up`
-- Windows: `start https://app.jobsearch.com/sign-up`
+- macOS: `open https://app.hasdata.com/sign-up`
+- Linux: `xdg-open https://app.hasdata.com/sign-up`
+- Windows: `start https://app.hasdata.com/sign-up`
 
 If the Bash tool is unavailable, display the URL directly:
-> "Please open this URL to create your free JobSearch account: https://app.jobsearch.com/sign-up"
+> "Please open this URL to create your free JobSearch account: https://app.hasdata.com/sign-up"
 
 **Step 2 — Wait for the key**
 
@@ -115,7 +115,7 @@ Do not save an invalid key.
 
 Update `.mcp.json`:
 - Move the `jobsearch` entry from `_inactive_services` into `mcpServers`
-- Set `JOBSEARCH_API_KEY` to the validated key in the `env` block
+- Set `HASDATA_API_KEY` to the validated key in the `env` block
 
 Confirm:
 > "JobSearch configured. `/career-navigator:search-jobs` will now search live job listings automatically."

@@ -5,9 +5,9 @@
       "comment": "JobSearch — job search across Indeed, LinkedIn, and other boards. Configured by /career-navigator:setup.",
       "type": "stdio",
       "command": "node",
-      "args": ["services/connectors/jobsearch/server.js"],
+      "args": ["services/connectors/hasdata/server.js"],
       "env": {
-        "JOBSEARCH_API_KEY": "8e109f3d-6d33-4be1-8ce5-615eca066799"
+        "HASDATA_API_KEY": ""
       }
     }
   },
