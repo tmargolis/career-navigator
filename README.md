@@ -43,7 +43,11 @@ Career Navigator will be submitted to the official Claude plugin marketplace at 
 
 ## Quick Start
 
-### 1. Run setup
+### 1. Add your job search folder to the chat
+
+In CoWork, click the **+** button (or the folder icon) and add the local folder where your resumes and cover letters live. This gives Career Navigator file access for the session.
+
+### 2. Run setup
 
 ```
 /career-navigator:setup
@@ -51,11 +55,11 @@ Career Navigator will be submitted to the official Claude plugin marketplace at 
 
 Reads everything in your job search folder — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures JobSearch for live job search and optionally Google Drive.
 
-### 2. Drop documents in your folder
+### 3. Drop documents in your folder
 
 Career Navigator monitors your job search folder automatically. Add a resume or cover letter, and it's ingested at the next startup or midnight sync — no command needed.
 
-### 3. Search for matching roles
+### 4. Search for matching roles
 
 ```
 /career-navigator:search-jobs
@@ -63,7 +67,7 @@ Career Navigator monitors your job search folder automatically. Add a resume or 
 
 With JobSearch configured: searches live job listings automatically and returns ranked results. Without it: generates optimized search strings for Indeed, LinkedIn, and Google Jobs, then ranks the results you bring back.
 
-### 4. Tailor your first resume
+### 5. Tailor your first resume
 
 ```
 /career-navigator:tailor-resume
