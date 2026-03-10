@@ -9,28 +9,5 @@
   "commands_dir": "commands",
   "agents_dir": "agents",
   "skills_dir": "skills",
-  "hooks_file": "hooks/hooks.json",
-  "capabilities": {
-    "connectors": {
-      "local-files": {
-        "type": "mcp",
-        "config": {
-          "command": "npx",
-          "args": [
-            "-y",
-            "@modelcontextprotocol/server-filesystem",
-            "${user_config.data_path}"
-          ]
-        }
-      }
-    },
-    "user_config": {
-      "data_path": {
-        "type": "string",
-        "title": "Data Folder Path",
-        "description": "The absolute path to your job search data folder.",
-        "required": true
-      }
-    }
-  }
+  "hooks_file": "hooks/hooks.json"
 }
