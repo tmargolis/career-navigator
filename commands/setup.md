@@ -72,6 +72,8 @@ Only walk through unconfigured items, or items the user explicitly asks to recon
 
 ---
 
+<!-- STEPS 2–6 COMMENTED OUT FOR INCREMENTAL TESTING — restore once step 0/1 confirmed working
+
 ### 2. JobSearch setup (job search)
 
 **Step 1 — Introduce JobSearch**
@@ -243,6 +245,8 @@ Google Drive (storage)   [✓] Active        (or [ ] Using local storage)
 Suggest the natural next step — never suggest running `/career-navigator:setup` again:
 - If JobSearch is not yet configured: "Run `/career-navigator:setup` again to add your JobSearch key, or run `/career-navigator:search-jobs` now to use assisted-manual search."
 - Otherwise: "Run `/career-navigator:search-jobs` to find matching roles, or `/career-navigator:tailor-resume` with a job description to build your first targeted resume."
+
+END COMMENTED-OUT SECTION -->
 
 ---
 
