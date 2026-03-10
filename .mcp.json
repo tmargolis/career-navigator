@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "_note": "Run /career-navigator:setup to configure integrations. The wizard handles all file edits automatically.",
+    "jobsearch": {
+      "comment": "JobSearch — job search across Indeed, LinkedIn, and other boards. Configured by /career-navigator:setup.",
+      "type": "stdio",
+      "command": "node",
+      "args": ["services/connectors/hasdata/server.js"],
+      "env": {
+        "HASDATA_API_KEY": "${HASDATA_API_KEY}"
+      }
+    }
+  },
+  "_inactive_services": {
+    "google-drive": {
+      "comment": "Google Drive storage connector. Configured by /career-navigator:setup.",
+      "type": "stdio",
+      "command": "node",
+      "args": ["services/connectors/google-drive/server.js"],
+      "env": {
+        "GOOGLE_CREDENTIALS_PATH": "services/connectors/google-drive/credentials.json"
+      }
+    }
+  }
+}
