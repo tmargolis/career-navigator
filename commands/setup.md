@@ -36,22 +36,16 @@ Throughout this command, `{user_dir}` refers to the user's configured job search
 
 Once you have the path, expand `~` if present and confirm the directory exists. If it doesn't exist, offer to create it.
 
-#### 0b. Register the directory
+#### 0b. Save the directory to config
 
-Run `python3 scripts/init.py {user_dir}` via the Bash tool. This saves the path to the Career Navigator config (so hooks know where to look) and registers the folder with Claude Desktop's filesystem MCP server if needed.
+Run `python3 scripts/init.py {user_dir}` via the Bash tool. This saves the path so session-start and sync hooks can find it at runtime. No restart required.
 
-**If the Bash tool runs init.py successfully**, check the output:
-- If it says "Restart Claude Desktop to apply changes" → tell the user:
-  > "Almost there — Career Navigator needs a one-time restart to finish registering your folder. Quit and reopen Claude Desktop, then run `/career-navigator:setup` again. This only happens once."
-  > Stop here. Do not proceed until the user confirms they've restarted.
-- If it says "Already configured" or succeeds silently → continue to step 1.
-
-**If the Bash tool is unavailable** (e.g., restricted permissions): attempt to write the Career Navigator config directly using the Write tool:
+If the Bash tool is unavailable, write the config directly using the Write tool:
 - Path (macOS): `~/Library/Application Support/Claude/cowork_plugins/career-navigator/config.json`
 - Path (Linux): `~/.config/Claude/cowork_plugins/career-navigator/config.json`
 - Content: `{"user_dir": "{user_dir}"}`
 
-Then continue — file access via Read/Write/Bash tools may still work even without MCP registration.
+Then continue to step 1.
 
 ---
 
