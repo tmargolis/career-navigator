@@ -1,3 +1,6 @@
+# Local config with credentials
+.mcp.json
+
 # Dependencies and environment
 node_modules/
 .env
