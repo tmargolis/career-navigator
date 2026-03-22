@@ -68,7 +68,7 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 ---
 
-## All Phase 1A Commands
+## All Phase 1B Commands
 
 | Command | Purpose |
 |---------|---------|
