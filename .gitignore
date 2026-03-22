@@ -10,5 +10,8 @@ career/
 .DS_Store
 **/.DS_Store
 
+# Local Claude instructions
+CLAUDE.md
+
 # Editor
 .vscode/
