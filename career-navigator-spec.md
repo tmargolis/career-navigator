@@ -72,25 +72,27 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [**15\. Phased Delivery Plan	20**](#15-phased-delivery-plan)
 
-[Phase 1A — "I built a Claude plugin that replaces a career coach" (MVP)	20](#phase-1a--i-built-a-claude-plugin-that-replaces-a-career-coach-mvp)
+[Phase 1 — Core Platform	20](#phase-1--core-platform)
 
-[Phase 1B — "It now tracks your entire job search and tells you what's working"	20](#phase-1b--it-now-tracks-your-entire-job-search-and-tells-you-whats-working)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search	20](#phase-1a--core-platform-plugin-scaffold-setup-session-start-and-live-job-search)
 
-[Phase 1C — "It now gives you an honest assessment of your skills, your gaps, and exactly what training is worth your time and money"	20](#phase-1c--it-now-gives-you-an-honest-assessment-of-your-skills-your-gaps-and-exactly-what-training-is-worth-your-time-and-money)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and insight engine	20](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-insight-engine)
 
-[Phase 1D — "It now finds your next opportunity before you even know to look for it"	20](#phase-1d--it-now-finds-your-next-opportunity-before-you-even-know-to-look-for-it)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI	20](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
 
-[Phase 1E — "It now preps you for every interview, at every level, in every mood"	21](#phase-1e--it-now-preps-you-for-every-interview-at-every-level-in-every-mood)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring	20](#phase-1d--proactive-discovery-outcome-weighted-job-scoring-and-market-trend-monitoring)
 
-[Phase 1F — "It now builds your professional brand while you search"	21](#phase-1f--it-now-builds-your-professional-brand-while-you-search)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn content advisor	21](#phase-1e--professional-presence-networking-strategy-event-radar-and-linkedin-content-advisor)
 
-[Phase 2A — Email & Calendar Integration	21](#phase-2a--email--calendar-integration)
+[Phase 2 — Integrations	21](#phase-2--integrations)
 
-[Phase 2B — Interview Audio Capture	22](#phase-2b--interview-audio-capture)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 2A — Email & Calendar Integration	21](#phase-2a--email--calendar-integration)
 
-[Phase 2C — Extended Integrations	22](#phase-2c--extended-integrations)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief	22](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
 
-[Phase 2D — Advanced Analytics & LinkedIn Automation	22](#phase-2d--advanced-analytics--linkedin-automation)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 2C — Extended Integrations	22](#phase-2c--extended-integrations)
+
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 2D — Advanced Analytics & LinkedIn Automation	22](#phase-2d--advanced-analytics--linkedin-automation)
 
 [Phase 3 — Platform Expansion	22](#phase-3--platform-expansion)
 
@@ -124,14 +126,15 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 | Plugin Name | career-navigator |
 | :---- | :---- |
-| **Version** | 1.0.0 |
+| **Version** | 1.1.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
+| **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | node-cron (cross-platform) |
 | **Notifications** | node-notifier (cross-platform native notifications) |
-| **Storage Layer (Phase 1\)** | Google Drive (additional connectors in Phase 2C) |
+| **Storage Layer (Phase 1\)** | Local filesystem — `{user_dir}` (cloud connectors in Phase 2C) |
 | **Analytics Layer (Phase 1\)** | SQLite \+ D3 visualization (additional connectors in Phase 2D) |
 | **AI Services** | Claude API (via MCP), Whisper (audio transcription — Phase 2B) |
-| **Job Search (Phase 1\)** | JobSearch (primary, via `/career-navigator:setup`) \+ assisted-manual fallback |
+| **Job Search (Phase 1\)** | Indeed connector (built-in, no token required) \+ assisted-manual fallback |
 
 # **2\. Plugin File Structure**
 
@@ -169,7 +172,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career-navigator:setup** | Command | Conversational setup wizard. Configures JobSearch for automated job search and optionally sets up Google Drive for cloud storage. Validates credentials before saving, writes all config automatically. Re-runnable to update keys or switch connectors. |
+| **/career-navigator:setup** | Command | Conversational setup wizard. Reads existing documents in the job search folder, builds the user profile and experience corpus, and configures JobSearch for live job search. Validates all inputs before saving, writes config automatically. Re-runnable to update keys or reconfigure. |
 
 ## **3.1 Resume & Cover Letter Commands**
 
@@ -215,22 +218,35 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 Agents are specialized Claude instances with focused roles. They can be invoked directly or orchestrated by commands. Multiple agents may collaborate on complex tasks.
 
-| Name | Type | Description |
+| Name | Phase | Description |
 | :---- | :---- | :---- |
-| **resume-coach** | Agent | Analyzes the resume corpus, identifies gaps and strengths, optimizes for ATS compatibility, and provides narrative coaching. Invoked by tailor-resume and resume-score commands. |
-| **job-scout** | Agent | Searches and ranks job opportunities across all configured job boards. Incorporates outcome history and market intelligence into scoring. Ranking improves over time as the user logs outcomes. |
-| **market-researcher** | Agent | Monitors macro hiring trends, role-specific demand signals, AI/automation displacement risks, geographic demand patterns, and sector-specific cycles. Feeds the market-brief command and the job-scout agent. |
-| **honest-advisor** | Agent | Provides candid assessments of the user's competitiveness for specific roles, potential recruiter concerns, and strategies for overcoming barriers. Researches company/industry-specific deviations from general norms. Empathetic but unsparing. |
-| **interview-coach** | Agent | Conducts mock interviews across all stages and vibes (supportive, neutral, challenging, antagonistic, bored). Adapts difficulty based on user performance in adaptive mode. Incorporates current events and company-specific research into questions. |
-| **networking-strategist** | Agent | Analyzes the user's network relative to their goals, identifies gaps and paths, drafts outreach, and evaluates content strategy. Searches email and calendar history for contact context with user approval. |
-| **content-advisor** | Agent | Evaluates LinkedIn content for audience fit, algorithmic performance, and cultural alignment with target companies. Flags political/cultural risks relative to specific employer profiles. Recommends topics proactively. |
-| **event-intelligence** | Agent | Continuously discovers and evaluates networking events globally. Assesses ROI using attendee quality, user target overlap, and historical conversion data. Flags high-value presentation opportunities. |
-| **insight-engine** | Agent | Analyzes cross-application outcome data to identify patterns: which resume variants, communication styles, and role types are performing best. Feeds recommendations back to job-scout and resume-coach. |
-| **interview-capture** | Agent | Phase 2B feature. Processes audio transcription from interviews (via Whisper), extracts structured data, and auto-populates the tracker. Only active with explicit user opt-in. Full privacy framework required before activation. |
+| **resume-coach** | 1B | Analyzes the resume corpus, identifies gaps and strengths, optimizes for ATS compatibility, and provides narrative coaching. Invoked by the `tailor-resume` and `resume-score` skills. |
+| **insight-engine** | 1B | Analyzes cross-application outcome data to identify patterns: which resume variants, communication styles, and role types are performing best. Updates corpus performance weights and feeds recommendations back to `job-scout` and `resume-coach`. |
+| **honest-advisor** | 1C | Provides candid assessments of the user's competitiveness for specific roles, potential recruiter concerns, and strategies for overcoming barriers. Researches company/industry-specific deviations from general norms. Empathetic but unsparing. |
+| **market-researcher** | 1C | Monitors macro hiring trends, role-specific demand signals, AI/automation displacement risks, geographic demand patterns, and sector-specific cycles. Feeds the `market-brief` command and the `job-scout` agent. |
+| **job-scout** | 1D | Searches and ranks job opportunities across all configured job boards. Incorporates outcome history and market intelligence into scoring. Ranking improves over time as the user logs outcomes. Proactively surfaces high-match opportunities. |
+| **interview-coach** | 2B | Conducts mock interviews across all stages and vibes (supportive, neutral, challenging, antagonistic, bored). Adapts difficulty based on user performance in adaptive mode. Incorporates current events and company-specific research into questions. |
+| **networking-strategist** | 1F | Analyzes the user's network relative to their goals, identifies gaps and paths, drafts outreach, and evaluates content strategy. Searches email and calendar history for contact context with user approval. |
+| **content-advisor** | 1F | Evaluates LinkedIn content for audience fit, algorithmic performance, and cultural alignment with target companies. Flags political/cultural risks relative to specific employer profiles. Recommends topics proactively. |
+| **event-intelligence** | 1F | Continuously discovers and evaluates networking events globally. Assesses ROI using attendee quality, user target overlap, and historical conversion data. Flags high-value presentation opportunities. |
+| **interview-capture** | 2B | Processes audio transcription from interviews (via Whisper), extracts structured data, and auto-populates the tracker. Only active with explicit user opt-in. Full privacy framework required before activation. |
 
 # **5\. Skills**
 
-Skills are auto-triggered capabilities that Claude activates when relevant context is detected, without requiring an explicit command invocation.
+Skills are auto-triggered capabilities that Claude activates when relevant context is detected, without requiring an explicit command invocation. This is the primary interaction model for Career Navigator — commands serve as explicit aliases for users who prefer them, but skills carry the behavioral intelligence.
+
+**Workflow skills** handle the core job search operations and fire from conversational intent:
+
+| Name | Type | Description |
+| :---- | :---- | :---- |
+| **tailor-resume** | Skill | Fires when the user shares or pastes a job description, or expresses intent to apply to a specific role. Reads the corpus, assembles an optimized resume for the target role, scores it for ATS compatibility, and saves it to the artifact inventory. Also invocable via `/career-navigator:tailor-resume`. |
+| **cover-letter** | Skill | Fires after a resume is tailored for a role, or when the user explicitly requests a cover letter for a specific job. Draws on the tailored resume, company research, and any known contact context. Saves to artifact inventory. Also invocable via `/career-navigator:cover-letter`. |
+| **track-application** | Skill | Fires when the user mentions applying to a job, logging a new application, or updating an existing one (e.g., "I just applied to Acme" or "I got a callback from Google"). Structures conversational input into the tracker database automatically. Also invocable via `/career-navigator:track-application`. |
+| **add-source** | Skill | Fires when the user uploads or references a new resume, CV, or portfolio document. Extracts experience units and adds them to the corpus. Also invocable via `/career-navigator:add-source`. |
+| **resume-score** | Skill | Fires when the user shares a resume alongside a job description without explicitly requesting tailoring. Scores ATS keyword match, formatting compliance, and narrative strength. Also invocable via `/career-navigator:resume-score`. |
+| **list-artifacts** | Skill | Fires when the user asks to see their generated documents, artifact history, or what has been created so far. Also invocable via `/career-navigator:list-artifacts`. |
+
+**Context skills** fire on ambient signals throughout any session:
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
@@ -267,10 +283,9 @@ The plugin defines a standard artifact storage interface. Users configure a sing
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **google-drive** | Connector | Stores artifacts and event logs in Google Drive via OAuth. Default connector for personal users. |
-| **onedrive** | Connector | Stores artifacts and event logs in Microsoft OneDrive via OAuth. Preferred for enterprise/Microsoft environments. |
-| **dropbox** | Connector | Stores artifacts and event logs in Dropbox via OAuth. |
-| **local** | Connector | Stores all data locally in a configurable directory. No cloud dependency. Suitable for privacy-sensitive users. |
+| **local** | Connector | Default connector. Stores all data locally in `{user_dir}`. No cloud dependency, no credentials required. All Phase 1 functionality uses this connector. |
+
+Cloud storage connectors (Google Drive, OneDrive, Dropbox) are introduced in Phase 2C. See [Phase 2C](#phase-2c--extended-integrations) for details.
 
 # **8\. Analytics Connectors**
 
@@ -304,7 +319,7 @@ External services are configured via the plugin's .mcp.json file. Run `/career-n
 
 ## **10.0 User Profile**
 
-Stored at `{user_dir}/profile/profile.md`. Created by `/career-navigator:setup` (using Google Drive resume data if connected, otherwise conversationally). Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
+Stored at `{user_dir}/profile/profile.md`. Created by `/career-navigator:setup` — scans documents in `{user_dir}` and builds the profile from existing resumes and cover letters; falls back to conversational Q&A if no documents are found. Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
 
 * **identity** — name, location, contact info, professional summary, core differentiator
 * **target\_roles** — preferred titles, minimum seniority level
@@ -404,7 +419,7 @@ Over time, the system builds a personalized model of what works for this specifi
 
 # **13\. Interview Capture (Phase 2B)**
 
-Interview capture is an opt-in feature that uses local audio recording and Whisper transcription to automatically log interview content. It has been moved to Phase 2B to allow time for a full privacy framework, consent model design, and cross-jurisdiction legal review before implementation. The post-interview Q\&A debrief (/career-navigator:interview-debrief) serves as the Phase 1 alternative.
+Interview capture is an opt-in feature that uses local audio recording and Whisper transcription to automatically log interview content. It is bundled with the full interview preparation system in Phase 2B, shipping together so the prep and capture experiences are developed and tested as a unified layer. The post-interview Q\&A debrief (`/career-navigator:interview-debrief`) is the primary debrief path for users who do not use audio capture.
 
 ## **13.1 Privacy Considerations (To Be Discussed)**
 
@@ -456,27 +471,35 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 # **15\. Phased Delivery Plan**
 
-## **Phase 1A — "I built a Claude plugin that replaces a career coach" (MVP)**
+## **Phase 1 — Core Platform**
 
-* Plugin scaffold: manifest, directory structure, node-cron scheduler, node-notifier
+Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
-* Resume corpus management and artifact inventory
+### **Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search**
 
-* /career-navigator:setup conversational configuration wizard — builds user profile from Google Drive if connected, auto-imports existing resumes into corpus, auto-imports past application history into tracker; falls back to conversational Q&A if no Drive access
+* Plugin scaffold: manifest, directory structure
 
-* /career-navigator:tailor-resume, /career-navigator:cover-letter, /career-navigator:resume-score, /career-navigator:add-source, /career-navigator:list-artifacts
+* `setup` skill and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into corpus, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (corpus, tracker, artifacts index)
 
-* Basic conversational application tracker with /career-navigator:track-application
+* `search-jobs` skill — live job search via Indeed connector; assisted-manual fallback
 
-* JobSearch job search (automated); assisted-manual fallback for LinkedIn
+* `session-start` skill — `SessionStart` hook with pipeline digest on every session open; onboarding on first run
 
-* Google Drive storage connector, local file storage default, SQLite data storage
+* Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
 
-* SessionStart hook with daily digest
+### **Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and insight engine**
 
-## **Phase 1B — "It now tracks your entire job search and tells you what's working"**
+* **Agents introduced:** `resume-coach` (resume assembly, ATS optimization, narrative coaching), `insight-engine` (outcome pattern analysis, performance weight updates)
 
-* Insight engine and feedback loop
+* Workflow skills built and auto-triggered: `tailor-resume`, `cover-letter`, `track-application`, `add-source`, `resume-score`, `list-artifacts` — activate from conversational intent; also invocable via explicit commands
+
+* Application tracker — full conversational tracking with stage history, contacts, notes, and outcome logging
+
+* ATS scoring — keyword match, formatting compliance, and narrative strength scoring on generated and existing resumes
+
+* `ats-optimization` and `salary-research` context skills
+
+* Insight engine and feedback loop — outcome data feeds back into corpus performance weights and job-scout scoring
 
 * Benchmarking against industry norms by role, level, company size, and geography
 
@@ -484,23 +507,27 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * D3 pipeline dashboard with timeline view and benchmark comparisons
 
-* /career-navigator:pipeline, /career-navigator:follow-up, /career-navigator:market-brief
+* `/career-navigator:pipeline`, `/career-navigator:follow-up`, `/career-navigator:market-brief`
 
-## **Phase 1C — "It now gives you an honest assessment of your skills, your gaps, and exactly what training is worth your time and money"**
+### **Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI**
 
-* Honest advisor agent with three-step norm/exception/strategy pattern
+* **Agents introduced:** `honest-advisor` (candid role competitiveness assessment, norm/exception/strategy pattern), `market-researcher` (role demand trends, AI/automation displacement, geographic signals)
 
-* Market researcher agent: role demand trends, AI/automation displacement, geographic signals
+* Honest advisor integration with three-step norm/exception/strategy pattern
+
+* Market researcher: role demand trends, AI/automation displacement, geographic signals
 
 * Skills self-assessment and gap analysis against target role requirements
 
 * Training recommendation engine with cost-benefit-time ROI analysis (certifications, degrees, bootcamps, self-study)
 
-* /career-navigator:suggest-roles, job scout scoring improvements driven by outcome data
+* `/career-navigator:suggest-roles`, job scout scoring improvements driven by outcome data
 
-* Note: skills assessment becomes significantly richer once Phase 1E mock interview performance data feeds back into the profile
+* Note: skills assessment becomes significantly richer once Phase 2B mock interview performance data feeds back into the profile
 
-## **Phase 1D — "It now finds your next opportunity before you even know to look for it"**
+### **Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring**
+
+* **Agent introduced:** `job-scout` (full outcome-weighted job ranking, proactive opportunity alerts, transferable skills analysis)
 
 * Job scout with full outcome-driven scoring and proactive opportunity alerts
 
@@ -510,27 +537,11 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Role demand forecasting incorporating AI/automation displacement signals
 
-## **Phase 1E — "It now preps you for every interview, at every level, in every mood"**
+### **Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn content advisor**
 
-* Mock interview system: guided, random, and adaptive modes
+* **Agents introduced:** `networking-strategist` (network analysis, gap identification, outreach drafting), `content-advisor` (LinkedIn content evaluation, cultural risk flagging, topic recommendations), `event-intelligence` (global event discovery, ROI assessment, presentation opportunity flagging)
 
-* All stages: recruiter screen, hiring manager, technical, panel, executive, final
-
-* Full vibe spectrum: supportive, neutral, challenging, antagonistic, bored (calibrated — not demoralizing)
-
-* Current events integration woven into mock interview questions
-
-* Morning brief with company news, interviewer research, and talking points
-
-* Post-interview Q\&A debrief flow (/career-navigator:interview-debrief) — structured conversational capture
-
-* /career-navigator:prep-interview, /career-navigator:mock-interview, /career-navigator:morning-brief
-
-* Mock interview performance feeds back into Phase 1C skills profile
-
-## **Phase 1F — "It now builds your professional brand while you search"**
-
-* Networking strategy agent and /career-navigator:network-map
+* Networking strategy and `/career-navigator:network-map`
 
 * Event radar with local, national, and international discovery
 
@@ -540,11 +551,15 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Post evaluator with cultural/political risk assessment against target company profiles
 
-* /career-navigator:draft-outreach, /career-navigator:content-suggest, /career-navigator:evaluate-post, /career-navigator:event-radar
+* `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`, `/career-navigator:event-radar`
 
 * Note: outreach enrichment with email/calendar history deferred to Phase 2A
 
-## **Phase 2A — Email & Calendar Integration**
+## **Phase 2 — Integrations**
+
+Phase 2 extends Career Navigator beyond the local filesystem by connecting it to the external services that complete the full job search experience. Phase 2A unlocks the email and calendar history that powers warm networking intelligence — surfacing prior contact relationships before outreach is drafted. Phase 2B brings the complete interview layer: a full mock interview system with audio capture and automated debrief logging, combined into a single release to avoid shipping the prep experience without the capture infrastructure. Phase 2C adds cloud storage connectors and ATS read-access, making the platform portable and enabling users to track applications submitted through employer systems. Phase 2D closes the analytics loop with BI connectors and LinkedIn automation for deeper pipeline visibility. Each sub-phase is independently deployable — users can adopt what's relevant to their workflow without requiring all of Phase 2 to be complete.
+
+### **Phase 2A — Email & Calendar Integration**
 
 * Gmail and Outlook OAuth connectors (read-only scoped)
 
@@ -558,9 +573,27 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Meeting history awareness for warm networking identification
 
-## **Phase 2B — Interview Audio Capture**
+### **Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief**
 
-* Full privacy risk assessment and consent model design
+* **Agents introduced:** `interview-coach` (mock interviews across all stages and vibes, adaptive difficulty, current events integration), `interview-capture` (audio transcription via Whisper, structured tracker population — opt-in only)
+
+* Mock interview system: guided, random, and adaptive modes
+
+* All stages: recruiter screen, hiring manager, technical, panel, executive, final
+
+* Full vibe spectrum: supportive, neutral, challenging, antagonistic, bored (calibrated — not demoralizing)
+
+* Current events integration woven into mock interview questions
+
+* Morning brief with company news, interviewer research, and talking points
+
+* Post-interview Q\&A debrief flow (`/career-navigator:interview-debrief`) — structured conversational capture; serves as the primary debrief path for users who do not use audio capture
+
+* `/career-navigator:prep-interview`, `/career-navigator:mock-interview`, `/career-navigator:morning-brief`
+
+* Mock interview performance feeds back into Phase 1C skills profile
+
+* Full privacy risk assessment and consent model design for audio capture
 
 * Cross-jurisdiction recording consent guidance
 
@@ -572,19 +605,19 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 * Auto-population of tracker from interview transcription
 
-## **Phase 2C — Extended Integrations**
+### **Phase 2C — Extended Integrations**
 
-* OneDrive storage connector
+* Google Drive storage connector (OAuth)
 
-* Dropbox storage connector
+* OneDrive storage connector (OAuth)
 
-* Local filesystem storage connector
+* Dropbox storage connector (OAuth)
 
 * IllinoisJobLink job board connector
 
 * ATS read-only connectors for Greenhouse, Workday, and Lever
 
-## **Phase 2D — Advanced Analytics & LinkedIn Automation**
+### **Phase 2D — Advanced Analytics & LinkedIn Automation**
 
 * Power BI streaming dataset connector
 
@@ -626,7 +659,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 | :---- | :---- | :---- |
 | **Interview Audio Privacy** | Privacy & Legal | Full privacy risk assessment needed before Phase 2B implementation. Consent model, storage location, retention policy, employer policy warnings, and cross-jurisdiction recording consent to be designed. |
 | **LinkedIn API Access** | Technical | LinkedIn's official API is highly restricted. Phase 1 uses assisted-manual workflow. Phase 2D will assess automation options including third-party providers like Proxycurl. |
-| **Antagonistic Interview Mode** | UX | Exact calibration of antagonistic vibe — specifically what constitutes appropriately challenging vs. demoralizing. Needs user testing. System must back off when interview is imminent. |
+| **Antagonistic Interview Mode** | UX | Exact calibration of antagonistic vibe — specifically what constitutes appropriately challenging vs. demoralizing. Needs user testing before Phase 2B ships. System must back off when interview is imminent. |
 | **Political/Cultural Content Guidance** | Ethics | System should inform not prescribe. Exact framing of cultural risk flags to be designed to avoid appearing to suppress legitimate expression. |
 | **Data Retention Policy** | Privacy | How long application data, artifacts, and event logs are retained. User-controlled deletion scope to be specified. |
 | **Salary Negotiation** | Scope | Offer evaluation and negotiation guidance mentioned briefly — full scope not yet specified. Candidate for Phase 3\. |
@@ -636,7 +669,7 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 | Command | Purpose |
 | :---- | :---- |
-| **/career-navigator:setup** | Configure JobSearch and Google Drive (run first) |
+| **/career-navigator:setup** | Configure job search folder, build corpus and profile, set up JobSearch (run first) |
 | **/career-navigator:tailor-resume** | Assemble optimal resume for a specific role from corpus |
 | **/career-navigator:cover-letter** | Generate targeted cover letter |
 | **/career-navigator:resume-score** | Score resume against a job description |
