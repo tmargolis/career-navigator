@@ -10,95 +10,95 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 # **Table of Contents**
 
-[**Table of Contents	2**](#heading=)
+[**Table of Contents	2**](#table-of-contents)
 
-[**1\. Overview	3**](#heading=)
+[**1\. Overview	3**](#1-overview)
 
-[1.1 Design Principles	3](#heading=)
+[1.1 Design Principles	3](#11-design-principles)
 
-[1.2 Plugin Architecture	3](#heading=)
+[1.2 Plugin Architecture	3](#12-plugin-architecture)
 
-[**2\. Plugin File Structure	4**](#heading=)
+[**2\. Plugin File Structure	4**](#2-plugin-file-structure)
 
-[**3\. Slash Commands	5**](#heading=)
+[**3\. Slash Commands	5**](#3-slash-commands)
 
-[3.1 Resume & Cover Letter Commands	5](#heading=)
+[3.1 Resume & Cover Letter Commands	5](#31-resume--cover-letter-commands)
 
-[3.2 Job Search & Tracking Commands	5](#heading=)
+[3.2 Job Search & Tracking Commands	5](#32-job-search--tracking-commands)
 
-[3.3 Interview Prep Commands	6](#heading=)
+[3.3 Interview Prep Commands	6](#33-interview-prep-commands)
 
-[3.4 Networking Commands	6](#heading=)
+[3.4 Networking Commands	6](#34-networking-commands)
 
-[**4\. Agents	7**](#heading=)
+[**4\. Agents	7**](#4-agents)
 
-[**5\. Skills	9**](#heading=)
+[**5\. Skills	9**](#5-skills)
 
-[**6\. Hooks	10**](#heading=)
+[**6\. Hooks	10**](#6-hooks)
 
-[**7\. Storage Connectors	11**](#heading=)
+[**7\. Storage Connectors	11**](#7-storage-connectors)
 
-[7.1 Interface	11](#heading=)
+[7.1 Interface	11](#71-interface)
 
-[7.2 Available Connectors	11](#heading=)
+[7.2 Available Connectors	11](#72-available-connectors)
 
-[**8\. Analytics Connectors	12**](#heading=)
+[**8\. Analytics Connectors	12**](#8-analytics-connectors)
 
-[**9\. External Service Integrations (.mcp.json)	13**](#heading=)
+[**9\. External Service Integrations (.mcp.json)	13**](#9-external-service-integrations-mcpjson)
 
-[**10\. Core Data Model	14**](#heading=)
+[**10\. Core Data Model	14**](#10-core-data-model)
 
-[10.1 Resume Corpus	14](#heading=)
+[10.1 Resume Corpus	14](#101-resume-corpus)
 
-[10.2 Application Record	14](#heading=)
+[10.2 Application Record	14](#102-application-record)
 
-[10.3 Artifact Record	14](#heading=)
+[10.3 Artifact Record	14](#103-artifact-record)
 
-[**11\. The Intelligence Feedback Loop	16**](#heading=)
+[**11\. The Intelligence Feedback Loop	16**](#11-the-intelligence-feedback-loop)
 
-[**12\. Daily Rhythm & Scheduling	17**](#heading=)
+[**12\. Daily Rhythm & Scheduling	17**](#12-daily-rhythm--scheduling)
 
-[12.1 Scheduled Events (node-cron)	17](#heading=)
+[12.1 Scheduled Events (node-cron)	17](#121-scheduled-events-node-cron)
 
-[12.2 Event-Driven Notifications (node-notifier)	17](#heading=)
+[12.2 Event-Driven Notifications (node-notifier)	17](#122-event-driven-notifications-node-notifier)
 
-[**13\. Interview Capture (Phase 2B)	18**](#heading=)
+[**13\. Interview Capture (Phase 2B)	18**](#phase-2b--interview-audio-capture)
 
-[13.1 Privacy Considerations (To Be Discussed)	18](#heading=)
+[13.1 Privacy Considerations (To Be Discussed)	18](#131-privacy-considerations-to-be-discussed)
 
-[13.2 Fallback: Post-Interview Q\&A Flow	18](#heading=)
+[13.2 Fallback: Post-Interview Q\&A Flow	18](#132-fallback-post-interview-qa-flow)
 
-[**14\. The Honest Advisor Design Philosophy	19**](#heading=)
+[**14\. The Honest Advisor Design Philosophy	19**](#14-the-honest-advisor-design-philosophy)
 
-[**15\. Phased Delivery Plan	20**](#heading=)
+[**15\. Phased Delivery Plan	20**](#15-phased-delivery-plan)
 
-[Phase 1A — "I built a Claude plugin that replaces a career coach" (MVP)	20](#heading=)
+[Phase 1A — "I built a Claude plugin that replaces a career coach" (MVP)	20](#phase-1a--i-built-a-claude-plugin-that-replaces-a-career-coach-mvp)
 
-[Phase 1B — "It now tracks your entire job search and tells you what's working"	20](#heading=)
+[Phase 1B — "It now tracks your entire job search and tells you what's working"	20](#phase-1b--it-now-tracks-your-entire-job-search-and-tells-you-whats-working)
 
-[Phase 1C — "It now gives you an honest assessment of your skills, your gaps, and exactly what training is worth your time and money"	20](#heading=)
+[Phase 1C — "It now gives you an honest assessment of your skills, your gaps, and exactly what training is worth your time and money"	20](#phase-1c--it-now-gives-you-an-honest-assessment-of-your-skills-your-gaps-and-exactly-what-training-is-worth-your-time-and-money)
 
-[Phase 1D — "It now finds your next opportunity before you even know to look for it"	20](#heading=)
+[Phase 1D — "It now finds your next opportunity before you even know to look for it"	20](#phase-1d--it-now-finds-your-next-opportunity-before-you-even-know-to-look-for-it)
 
-[Phase 1E — "It now preps you for every interview, at every level, in every mood"	21](#heading=)
+[Phase 1E — "It now preps you for every interview, at every level, in every mood"	21](#phase-1e--it-now-preps-you-for-every-interview-at-every-level-in-every-mood)
 
-[Phase 1F — "It now builds your professional brand while you search"	21](#heading=)
+[Phase 1F — "It now builds your professional brand while you search"	21](#phase-1f--it-now-builds-your-professional-brand-while-you-search)
 
-[Phase 2A — Email & Calendar Integration	21](#heading=)
+[Phase 2A — Email & Calendar Integration	21](#phase-2a--email--calendar-integration)
 
-[Phase 2B — Interview Audio Capture	22](#heading=)
+[Phase 2B — Interview Audio Capture	22](#phase-2b--interview-audio-capture)
 
-[Phase 2C — Extended Integrations	22](#heading=)
+[Phase 2C — Extended Integrations	22](#phase-2c--extended-integrations)
 
-[Phase 2D — Advanced Analytics & LinkedIn Automation	22](#heading=)
+[Phase 2D — Advanced Analytics & LinkedIn Automation	22](#phase-2d--advanced-analytics--linkedin-automation)
 
-[Phase 3 — Platform Expansion	22](#heading=)
+[Phase 3 — Platform Expansion	22](#phase-3--platform-expansion)
 
-[Phase 4 — Enterprise & Ecosystem	22](#heading=)
+[Phase 4 — Enterprise & Ecosystem	22](#phase-4--enterprise--ecosystem)
 
-[**16\. Open Questions & Deferred Decisions	24**](#heading=)
+[**16\. Open Questions & Deferred Decisions	24**](#16-open-questions--deferred-decisions)
 
-[**Appendix: Command Quick Reference	25**](#heading=)
+[**Appendix: Command Quick Reference	25**](#appendix-command-quick-reference)
 
 # **1\. Overview**
 
