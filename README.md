@@ -155,7 +155,7 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 
 **Phase 1A (shipped — v1.1.0):** Plugin scaffold, setup wizard (builds profile and corpus from existing documents), live job search via Indeed, session start hook with pipeline digest.
 
-**Phase 1B:** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach` and `insight-engine` agents. Feedback loop connecting outcomes to corpus weights. Follow-up timeline intelligence. Pipeline dashboard.
+**Phase 1B:** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach` and `analyst` agents. Feedback loop connecting outcomes to corpus weights. AI displacement assessment via Anthropic Economic Index. Follow-up timeline intelligence. Pipeline dashboard.
 
 **Phase 1C:** `honest-advisor` and `market-researcher` agents. Candid role competitiveness assessment. Skills gap analysis and training ROI engine. Market trend and AI/automation displacement signals (`/career-navigator:suggest-roles`).
 

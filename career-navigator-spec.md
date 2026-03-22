@@ -76,7 +76,7 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [&nbsp;&nbsp;&nbsp;&nbsp;Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search	20](#phase-1a--core-platform-plugin-scaffold-setup-session-start-and-live-job-search)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and insight engine	20](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-insight-engine)
+[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent	20](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-analyst-agent)
 
 [&nbsp;&nbsp;&nbsp;&nbsp;Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI	20](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
 
@@ -221,14 +221,14 @@ Agents are specialized Claude instances with focused roles. They can be invoked 
 | Name | Phase | Description |
 | :---- | :---- | :---- |
 | **resume-coach** | 1B | Analyzes the resume corpus, identifies gaps and strengths, optimizes for ATS compatibility, and provides narrative coaching. Invoked by the `tailor-resume` and `resume-score` skills. |
-| **insight-engine** | 1B | Analyzes cross-application outcome data to identify patterns: which resume variants, communication styles, and role types are performing best. Updates corpus performance weights and feeds recommendations back to `job-scout` and `resume-coach`. |
+| **analyst** | 1B | Analyzes application outcome data to identify patterns in what's advancing and what isn't. Identifies transferable strengths and core capabilities in the user's experience that apply across roles and industries. Assesses AI and automation displacement risk for current and target roles using the Anthropic Economic Index. Updates corpus performance weights and feeds recommendations to `job-scout` and `resume-coach`. |
 | **honest-advisor** | 1C | Provides candid assessments of the user's competitiveness for specific roles, potential recruiter concerns, and strategies for overcoming barriers. Researches company/industry-specific deviations from general norms. Empathetic but unsparing. |
 | **market-researcher** | 1C | Monitors macro hiring trends, role-specific demand signals, AI/automation displacement risks, geographic demand patterns, and sector-specific cycles. Feeds the `market-brief` command and the `job-scout` agent. |
 | **job-scout** | 1D | Searches and ranks job opportunities across all configured job boards. Incorporates outcome history and market intelligence into scoring. Ranking improves over time as the user logs outcomes. Proactively surfaces high-match opportunities. |
+| **networking-strategist** | 1E | Analyzes the user's network relative to their goals, identifies gaps and paths, drafts outreach, and evaluates content strategy. Searches email and calendar history for contact context with user approval. |
+| **content-advisor** | 1E | Evaluates LinkedIn content for audience fit, algorithmic performance, and cultural alignment with target companies. Flags political/cultural risks relative to specific employer profiles. Recommends topics proactively. |
+| **event-intelligence** | 1E | Continuously discovers and evaluates networking events globally. Assesses ROI using attendee quality, user target overlap, and historical conversion data. Flags high-value presentation opportunities. |
 | **interview-coach** | 2B | Conducts mock interviews across all stages and vibes (supportive, neutral, challenging, antagonistic, bored). Adapts difficulty based on user performance in adaptive mode. Incorporates current events and company-specific research into questions. |
-| **networking-strategist** | 1F | Analyzes the user's network relative to their goals, identifies gaps and paths, drafts outreach, and evaluates content strategy. Searches email and calendar history for contact context with user approval. |
-| **content-advisor** | 1F | Evaluates LinkedIn content for audience fit, algorithmic performance, and cultural alignment with target companies. Flags political/cultural risks relative to specific employer profiles. Recommends topics proactively. |
-| **event-intelligence** | 1F | Continuously discovers and evaluates networking events globally. Assesses ROI using attendee quality, user target overlap, and historical conversion data. Flags high-value presentation opportunities. |
 | **interview-capture** | 2B | Processes audio transcription from interviews (via Whisper), extracts structured data, and auto-populates the tracker. Only active with explicit user opt-in. Full privacy framework required before activation. |
 
 # **5\. Skills**
@@ -487,9 +487,9 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 
 * Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
 
-### **Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and insight engine**
+### **Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent**
 
-* **Agents introduced:** `resume-coach` (resume assembly, ATS optimization, narrative coaching), `insight-engine` (outcome pattern analysis, performance weight updates)
+* **Agents introduced:** `resume-coach` (resume assembly, ATS optimization, narrative coaching), `analyst` (outcome pattern analysis, transferable strengths identification, AI displacement assessment)
 
 * Workflow skills built and auto-triggered: `tailor-resume`, `cover-letter`, `track-application`, `add-source`, `resume-score`, `list-artifacts` — activate from conversational intent; also invocable via explicit commands
 
