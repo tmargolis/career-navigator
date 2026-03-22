@@ -1,6 +1,6 @@
 # Career Navigator
 
-An AI-powered end-to-end job search companion built as a Claude Cowork plugin (also compatible with Claude Code). Combines the functions of a recruiter, career coach, reverse recruiter, and market analyst into a single intelligent platform that learns what works for you over time.
+An AI-powered end-to-end job search companion built as a Claude Cowork plugin. Combines the functions of a recruiter, career coach, reverse recruiter, and market analyst into a single intelligent platform that learns what works for you over time.
 
 ## What It Does
 
@@ -19,20 +19,10 @@ The core differentiator: every application outcome feeds back into the system. O
 
 ### Install via Claude Desktop
 
-1. Download the zip: **Code → Download ZIP** on this page (or [direct link](https://github.com/tmargolis/career-navigator/archive/refs/heads/main.zip))
+1. Download the zip: [direct link](https://github.com/tmargolis/career-navigator/archive/refs/heads/main.zip)
 2. In Claude Desktop: **Browse plugins → Personal → Upload a plugin** → select the ZIP
 3. Add the directory where your resumes, cover letters, applications, etc. are stored
 3. In a new chat with Career Navigator active, run the /setup for the career navigator plugin
-
-### Install via Claude Code (CLI)
-
-```bash
-git clone https://github.com/tmargolis/career-navigator.git
-cd career-navigator
-claude plugin install .
-```
-
-Then run `/career-navigator:setup`.
 
 ---
 
@@ -136,7 +126,7 @@ Run `/career-navigator:setup` to configure integrations. The wizard handles ever
 
 ## Session Start Hook
 
-Every time you open Claude Cowork (or Claude Code) with this plugin active, Career Navigator runs a brief session-start check. If you have application data, it surfaces:
+Every time you open Claude Cowork with this plugin active, Career Navigator runs a brief session-start check. If you have application data, it surfaces:
 
 - Pipeline status counts by stage
 - Applications overdue for follow-up (>7 days without a status change)
