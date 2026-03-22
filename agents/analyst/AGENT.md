@@ -140,29 +140,7 @@ Once core strengths are identified, map them to role types and industries where 
 
 Flag where a strength is highly industry-specific vs. genuinely portable. Don't overstate transferability — if a deep domain credential is required to translate a skill, say so.
 
-### Output Format
-
-```
-**Transferable Strengths Analysis**
-
-{1–2 sentence highlight: the single most compelling or surprising strength finding — lead with the capability, not a preamble}
-
-Core capabilities identified
-1. {Capability name} — {1-sentence description of what the evidence shows}
-   Evidence: {specific units/achievements that demonstrate this}
-   High-value destinations: {role types and industries where this is prized}
-
-2. ...
-
-Portable across industries
-{Strengths that transfer broadly with minimal repositioning}
-
-Domain-dependent
-{Strengths that are valuable but require specific context or credentials to translate}
-
-Non-obvious opportunities
-{Role types or industries the user likely hasn't considered, with specific rationale}
-```
+Return the identified capabilities, their evidence, transferable form, and destination mapping to the invoking skill for presentation.
 
 ---
 
@@ -208,63 +186,13 @@ Based on the displacement risk profile, identify which of the user's skills and 
 
 If the user's current positioning emphasizes tasks with high displacement risk, surface this clearly and suggest how to reframe their narrative toward durable capabilities. This is not about discarding experience — it is about foregrounding what will remain valuable.
 
-### Output Format
-
-```
-**AI Displacement Assessment** — {Role}
-
-{1–2 sentence highlight: overall risk posture and the single most important durable differentiator to lead with}
-
-Overall risk profile
-  High displacement risk tasks:    {n}%  — {examples}
-  Moderate displacement risk tasks: {n}%  — {examples}
-  Low displacement risk tasks:      {n}%  — {examples}
-
-Tasks most likely to be automated (2–5 year horizon)
-- {Task} — {why it's at risk per Economic Index data}
-
-Durable strengths
-- {Capability} — {why it is low risk and likely to grow in value}
-
-Narrative reframe
-{If the user's positioning overweights high-risk tasks, specific suggestions for reframing toward durable capabilities in resume summaries, cover letters, and outreach}
-
-Adjacent capabilities worth developing
-- {Skill/area} — {why it's strategically valuable given the user's existing foundation}
-
-Source: Anthropic Economic Index, {report date}
-```
+Return the risk profile, durable strengths, narrative reframe, and adjacent capabilities to the invoking skill for presentation.
 
 ---
 
-## Integrated Insight Report
+## Integrated Report
 
-When invoked without a specific operation, run all three and deliver a unified report:
-
-```
-**Analyst Report** — {date}
-
-HIGHLIGHTS
-- Search: {1-sentence verdict on what's working or not}
-- Strengths: {1-sentence on the most transferable capability}
-- AI outlook: {1-sentence on overall displacement risk posture}
-
-PART 1: WHAT'S WORKING IN YOUR SEARCH
-{1–2 sentence section highlight before detail}
-{Outcome pattern analysis — lead with the most actionable finding}
-
-PART 2: YOUR TRANSFERABLE STRENGTHS
-{1–2 sentence section highlight before detail}
-{Core capabilities and non-obvious destinations}
-
-PART 3: AI DISPLACEMENT OUTLOOK
-{1–2 sentence section highlight before detail}
-{Risk profile for current and target roles, durable differentiators, narrative reframe}
-
-RECOMMENDED NEXT ACTIONS
-1. {Most impactful thing to change or do, based on all three analyses}
-2. ...
-```
+When invoked to run all three operations, complete them in sequence (Operation 1 → 2 → 3) and return the full results to the `report` skill for presentation.
 
 ---
 

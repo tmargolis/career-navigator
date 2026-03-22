@@ -53,15 +53,23 @@ Hand off to the `resume-coach` agent with:
 
 ### 3. Score and review
 
-Present the ATS score and a brief assessment before saving:
+Present the full assessment returned by `resume-coach` before saving:
 
 ```
+Resume assembled for {Role} at {Company}
+
 ATS score: {n}/100
-Keyword coverage: {matched_keywords} / {total_required}
-{1–2 sentences on the strongest aspects and any gaps worth noting}
+Keyword coverage: {matched_keywords} / {total_required} must-have keywords matched
+
+Strengths
+- {What the corpus covers well for this role}
+
+Gaps (honest)
+- {Requirements with no or weak corpus coverage}
+- {Achievements that need metrics or sharpening}
 ```
 
-If the score is below 70, surface the top 2–3 missing keywords and ask:
+If the score is below 70, ask before saving:
 > "This resume scores {n}/100 for ATS. The main gaps are {keywords}. Do you want me to address them before saving?"
 
 ### 4. Save the artifact
@@ -90,7 +98,7 @@ Once the user confirms (or if the score is ≥ 70 with no gaps flagged), save th
 ```
 
 Confirm to the user:
-> "Saved as **{filename}**. Run `/career-navigator:cover-letter` to write a matching cover letter."
+> "Saved as **{filename}**. Run `/career-navigator:cover-letter` to generate a matching cover letter."
 
 ### 5. Suggest next step
 

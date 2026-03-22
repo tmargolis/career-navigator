@@ -80,42 +80,7 @@ From corpus education units. Include relevant certifications if present.
 **Step 5 — ATS score**
 Run an ATS check before saving (see ATS Scoring below). If the score is below 70, revise before presenting to the user.
 
-**Step 6 — Save artifact**
-- Save the resume as `{company}-{role-slug}-{YYYY-MM}.md` in `{user_dir}`
-- Add an entry to `{user_dir}/artifacts-index.json`:
-  ```json
-  {
-    "id": "artifact-{n}",
-    "type": "resume",
-    "filename": "...",
-    "path": "...",
-    "target_company": "...",
-    "target_role": "...",
-    "date_created": "...",
-    "source": "generated",
-    "ats_score": ...,
-    "source_units": ["exp-001", "exp-002", ...],
-    "jd_keywords": ["...", "..."]
-  }
-  ```
-
-**Step 7 — Report to user**
-```
-Resume assembled for {Role} at {Company}
-
-ATS score: {n}/100
-Keyword coverage: {n}/{total} must-have keywords matched
-
-Strengths
-- {What the corpus covers well for this role}
-
-Gaps (honest)
-- {Requirements with no or weak corpus coverage}
-- {Achievements that need metrics or sharpening}
-
-Saved: {filename}
-Run /career-navigator:cover-letter to generate a matching cover letter.
-```
+Return the completed resume text, ATS score, keyword coverage count, strengths, and gaps to the invoking skill for saving and user presentation.
 
 ---
 

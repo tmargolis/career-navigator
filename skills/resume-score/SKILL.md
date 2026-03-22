@@ -39,24 +39,7 @@ If the user only provided a resume with no JD, and there is an active role in co
 
 ### 2. Invoke resume-coach
 
-Pass the resume text and JD to `resume-coach` for analysis. The agent evaluates:
-
-**ATS keyword match**
-- Required keywords: terms that appear in the JD's requirements section (skills, tools, certifications, titles)
-- Preferred keywords: terms that appear elsewhere in the JD (nice-to-haves, cultural language)
-- Match count and percentage for each category
-
-**Formatting compliance**
-- No tables, headers in unusual locations, columns, or other ATS-hostile structures
-- Contact info in expected location
-- Standard section headings (Experience, Education, Skills)
-- No images, graphics, or non-standard fonts
-
-**Narrative strength**
-- Summary/objective is specific and role-targeted (not generic)
-- Achievements are quantified where possible
-- Most recent and relevant experience is appropriately weighted
-- No excessive jargon or buzzwords without substance
+Pass the resume text and JD to `resume-coach` for analysis. The agent applies its ATS compatibility, narrative strength, and strategic fit scoring rubrics and returns scores per dimension.
 
 ### 3. Present the score
 
@@ -65,15 +48,14 @@ Pass the resume text and JD to `resume-coach` for analysis. The agent evaluates:
 
 Overall: {n}/100
 
-ATS keyword match    {n}/40
-  Required:  {matched}/{total} keywords  ({%})
-  Preferred: {matched}/{total} keywords  ({%})
+ATS Compatibility    {n}/40
+  {keyword match count, formatting flags, one line each}
 
-Formatting          {n}/30
-  {pass/flag per check, one line each}
+Narrative Strength  {n}/35
+  {2–3 sentences of candid assessment: achievement quality, summary relevance, seniority signal}
 
-Narrative strength  {n}/30
-  {2–3 sentences of candid assessment}
+Strategic Fit       {n}/25
+  {1–2 sentences: role alignment and differentiator visibility}
 
 ---
 Top gaps to address
