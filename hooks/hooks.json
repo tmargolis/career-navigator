@@ -1,0 +1,14 @@
+{
+  "SessionStart": [
+    {
+      "matcher": "session start",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '## Team Context\n\nSprint cycle: 2 weeks. Standup: daily at 9:30 AM. Use ~~project tracker for ticket management.'",
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

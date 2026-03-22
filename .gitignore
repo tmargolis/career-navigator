@@ -1,0 +1,14 @@
+# Secrets
+.env
+*.env
+.env.*
+
+# Personal job search data (user_dir — never commit)
+career/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode/
