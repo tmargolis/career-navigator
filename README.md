@@ -68,7 +68,7 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 ---
 
-## Skills & Commands
+## All Phase 1B Commands
 
 Career Navigator is designed skill-first: most workflows trigger automatically from conversational context — paste a job description and a resume is assembled; say "I just applied to Acme" and the tracker updates. Commands are available for users who prefer explicit invocation.
 
