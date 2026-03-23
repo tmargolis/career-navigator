@@ -24,10 +24,10 @@ Generate a self-contained HTML dashboard visualizing the user's job search pipel
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/tracker/tracker.json` | Applications, stage history, pipeline summary |
-| `{user_dir}/profile/ExperienceLibrary.json` | Experience units with performance weights and update log |
-| `{user_dir}/artifacts-index.json` | Generated artifacts with ATS scores |
-| `{user_dir}/analysis/analyst-graph-data.json` | Optional graph data from the analyst report |
+| `{user_dir}/CareerNavigator/tracker.json` | Applications, stage history, pipeline summary |
+| `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with performance weights and update log |
+| `{user_dir}/CareerNavigator/artifacts-index.json` | Generated artifacts with ATS scores |
+| `{user_dir}/CareerNavigator/analyst-graph-data.json` | Optional graph data from the analyst report |
 
 ---
 
@@ -96,15 +96,15 @@ Read all three files and build the following JSON object. This will be embedded 
 
 **Confidence tier:** count applications where `outcome` != `"pending"` — use analyst Op 4 thresholds (0–4: Preliminary, 5–14: Directional, 15–29: Moderate, 30+: High)
 
-**ExperienceLibrary units:** read `units[]` from `profile/ExperienceLibrary.json`. For `update_note`, use the most recent entry from `weight_update_log` for that unit (match by `unit_id`), or `null` if none.
+**ExperienceLibrary units:** read `units[]` from `CareerNavigator/ExperienceLibrary.json`. For `update_note`, use the most recent entry from `weight_update_log` for that unit (match by `unit_id`), or `null` if none.
 
-**AI displacement + strengths graphs:** optionally read `{user_dir}/analysis/analyst-graph-data.json`. If missing or invalid, set `ai_displacement_outlook` to `null` and `transferable_strengths` to `[]`.
+**AI displacement + strengths graphs:** optionally read `{user_dir}/CareerNavigator/analyst-graph-data.json`. If missing or invalid, set `ai_displacement_outlook` to `null` and `transferable_strengths` to `[]`.
 
 ---
 
 ### 2. Write the HTML file
 
-Write the assembled dashboard to `{user_dir}/pipeline-dashboard.html` using the exact template below. Replace `/*DATA_PLACEHOLDER*/` with the serialized JSON object from Step 1.
+Write the assembled dashboard to `{user_dir}/CareerNavigator/pipeline-dashboard.html` using the exact template below. Replace `/*DATA_PLACEHOLDER*/` with the serialized JSON object from Step 1.
 
 ```html
 <!DOCTYPE html>
@@ -598,13 +598,13 @@ function truncate(s, n){
 After writing the file, open it in the user's default browser:
 
 ```bash
-python3 -c "import webbrowser, os; webbrowser.open('file://' + os.path.abspath('{user_dir}/pipeline-dashboard.html'))"
+python3 -c "import webbrowser, os; webbrowser.open('file://' + os.path.abspath('{user_dir}/CareerNavigator/pipeline-dashboard.html'))"
 ```
 
 ### 4. Confirm
 
 ```
-Dashboard generated → {user_dir}/pipeline-dashboard.html
+Dashboard generated → {user_dir}/CareerNavigator/pipeline-dashboard.html
 Opening in browser.
 ```
 

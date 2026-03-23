@@ -22,10 +22,10 @@ Always read these files at the start of every operation — do not ask for infor
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/profile/profile.md` | Target roles, comp floor, differentiators, location, key skills |
-| `{user_dir}/profile/ExperienceLibrary.json` | All experience units with achievements, skills, and performance weights |
-| `{user_dir}/artifacts-index.json` | Previously generated resumes and cover letters |
-| `{user_dir}/tracker/tracker.json` | Application history and outcomes |
+| `{user_dir}/CareerNavigator/profile.md` | Target roles, comp floor, differentiators, location, key skills |
+| `{user_dir}/CareerNavigator/ExperienceLibrary.json` | All experience units with achievements, skills, and performance weights |
+| `{user_dir}/CareerNavigator/artifacts-index.json` | Previously generated resumes and cover letters |
+| `{user_dir}/CareerNavigator/tracker.json` | Application history and outcomes |
 
 ## Core Operations
 
@@ -140,4 +140,4 @@ Apply these checks to any resume being generated or evaluated:
 - Do not fabricate experience units, skills, or metrics
 - Do not include experience units not present in the ExperienceLibrary
 - Do not tell the user the resume is strong if the ExperienceLibrary match is weak — be honest
-- Do not ask for information already present in profile.md or profile/ExperienceLibrary.json
+- Do not ask for information already present in profile.md or CareerNavigator/ExperienceLibrary.json

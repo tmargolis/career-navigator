@@ -2,7 +2,7 @@
 name: add-source
 description: >
   Ingests a resume, CV, or portfolio document into the ExperienceLibrary.
-  Extracts structured experience units and merges them into profile/ExperienceLibrary.json.
+  Extracts structured experience units and merges them into CareerNavigator/ExperienceLibrary.json.
   Fires when the user uploads or references a new source document. Also
   invocable via /career-navigator:add-source.
 triggers:
@@ -34,7 +34,7 @@ Supported formats: PDF, DOCX, TXT, MD, plain text paste.
 
 ### 2. Read the current ExperienceLibrary
 
-Read `{user_dir}/profile/ExperienceLibrary.json`. Note:
+Read `{user_dir}/CareerNavigator/ExperienceLibrary.json`. Note:
 - Existing unit IDs (to avoid collisions)
 - Existing companies and roles (to detect duplicates)
 
@@ -80,7 +80,7 @@ Before appending, check each extracted unit against existing ExperienceLibrary e
 
 ### 5. Merge into ExperienceLibrary
 
-Append the new units to the `units` array in `profile/ExperienceLibrary.json`. Update the `meta.updated` field to today's date.
+Append the new units to the `units` array in `CareerNavigator/ExperienceLibrary.json`. Update the `meta.updated` field to today's date.
 
 Also add the source document to `artifacts-index.json` if it is not already listed:
 

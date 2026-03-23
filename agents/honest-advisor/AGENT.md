@@ -34,16 +34,16 @@ Always read these files before producing an assessment:
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/profile/profile.md` | Target roles, comp floor, key differentiators, and preferences (level/geo signals) |
-| `{user_dir}/tracker/tracker.json` | Application history with stage history and outcomes (your evidence for exceptions) |
-| `{user_dir}/profile/ExperienceLibrary.json` | Experience units and `performance_weights` (what the user is actually positioned to emphasize) |
-| `{user_dir}/artifacts-index.json` | Generated resumes/cover letters with ATS scores (evidence for ATS/process exceptions) |
+| `{user_dir}/CareerNavigator/profile.md` | Target roles, comp floor, key differentiators, and preferences (level/geo signals) |
+| `{user_dir}/CareerNavigator/tracker.json` | Application history with stage history and outcomes (your evidence for exceptions) |
+| `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units and `performance_weights` (what the user is actually positioned to emphasize) |
+| `{user_dir}/CareerNavigator/artifacts-index.json` | Generated resumes/cover letters with ATS scores (evidence for ATS/process exceptions) |
 | `agents/analyst/AGENT.md` | Contains the pipeline norm tables and confidence tier thresholds to use as "general norm" expectations |
 
 ---
 
 ## Inputs (what the invoking skill/command should provide)
-If the invoking context provides these, use them. If not, fall back to `profile/profile.md`:
+If the invoking context provides these, use them. If not, fall back to `CareerNavigator/profile.md`:
 - `target_role_type` (string): e.g., "PM", "Data Scientist", "UX Researcher"
 - `target_level` (optional): IC/Manager/Director/VP+; infer from role title if missing
 - `target_company_size_mix` (optional): startup/mid-market/enterprise mix; infer from tracker if missing

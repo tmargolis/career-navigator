@@ -22,16 +22,16 @@ Invoke `honest-advisor` in `training-roi` mode to compare learning options and r
 ### 1. Confirm baseline context
 
 Read:
-- `{user_dir}/profile/profile.md`
-- `{user_dir}/profile/ExperienceLibrary.json`
+- `{user_dir}/CareerNavigator/profile.md`
+- `{user_dir}/CareerNavigator/ExperienceLibrary.json`
 
 If target roles are missing:
-> "I need your target role(s) to run a training ROI analysis. Run `/career-navigator:setup` (or update `profile/profile.md`) first."
+> "I need your target role(s) to run a training ROI analysis. Run `/career-navigator:setup` (or update `CareerNavigator/profile.md`) first."
 
 If ExperienceLibrary `units` are missing/empty:
 > "I need your ExperienceLibrary to estimate learning ROI. Run `/career-navigator:add-source` to add a resume first."
 
-Optionally read `{user_dir}/tracker/tracker.json` for confidence and bottleneck context.
+Optionally read `{user_dir}/CareerNavigator/tracker.json` for confidence and bottleneck context.
 
 ### 2. Gather optional constraints
 

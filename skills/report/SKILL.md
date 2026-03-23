@@ -24,7 +24,7 @@ Invoke the `analyst` agent to run all three operations and deliver the integrate
 
 ### 1. Confirm data exists
 
-Read `{user_dir}/tracker/tracker.json`, `{user_dir}/profile/ExperienceLibrary.json`, `{user_dir}/profile/profile.md`, and `{user_dir}/artifacts-index.json`. If the ExperienceLibrary is empty:
+Read `{user_dir}/CareerNavigator/tracker.json`, `{user_dir}/CareerNavigator/ExperienceLibrary.json`, `{user_dir}/CareerNavigator/profile.md`, and `{user_dir}/CareerNavigator/artifacts-index.json`. If the ExperienceLibrary is empty:
 
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first."
 
@@ -32,24 +32,24 @@ If the tracker has no applications, note this inline — pattern analysis will b
 
 ### 1.5 Ensure ATS scores exist (resume artifacts)
 
-Read `{user_dir}/artifacts-index.json`.
+Read `{user_dir}/CareerNavigator/artifacts-index.json`.
 
 If any artifact with `type: "resume"` is missing `ats_score` (or has `ats_score: null`):
 
 - Invoke `resume-score` for that resume artifact (reference its `filename` so the skill can look it up and run the ATS check pass).
 - If keyword coverage can’t be computed due to missing JD context, still proceed with formatting/narrative ATS checks and write whatever `ats_score` the ATS pass can compute.
-- Re-check `{user_dir}/artifacts-index.json` after the ATS pass(es). If scores are still missing, note the remaining ATS gaps in the report highlights.
+- Re-check `{user_dir}/CareerNavigator/artifacts-index.json` after the ATS pass(es). If scores are still missing, note the remaining ATS gaps in the report highlights.
 
 ### 2. Invoke analyst — all four operations
 
 Hand off to the `analyst` agent with:
-- The full `tracker/tracker.json`
-- The full `profile/ExperienceLibrary.json`
+- The full `CareerNavigator/tracker.json`
+- The full `CareerNavigator/ExperienceLibrary.json`
 - The full `artifacts-index.json`
-- The full `profile/profile.md`
+- The full `CareerNavigator/profile.md`
 - Instruction to read `references/AI_Job_Report-Anthropic-2026-03.pdf` before the displacement assessment
 - Instruction to run all four operations: outcome patterns (Op 1), transferable strengths (Op 2), AI displacement (Op 3), market benchmark (Op 4)
-- Instruction: return graph-ready data in addition to the narrative, suitable for writing to `{user_dir}/analysis/analyst-graph-data.json`, using this schema:
+- Instruction: return graph-ready data in addition to the narrative, suitable for writing to `{user_dir}/CareerNavigator/analyst-graph-data.json`, using this schema:
   - `ai_displacement_outlook`: `{overall_risk, exposure_min_pct, exposure_max_pct, durable_min_pct, durable_max_pct, durable_differentiators[], narrative_reframe}`
   - `transferable_strengths`: array of `{name, rating, score_0_100, evidence, destinations[]}`
 
@@ -114,7 +114,7 @@ RECOMMENDED NEXT ACTIONS
 
 ### 4. Write dashboard graph data (AI displacement + transferable strengths)
 
-Write `{user_dir}/analysis/analyst-graph-data.json` (create `{user_dir}/analysis/` if needed) using the graph-ready data returned by the analyst agent in step 2.
+Write `{user_dir}/CareerNavigator/analyst-graph-data.json` (create `{user_dir}/CareerNavigator/` if needed) using the graph-ready data returned by the analyst agent in step 2.
 
 Required JSON keys:
 - `ai_displacement_outlook`
@@ -128,7 +128,7 @@ Dashboard subkeys (when available):
 
 ### 5. Generate the pipeline dashboard
 
-After presenting the text report, invoke the `pipeline-dashboard` skill. It will read the same data files, build the visualization, write `{user_dir}/pipeline-dashboard.html`, and open it in the browser automatically.
+After presenting the text report, invoke the `pipeline-dashboard` skill. It will read the same data files, build the visualization, write `{user_dir}/CareerNavigator/pipeline-dashboard.html`, and open it in the browser automatically.
 
 Do not wait for the user to ask — generate it every time the report runs.
 

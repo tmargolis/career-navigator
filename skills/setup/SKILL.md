@@ -34,20 +34,20 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 
 | File | Path |
 |---|---|
-| Profile | `{user_dir}/profile/profile.md` |
-| ExperienceLibrary | `{user_dir}/profile/ExperienceLibrary.json` |
-| Tracker | `{user_dir}/tracker/tracker.json` |
-| Artifacts index | `{user_dir}/artifacts-index.json` |
+| Profile | `{user_dir}/CareerNavigator/profile.md` |
+| ExperienceLibrary | `{user_dir}/CareerNavigator/ExperienceLibrary.json` |
+| Tracker | `{user_dir}/CareerNavigator/tracker.json` |
+| Artifacts index | `{user_dir}/CareerNavigator/artifacts-index.json` |
 
 #### For each file: two paths
 
 **If the file exists** — validate its format and content:
 
-- **`profile/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (ExperienceLibrary, resume documents in `{user_dir}`). Inform the user of any gaps found and how they were resolved.
+- **`CareerNavigator/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (ExperienceLibrary, resume documents in `{user_dir}`). Inform the user of any gaps found and how they were resolved.
 
-- **`profile/ExperienceLibrary.json`**: Must be valid JSON with a `meta` object and a non-empty `units` array. Each unit must have `id`, `type`, `company` (or `institution`), `title`, and `dates`. Flag any units missing required fields and prompt the user to supply them. If the array is empty, treat the file as missing and rebuild it.
+- **`CareerNavigator/ExperienceLibrary.json`**: Must be valid JSON with a `meta` object and a non-empty `units` array. Each unit must have `id`, `type`, `company` (or `institution`), `title`, and `dates`. Flag any units missing required fields and prompt the user to supply them. If the array is empty, treat the file as missing and rebuild it.
 
-- **`tracker/tracker.json`**: Must be valid JSON with `meta`, `applications` array, and `pipeline_summary`. Each application entry must have at minimum `id`, `company`, `role`, and `status`. Recalculate `pipeline_summary` counts from the actual `applications` array and update if stale.
+- **`CareerNavigator/tracker.json`**: Must be valid JSON with `meta`, `applications` array, and `pipeline_summary`. Each application entry must have at minimum `id`, `company`, `role`, and `status`. Recalculate `pipeline_summary` counts from the actual `applications` array and update if stale.
 
 - **`artifacts-index.json`**: Must be valid JSON with a `meta` object and an `artifacts` array. Cross-check the listed artifact filenames against files actually present in `{user_dir}`. Remove entries for files that no longer exist. Add entries for PDF/DOCX files found in `{user_dir}` that are not yet indexed.
 
@@ -69,7 +69,7 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 
 #### Schemas for newly created files
 
-**`profile/profile.md`**
+**`CareerNavigator/profile.md`**
 ```markdown
 # {Name} — Job Search Profile
 
@@ -95,7 +95,7 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 - Actively searching as of {today's date}
 ```
 
-**`profile/ExperienceLibrary.json`**
+**`CareerNavigator/ExperienceLibrary.json`**
 ```json
 {
   "meta": { "created": "{today}", "version": "1.0", "description": "..." },
@@ -116,7 +116,7 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 }
 ```
 
-**`tracker/tracker.json`**
+**`CareerNavigator/tracker.json`**
 ```json
 {
   "meta": { "created": "{today}", "version": "1.0", "description": "..." },

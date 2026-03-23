@@ -323,7 +323,7 @@ External services are configured via the plugin's .mcp.json file. Run `/career-n
 
 ## **10.0 User Profile**
 
-Stored at `{user_dir}/profile/profile.md`. Created by `/career-navigator:setup` — scans documents in `{user_dir}` and builds the profile from existing resumes and cover letters; falls back to conversational Q&A if no documents are found. Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
+Stored at `{user_dir}/CareerNavigator/profile.md`. Created by `/career-navigator:setup` — scans documents in `{user_dir}` and builds the profile from existing resumes and cover letters; falls back to conversational Q&A if no documents are found. Read automatically by all agents at the start of every operation — agents must not ask for information that is already in the profile.
 
 * **identity** — name, location, contact info, professional summary, core differentiator
 * **target\_roles** — preferred titles, minimum seniority level
