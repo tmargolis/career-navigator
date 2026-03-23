@@ -4,8 +4,9 @@ description: >
   Generates a self-contained interactive D3 pipeline dashboard as an HTML
   file and opens it in the browser. Shows application timeline, pipeline
   funnel with conversion rates, benchmark comparisons against industry
-  norms, and corpus performance weights. Can be invoked standalone or as
-  the final step of the analyst report.
+  norms, AI displacement outlook, transferable strengths, and corpus
+  performance weights. Can be invoked standalone or as the final step of
+  the analyst report.
 triggers:
   - "show me my pipeline"
   - "open the dashboard"
@@ -26,6 +27,7 @@ Generate a self-contained HTML dashboard visualizing the user's job search pipel
 | `{user_dir}/tracker/tracker.json` | Applications, stage history, pipeline summary |
 | `{user_dir}/corpus/index.json` | Experience units with performance weights and update log |
 | `{user_dir}/artifacts-index.json` | Generated artifacts with ATS scores |
+| `{user_dir}/analysis/analyst-graph-data.json` | Optional graph data from the analyst report |
 
 ---
 
@@ -65,6 +67,24 @@ Read all three files and build the following JSON object. This will be embedded 
       "weight": {float 0.1–1.0},
       "update_note": "{most recent weight_update_log rationale, or null}"
     }
+  ],
+  "ai_displacement_outlook": {
+    "overall_risk": "{label}",
+    "exposure_min_pct": {number},
+    "exposure_max_pct": {number},
+    "durable_min_pct": {number},
+    "durable_max_pct": {number},
+    "durable_differentiators": ["..."],
+    "narrative_reframe": "..."
+  },
+  "transferable_strengths": [
+    {
+      "name": "{strength name}",
+      "rating": "{HIGH|VERY_HIGH|MODERATE_HIGH|...}",
+      "score_0_100": {number},
+      "evidence": "{short evidence snippet}",
+      "destinations": ["..."]
+    }
   ]
 }
 ```
@@ -77,6 +97,8 @@ Read all three files and build the following JSON object. This will be embedded 
 **Confidence tier:** count applications where `outcome` != `"pending"` — use analyst Op 4 thresholds (0–4: Preliminary, 5–14: Directional, 15–29: Moderate, 30+: High)
 
 **Corpus units:** read `units[]` from `corpus/index.json`. For `update_note`, use the most recent entry from `weight_update_log` for that unit (match by `unit_id`), or `null` if none.
+
+**AI displacement + strengths graphs:** optionally read `{user_dir}/analysis/analyst-graph-data.json`. If missing or invalid, set `ai_displacement_outlook` to `null` and `transferable_strengths` to `[]`.
 
 ---
 
@@ -114,6 +136,8 @@ Write the assembled dashboard to `{user_dir}/pipeline-dashboard.html` using the 
     <div class="panel wide"><h2>Application Timeline</h2><svg id="sv-timeline"></svg></div>
     <div class="panel"><h2>Pipeline Funnel</h2><svg id="sv-funnel"></svg></div>
     <div class="panel"><h2>vs. Industry Norms</h2><svg id="sv-bench"></svg></div>
+    <div class="panel"><h2>AI Displacement Outlook</h2><svg id="sv-displacement"></svg></div>
+    <div class="panel"><h2>Transferable Strengths</h2><svg id="sv-strengths"></svg></div>
     <div class="panel wide"><h2>Corpus Performance Weights</h2><svg id="sv-corpus"></svg></div>
   </div>
 <script>
@@ -132,6 +156,12 @@ const tip = document.getElementById('tip');
 function showTip(html, e){ tip.innerHTML=html; tip.style.opacity=1; moveTip(e); }
 function moveTip(e){ tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-8)+'px'; }
 function hideTip(){ tip.style.opacity=0; }
+
+function truncate(s, n){
+  s = (s ?? '').toString();
+  if(s.length <= n) return s;
+  return s.slice(0, Math.max(0, n-3)) + '...';
+}
 
 // ── TIMELINE ────────────────────────────────────────────────────────────────
 (function(){
@@ -163,7 +193,13 @@ function hideTip(){ tip.style.opacity=0; }
   svg.selectAll('.tick line').attr('stroke','#30363d');
 
   svg.append('g').call(d3.axisLeft(y).tickSize(0))
-    .selectAll('text').attr('fill','#8b949e').attr('font-size',11).attr('dx',-6);
+    .selectAll('text')
+    .attr('fill','#8b949e').attr('font-size',11).attr('dx',0)
+    .style('text-anchor','start')
+    .each(function(d){
+      const full = d;
+      d3.select(this).text(truncate(full, 34)).attr('title', full).style('cursor','help');
+    });
   svg.select('.domain').remove();
 
   // today line
@@ -182,61 +218,131 @@ function hideTip(){ tip.style.opacity=0; }
       .attr('fill',SC[a.status]||'#484f58').attr('opacity',.18).attr('rx',3);
 
     svg.append('circle')
+      .attr('class','timeline-dot')
+      .attr('data-status',a.status)
       .attr('cx',x(a.t0)).attr('cy',y(key)+y.bandwidth()/2).attr('r',5)
-      .attr('fill',SC[a.status]||'#484f58').attr('cursor','pointer')
+      .attr('fill',SC[a.status]||'#484f58').attr('stroke','none').attr('stroke-width',0)
+      .attr('opacity',1).attr('cursor','pointer')
       .on('mouseover', e => showTip(`<strong>${a.company}</strong><br>${a.role}<br>Applied: ${a.date_applied}<br>Status: <span style="color:${SC[a.status]||'#8b949e'}">${a.status}</span>`,e))
       .on('mousemove', moveTip).on('mouseout', hideTip);
   });
 
-  // legend
+  // legend (hover to highlight matching dots)
   const statuses = [...new Set(apps.map(a=>a.status))];
+  const allDots = svg.selectAll('.timeline-dot');
+
+  function resetDots(){
+    allDots
+      .attr('opacity',1)
+      .attr('r',5)
+      .attr('stroke','none')
+      .attr('stroke-width',0);
+  }
+
+  function focusDots(s){
+    allDots
+      .attr('opacity',0.12)
+      .attr('r',4)
+      .attr('stroke','none')
+      .attr('stroke-width',0);
+
+    svg.selectAll(`.timeline-dot[data-status="${s}"]`)
+      .attr('opacity',1)
+      .attr('r',7)
+      .attr('stroke','#e1e4e8')
+      .attr('stroke-width',1.6);
+  }
+
   const lg = svg.append('g').attr('transform',`translate(0,${H+mb-4})`);
   let lx = 0;
   statuses.forEach(s => {
-    lg.append('circle').attr('cx',lx+4).attr('cy',0).attr('r',4).attr('fill',SC[s]||'#484f58');
-    lg.append('text').attr('x',lx+12).attr('y',4).attr('fill','#8b949e').attr('font-size',10).text(s);
+    const g = lg.append('g').attr('transform',`translate(${lx},0)`).style('cursor','pointer');
+    g.append('circle').attr('cx',4).attr('cy',0).attr('r',4).attr('fill',SC[s]||'#484f58');
+    g.append('text').attr('x',12).attr('y',4).attr('fill','#8b949e').attr('font-size',10).text(s);
+    g.on('mouseover', () => focusDots(s)).on('mouseout', resetDots);
     lx += 80;
   });
+
+  resetDots();
 })();
 
 // ── FUNNEL ───────────────────────────────────────────────────────────────────
 (function(){
   const stages = ['considering','applied','phone_screen','interview','offer','accepted'];
   const labels = ['Considering','Applied','Phone Screen','Interview','Offer','Accepted'];
-  const all = D.applications;
+  const all = D.applications || [];
 
-  const stageOrder = s => stages.indexOf(s) === -1 ? stages.length : stages.indexOf(s);
-  const counts = stages.map(s => all.filter(a => stageOrder(a.status) >= stages.indexOf(s)).length);
+  function stageOrder(status){
+    switch(status){
+      case 'considering': return 0;
+      case 'applied': return 1;
+      case 'phone_screen': return 2;
+      case 'interview': return 3;
+      case 'offer': return 4;
+      case 'accepted': return 5;
+      // Terminal outcomes we currently bucket as "after applied" in the funnel.
+      // This prevents phone/interview/offer bars appearing when you only have rejections.
+      case 'rejected':
+      case 'withdrew':
+      case 'ghosted':
+      case 'declined_or_inactive':
+        return 1;
+      default:
+        return 1;
+    }
+  }
+
+  if(!all.length){
+    document.querySelector('#sv-funnel').insertAdjacentHTML('afterend','<p class="no-data">No applications yet.</p>');
+    return;
+  }
+
+  const buckets = stages.map((stage, i) => {
+    const apps = all.filter(a => stageOrder(a.status) >= i);
+    return { stage, label: labels[i], count: apps.length, apps };
+  }).filter(b => b.count > 0);
 
   const ml=96, mr=40, mt=8, mb=8;
   const panelW = document.querySelector('#sv-funnel').closest('.panel').clientWidth - 40;
   const W = panelW - ml - mr;
-  const rh = 34, H = stages.length * rh;
+  const rh = 34, H = buckets.length * rh;
 
   const svg = d3.select('#sv-funnel')
     .attr('width',panelW).attr('height',H+mt+mb)
     .append('g').attr('transform',`translate(${ml},${mt})`);
 
-  const x = d3.scaleLinear().domain([0, Math.max(1, counts[0])]).range([0, W]);
-  const y = d3.scaleBand().domain(labels).range([0,H]).padding(.28);
+  const x = d3.scaleLinear().domain([0, Math.max(1, buckets[0].count)]).range([0, W]);
+  const y = d3.scaleBand().domain(buckets.map(b => b.label)).range([0,H]).padding(.28);
 
   svg.append('g').call(d3.axisLeft(y).tickSize(0))
-    .selectAll('text').attr('fill','#8b949e').attr('font-size',11).attr('dx',-6);
+    .selectAll('text').attr('fill','#8b949e').attr('font-size',11).attr('dx',0).style('text-anchor','start');
   svg.select('.domain').remove();
 
-  labels.forEach((label, i) => {
+  buckets.forEach((b, i) => {
+    const yPos = y(b.label);
+    const w = Math.max(x(b.count), 4);
+
     svg.append('rect')
-      .attr('x',0).attr('y',y(label)).attr('width',Math.max(x(counts[i]),4)).attr('height',y.bandwidth())
-      .attr('fill',SC[stages[i]]||'#484f58').attr('rx',3).attr('opacity',.82);
+      .attr('x',0).attr('y',yPos).attr('width',w).attr('height',y.bandwidth())
+      .attr('fill',SC[b.stage]||'#484f58').attr('rx',3).attr('opacity',.82)
+      .on('mouseover', e => {
+        const apps = b.apps || [];
+        const shown = apps.slice(0,6).map(a => `• ${a.company} — ${a.role} (${a.status})`).join('<br>');
+        const more = apps.length > 6 ? `<br>+${apps.length-6} more` : '';
+        const html = `<strong>${b.label}</strong><br>${b.count} application${b.count!==1?'s':''}<br>${shown || '—'}${more}`;
+        showTip(html, e);
+      })
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
 
     svg.append('text')
-      .attr('x',Math.max(x(counts[i]),4)+6).attr('y',y(label)+y.bandwidth()/2+4)
-      .attr('fill','#8b949e').attr('font-size',11).text(counts[i]);
+      .attr('x',w+6).attr('y',yPos+y.bandwidth()/2+4)
+      .attr('fill','#8b949e').attr('font-size',11).text(b.count);
 
-    if(i > 0 && counts[i-1] > 0){
-      const rate = Math.round(counts[i]/counts[i-1]*100);
+    if(i > 0 && buckets[i-1].count > 0){
+      const rate = Math.round(b.count / buckets[i-1].count * 100);
       svg.append('text')
-        .attr('x',W).attr('y',y(label)-3)
+        .attr('x',W).attr('y',yPos-3)
         .attr('text-anchor','end').attr('fill','#484f58').attr('font-size',9)
         .text(`${rate}% conversion`);
     }
@@ -270,7 +376,13 @@ function hideTip(){ tip.style.opacity=0; }
   svg.selectAll('.tick line').attr('stroke','#30363d');
 
   svg.append('g').call(d3.axisLeft(y).tickSize(0))
-    .selectAll('text').attr('fill','#8b949e').attr('font-size',11).attr('dx',-6);
+    .selectAll('text')
+    .attr('fill','#8b949e').attr('font-size',11).attr('dx',0)
+    .style('text-anchor','start')
+    .each(function(d){
+      const full = d;
+      d3.select(this).text(truncate(full, 40)).attr('title', full).style('cursor','help');
+    });
   svg.select('.domain').remove();
 
   metrics.forEach(m => {
@@ -305,6 +417,120 @@ function hideTip(){ tip.style.opacity=0; }
   });
 })();
 
+// ── AI DISPLACEMENT OUTLOOK ──────────────────────────────────────────────
+(function(){
+  const data = D.ai_displacement_outlook;
+  if(!data){
+    document.querySelector('#sv-displacement').insertAdjacentHTML('afterend','<p class="no-data">Run /career-navigator:report to generate AI displacement data.</p>');
+    return;
+  }
+
+  const panelW = document.querySelector('#sv-displacement').closest('.panel').clientWidth - 40;
+  const ml=26, mr=24, mt=10, mb=22;
+  const W = panelW - ml - mr;
+  const H = 118;
+
+  const exposureMin = (data.exposure_min_pct ?? null);
+  const exposureMax = (data.exposure_max_pct ?? null);
+  const valid = exposureMin !== null && exposureMax !== null && isFinite(exposureMin) && isFinite(exposureMax);
+  if(!valid){
+    document.querySelector('#sv-displacement').insertAdjacentHTML('afterend','<p class="no-data">AI displacement graph data is missing.</p>');
+    return;
+  }
+
+  const x = d3.scaleLinear().domain([0,100]).range([0,W]);
+  const yBar = 48;
+
+  const svg = d3.select('#sv-displacement')
+    .attr('width',panelW).attr('height',H+mt+mb)
+    .append('g').attr('transform',`translate(${ml},${mt})`);
+
+  svg.append('text')
+    .attr('x',0).attr('y',18).attr('fill','#e1e4e8').attr('font-size',11)
+    .text(`Overall risk: ${data.overall_risk || '—'}`);
+
+  svg.append('rect')
+    .attr('x',0).attr('y',yBar).attr('width',W).attr('height',16)
+    .attr('fill','#21262d').attr('rx',6);
+
+  const minX = x(Math.max(0, exposureMin));
+  const maxX = x(Math.min(100, exposureMax));
+  const w = Math.max(maxX - minX, 3);
+
+  // Exposed tasks range
+  svg.append('rect')
+    .attr('x',minX).attr('y',yBar).attr('width',w).attr('height',16)
+    .attr('fill','#d2a8ff').attr('opacity',0.9).attr('rx',6);
+
+  svg.append('line').attr('x1',minX).attr('x2',minX).attr('y1',yBar-2).attr('y2',yBar+18).attr('stroke','#8b949e').attr('stroke-width',1);
+  svg.append('line').attr('x1',maxX).attr('x2',maxX).attr('y1',yBar-2).attr('y2',yBar+18).attr('stroke','#8b949e').attr('stroke-width',1);
+
+  const durableMin = data.durable_min_pct ?? (100 - exposureMax);
+  const durableMax = data.durable_max_pct ?? (100 - exposureMin);
+
+  svg.append('text')
+    .attr('x',0).attr('y',yBar+34).attr('fill','#8b949e').attr('font-size',11)
+    .text(`Exposed: ${Math.round(exposureMin)}–${Math.round(exposureMax)}%  ·  Durable: ${Math.round(durableMin)}–${Math.round(durableMax)}%`);
+})();
+
+// ── TRANSFERABLE STRENGTHS ───────────────────────────────────────────────
+(function(){
+  const raw = D.transferable_strengths || [];
+  if(!raw.length){
+    document.querySelector('#sv-strengths').insertAdjacentHTML('afterend','<p class="no-data">Run /career-navigator:report to generate transferable strengths data.</p>');
+    return;
+  }
+
+  const items = raw.slice(0,6);
+  const panelW = document.querySelector('#sv-strengths').closest('.panel').clientWidth - 40;
+  const ml=155, mr=30, mt=10, mb=20;
+  const W = panelW - ml - mr;
+  const rh = 30, H = items.length * rh;
+
+  const svg = d3.select('#sv-strengths')
+    .attr('width',panelW).attr('height',H+mt+mb)
+    .append('g').attr('transform',`translate(${ml},${mt})`);
+
+  const x = d3.scaleLinear().domain([0,100]).range([0,W]);
+  const y = d3.scaleBand().domain(items.map(i=>i.name)).range([0,H]).padding(.25);
+
+  svg.append('g').call(d3.axisLeft(y).tickSize(0))
+    .selectAll('text')
+    .attr('fill','#8b949e').attr('font-size',11).attr('dx',0)
+    .style('text-anchor','start')
+    .each(function(d){
+      const full = d;
+      d3.select(this).text(truncate(full, 26)).attr('title', full).style('cursor','help');
+    });
+  svg.select('.domain').remove();
+
+  const color = d3.scaleSequential(d3.interpolateRgb('#2d333b','#58a6ff')).domain([0,100]);
+
+  items.forEach(it => {
+    const score = Math.max(0, Math.min(100, Number(it.score_0_100 ?? 0)));
+    const yPos = y(it.name);
+    const w = Math.max(x(score), 3);
+
+    svg.append('rect')
+      .attr('x',0).attr('y',yPos).attr('width',w).attr('height',y.bandwidth())
+      .attr('fill',color(score)).attr('rx',4).attr('opacity',0.9)
+      .attr('cursor','pointer')
+      .on('mouseover', e => {
+        const dest = (it.destinations || []).slice(0,3).join(', ');
+        const evidence = it.evidence ? `<br>${it.evidence}` : '';
+        const html = `<strong>${it.name}</strong><br>Rating: ${it.rating || '—'}<br>Score: ${score}/100${dest ? `<br>Destinations: ${dest}` : ''}${evidence}`;
+        showTip(html, e);
+      })
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
+
+    svg.append('text')
+      .attr('x',w+6).attr('y',yPos+y.bandwidth()/2+4)
+      .attr('fill','#e1e4e8').attr('font-size',11)
+      .text(score.toFixed(0));
+  });
+})();
+
 // ── CORPUS WEIGHTS ────────────────────────────────────────────────────────────
 (function(){
   const units = D.corpus_units;
@@ -329,7 +555,13 @@ function hideTip(){ tip.style.opacity=0; }
   svg.selectAll('.tick line').attr('stroke','#30363d');
 
   svg.append('g').call(d3.axisLeft(y).tickSize(0))
-    .selectAll('text').attr('fill','#8b949e').attr('font-size',11).attr('dx',-6);
+    .selectAll('text')
+    .attr('fill','#8b949e').attr('font-size',11).attr('dx',0)
+    .style('text-anchor','start')
+    .each(function(d){
+      const full = d;
+      d3.select(this).text(truncate(full, 40)).attr('title', full).style('cursor','help');
+    });
   svg.select('.domain').remove();
 
   // neutral line at 0.5

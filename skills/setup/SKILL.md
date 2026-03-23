@@ -155,3 +155,31 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 Career Navigator uses the **Indeed connector** (built-in Claude Cowork integration) for live job search. No token or configuration is required — confirm it's available and continue:
 
 > "Job search is powered by the Indeed connector. No additional setup needed — run `/career-navigator:search-jobs` any time to find live listings."
+
+### 4. Configure Apify for salary benchmarking (optional)
+
+The `salary-research` skill uses the Apify MCP server to pull live compensation data. This step is optional — skip it if the user doesn't need salary benchmarking.
+
+Ask the user:
+> "Would you like to set up salary benchmarking? It uses Apify's free tier ($5/month in credits — enough for personal job search use) to pull live salary data by role and location."
+
+**If yes:**
+
+1. Direct them to sign up at **https://apify.com** (free account).
+
+2. Retrieve their Personal API token:
+   > "Once you're signed in, go to **Console → Settings → Integrations** and copy your Personal API token."
+
+3. Write their token to `{user_dir}/.env`:
+   ```
+   APIFY_TOKEN=<their_token>
+   ```
+   Confirm the file was written:
+   > "Saved your Apify token to `{user_dir}/.env`."
+
+4. Tell them to start a new Cowork session:
+   > "Start a new Cowork session — Career Navigator will pick up your token automatically and the Apify MCP server will be ready. Then run `/career-navigator:salary-research` or say 'what's the salary range for a Senior PM in Chicago?' to try it."
+
+**If no or skipped:**
+
+> "No problem — salary benchmarking is off for now. You can set it up any time by running `/career-navigator:setup` again."
