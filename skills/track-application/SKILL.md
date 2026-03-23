@@ -154,7 +154,15 @@ Required for a new record: `company`, `role`, `status`. Ask only for `company` a
 - Set `outcome` to `"pending"`
 - Initialize `stage_history` with one entry for the current stage
 - Initialize `notes` as an array; add one entry if the user provided context
-- Set `follow_up_date` if mentioned, otherwise `null`
+- Set `follow_up_date` using company-window intelligence (see below) — only use a user-provided date if they explicitly stated one
+
+**Setting follow_up_date for new applications:**
+
+Read `{user_dir}/tracker/company-windows.json`. Look up the company:
+- If found: `follow_up_date` = `date_applied` + `follow_up_after_days`
+- If not found: research the company using web search (same method as the `follow-up` skill — Glassdoor, LinkedIn, Blind) and store the result in `company-windows.json` before setting the date. If research returns no usable data, fall back to the size-tier default (startup: +10d, mid-market: +14d, enterprise: +21d).
+
+After setting the date, note it in the confirmation output.
 
 **Status update** — find the matching record and:
 - Update `status`
