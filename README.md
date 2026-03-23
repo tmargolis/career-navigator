@@ -44,7 +44,7 @@ In CoWork, click the **+** button (or the folder icon) and add the local folder 
 /career-navigator:setup
 ```
 
-Reads everything in your job search folder — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures JobSearch for live job search and optionally Google Drive.
+Reads everything in your job search folder — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures JobSearch for live job search.
 
 ### 3. Drop documents in your folder
 
@@ -70,18 +70,20 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 ## All Phase 1B Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/career-navigator:setup` | Configure JobSearch and Google Drive (run first) |
-| `/career-navigator:add-source` | Add a resume or CV to your experience corpus |
-| `/career-navigator:tailor-resume` | Build an optimized resume for a specific role |
-| `/career-navigator:cover-letter` | Generate a targeted cover letter |
-| `/career-navigator:resume-score` | Score any resume against a job description |
-| `/career-navigator:list-artifacts` | View all generated resumes and cover letters |
-| `/career-navigator:search-jobs` | Find and rank job opportunities |
-| `/career-navigator:track-application` | Log or update a job application |
+Career Navigator is designed skill-first: most workflows trigger automatically from conversational context — paste a job description and a resume is assembled; say "I just applied to Acme" and the tracker updates. Commands are available for users who prefer explicit invocation.
 
-You can also trigger commands conversationally — if you say "I just applied to Acme for a PM role," Career Navigator recognizes the intent and logs it automatically.
+| Skill / Command | Trigger | Purpose |
+|---------|---------|---------|
+| `tailor-resume` | Paste a job description, or say "I want to apply to X" | Assemble an optimized resume from your corpus for a specific role |
+| `cover-letter` | After tailoring a resume, or "write me a cover letter for X" | Generate a targeted cover letter |
+| `track-application` | "I just applied to X", "log this application" | Log or update a job application |
+| `add-source` | Upload or reference a resume/CV | Add a document to your experience corpus |
+| `resume-score` | Share a resume + job description together | Score ATS match, formatting, and narrative strength |
+| `search-jobs` | "find jobs", "search for X roles" | Find and rank job opportunities |
+| `/career-navigator:setup` | Explicit (run first) | Configure job search folder, build corpus and profile |
+| `/career-navigator:list-artifacts` | Explicit | View all generated resumes and cover letters |
+
+All skills are also invocable as explicit commands using the `/career-navigator:` prefix.
 
 ---
 
@@ -118,9 +120,39 @@ No data leaves your machine unless you configure a cloud connector (see [CONNECT
 
 Run `/career-navigator:setup` to configure integrations. The wizard handles everything conversationally — no file editing required.
 
-**Job search:** Career Navigator uses the built-in **Indeed connector** (Claude Cowork integration) for live job listings. No token or configuration required — `/career-navigator:search-jobs` works out of the box.
+**Job search:** Career Navigator uses the built-in **Indeed connector** (Claude Cowork integration) for live job listings. No token or configuration required — job search works out of the box.
 
-**Cloud storage (Google Drive):** By default, all data is stored locally in `data/`. To sync to Google Drive, run `/career-navigator:setup` — it walks through creating OAuth credentials and handles all configuration. See [CONNECTORS.md](CONNECTORS.md) for details on the connector interface.
+**Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. Cloud storage connectors (Google Drive, OneDrive, Dropbox) are available in Phase 2. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
+
+### Apify MCP for salary benchmarking (manual setup)
+
+`/career-navigator:salary-research` uses Apify via MCP. Right now this connector should be added in **Claude Desktop Local MCP servers** (not only in the plugin `.mcp.json`).
+
+1. Create an account at [apify.com](https://apify.com).
+2. In Apify, copy your API token from **Console -> Settings -> Integrations**.
+3. In Claude Desktop, open **Settings -> Developer -> Local MCP servers** and add Apify (or edit your config file directly).
+4. Use a config like:
+
+```json
+{
+  "mcpServers": {
+    "apify": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.apify.com/?tools=call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search",
+        "--header",
+        "Authorization: Bearer APIFY_API_KEY"
+      ]
+    }
+  }
+}
+```
+
+5. Restart Claude Desktop (or start a new Cowork chat), then run `/career-navigator:salary-research`.
+
+Use your own token and never commit it to this repository.
 
 ---
 
@@ -151,25 +183,25 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 
 ### Phase 1 — Core Platform
 
-**Phase 1A (current):** Resume corpus, artifact inventory, application tracker, ATS scoring, job search, session hook.
+**Phase 1A (shipped — v1.1.0):** Plugin scaffold, setup wizard (builds profile and corpus from existing documents), live job search via Indeed, session start hook with pipeline digest.
 
-**Phase 1B:** Insight engine and feedback loop. Benchmarking against industry norms by role, level, and geography. Follow-up timeline intelligence. D3 pipeline dashboard (`/career-navigator:pipeline`, `/career-navigator:follow-up`, `/career-navigator:market-brief`).
+**Phase 1B (in progress):** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach` and `analyst` agents. Feedback loop connecting outcomes to corpus weights. AI displacement assessment via Anthropic Economic Index. Follow-up timeline intelligence. Pipeline dashboard.
 
-**Phase 1C:** Honest advisor agent with three-step norm/exception/strategy pattern. Market researcher tracking role demand trends and AI/automation displacement. Skills self-assessment, gap analysis, and training ROI engine (`/career-navigator:suggest-roles`).
+**Phase 1C:** `honest-advisor` and `market-researcher` agents. Candid role competitiveness assessment. Skills gap analysis and training ROI engine. Market trend and AI/automation displacement signals (`/career-navigator:suggest-roles`).
 
-**Phase 1D:** Job scout with full outcome-driven scoring and proactive opportunity alerts. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
+**Phase 1D:** `job-scout` agent with full outcome-weighted scoring and proactive opportunity alerts. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
-**Phase 1E:** Full mock interview system — guided, random, and adaptive modes across all stages (recruiter screen, hiring manager, technical, panel, executive) and vibes (supportive, neutral, challenging, antagonistic, bored). Morning brief with company news and interviewer research. Post-interview debrief flow. (`/career-navigator:prep-interview`, `/career-navigator:mock-interview`, `/career-navigator:morning-brief`, `/career-navigator:interview-debrief`).
-
-**Phase 1F:** Networking strategy agent and network map. Event radar with local, national, and international discovery. LinkedIn content advisor and post evaluator with cultural risk assessment. (`/career-navigator:network-map`, `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`, `/career-navigator:event-radar`).
+**Phase 1E:** `networking-strategist`, `content-advisor`, and `event-intelligence` agents. Network map and gap analysis. Event radar. LinkedIn content advisor and post evaluator with cultural risk assessment.
 
 ### Phase 2 — Integrations
 
+Phase 2 connects Career Navigator to the external services that complete the full job search experience. Email and calendar history power warm networking intelligence. The complete interview layer — mock interviews, morning brief, audio capture, and debrief — ships together in Phase 2B so prep and capture are developed as a unified experience. Cloud storage connectors and ATS read-access make the platform portable and employer-system-aware. Advanced analytics and LinkedIn automation close the loop for power users. Sub-phases are independently deployable.
+
 **Phase 2A:** Gmail and Outlook connectors (read-only, OAuth). Google Calendar and Outlook Calendar integration. Contact correspondence history for warm outreach context.
 
-**Phase 2B:** Interview audio capture via Whisper transcription. Full privacy framework, consent model, and cross-jurisdiction recording guidance. Local processing option for privacy-sensitive users.
+**Phase 2B:** `interview-coach` and `interview-capture` agents. Full mock interview system across all stages and vibes. Morning brief with company news and interviewer research. Post-interview debrief flow. Audio capture via Whisper with full privacy framework, consent model, and cross-jurisdiction recording guidance.
 
-**Phase 2C:** OneDrive, Dropbox, and local filesystem storage connectors. IllinoisJobLink job board connector. ATS read-only connectors for Greenhouse, Workday, and Lever.
+**Phase 2C:** Google Drive, OneDrive, and Dropbox storage connectors. IllinoisJobLink job board connector. ATS read-only connectors for Greenhouse, Workday, and Lever.
 
 **Phase 2D:** Power BI streaming dataset connector. Qlik Engine API connector. D3 data export. LinkedIn automation for job search and connection graph access.
 
@@ -185,7 +217,7 @@ White-label version for career coaching practices and staffing agencies. API for
 
 ## Specification
 
-See [career-navigator-spec.md](career-navigator-spec.md) for the full product specification covering all agents, skills, hooks, data model, and design philosophy.
+See [career-navigator-spec.md](references/career-navigator-spec.md) for the full product specification covering all agents, skills, hooks, data model, and design philosophy.
 
 ## Contributing
 

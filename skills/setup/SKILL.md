@@ -155,3 +155,47 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 Career Navigator uses the **Indeed connector** (built-in Claude Cowork integration) for live job search. No token or configuration is required — confirm it's available and continue:
 
 > "Job search is powered by the Indeed connector. No additional setup needed — run `/career-navigator:search-jobs` any time to find live listings."
+
+### 4. Configure Apify for salary benchmarking (optional)
+
+The `salary-research` skill uses the Apify MCP server to pull live compensation data. This step is optional — skip it if the user doesn't need salary benchmarking.
+
+Important: for now, users should configure Apify in **Claude Desktop Local MCP servers**. Do not assume plugin `.mcp.json` alone will register Apify in Cowork.
+
+Ask the user:
+> "Would you like to set up salary benchmarking? It uses Apify's free tier ($5/month in credits — enough for personal job search use) to pull live salary data by role and location."
+
+**If yes:**
+
+1. Direct them to sign up at **https://apify.com** (free account).
+
+2. Retrieve their Personal API token:
+   > "Once you're signed in, go to **Console → Settings → Integrations** and copy your Personal API token."
+
+3. Tell them to configure Claude Desktop Local MCP:
+   > "In Claude Desktop, go to **Settings → Developer → Local MCP servers** and add an `apify` server. If editing config directly, use a snippet like this:"
+   ```json
+   {
+     "mcpServers": {
+       "apify": {
+         "command": "npx",
+         "args": [
+           "-y",
+           "mcp-remote",
+           "https://mcp.apify.com/?tools=call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search",
+           "--header",
+           "Authorization: Bearer APIFY_API_KEY"
+         ]
+       }
+     }
+   }
+   ```
+
+4. Remind them to replace `APIFY_API_KEY` with their own token and keep it private.
+
+5. Tell them to restart Claude Desktop (or start a new Cowork session):
+   > "Once restarted, the Apify MCP server should be available. Then run `/career-navigator:salary-research` or say 'what's the salary range for a Senior PM in Chicago?' to test it."
+
+**If no or skipped:**
+
+> "No problem — salary benchmarking is off for now. You can set it up any time by running `/career-navigator:setup` again."

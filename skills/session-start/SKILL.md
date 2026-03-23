@@ -56,9 +56,13 @@ Read `tracker/tracker.json` and `artifacts-index.json` from `{user_dir}`. Then o
 
 **Pipeline counts** — count `applications` entries by `status`. Recognized statuses: `considering`, `applied`, `phone_screen`, `interview`, `offer`, `accepted`, `declined`, `inactive`. Group anything unrecognized under `other`.
 
-**Overdue follow-up** — an application is overdue if:
-- Its most recent `stage_history` entry is more than 7 days before today, AND
-- Its `status` is not `accepted`, `declined`, or `inactive`
+**Overdue follow-up** — read `{user_dir}/tracker/company-windows.json` to determine overdue status per application. An application is overdue if:
+- `days elapsed since date_applied` exceeds the company's `typical_first_response_days.max` (from `company-windows.json`), AND
+- Its `status` is not `accepted`, `declined`, `rejected`, or `inactive`
+
+If `company-windows.json` does not exist or a company is not yet researched, fall back to size-tier defaults: startup = 14d, mid-market = 21d, enterprise = 42d. Do not use a flat 7-day rule.
+
+Applications at `phone_screen` or `interview` stage are overdue if `days_since_last_stage_history_entry` > 7 days (shorter cadence expected at active stages).
 
 **Interviews today** — check `stage_history` entries across all applications for any entry whose `stage` contains "interview" and whose `date` matches today's date (YYYY-MM-DD).
 
@@ -84,8 +88,8 @@ Artifacts
   Cover letters    {n}
 ```
 
-Keep it tight — no extra commentary unless there are overdue items, in which case append a single line naming them:
-> ⚠ Overdue: {Company — Role} (last update {n} days ago)
+Keep it tight — no extra commentary unless there are overdue items, in which case append one line per overdue application:
+> ⚠ Overdue: {Company — Role} ({n}d elapsed · window was {window_max}d) — run `/career-navigator:follow-up`
 
 If everything is clean (no overdue, no interviews today, pipeline counts all zero), output:
 > **Career Navigator** — No active applications. Run `/career-navigator:search-jobs` to find new opportunities.
