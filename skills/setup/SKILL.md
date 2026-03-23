@@ -2,7 +2,7 @@
 name: setup
 description: >
   The single entry point for all Career Navigator configuration. Sets up the
-  job search folder, builds the user profile, corpus and application tracker from existing documents,
+  job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents,
   configures JobSearch for live job search, and optionally connects Google Drive.
   No Customize button required — run this command to do everything.
 triggers:
@@ -11,9 +11,9 @@ triggers:
   - "get started with career navigator"
 ---
 
-Use this after installing the plugin — it handles everything: registering your job search folder, reading your existing documents, building your profile and corpus, and configuring integrations. 
+Use this after installing the plugin — it handles everything: registering your job search folder, reading your existing documents, building your profile and ExperienceLibrary, and configuring integrations. 
 
-The working directory (or relevant sub-directory) should be configured as the user's job search directory to be referred to as `{user_dir}`. All data this plugin produces— profile, corpus, tracker, generated artifacts — lives in subdirectories of the `{user_dir}` folder alongside the user's raw documents.
+The working directory (or relevant sub-directory) should be configured as the user's job search directory to be referred to as `{user_dir}`. All data this plugin produces— profile, ExperienceLibrary, tracker, generated artifacts — lives in subdirectories of the `{user_dir}` folder alongside the user's raw documents.
 
 ## Workflow
 
@@ -33,7 +33,7 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 | File | Path |
 |---|---|
 | Profile | `{user_dir}/profile/profile.md` |
-| Corpus | `{user_dir}/corpus/index.json` |
+| ExperienceLibrary | `{user_dir}/profile/ExperienceLibrary.json` |
 | Tracker | `{user_dir}/tracker/tracker.json` |
 | Artifacts index | `{user_dir}/artifacts-index.json` |
 
@@ -41,9 +41,9 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 
 **If the file exists** — validate its format and content:
 
-- **`profile/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (corpus, resume documents in `{user_dir}`). Inform the user of any gaps found and how they were resolved.
+- **`profile/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (ExperienceLibrary, resume documents in `{user_dir}`). Inform the user of any gaps found and how they were resolved.
 
-- **`corpus/index.json`**: Must be valid JSON with a `meta` object and a non-empty `units` array. Each unit must have `id`, `type`, `company` (or `institution`), `title`, and `dates`. Flag any units missing required fields and prompt the user to supply them. If the array is empty, treat the file as missing and rebuild it.
+- **`profile/ExperienceLibrary.json`**: Must be valid JSON with a `meta` object and a non-empty `units` array. Each unit must have `id`, `type`, `company` (or `institution`), `title`, and `dates`. Flag any units missing required fields and prompt the user to supply them. If the array is empty, treat the file as missing and rebuild it.
 
 - **`tracker/tracker.json`**: Must be valid JSON with `meta`, `applications` array, and `pipeline_summary`. Each application entry must have at minimum `id`, `company`, `role`, and `status`. Recalculate `pipeline_summary` counts from the actual `applications` array and update if stale.
 
@@ -59,11 +59,11 @@ After validation, report to the user:
 1. Scan `{user_dir}` (non-recursively) for readable documents: PDF, DOCX, TXT, MD files.
 2. Read each document and extract relevant content.
 3. Build the missing file(s) following the schemas below.
-4. Create any missing subdirectories (`profile/`, `corpus/`, `tracker/`) before writing.
+4. Create any missing subdirectories (`profile/`, `tracker/`) before writing.
 5. Inform the user which documents were used and what was created.
 
 If no source documents exist in `{user_dir}` at all, create minimal placeholder files and prompt the user to add their resume:
-> "I didn't find any resumes or documents in your job search folder. Add a resume (PDF or DOCX) and run `/career-navigator:setup` again to build your profile and corpus."
+> "I didn't find any resumes or documents in your job search folder. Add a resume (PDF or DOCX) and run `/career-navigator:setup` again to build your profile and ExperienceLibrary."
 
 #### Schemas for newly created files
 
@@ -93,7 +93,7 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 - Actively searching as of {today's date}
 ```
 
-**`corpus/index.json`**
+**`profile/ExperienceLibrary.json`**
 ```json
 {
   "meta": { "created": "{today}", "version": "1.0", "description": "..." },

@@ -49,8 +49,8 @@ Run all 5 `get_job_details` calls in parallel.
 ### 4. Score and rank with job-scout
 
 Pass all retrieved listings to the `job-scout` agent for outcome-weighted scoring. Job-scout will:
-- Read `search_performance` from `tracker.json` and `performance_weights` from `corpus/index.json`
-- Score each listing across outcome signals, corpus fit, and profile fit
+- Read `search_performance` and `strategy_signals` from `tracker.json`, plus `performance_weights` from `profile/ExperienceLibrary.json`
+- Score each listing across outcome signals, ExperienceLibrary fit, profile fit, and strategy signals
 - Return the listings in ranked order with composite scores and per-factor rationale
 
 Use job-scout's ranked order for the final presentation. If job-scout returns a tie (within 5 points), preserve the original Indeed relevance order within the tied group.
@@ -71,7 +71,7 @@ Use this format for each listing:
 Company: {Company Name}
 Location: {City, State | Remote | Hybrid}
 Salary: {range if listed, otherwise "Not listed"}
-Score: {composite}/100 · {corpus fit %}% corpus fit{avoid signal warning if present}
+Score: {composite}/100 · {ExperienceLibrary fit %}% ExperienceLibrary fit{avoid signal warning if present}
 
 > {2–3 sentence summary of the role drawn from the job description — focus on scope, key responsibilities, and what makes it notable}
 

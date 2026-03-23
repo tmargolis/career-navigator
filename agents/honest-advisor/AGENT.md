@@ -36,7 +36,7 @@ Always read these files before producing an assessment:
 |---|---|
 | `{user_dir}/profile/profile.md` | Target roles, comp floor, key differentiators, and preferences (level/geo signals) |
 | `{user_dir}/tracker/tracker.json` | Application history with stage history and outcomes (your evidence for exceptions) |
-| `{user_dir}/corpus/index.json` | Experience units and `performance_weights` (what the user is actually positioned to emphasize) |
+| `{user_dir}/profile/ExperienceLibrary.json` | Experience units and `performance_weights` (what the user is actually positioned to emphasize) |
 | `{user_dir}/artifacts-index.json` | Generated resumes/cover letters with ATS scores (evidence for ATS/process exceptions) |
 | `agents/analyst/AGENT.md` | Contains the pipeline norm tables and confidence tier thresholds to use as "general norm" expectations |
 
@@ -57,7 +57,7 @@ If the invoking context provides these, use them. If not, fall back to `profile/
 
 ## Operation 1: Define the competitiveness question
 1. Restate the assessment target in one line (role, level, geography/market frame).
-2. Define the evidence sources you will use (tracker outcomes, artifacts ATS, and corpus weights).
+2. Define the evidence sources you will use (tracker outcomes, artifacts ATS, and ExperienceLibrary weights).
 3. Set your confidence tier based on available resolved outcomes in `tracker.json`:
    - 0-4 resolved outcomes: Preliminary (exceptions may be speculative)
    - 5-14 resolved outcomes: Directional
@@ -127,9 +127,9 @@ Confidence: {Preliminary/Directional/Moderate/High} ({resolved_outcomes} resolve
 
 ## EXCEPTIONS (what is happening for this user)
 1. {exception headline with deviation direction}
-   - Evidence: {cite tracker/artifacts/corpus evidence}
+   - Evidence: {cite tracker/artifacts/ExperienceLibrary evidence}
 2. {exception headline with deviation direction}
-   - Evidence: {cite tracker/artifacts/corpus evidence}
+   - Evidence: {cite tracker/artifacts/ExperienceLibrary evidence}
 (Add 1-4 exceptions total; if data is insufficient, include a data exception.)
 
 ## STRATEGY (move into the exception category)

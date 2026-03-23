@@ -1,8 +1,8 @@
 ---
 name: add-source
 description: >
-  Ingests a resume, CV, or portfolio document into the experience corpus.
-  Extracts structured experience units and merges them into corpus/index.json.
+  Ingests a resume, CV, or portfolio document into the ExperienceLibrary.
+  Extracts structured experience units and merges them into profile/ExperienceLibrary.json.
   Fires when the user uploads or references a new source document. Also
   invocable via /career-navigator:add-source.
 triggers:
@@ -10,16 +10,16 @@ triggers:
   - "add my resume"
   - "add this CV"
   - "ingest this document"
-  - "add to my corpus"
+  - "add to my ExperienceLibrary"
   - "add a source"
   - "here's my resume"
   - "upload my resume"
   - "I have a new resume"
   - "I have another resume"
-  - "add this to the corpus"
+  - "add this to the ExperienceLibrary"
 ---
 
-Extract structured experience units from a source document and merge them into the user's experience corpus.
+Extract structured experience units from a source document and merge them into the user's ExperienceLibrary.
 
 ## Workflow
 
@@ -32,9 +32,9 @@ Extract structured experience units from a source document and merge them into t
 
 Supported formats: PDF, DOCX, TXT, MD, plain text paste.
 
-### 2. Read the current corpus
+### 2. Read the current ExperienceLibrary
 
-Read `{user_dir}/corpus/index.json`. Note:
+Read `{user_dir}/profile/ExperienceLibrary.json`. Note:
 - Existing unit IDs (to avoid collisions)
 - Existing companies and roles (to detect duplicates)
 
@@ -73,14 +73,14 @@ Read the source document in full. For each distinct role, education entry, publi
 
 ### 4. Check for duplicates
 
-Before appending, check each extracted unit against existing corpus entries:
+Before appending, check each extracted unit against existing ExperienceLibrary entries:
 - Same company + overlapping date range = likely duplicate
 - If a likely duplicate is found, surface it:
-> "I see an existing entry for {Role} at {Company} ({dates}) in your corpus. Should I replace it, merge the achievements, or add this as a separate entry?"
+> "I see an existing entry for {Role} at {Company} ({dates}) in your ExperienceLibrary. Should I replace it, merge the achievements, or add this as a separate entry?"
 
-### 5. Merge into corpus
+### 5. Merge into ExperienceLibrary
 
-Append the new units to the `units` array in `corpus/index.json`. Update the `meta.updated` field to today's date.
+Append the new units to the `units` array in `profile/ExperienceLibrary.json`. Update the `meta.updated` field to today's date.
 
 Also add the source document to `artifacts-index.json` if it is not already listed:
 
@@ -94,19 +94,19 @@ Also add the source document to `artifacts-index.json` if it is not already list
   "target_role": null,
   "date_created": "{file date or today}",
   "source": "existing",
-  "notes": "Source document added to corpus"
+  "notes": "Source document added to ExperienceLibrary"
 }
 ```
 
 ### 6. Confirm
 
 ```
-Added to corpus: {n} experience unit(s) from {filename}
+Added to ExperienceLibrary: {n} experience unit(s) from {filename}
   {Role} at {Company} ({dates})
   {Role} at {Company} ({dates})
   ...
 
-Corpus total: {total unit count} units
+ExperienceLibrary total: {total unit count} units
 ```
 
 If duplicates were merged or skipped, note that inline. Keep the confirmation concise.

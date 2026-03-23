@@ -1,8 +1,8 @@
 ---
 name: skill-transfer
 description: >
-  Identifies the user's core transferable capabilities from their experience
-  corpus and maps them to role types and industries beyond their current track.
+  Identifies the user's core transferable capabilities from their
+  ExperienceLibrary and maps them to role types and industries beyond their current track.
   Surfaces non-obvious destinations and flags domain-dependent vs. portable
   strengths. Invokes the analyst agent.
 triggers:
@@ -23,16 +23,16 @@ Invoke the `analyst` agent to identify the user's transferable strengths and map
 
 ### 1. Confirm data exists
 
-Read `{user_dir}/corpus/index.json` and `{user_dir}/profile/profile.md`. If the corpus `units` array is empty:
+Read `{user_dir}/profile/ExperienceLibrary.json` and `{user_dir}/profile/profile.md`. If the ExperienceLibrary `units` array is empty:
 
-> "Your experience corpus is empty. Run `/career-navigator:add-source` to add a resume first."
+> "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first."
 
 Otherwise, proceed.
 
 ### 2. Invoke analyst — Operation 2
 
 Hand off to the `analyst` agent with:
-- The full `corpus/index.json`
+- The full `profile/ExperienceLibrary.json`
 - The full `profile/profile.md`
 
 The agent will identify core capabilities, their transferable form, and the role types and industries where they have high value — including destinations the user may not have considered.

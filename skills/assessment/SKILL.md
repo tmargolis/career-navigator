@@ -25,9 +25,9 @@ Read `{user_dir}/profile/profile.md`. If it has no `target_roles` (or equivalent
 
 > "I need your target role(s) to run an assessment. Run `/career-navigator:setup` (or update your `profile/profile.md`)."
 
-Read `{user_dir}/corpus/index.json`. If the corpus `units` array is empty:
+Read `{user_dir}/profile/ExperienceLibrary.json`. If the ExperienceLibrary `units` array is empty:
 
-> "Your experience corpus is empty. Run `/career-navigator:add-source` to add a resume first."
+> "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first."
 
 Optionally read `{user_dir}/tracker/tracker.json` to estimate how strong your evidence base is. If resolved outcomes are < 5, expect confidence to be `Preliminary`.
 
@@ -57,7 +57,7 @@ Target requirements (from profile):
 Evidence-based gaps:
 1. {exception headline + deviation direction}
    - Impacts: {which requirements this likely undermines}
-   - Evidence: {cite tracker/artifacts/corpus evidence}
+   - Evidence: {cite tracker/artifacts/ExperienceLibrary evidence}
 2. ...
 
 Repositioning plan:

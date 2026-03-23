@@ -5,7 +5,7 @@ An AI-powered end-to-end job search companion built as a Claude Cowork plugin. C
 ## What It Does
 
 Career Navigator manages your entire job search in one place:
-- Builds targeted resumes from a structured corpus of your experience
+- Builds targeted resumes from a structured ExperienceLibrary of your experience
 - Scores and optimizes every resume for ATS systems
 - Tracks every application with full stage history
 - Ranks job opportunities against your skills and outcome history
@@ -44,7 +44,7 @@ In CoWork, click the **+** button (or the folder icon) and add the local folder 
 /career-navigator:setup
 ```
 
-Reads everything in your job search folder — resumes, cover letters, past applications — and automatically builds your profile and corpus. Also configures JobSearch for live job search.
+Reads everything in your job search folder — resumes, cover letters, past applications — and automatically builds your profile and ExperienceLibrary. Also configures JobSearch for live job search.
 
 ### 3. Drop documents in your folder
 
@@ -64,7 +64,7 @@ With JobSearch configured: searches live job listings automatically and returns 
 /career-navigator:tailor-resume
 ```
 
-Paste a job description. Career Navigator assembles the optimal resume from your corpus, scores it for ATS compatibility, and saves it to your artifact inventory.
+Paste a job description. Career Navigator assembles the optimal resume from your ExperienceLibrary, scores it for ATS compatibility, and saves it to your artifact inventory.
 
 ---
 
@@ -74,15 +74,16 @@ Career Navigator is designed skill-first: most workflows trigger automatically f
 
 | Skill / Command | Trigger | Purpose |
 |---------|---------|---------|
-| `tailor-resume` | Paste a job description, or say "I want to apply to X" | Assemble an optimized resume from your corpus for a specific role |
+| `tailor-resume` | Paste a job description, or say "I want to apply to X" | Assemble an optimized resume from your ExperienceLibrary for a specific role |
 | `cover-letter` | After tailoring a resume, or "write me a cover letter for X" | Generate a targeted cover letter |
 | `track-application` | "I just applied to X", "log this application" | Log or update a job application |
-| `add-source` | Upload or reference a resume/CV | Add a document to your experience corpus |
+| `add-source` | Upload or reference a resume/CV | Add a document to your ExperienceLibrary |
 | `resume-score` | Share a resume + job description together | Score ATS match, formatting, and narrative strength |
 | `search-jobs` | "find jobs", "search for X roles" | Find and rank job opportunities |
 | `market-brief` | "market brief", "is this role in demand", "/career-navigator:market-brief" | Surface role demand trends, AI/automation displacement signals, and geographic competitiveness |
+| `suggest-roles` | "suggest roles", "what else could I apply to", "/career-navigator:suggest-roles" | Suggest non-obvious role opportunities and write strategy signals that improve job-scout ranking |
 | `training-roi` | "training roi", "what should I learn next", "is a bootcamp/certification/degree worth it" | Compare certifications, degrees, bootcamps, and self-study with cost-benefit-time ROI analysis |
-| `/career-navigator:setup` | Explicit (run first) | Configure job search folder, build corpus and profile |
+| `/career-navigator:setup` | Explicit (run first) | Configure job search folder, build ExperienceLibrary and profile |
 | `/career-navigator:list-artifacts` | Explicit | View all generated resumes and cover letters |
 
 All skills are also invocable as explicit commands using the `/career-navigator:` prefix.
@@ -105,9 +106,8 @@ Everything lives in one folder — the job search directory you provide. Career 
 │
 ├── artifacts-index.json         — index of all generated documents
 ├── profile/
-│   └── profile.md               — your profile: targets, comp floor, differentiators
-├── corpus/
-│   └── index.json               — experience units extracted from your resumes
+│   ├── profile.md               — your profile: targets, comp floor, differentiators
+│   └── ExperienceLibrary.json   — experience units extracted from your resumes
 └── tracker/
     └── tracker.json             — all application records with full stage history
 ```
@@ -192,9 +192,9 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 - Phase 1D: Not started
 - Phase 1E: Not started
 
-**Phase 1A (shipped — v1.3.0):** Plugin scaffold, setup wizard (builds profile and corpus from existing documents), live job search via Indeed, session start hook with pipeline digest.
+**Phase 1A (shipped — v1.3.0):** Plugin scaffold, setup wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, session start hook with pipeline digest.
 
-**Phase 1B (completed):** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach` and `analyst` agents. Feedback loop connecting outcomes to corpus weights. AI displacement assessment via Anthropic Economic Index. Follow-up timeline intelligence. Pipeline dashboard.
+**Phase 1B (completed):** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach` and `analyst` agents. Feedback loop connecting outcomes to ExperienceLibrary weights. AI displacement assessment via Anthropic Economic Index. Follow-up timeline intelligence. Pipeline dashboard.
 
 **Phase 1C (in progress):** `honest-advisor` and `market-researcher` agents. Candid role competitiveness assessment. Skills gap analysis and training ROI engine. Market trend and AI/automation displacement signals (`/career-navigator:suggest-roles`).
 

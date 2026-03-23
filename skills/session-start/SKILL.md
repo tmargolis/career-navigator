@@ -26,7 +26,7 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 | File | Path |
 |---|---|
 | Profile | `{user_dir}/profile/profile.md` |
-| Corpus | `{user_dir}/corpus/index.json` |
+| ExperienceLibrary | `{user_dir}/profile/ExperienceLibrary.json` |
 | Tracker | `{user_dir}/tracker/tracker.json` |
 | Artifacts index | `{user_dir}/artifacts-index.json` |
 
@@ -44,7 +44,7 @@ Output this onboarding message:
 >
 > Your job search companion is installed and ready. To get started:
 >
-> 1. Run `/career-navigator:setup` — reads your existing resumes and cover letters, builds your profile and experience corpus, and configures live job search.
+> 1. Run `/career-navigator:setup` — reads your existing resumes and cover letters, builds your profile and ExperienceLibrary, and configures live job search.
 >
 > That's it. Once setup is complete, every session will open with a live pipeline brief.
 

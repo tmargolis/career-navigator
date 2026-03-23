@@ -30,14 +30,14 @@ If location preferences are missing, continue but mark geographic confidence as 
 
 Optionally read:
 - `{user_dir}/tracker/tracker.json` for user-specific conversion/timeline signals
-- `{user_dir}/corpus/index.json` for capability-fit context
+- `{user_dir}/profile/ExperienceLibrary.json` for capability-fit context
 
 ### 2. Invoke market-researcher
 
 Hand off to `market-researcher` with:
 - The full `profile/profile.md`
 - The full `tracker/tracker.json` (if present)
-- The full `corpus/index.json` (if present)
+- The full `profile/ExperienceLibrary.json` (if present)
 - Instruction to include all three required sections:
   1. Role demand trends
   2. AI/automation displacement outlook
