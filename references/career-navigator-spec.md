@@ -475,9 +475,18 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 ## **Phase 1 — Core Platform**
 
+Phase status:
+- Phase 1A: Completed
+- Phase 1B: Completed
+- Phase 1C: In progress
+- Phase 1D: Not started
+- Phase 1E: Not started
+
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
 ### **Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search**
+
+Status: Completed
 
 * Plugin scaffold: manifest, directory structure
 
@@ -490,6 +499,8 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 * Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
 
 ### **Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent**
+
+Status: Completed
 
 * **Agents introduced:** `resume-coach` (resume assembly, ATS optimization, narrative coaching), `analyst` (outcome pattern analysis, transferable strengths identification, AI displacement assessment)
 
@@ -512,6 +523,8 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 * `/career-navigator:pipeline`, `/career-navigator:follow-up`
 
 ### **Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI**
+
+Status: In progress
 
 * **Agents introduced:** 
 
