@@ -126,7 +126,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 | Plugin Name | career-navigator |
 | :---- | :---- |
-| **Version** | 1.3.0 |
+| **Version** | 1.4.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | node-cron (cross-platform) |
@@ -480,8 +480,8 @@ The advisor is calibrated to be less confrontational when the user has an interv
 Phase status:
 - Phase 1A: Completed
 - Phase 1B: Completed
-- Phase 1C: In progress
-- Phase 1D: Not started
+- Phase 1C: Completed
+- Phase 1D: In progress
 - Phase 1E: Not started
 
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
@@ -526,7 +526,7 @@ Status: Completed
 
 ### **Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI**
 
-Status: In progress
+Status: Completed
 
 * **Agents introduced:** 
 
@@ -545,6 +545,8 @@ Status: In progress
     * Note: skills assessment becomes significantly richer once Phase 2B mock interview performance data feeds back into the profile
 
 ### **Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring**
+
+Status: In progress
 
 * **Agent introduced:** `job-scout` (full outcome-weighted job ranking, proactive opportunity alerts, transferable skills analysis)
 
