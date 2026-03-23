@@ -190,9 +190,114 @@ Return the risk profile, durable strengths, narrative reframe, and adjacent capa
 
 ---
 
+## Operation 4: Market Benchmark
+
+Compare the user's actual pipeline metrics against industry norms segmented by role, level, company size, and geography.
+
+### Step 1 — Calculate actual metrics
+
+Read `tracker.json` and `artifacts-index.json`. Compute:
+
+| Metric | How to calculate |
+|---|---|
+| App → Response rate | Applications with any stage beyond `applied` ÷ total applications |
+| Response → Screen rate | Applications reaching `phone_screen` ÷ applications with any response |
+| Screen → Interview rate | Applications reaching `interview` ÷ applications that had a phone screen |
+| Interview → Offer rate | Applications reaching `offer` ÷ applications that had an interview |
+| Ghosting rate | Applications with status `ghosted` or no activity in 30+ days ÷ total applications |
+| Avg days to first response | Mean days from `date_applied` to first `stage_history` entry beyond `applied` |
+| Avg days to offer | Mean days from `date_applied` to `offer` stage, for applications that reached it |
+| Avg ATS score | Mean `ats_score` across all artifacts in `artifacts-index.json` with a score present |
+
+Only count applications with enough history to contribute to each metric. If a metric has fewer than 3 data points, report it as `insufficient data` rather than a number.
+
+### Step 2 — Classify the user's search context
+
+From `profile.md` and `tracker.json`, identify:
+
+**Level** — infer from target role titles:
+- IC / Individual Contributor — PM, Engineer, Designer, Researcher (no direct reports implied)
+- Manager — "Manager", "Lead", "Team Lead"
+- Director — "Director", "Sr. Director", "Group PM", "Head of"
+- VP / Executive — "VP", "SVP", "C-suite", "Partner"
+
+**Company size mix** — from `tracker.json` applications (use context clues in notes, company names, or job descriptions; if unknown, mark as mixed):
+- Startup: < 200 employees
+- Mid-market: 200–2,000 employees
+- Enterprise: 2,000+ employees
+
+**Primary geography** — from `profile.md` location field.
+
+### Step 3 — Compare against industry norms
+
+Use the norm tables below. Select the row matching the user's level and company size mix. If the mix is spread across sizes, use the weighted average or note the range.
+
+#### Pipeline conversion norms by level
+
+| Level | App → Response | Response → Screen | Screen → Interview | Interview → Offer |
+|---|---|---|---|---|
+| IC | 15–25% | 50–65% | 40–55% | 20–30% |
+| Manager | 12–20% | 45–60% | 40–55% | 22–32% |
+| Director | 8–18% | 40–55% | 40–55% | 25–38% |
+| VP / Executive | 5–14% | 35–55% | 45–60% | 30–45% |
+
+**Note:** Director and above see lower initial response rates because inbound volume relative to open roles is high — but conversion improves at later stages for qualified candidates. A below-norm App → Response rate at Director level is more likely a targeting or resume issue than a market issue.
+
+#### Pipeline norms by company size
+
+| Company size | App → Response | Avg days to first response | Ghosting rate |
+|---|---|---|---|
+| Startup | 20–35% | 3–10 days | 15–25% |
+| Mid-market | 12–22% | 7–21 days | 25–35% |
+| Enterprise | 7–16% | 14–42 days | 30–45% |
+
+#### Geographic market signals
+
+| Market | Competitiveness | Typical impact |
+|---|---|---|
+| SF Bay Area (AI/tech) | Very high | Application volume 2–3× national average; lower App → Response norms apply |
+| NYC | High | Competitive across finance, media, tech; comp premiums 10–20% over national |
+| Chicago | Moderate | Lower applicant volume; response rates often above national norm; comp 5–15% below SF/NYC |
+| Remote (national pool) | Very high | Competes with the entire US talent market; apply national-average norms or SF norms for AI roles |
+| Other metros | Varies | Note if data is insufficient to segment |
+
+#### ATS score thresholds
+
+| Score | Interpretation |
+|---|---|
+| < 60 | High risk of ATS filter-out before human review |
+| 60–69 | Marginal — may pass some systems, fail others |
+| 70–84 | Competitive |
+| 85+ | Strong — unlikely to be filtered on keyword grounds |
+
+### Step 4 — Compensation positioning
+
+Do not run a new Apify salary lookup here. Instead, check whether `salary-research` has been run recently (look for any compensation data in the conversation or in notes within `tracker.json`). If comp data is available, contextualize it by level and company size:
+
+- Startups typically offer 15–30% below enterprise base, offset by equity
+- Enterprise (FAANG-tier) typically at or above market median with lower equity upside
+- Director-level roles at AI-first companies (Anthropic, OpenAI, Google DeepMind) carry a 20–40% premium over equivalent Director roles at traditional enterprise software companies
+
+If no comp data is available, note: "Run `/career-navigator:salary-research` to benchmark your compensation floor and offers against current market rates."
+
+### Step 5 — Surface gaps and strengths
+
+For each metric:
+- **Above norm:** note it as a strength, briefly
+- **At norm:** neutral — no action needed
+- **Below norm:** flag it with a one-line interpretation specific to their level and company size context — not generic advice
+
+Prioritize the 1–3 gaps with the most impact on search velocity. Be direct: if App → Response is below norm, say whether the evidence points to a resume issue, a targeting issue, or a market volume issue — and distinguish between them based on their ATS scores and the role/company types they're targeting.
+
+Return all calculated metrics, norm comparisons, gaps, and strengths to the `benchmark` skill for presentation.
+
+---
+
 ## Integrated Report
 
 When invoked to run all three operations, complete them in sequence (Operation 1 → 2 → 3) and return the full results to the `report` skill for presentation.
+
+When invoked to run all four operations (via the `report` skill when benchmark data is requested), complete Operations 1 → 2 → 3 → 4 in sequence.
 
 ---
 
