@@ -81,6 +81,6 @@ If a metric cannot be calculated (e.g., no offers yet, so interview → offer ra
 Based on the lowest-performing metric:
 
 - App → Response below norm: > "Your resume may not be clearing ATS or targeting JDs closely enough. Run `/career-navigator:resume-score` against your weakest-performing artifact."
-- Response → Screen or Screen → Interview below norm: > "Your materials are getting in — the issue is later in the funnel. Run `/career-navigator:pattern-analysis` to see which corpus units are in stalled applications."
+- Response → Screen or Screen → Interview below norm: > "Your materials are getting in — the issue is later in the funnel. Run `/career-navigator:pattern-analysis` to see which ExperienceLibrary units are in stalled applications."
 - Timelines slow across the board: > "Long timelines are common for enterprise roles. Check `/career-navigator:track-application` to ensure follow-ups are scheduled."
 - ATS scores below 70: > "Run `/career-navigator:ats-optimization` to surface the highest-impact fixes on your active artifacts."

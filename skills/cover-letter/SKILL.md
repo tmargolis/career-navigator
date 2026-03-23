@@ -25,7 +25,7 @@ Generate a targeted, honest cover letter for a specific role. Do not pad, flatte
 **Job description** — required. If not already in context, ask the user to provide it.
 
 **Tailored resume** — check `{user_dir}/artifacts-index.json` for a resume artifact for this company and role. If one exists, use it as the primary source for experience framing. If none exists:
-> "I don't see a tailored resume for this role yet. Want me to tailor one first, or write the cover letter from your corpus directly?"
+> "I don't see a tailored resume for this role yet. Want me to tailor one first, or write the cover letter from your ExperienceLibrary directly?"
 
 **Profile** — read `{user_dir}/profile/profile.md` for differentiators, tone preferences, and any standing instructions.
 
@@ -45,7 +45,7 @@ Do not use generic praise ("innovative company", "exciting mission"). If no spec
 
 Structure:
 1. **Opening** — specific reason this role and company, not just any job. One sentence max.
-2. **Core case** — 2–3 paragraphs. Each makes one concrete point supported by a specific achievement from the corpus. Mirror JD language where it is authentic.
+2. **Core case** — 2–3 paragraphs. Each makes one concrete point supported by a specific achievement from the ExperienceLibrary. Mirror JD language where it is authentic.
 3. **Close** — brief, direct. Express interest in a conversation. Do not beg or hedge.
 
 Tone: confident and specific. Honest-over-encouraging applies here too — do not claim enthusiasm the user hasn't expressed.

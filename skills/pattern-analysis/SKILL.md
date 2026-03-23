@@ -2,7 +2,7 @@
 name: pattern-analysis
 description: >
   Analyzes application outcome data to find what's working and what isn't.
-  Cross-references tracker history with artifact performance to update corpus
+  Cross-references tracker history with artifact performance to update ExperienceLibrary
   weights and surface search_performance signals. Invokes the analyst agent.
 triggers:
   - "analyze my search"
@@ -32,12 +32,12 @@ Otherwise, proceed.
 Hand off to the `analyst` agent with:
 - The full `tracker/tracker.json`
 - The full `artifacts-index.json`
-- The full `corpus/index.json`
+- The full `profile/ExperienceLibrary.json`
 
 The agent will:
 - Cross-reference artifact performance with application outcomes
 - Identify patterns in variant performance, experience unit performance, role/market fit, and timelines
-- Update `performance_weights` in `corpus/index.json`
+- Update `performance_weights` in `profile/ExperienceLibrary.json`
 - Write a `weight_update_log` entry for each change
 - Write a `search_performance` summary to `tracker.json`
 
@@ -48,7 +48,7 @@ After the agent completes, report what changed:
 ```
 Pattern analysis complete.
 
-Corpus weights updated
+ExperienceLibrary weights updated
   {n} unit(s) increased  — {role titles, brief rationale}
   {n} unit(s) decreased  — {role titles, brief rationale}
   {n} unit(s) unchanged  (insufficient data)

@@ -4,7 +4,7 @@ description: >
   Generates a self-contained interactive D3 pipeline dashboard as an HTML
   file and opens it in the browser. Shows application timeline, pipeline
   funnel with conversion rates, benchmark comparisons against industry
-  norms, AI displacement outlook, transferable strengths, and corpus
+  norms, AI displacement outlook, transferable strengths, and ExperienceLibrary
   performance weights. Can be invoked standalone or as the final step of
   the analyst report.
 triggers:
@@ -25,7 +25,7 @@ Generate a self-contained HTML dashboard visualizing the user's job search pipel
 | File | Purpose |
 |---|---|
 | `{user_dir}/tracker/tracker.json` | Applications, stage history, pipeline summary |
-| `{user_dir}/corpus/index.json` | Experience units with performance weights and update log |
+| `{user_dir}/profile/ExperienceLibrary.json` | Experience units with performance weights and update log |
 | `{user_dir}/artifacts-index.json` | Generated artifacts with ATS scores |
 | `{user_dir}/analysis/analyst-graph-data.json` | Optional graph data from the analyst report |
 
@@ -61,7 +61,7 @@ Read all three files and build the following JSON object. This will be embedded 
     { "label": "Screen → Interview", "user_value": ..., "norm_low": ..., "norm_high": ... },
     { "label": "Interview → Offer",  "user_value": ..., "norm_low": ..., "norm_high": ... }
   ],
-  "corpus_units": [
+  "experience_library_units": [
     {
       "label": "{title} — {company} ({dates})",
       "weight": {float 0.1–1.0},
@@ -96,7 +96,7 @@ Read all three files and build the following JSON object. This will be embedded 
 
 **Confidence tier:** count applications where `outcome` != `"pending"` — use analyst Op 4 thresholds (0–4: Preliminary, 5–14: Directional, 15–29: Moderate, 30+: High)
 
-**Corpus units:** read `units[]` from `corpus/index.json`. For `update_note`, use the most recent entry from `weight_update_log` for that unit (match by `unit_id`), or `null` if none.
+**ExperienceLibrary units:** read `units[]` from `profile/ExperienceLibrary.json`. For `update_note`, use the most recent entry from `weight_update_log` for that unit (match by `unit_id`), or `null` if none.
 
 **AI displacement + strengths graphs:** optionally read `{user_dir}/analysis/analyst-graph-data.json`. If missing or invalid, set `ai_displacement_outlook` to `null` and `transferable_strengths` to `[]`.
 
@@ -138,7 +138,7 @@ Write the assembled dashboard to `{user_dir}/pipeline-dashboard.html` using the 
     <div class="panel"><h2>vs. Industry Norms</h2><svg id="sv-bench"></svg></div>
     <div class="panel"><h2>AI Displacement Outlook</h2><svg id="sv-displacement"></svg></div>
     <div class="panel"><h2>Transferable Strengths</h2><svg id="sv-strengths"></svg></div>
-    <div class="panel wide"><h2>Corpus Performance Weights</h2><svg id="sv-corpus"></svg></div>
+    <div class="panel wide"><h2>ExperienceLibrary Performance Weights</h2><svg id="sv-experience-library"></svg></div>
   </div>
 <script>
 const D = /*DATA_PLACEHOLDER*/;
@@ -533,15 +533,15 @@ function truncate(s, n){
 
 // ── CORPUS WEIGHTS ────────────────────────────────────────────────────────────
 (function(){
-  const units = D.corpus_units;
+  const units = D.experience_library_units;
   if(!units||!units.length){ return; }
 
   const ml=260, mr=60, mt=8, mb=20;
-  const panelW = document.querySelector('#sv-corpus').closest('.panel').clientWidth - 40;
+  const panelW = document.querySelector('#sv-experience-library').closest('.panel').clientWidth - 40;
   const W = panelW - ml - mr;
   const rh = 28, H = units.length * rh;
 
-  const svg = d3.select('#sv-corpus')
+  const svg = d3.select('#sv-experience-library')
     .attr('width',panelW).attr('height',H+mt+mb)
     .append('g').attr('transform',`translate(${ml},${mt})`);
 

@@ -48,7 +48,7 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [**10\. Core Data Model	14**](#10-core-data-model)
 
-[10.1 Resume Corpus	14](#101-resume-corpus)
+[10.1 ExperienceLibrary	14](#101-experiencelibrary)
 
 [10.2 Application Record	14](#102-application-record)
 
@@ -126,7 +126,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 | Plugin Name | career-navigator |
 | :---- | :---- |
-| **Version** | 1.1.0 |
+| **Version** | 1.3.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | node-cron (cross-platform) |
@@ -172,16 +172,16 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career-navigator:setup** | Command | Conversational setup wizard. Reads existing documents in the job search folder, builds the user profile and experience corpus, and configures JobSearch for live job search. Validates all inputs before saving, writes config automatically. Re-runnable to update keys or reconfigure. |
+| **/career-navigator:setup** | Command | Conversational setup wizard. Reads existing documents in the job search folder, builds the user profile and ExperienceLibrary, and configures JobSearch for live job search. Validates all inputs before saving, writes config automatically. Re-runnable to update keys or reconfigure. |
 
 ## **3.1 Resume & Cover Letter Commands**
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career-navigator:tailor-resume** | Command | Takes one or more source documents from the corpus and a job description, assembles and rewrites the best possible resume for that specific role, scores it for ATS compatibility, and saves it to the artifact inventory. |
+| **/career-navigator:tailor-resume** | Command | Takes one or more source documents from the ExperienceLibrary and a job description, assembles and rewrites the best possible resume for that specific role, scores it for ATS compatibility, and saves it to the artifact inventory. |
 | **/career-navigator:cover-letter** | Command | Generates a targeted cover letter for a specific role, drawing on the tailored resume, company research, and any known contact context. Saves to artifact inventory. |
 | **/career-navigator:resume-score** | Command | Scores an existing resume or cover letter against a job description for ATS keyword match, formatting compliance, and narrative strength. |
-| **/career-navigator:add-source** | Command | Adds a new source document (resume, CV, portfolio) to the resume corpus for use in future tailoring. |
+| **/career-navigator:add-source** | Command | Adds a new source document (resume, CV, portfolio) to the ExperienceLibrary for use in future tailoring. |
 | **/career-navigator:list-artifacts** | Command | Lists all generated artifacts in the inventory with metadata: date created, job applied for, outcome if known. |
 
 ## **3.2 Job Search & Tracking Commands**
@@ -193,7 +193,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | **/career-navigator:pipeline** | Command | Displays the full application pipeline dashboard with timeline view, benchmark comparisons, and action items flagged by stage age. |
 | **/career-navigator:follow-up** | Command | Generates a contextual follow-up message for a specific application based on elapsed time, last communication, and company norms. |
 | **/career-navigator:market-brief** | Command | Generates a current market intelligence report for the user's target roles and industries, including trend data, competition levels, and AI/automation impact assessment. |
-| **/career-navigator:suggest-roles** | Command | Analyzes the user's full experience corpus and suggests non-obvious role types their skills could be applied to, with rationale for each suggestion. |
+| **/career-navigator:suggest-roles** | Command | Analyzes the user's full ExperienceLibrary and suggests non-obvious role types their skills could be applied to, with rationale for each suggestion. |
 
 ## **3.3 Interview Prep Commands**
 
@@ -220,8 +220,8 @@ Agents are specialized Claude instances with focused roles. They can be invoked 
 
 | Name | Phase | Description |
 | :---- | :---- | :---- |
-| **resume-coach** | 1B | Analyzes the resume corpus, identifies gaps and strengths, optimizes for ATS compatibility, and provides narrative coaching. Invoked by the `tailor-resume` and `resume-score` skills. |
-| **analyst** | 1B | Analyzes application outcome data to identify patterns in what's advancing and what isn't. Identifies transferable strengths and core capabilities in the user's experience that apply across roles and industries. Assesses AI and automation displacement risk for current and target roles using the Anthropic Economic Index. Updates corpus performance weights and feeds recommendations to `job-scout` and `resume-coach`. |
+| **resume-coach** | 1B | Analyzes the ExperienceLibrary, identifies gaps and strengths, optimizes for ATS compatibility, and provides narrative coaching. Invoked by the `tailor-resume` and `resume-score` skills. |
+| **analyst** | 1B | Analyzes application outcome data to identify patterns in what's advancing and what isn't. Identifies transferable strengths and core capabilities in the user's experience that apply across roles and industries. Assesses AI and automation displacement risk for current and target roles using the Anthropic Economic Index. Updates ExperienceLibrary performance weights and feeds recommendations to `job-scout` and `resume-coach`. |
 | **honest-advisor** | 1C | Provides candid assessments of the user's competitiveness for specific roles, potential recruiter concerns, and strategies for overcoming barriers. Researches company/industry-specific deviations from general norms. Empathetic but unsparing. |
 | **market-researcher** | 1C | Monitors macro hiring trends, role-specific demand signals, AI/automation displacement risks, geographic demand patterns, and sector-specific cycles. Feeds the `market-brief` command and the `job-scout` agent. |
 | **job-scout** | 1D | Searches and ranks job opportunities across all configured job boards. Incorporates outcome history and market intelligence into scoring. Ranking improves over time as the user logs outcomes. Proactively surfaces high-match opportunities. |
@@ -239,12 +239,16 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **tailor-resume** | Skill | Fires when the user shares or pastes a job description, or expresses intent to apply to a specific role. Reads the corpus, assembles an optimized resume for the target role, scores it for ATS compatibility, and saves it to the artifact inventory. Also invocable via `/career-navigator:tailor-resume`. |
+| **tailor-resume** | Skill | Fires when the user shares or pastes a job description, or expresses intent to apply to a specific role. Reads the ExperienceLibrary, assembles an optimized resume for the target role, scores it for ATS compatibility, and saves it to the artifact inventory. Also invocable via `/career-navigator:tailor-resume`. |
 | **cover-letter** | Skill | Fires after a resume is tailored for a role, or when the user explicitly requests a cover letter for a specific job. Draws on the tailored resume, company research, and any known contact context. Saves to artifact inventory. Also invocable via `/career-navigator:cover-letter`. |
 | **track-application** | Skill | Fires when the user mentions applying to a job, logging a new application, or updating an existing one (e.g., "I just applied to Acme" or "I got a callback from Google"). Structures conversational input into the tracker database automatically. Also invocable via `/career-navigator:track-application`. |
-| **add-source** | Skill | Fires when the user uploads or references a new resume, CV, or portfolio document. Extracts experience units and adds them to the corpus. Also invocable via `/career-navigator:add-source`. |
+| **add-source** | Skill | Fires when the user uploads or references a new resume, CV, or portfolio document. Extracts experience units and adds them to the ExperienceLibrary. Also invocable via `/career-navigator:add-source`. |
 | **resume-score** | Skill | Fires when the user shares a resume alongside a job description without explicitly requesting tailoring. Scores ATS keyword match, formatting compliance, and narrative strength. Also invocable via `/career-navigator:resume-score`. |
 | **list-artifacts** | Skill | Fires when the user asks to see their generated documents, artifact history, or what has been created so far. Also invocable via `/career-navigator:list-artifacts`. |
+| **assessment** | Skill | Fires when the user asks for an honest assessment and gap analysis vs. their target role requirements. Uses the `honest-advisor` agent's norm/exception/strategy pattern to surface evidence-based gaps and repositioning options. |
+| **market-brief** | Skill | Fires when the user asks for current market conditions. Invokes `market-researcher` to summarize role demand trends, AI/automation displacement signals, and geography-specific competitiveness. Also invocable via `/career-navigator:market-brief`. |
+| **suggest-roles** | Skill | Fires when the user asks what adjacent or non-obvious roles they should target. Invokes `honest-advisor` and `market-researcher`, then writes `strategy_signals` to `tracker.json` for job-scout scoring improvements. Also invocable via `/career-navigator:suggest-roles`. |
+| **training-roi** | Skill | Fires when the user asks what to learn next. Compares certifications, degrees, bootcamps, and self-study using a cost-benefit-time ROI framework and recommends a primary and fallback path. |
 
 **Context skills** fire on ambient signals throughout any session:
 
@@ -326,13 +330,13 @@ Stored at `{user_dir}/profile/profile.md`. Created by `/career-navigator:setup` 
 * **target\_companies** — primary, secondary, and tertiary targets; industries to prioritize and avoid
 * **compensation\_floor** — minimum total comp (base + bonus + equity annualized); expected ranges by company type
 * **location** — geographic preferences, relocation openness, remote/hybrid preference
-* **key\_skills** — prioritized skill list for ATS matching and corpus tagging
+* **key\_skills** — prioritized skill list for ATS matching and ExperienceLibrary tagging
 * **differentiators** — named, high-value elements that must appear in every tailored resume
 * **search\_notes** — standing instructions for agents: preferred channels, company-specific notes, anything static that should inform every search and application
 
-## **10.1 Resume Corpus**
+## **10.1 ExperienceLibrary**
 
-The corpus is not a collection of discrete resumes — it is a structured pool of experience units that can be recombined. Each unit has metadata indicating source document, role type relevance, industry tags, and performance history.
+The ExperienceLibrary is not a collection of discrete resumes — it is a structured pool of experience units that can be recombined. Each unit has metadata indicating source document, role type relevance, industry tags, and performance history.
 
 * source\_documents\[ \] — original uploaded files (resumes, CVs, portfolios)
 
@@ -473,13 +477,22 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 ## **Phase 1 — Core Platform**
 
+Phase status:
+- Phase 1A: Completed
+- Phase 1B: Completed
+- Phase 1C: In progress
+- Phase 1D: Not started
+- Phase 1E: Not started
+
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
 ### **Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search**
 
+Status: Completed
+
 * Plugin scaffold: manifest, directory structure
 
-* `setup` skill and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into corpus, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (corpus, tracker, artifacts index)
+* `setup` skill and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index)
 
 * `search-jobs` skill — live job search via Indeed connector; assisted-manual fallback
 
@@ -488,6 +501,8 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 * Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
 
 ### **Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent**
+
+Status: Completed
 
 * **Agents introduced:** `resume-coach` (resume assembly, ATS optimization, narrative coaching), `analyst` (outcome pattern analysis, transferable strengths identification, AI displacement assessment)
 
@@ -499,7 +514,7 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 
 * `ats-optimization` and `salary-research` context skills
 
-* Insight engine and feedback loop — outcome data feeds back into corpus performance weights and job-scout scoring
+* Insight engine and feedback loop — outcome data feeds back into ExperienceLibrary performance weights and job-scout scoring
 
 * Benchmarking against industry norms by role, level, company size, and geography
 
@@ -507,23 +522,27 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 
 * D3 pipeline dashboard with timeline view and benchmark comparisons
 
-* `/career-navigator:pipeline`, `/career-navigator:follow-up`, `/career-navigator:market-brief`
+* `/career-navigator:pipeline`, `/career-navigator:follow-up`
 
 ### **Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI**
 
-* **Agents introduced:** `honest-advisor` (candid role competitiveness assessment, norm/exception/strategy pattern), `market-researcher` (role demand trends, AI/automation displacement, geographic signals)
+Status: In progress
 
-* Honest advisor integration with three-step norm/exception/strategy pattern
+* **Agents introduced:** 
 
-* Market researcher: role demand trends, AI/automation displacement, geographic signals
+    * `honest-advisor` candid role competitiveness assessment, norm/exception/strategy pattern
 
-* Skills self-assessment and gap analysis against target role requirements
+    * `market-researcher` role demand trends, AI/automation displacement, geographic signals
+
+        triggered through `/career-navigator:market-brief` skill
+
+* Skills assessment and gap analysis against target role requirements
 
 * Training recommendation engine with cost-benefit-time ROI analysis (certifications, degrees, bootcamps, self-study)
 
 * `/career-navigator:suggest-roles`, job scout scoring improvements driven by outcome data
 
-* Note: skills assessment becomes significantly richer once Phase 2B mock interview performance data feeds back into the profile
+    * Note: skills assessment becomes significantly richer once Phase 2B mock interview performance data feeds back into the profile
 
 ### **Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring**
 
@@ -669,11 +688,11 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 
 | Command | Purpose |
 | :---- | :---- |
-| **/career-navigator:setup** | Configure job search folder, build corpus and profile, set up JobSearch (run first) |
-| **/career-navigator:tailor-resume** | Assemble optimal resume for a specific role from corpus |
+| **/career-navigator:setup** | Configure job search folder, build ExperienceLibrary and profile, set up JobSearch (run first) |
+| **/career-navigator:tailor-resume** | Assemble optimal resume for a specific role from ExperienceLibrary |
 | **/career-navigator:cover-letter** | Generate targeted cover letter |
 | **/career-navigator:resume-score** | Score resume against a job description |
-| **/career-navigator:add-source** | Add source document to corpus |
+| **/career-navigator:add-source** | Add source document to ExperienceLibrary |
 | **/career-navigator:list-artifacts** | List all generated artifacts |
 | **/career-navigator:search-jobs** | Search and rank job opportunities |
 | **/career-navigator:track-application** | Log or update an application |

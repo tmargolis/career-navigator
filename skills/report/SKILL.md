@@ -24,9 +24,9 @@ Invoke the `analyst` agent to run all three operations and deliver the integrate
 
 ### 1. Confirm data exists
 
-Read `{user_dir}/tracker/tracker.json`, `{user_dir}/corpus/index.json`, `{user_dir}/profile/profile.md`, and `{user_dir}/artifacts-index.json`. If the corpus is empty:
+Read `{user_dir}/tracker/tracker.json`, `{user_dir}/profile/ExperienceLibrary.json`, `{user_dir}/profile/profile.md`, and `{user_dir}/artifacts-index.json`. If the ExperienceLibrary is empty:
 
-> "Your experience corpus is empty. Run `/career-navigator:add-source` to add a resume first."
+> "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first."
 
 If the tracker has no applications, note this inline — pattern analysis will be limited but the other two operations can still run.
 
@@ -44,7 +44,7 @@ If any artifact with `type: "resume"` is missing `ats_score` (or has `ats_score:
 
 Hand off to the `analyst` agent with:
 - The full `tracker/tracker.json`
-- The full `corpus/index.json`
+- The full `profile/ExperienceLibrary.json`
 - The full `artifacts-index.json`
 - The full `profile/profile.md`
 - Instruction to read `references/AI_Job_Report-Anthropic-2026-03.pdf` before the displacement assessment
@@ -73,10 +73,10 @@ PART 1: WHAT'S WORKING IN YOUR SEARCH
 {1–2 sentence highlight for the single most actionable outcome-pattern finding}
 {Short detail (3–6 bullets) capturing: what the data shows, what it doesn't show yet, and the 1–2 biggest pipeline bottlenecks}
 
-Corpus weights updated: {n} changed ({n} up, {n} down)
+ExperienceLibrary weights updated: {n} changed ({n} up, {n} down)
 Data confidence: {Preliminary / Directional / Moderate / High}
 
-Note: The AI displacement + transferable strengths graphs (and pipeline funnel/benchmark + corpus weights) are interactive in your pipeline dashboard, so I’m not duplicating those charts/tables in the text report.
+Note: The AI displacement + transferable strengths graphs (and pipeline funnel/benchmark + ExperienceLibrary weights) are interactive in your pipeline dashboard, so I’m not duplicating those charts/tables in the text report.
 
 ---
 
@@ -136,7 +136,7 @@ Do not wait for the user to ask — generate it every time the report runs.
 
 Based on the most prominent finding across all four analyses:
 - If any ATS scores are weak: > "Run `/career-navigator:ats-optimization` on specific resumes that could be improved."
-- If search patterns are weak: > "Run `/career-navigator:tailor-resume` using the updated corpus weights."
+- If search patterns are weak: > "Run `/career-navigator:tailor-resume` using the updated ExperienceLibrary weights."
 - If transferable strengths suggest a pivot: > "Run `/career-navigator:search-jobs` targeting {role type}."
 - If AI risk is high in current positioning: > "Run `/career-navigator:cover-letter` to try a reframed narrative."
 - If pipeline metrics are below norm: > "Run `/career-navigator:benchmark` for the full breakdown with targeted fixes."

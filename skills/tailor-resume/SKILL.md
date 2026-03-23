@@ -1,7 +1,7 @@
 ---
 name: tailor-resume
 description: >
-  Assembles an optimized resume for a specific role from the experience corpus,
+  Assembles an optimized resume for a specific role from the ExperienceLibrary,
   scores it for ATS compatibility, and saves it to the artifact inventory.
   Fires automatically when the user shares or pastes a job description, or
   expresses intent to apply to a specific role. Also invocable via
@@ -21,7 +21,7 @@ triggers:
   - "I found a job posting"
 ---
 
-Assemble the best possible resume for a specific role, drawn from the user's experience corpus. Invoke the `resume-coach` agent to do the work.
+Assemble the best possible resume for a specific role, drawn from the user's ExperienceLibrary. Invoke the `resume-coach` agent to do the work.
 
 ## Workflow
 
@@ -32,8 +32,8 @@ Assemble the best possible resume for a specific role, drawn from the user's exp
 
 **Target role and company** — extract from the JD if not stated explicitly.
 
-**Corpus** — read `{user_dir}/corpus/index.json`. If the file is missing or the `units` array is empty:
-> "Your experience corpus is empty. Run `/career-navigator:add-source` to add a resume first, then I can tailor one for this role."
+**ExperienceLibrary** — read `{user_dir}/profile/ExperienceLibrary.json`. If the file is missing or the `units` array is empty:
+> "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first, then I can tailor one for this role."
 
 **Profile** — read `{user_dir}/profile/profile.md` for differentiators, skills, and target preferences. Do not ask the user for anything that is already in the profile.
 
@@ -41,7 +41,7 @@ Assemble the best possible resume for a specific role, drawn from the user's exp
 
 Hand off to the `resume-coach` agent with:
 - The full job description text
-- The full corpus (`corpus/index.json`)
+- The full ExperienceLibrary (`profile/ExperienceLibrary.json`)
 - The user profile (`profile/profile.md`)
 - Any specific instructions the user provided (emphasis, exclusions, tone)
 
@@ -62,10 +62,10 @@ ATS score: {n}/100
 Keyword coverage: {matched_keywords} / {total_required} must-have keywords matched
 
 Strengths
-- {What the corpus covers well for this role}
+- {What the ExperienceLibrary covers well for this role}
 
 Gaps (honest)
-- {Requirements with no or weak corpus coverage}
+- {Requirements with no or weak ExperienceLibrary coverage}
 - {Achievements that need metrics or sharpening}
 ```
 

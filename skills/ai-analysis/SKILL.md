@@ -24,16 +24,16 @@ Invoke the `analyst` agent to assess AI and automation displacement risk for the
 
 ### 1. Confirm data exists
 
-Read `{user_dir}/corpus/index.json` and `{user_dir}/profile/profile.md`. If the corpus `units` array is empty or `profile.md` has no target roles:
+Read `{user_dir}/profile/ExperienceLibrary.json` and `{user_dir}/profile/profile.md`. If the ExperienceLibrary `units` array is empty or `profile.md` has no target roles:
 
-> "I need your experience corpus and target roles to run a displacement assessment. Run `/career-navigator:add-source` to add a resume, then `/career-navigator:setup` to set your target roles."
+> "I need your ExperienceLibrary and target roles to run a displacement assessment. Run `/career-navigator:add-source` to add a resume, then `/career-navigator:setup` to set your target roles."
 
 Otherwise, proceed.
 
 ### 2. Invoke analyst — Operation 3
 
 Hand off to the `analyst` agent with:
-- The full `corpus/index.json`
+- The full `profile/ExperienceLibrary.json`
 - The full `profile/profile.md`
 - Instruction to read `references/AI_Job_Report-Anthropic-2026-03.pdf` before analysis
 
