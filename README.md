@@ -5,7 +5,7 @@ An AI-powered end-to-end job search companion built as a Claude Cowork plugin. C
 ## What It Does
 
 Career Navigator manages your entire job search in one place:
-- Builds targeted resumes from a structured ExperienceLibrary of your experience
+- Builds targeted resumes from a structured Library of your Experiences
 - Scores and optimizes every resume for ATS systems
 - Tracks every application with full stage history
 - Ranks job opportunities against your skills and outcome history

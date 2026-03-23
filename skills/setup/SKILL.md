@@ -6,6 +6,8 @@ description: >
   configures JobSearch for live job search, and optionally connects Google Drive.
   No Customize button required — run this command to do everything.
 triggers:
+  - "launch career"
+  - "set up career"
   - "set up career navigator"
   - "configure career navigator"
   - "get started with career navigator"
