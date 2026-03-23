@@ -81,6 +81,7 @@ Career Navigator is designed skill-first: most workflows trigger automatically f
 | `resume-score` | Share a resume + job description together | Score ATS match, formatting, and narrative strength |
 | `search-jobs` | "find jobs", "search for X roles" | Find and rank job opportunities |
 | `market-brief` | "market brief", "is this role in demand", "/career-navigator:market-brief" | Surface role demand trends, AI/automation displacement signals, and geographic competitiveness |
+| `training-roi` | "training roi", "what should I learn next", "is a bootcamp/certification/degree worth it" | Compare certifications, degrees, bootcamps, and self-study with cost-benefit-time ROI analysis |
 | `/career-navigator:setup` | Explicit (run first) | Configure job search folder, build corpus and profile |
 | `/career-navigator:list-artifacts` | Explicit | View all generated resumes and cover letters |
 

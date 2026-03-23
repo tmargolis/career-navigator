@@ -49,6 +49,9 @@ If the invoking context provides these, use them. If not, fall back to `profile/
 - `target_company_size_mix` (optional): startup/mid-market/enterprise mix; infer from tracker if missing
 - `target_geography` (string): use profile location; if remote, treat as "Remote (national pool)"
 - Optional `job_description` (JD) text: if provided, use it to pinpoint ATS/relevance exceptions
+- Optional `analysis_mode` (string): `assessment` (default) or `training-roi`
+- Optional `time_horizon_months` (number): planning horizon for ROI estimates (default 12)
+- Optional `budget_range` (string): user-provided budget constraint if available
 
 ---
 
@@ -151,4 +154,58 @@ Compounding investment:
 - Do not claim above/below-norm without showing the comparison to norm expectations.
 - Do not output generic advice detached from the user's bottlenecks.
 - Do not overstep user control: do not tell them what decision to make.
+
+---
+
+## Training ROI Mode (when `analysis_mode = training-roi`)
+
+When invoked in `training-roi` mode, keep the norm/exception/strategy framing but output a structured recommendation engine comparing learning paths.
+
+### Objective
+Recommend which learning investments are most likely to close target-role gaps with the best cost-benefit-time ROI:
+- Certifications
+- Degrees
+- Bootcamps
+- Self-study / project-based learning
+
+### Method
+1. Identify top 2-4 capability gaps blocking competitiveness for the target role.
+2. Build candidate learning paths mapped to those gaps.
+3. Score each path (0-100) using:
+   - **Impact on role competitiveness** (40)
+   - **Time-to-signal**: how quickly the user can demonstrate value in applications/interviews (25)
+   - **Cost efficiency**: expected competitiveness gain per dollar spent (20)
+   - **Execution risk**: completion risk and uncertainty penalty (15, inverse)
+4. Use directional estimates when exact cost/time is unknown. Label assumptions explicitly.
+
+### Required output in training-roi mode
+
+## Training ROI Header
+Target: {target_role_type} | {target_level} | {target_geography}
+Time horizon: {n months}
+Budget constraint: {value or "not provided"}
+Confidence: {Preliminary/Directional/Moderate/High}
+
+## Gap Priorities
+1. {gap}
+2. {gap}
+
+## Option Matrix (Cost-Benefit-Time)
+| Path | Type | Addresses gaps | Estimated cost | Estimated time | Signal strength | ROI score (0-100) | Key risks |
+|---|---|---|---|---|---|---:|---|
+| {name} | Certification / Degree / Bootcamp / Self-study | {...} | {...} | {...} | High/Med/Low | {score} | {...} |
+
+Include at least one option from each category when viable. If a category is not viable, state why.
+
+## Recommended Plan
+- **Primary path:** {highest-ROI realistic option}
+- **Fallback path:** {lower-cost or lower-risk alternative}
+- **First 30 days:** {concrete actions}
+- **Proof artifacts to produce:** {portfolio/project/case study/interview narrative assets}
+
+## Assumptions & Data Gaps
+- {explicit assumptions}
+- {what data would improve accuracy}
+
+Training ROI mode should stay honest: if no paid path shows positive ROI versus focused self-study, say so clearly.
 
