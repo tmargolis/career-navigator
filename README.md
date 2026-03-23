@@ -80,6 +80,7 @@ Career Navigator is designed skill-first: most workflows trigger automatically f
 | `add-source` | Upload or reference a resume/CV | Add a document to your experience corpus |
 | `resume-score` | Share a resume + job description together | Score ATS match, formatting, and narrative strength |
 | `search-jobs` | "find jobs", "search for X roles" | Find and rank job opportunities |
+| `market-brief` | "market brief", "is this role in demand", "/career-navigator:market-brief" | Surface role demand trends, AI/automation displacement signals, and geographic competitiveness |
 | `/career-navigator:setup` | Explicit (run first) | Configure job search folder, build corpus and profile |
 | `/career-navigator:list-artifacts` | Explicit | View all generated resumes and cover letters |
 

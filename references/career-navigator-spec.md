@@ -246,6 +246,7 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **resume-score** | Skill | Fires when the user shares a resume alongside a job description without explicitly requesting tailoring. Scores ATS keyword match, formatting compliance, and narrative strength. Also invocable via `/career-navigator:resume-score`. |
 | **list-artifacts** | Skill | Fires when the user asks to see their generated documents, artifact history, or what has been created so far. Also invocable via `/career-navigator:list-artifacts`. |
 | **assessment** | Skill | Fires when the user asks for an honest assessment and gap analysis vs. their target role requirements. Uses the `honest-advisor` agent's norm/exception/strategy pattern to surface evidence-based gaps and repositioning options. |
+| **market-brief** | Skill | Fires when the user asks for current market conditions. Invokes `market-researcher` to summarize role demand trends, AI/automation displacement signals, and geography-specific competitiveness. Also invocable via `/career-navigator:market-brief`. |
 
 **Context skills** fire on ambient signals throughout any session:
 
