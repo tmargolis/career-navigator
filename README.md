@@ -124,6 +124,36 @@ Run `/career-navigator:setup` to configure integrations. The wizard handles ever
 
 **Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. Cloud storage connectors (Google Drive, OneDrive, Dropbox) are available in Phase 2. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
 
+### Apify MCP for salary benchmarking (manual setup)
+
+`/career-navigator:salary-research` uses Apify via MCP. Right now this connector should be added in **Claude Desktop Local MCP servers** (not only in the plugin `.mcp.json`).
+
+1. Create an account at [apify.com](https://apify.com).
+2. In Apify, copy your API token from **Console -> Settings -> Integrations**.
+3. In Claude Desktop, open **Settings -> Developer -> Local MCP servers** and add Apify (or edit your config file directly).
+4. Use a config like:
+
+```json
+{
+  "mcpServers": {
+    "apify": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.apify.com/?tools=call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search",
+        "--header",
+        "Authorization: Bearer APIFY_API_KEY"
+      ]
+    }
+  }
+}
+```
+
+5. Restart Claude Desktop (or start a new Cowork chat), then run `/career-navigator:salary-research`.
+
+Use your own token and never commit it to this repository.
+
 ---
 
 ## Session Start Hook
