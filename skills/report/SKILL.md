@@ -1,10 +1,12 @@
 ---
 name: report
 description: >
-  Runs all three analyst operations — outcome pattern analysis, transferable
-  strengths, and AI displacement assessment — and delivers a unified insight
-  report. The integrated view of the user's search health, career capital, and
-  future positioning. Invokes the analyst agent.
+  Runs all four analyst operations — outcome pattern analysis, transferable
+  strengths, AI displacement assessment, and market benchmark — and delivers
+  a unified insight report followed by an interactive D3 pipeline dashboard
+  opened in the browser. The integrated view of the user's search health,
+  career capital, future positioning, and how their metrics compare to
+  industry norms. Invokes the analyst agent and pipeline-dashboard skill.
 triggers:
   - "run the analyst"
   - "analyst report"
@@ -96,7 +98,13 @@ RECOMMENDED NEXT ACTIONS
 2. ...
 ```
 
-### 4. Suggest next step
+### 4. Generate the pipeline dashboard
+
+After presenting the text report, invoke the `pipeline-dashboard` skill. It will read the same data files, build the visualization, write `{user_dir}/pipeline-dashboard.html`, and open it in the browser automatically.
+
+Do not wait for the user to ask — generate it every time the report runs.
+
+### 5. Suggest next step
 
 Based on the most prominent finding across all four analyses:
 - If search patterns are weak: > "Run `/career-navigator:tailor-resume` using the updated corpus weights."
