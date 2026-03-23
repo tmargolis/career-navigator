@@ -28,7 +28,7 @@ Invoke the `resume-coach` agent to perform the scoring analysis.
 
 **Resume** — required. Accept:
 - A file path to an existing document in `{user_dir}`
-- An artifact name from `artifacts-index.json` (look up by filename)
+- An artifact name from `CareerNavigator/artifacts-index.json` (look up by filename)
 - Content pasted directly into the conversation
 
 **Job description** — required. If not provided:

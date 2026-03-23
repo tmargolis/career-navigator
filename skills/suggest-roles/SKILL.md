@@ -20,16 +20,16 @@ Invoke both `honest-advisor` and `market-researcher` to generate role suggestion
 ### 1. Confirm data exists
 
 Read:
-- `{user_dir}/profile/profile.md`
-- `{user_dir}/profile/ExperienceLibrary.json`
+- `{user_dir}/CareerNavigator/profile.md`
+- `{user_dir}/CareerNavigator/ExperienceLibrary.json`
 
 If profile has no target roles:
-> "I need your current target role(s) first. Run `/career-navigator:setup` or update `profile/profile.md` before running role suggestions."
+> "I need your current target role(s) first. Run `/career-navigator:setup` or update `CareerNavigator/profile.md` before running role suggestions."
 
 If ExperienceLibrary `units` is empty:
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume before role suggestions."
 
-Optionally read `{user_dir}/tracker/tracker.json` for confidence and outcome context.
+Optionally read `{user_dir}/CareerNavigator/tracker.json` for confidence and outcome context.
 
 ### 2. Run advisor pass (competitiveness + transferable fit)
 
@@ -54,7 +54,7 @@ Combine both outputs into a ranked role list:
 
 ### 5. Write job-scout scoring signals
 
-Update `{user_dir}/tracker/tracker.json` with a `strategy_signals` object (create if missing):
+Update `{user_dir}/CareerNavigator/tracker.json` with a `strategy_signals` object (create if missing):
 
 ```json
 {

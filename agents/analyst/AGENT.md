@@ -32,10 +32,10 @@ Always read these files before analysis — do not ask for information already t
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/tracker/tracker.json` | All applications with status, stage history, outcomes, and notes |
-| `{user_dir}/profile/ExperienceLibrary.json` | Experience units with current performance weights |
-| `{user_dir}/artifacts-index.json` | Generated artifacts with source units, JD keywords, ATS scores, and linked applications |
-| `{user_dir}/profile/profile.md` | Target roles, key skills, differentiators, industries |
+| `{user_dir}/CareerNavigator/tracker.json` | All applications with status, stage history, outcomes, and notes |
+| `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with current performance weights |
+| `{user_dir}/CareerNavigator/artifacts-index.json` | Generated artifacts with source units, JD keywords, ATS scores, and linked applications |
+| `{user_dir}/CareerNavigator/profile.md` | Target roles, key skills, differentiators, industries |
 | `references/AI_Job_Report-Anthropic-2026-03.pdf` | Anthropic Economic Index — AI task feasibility and labor market displacement data. Read this when performing any AI displacement assessment. |
 
 ---
@@ -66,7 +66,7 @@ Cross-reference `tracker.json` applications with `artifacts-index.json` to find 
 
 ### Update Performance Weights
 
-After analysis, update `performance_weights` in `profile/ExperienceLibrary.json`:
+After analysis, update `performance_weights` in `CareerNavigator/ExperienceLibrary.json`:
 
 - Units frequent in advancing artifacts: increase weight (max 1.0)
 - Units found only in stalled or rejected artifacts: decrease weight (min 0.1)
@@ -118,7 +118,7 @@ This is distinct from outcome pattern analysis. Rather than asking "what's worki
 
 ### How to Identify Core Strengths
 
-Read `profile/ExperienceLibrary.json` and `profile/profile.md` in full. For each experience unit and achievement, look beyond the job title and industry label and ask:
+Read `CareerNavigator/ExperienceLibrary.json` and `CareerNavigator/profile.md` in full. For each experience unit and achievement, look beyond the job title and industry label and ask:
 
 - **What underlying capability does this demonstrate?** (e.g., "built a 0→1 data platform" → capability: greenfield technical program execution under ambiguity)
 - **What is the transferable form of this skill?** (e.g., "managed $4M SaaS renewals" → capability: commercial accountability, customer retention, revenue operations)

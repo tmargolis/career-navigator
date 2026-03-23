@@ -68,23 +68,33 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 ---
 
-## All Phase 1B Commands
+## All Phase 1ABC Skills
 
 Career Navigator is designed skill-first: most workflows trigger automatically from conversational context — paste a job description and a resume is assembled; say "I just applied to Acme" and the tracker updates. Commands are available for users who prefer explicit invocation.
 
 | Skill / Command | Trigger | Purpose |
 |---------|---------|---------|
+| `/career-navigator:setup` | Explicit (run first) | Configure job search folder and initialize `CareerNavigator` data files |
+| `session-start` | Session open | Surface pipeline status, overdue follow-ups, and interview-day context |
+| `add-source` | Upload or reference a resume/CV | Add source documents into `CareerNavigator/ExperienceLibrary.json` |
 | `tailor-resume` | Paste a job description, or say "I want to apply to X" | Assemble an optimized resume from your ExperienceLibrary for a specific role |
 | `cover-letter` | After tailoring a resume, or "write me a cover letter for X" | Generate a targeted cover letter |
-| `track-application` | "I just applied to X", "log this application" | Log or update a job application |
-| `add-source` | Upload or reference a resume/CV | Add a document to your ExperienceLibrary |
 | `resume-score` | Share a resume + job description together | Score ATS match, formatting, and narrative strength |
-| `search-jobs` | "find jobs", "search for X roles" | Find and rank job opportunities |
+| `ats-optimization` | "optimize for ATS", "fix ATS issues" | Surface ATS-hostile formatting/keyword issues with prioritized fixes |
+| `/career-navigator:list-artifacts` | Explicit | View generated resumes/cover letters and linked outcomes |
+| `track-application` | "I just applied to X", "log this application" | Log or update a job application |
+| `search-jobs` | "find jobs", "search for X roles" | Find and rank job opportunities with outcome + strategy signals |
+| `follow-up` | "follow up with X", "is this overdue?" | Generate contextual follow-up messaging based on company response windows |
+| `pattern-analysis` | "what's converting?", "analyze my search" | Update ExperienceLibrary performance weights from outcome patterns |
+| `skill-transfer` | "what else could I do?" | Map transferable strengths to adjacent role/industry opportunities |
+| `ai-analysis` | "AI risk", "future-proof my career" | Assess task-level AI displacement risk and durable differentiators |
+| `benchmark` | "how am I doing vs market?" | Compare funnel metrics against role/market/company-size norms |
+| `report` | "run full analysis" | Generate integrated analyst report + dashboard data |
+| `pipeline-dashboard` | Dashboard generation | Build/open interactive pipeline dashboard |
+| `salary-research` | "salary range for X in Y" | Pull live compensation benchmarks via Apify MCP |
 | `market-brief` | "market brief", "is this role in demand", "/career-navigator:market-brief" | Surface role demand trends, AI/automation displacement signals, and geographic competitiveness |
 | `suggest-roles` | "suggest roles", "what else could I apply to", "/career-navigator:suggest-roles" | Suggest non-obvious role opportunities and write strategy signals that improve job-scout ranking |
 | `training-roi` | "training roi", "what should I learn next", "is a bootcamp/certification/degree worth it" | Compare certifications, degrees, bootcamps, and self-study with cost-benefit-time ROI analysis |
-| `/career-navigator:setup` | Explicit (run first) | Configure job search folder, build ExperienceLibrary and profile |
-| `/career-navigator:list-artifacts` | Explicit | View all generated resumes and cover letters |
 
 All skills are also invocable as explicit commands using the `/career-navigator:` prefix.
 
@@ -104,12 +114,14 @@ Everything lives in one folder — the job search directory you provide. Career 
 ├── resume-acme-pm-2026-03.md    ← Career Navigator outputs (saved here directly)
 ├── cover-letter-acme-pm-2026-03.md
 │
-├── artifacts-index.json         — index of all generated documents
-├── profile/
-│   ├── profile.md               — your profile: targets, comp floor, differentiators
-│   └── ExperienceLibrary.json   — experience units extracted from your resumes
-└── tracker/
-    └── tracker.json             — all application records with full stage history
+├── CareerNavigator/
+│   ├── profile.md               — your targets, comp floor, differentiators
+│   ├── ExperienceLibrary.json   — experience units extracted from source resumes/CVs
+│   ├── tracker.json             — application records with full stage history
+│   ├── artifacts-index.json     — index of generated resumes and cover letters
+│   ├── company-windows.json     — company-specific response windows for follow-up timing
+│   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering
+│   └── pipeline-dashboard.html  — generated interactive dashboard artifact
 ```
 
 No data leaves your machine unless you configure a cloud connector (see [CONNECTORS.md](CONNECTORS.md)).

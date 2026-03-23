@@ -21,23 +21,23 @@ Invoke the `market-researcher` agent to generate a current market intelligence b
 
 ### 1. Confirm required context
 
-Read `{user_dir}/profile/profile.md`.
+Read `{user_dir}/CareerNavigator/profile.md`.
 
 If target roles are missing:
-> "I need your target role(s) to generate a market brief. Run `/career-navigator:setup` (or update `profile/profile.md`) with your target roles first."
+> "I need your target role(s) to generate a market brief. Run `/career-navigator:setup` (or update `CareerNavigator/profile.md`) with your target roles first."
 
 If location preferences are missing, continue but mark geographic confidence as limited.
 
 Optionally read:
-- `{user_dir}/tracker/tracker.json` for user-specific conversion/timeline signals
-- `{user_dir}/profile/ExperienceLibrary.json` for capability-fit context
+- `{user_dir}/CareerNavigator/tracker.json` for user-specific conversion/timeline signals
+- `{user_dir}/CareerNavigator/ExperienceLibrary.json` for capability-fit context
 
 ### 2. Invoke market-researcher
 
 Hand off to `market-researcher` with:
-- The full `profile/profile.md`
-- The full `tracker/tracker.json` (if present)
-- The full `profile/ExperienceLibrary.json` (if present)
+- The full `CareerNavigator/profile.md`
+- The full `CareerNavigator/tracker.json` (if present)
+- The full `CareerNavigator/ExperienceLibrary.json` (if present)
 - Instruction to include all three required sections:
   1. Role demand trends
   2. AI/automation displacement outlook

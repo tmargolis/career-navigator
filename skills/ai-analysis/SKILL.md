@@ -24,7 +24,7 @@ Invoke the `analyst` agent to assess AI and automation displacement risk for the
 
 ### 1. Confirm data exists
 
-Read `{user_dir}/profile/ExperienceLibrary.json` and `{user_dir}/profile/profile.md`. If the ExperienceLibrary `units` array is empty or `profile.md` has no target roles:
+Read `{user_dir}/CareerNavigator/ExperienceLibrary.json` and `{user_dir}/CareerNavigator/profile.md`. If the ExperienceLibrary `units` array is empty or `profile.md` has no target roles:
 
 > "I need your ExperienceLibrary and target roles to run a displacement assessment. Run `/career-navigator:add-source` to add a resume, then `/career-navigator:setup` to set your target roles."
 
@@ -33,8 +33,8 @@ Otherwise, proceed.
 ### 2. Invoke analyst — Operation 3
 
 Hand off to the `analyst` agent with:
-- The full `profile/ExperienceLibrary.json`
-- The full `profile/profile.md`
+- The full `CareerNavigator/ExperienceLibrary.json`
+- The full `CareerNavigator/profile.md`
 - Instruction to read `references/AI_Job_Report-Anthropic-2026-03.pdf` before analysis
 
 The agent will decompose the user's current and target roles into tasks, score each task against the Economic Index, build a role-level risk profile, identify durable differentiators, and suggest narrative reframes where needed.

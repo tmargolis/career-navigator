@@ -26,7 +26,7 @@ Benchmark the user's pipeline performance against industry norms for their role,
 
 ### 1. Check data threshold
 
-Read `{user_dir}/tracker/tracker.json`. Count the total number of applications (any status). If fewer than 5:
+Read `{user_dir}/CareerNavigator/tracker.json`. Count the total number of applications (any status). If fewer than 5:
 
 > "You need at least 5 applications to run a meaningful benchmark — you have {n} so far. Keep logging applications via `/career-navigator:track-application` and run this again once you have more history."
 
@@ -37,9 +37,9 @@ If ≥5 but fewer than 10 resolved outcomes, proceed with a note that results ar
 ### 2. Invoke analyst — Operation 4
 
 Hand off to the `analyst` agent with:
-- The full `tracker/tracker.json`
-- The full `artifacts-index.json`
-- The full `profile/profile.md`
+- The full `CareerNavigator/tracker.json`
+- The full `CareerNavigator/artifacts-index.json`
+- The full `CareerNavigator/profile.md`
 - Instruction to run Operation 4: Market Benchmark
 
 ### 3. Present the benchmark report

@@ -24,10 +24,10 @@ Generate a targeted, honest cover letter for a specific role. Do not pad, flatte
 
 **Job description** — required. If not already in context, ask the user to provide it.
 
-**Tailored resume** — check `{user_dir}/artifacts-index.json` for a resume artifact for this company and role. If one exists, use it as the primary source for experience framing. If none exists:
+**Tailored resume** — check `{user_dir}/CareerNavigator/artifacts-index.json` for a resume artifact for this company and role. If one exists, use it as the primary source for experience framing. If none exists:
 > "I don't see a tailored resume for this role yet. Want me to tailor one first, or write the cover letter from your ExperienceLibrary directly?"
 
-**Profile** — read `{user_dir}/profile/profile.md` for differentiators, tone preferences, and any standing instructions.
+**Profile** — read `{user_dir}/CareerNavigator/profile.md` for differentiators, tone preferences, and any standing instructions.
 
 **Contact context** — check `tracker.json` for any known contacts at the company. If a contact is present, offer to reference them:
 > "I see {Name} at {Company} is in your tracker. Should I reference your connection in the letter?"
@@ -63,7 +63,7 @@ After confirmation, save the letter:
 
 - **Filename format**: `{Company} — {Role Title} Cover Letter ({YYYY-MM-DD}).md`
 - **Path**: `{user_dir}/`
-- **Write to `{user_dir}/artifacts-index.json`**:
+- **Write to `{user_dir}/CareerNavigator/artifacts-index.json`**:
 
 ```json
 {

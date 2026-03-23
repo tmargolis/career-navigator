@@ -29,9 +29,9 @@ Always read these files first:
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/profile/profile.md` | Target roles, location preferences, and compensation floor |
-| `{user_dir}/tracker/tracker.json` | User-specific outcomes and response patterns by role/company/market |
-| `{user_dir}/profile/ExperienceLibrary.json` | Experience units and strengths that influence market fit |
+| `{user_dir}/CareerNavigator/profile.md` | Target roles, location preferences, and compensation floor |
+| `{user_dir}/CareerNavigator/tracker.json` | User-specific outcomes and response patterns by role/company/market |
+| `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units and strengths that influence market fit |
 | `agents/analyst/AGENT.md` | Pipeline benchmark and geographic norm tables for market context |
 | `references/AI_Job_Report-Anthropic-2026-03.pdf` | Task-level AI feasibility/displacement guidance |
 

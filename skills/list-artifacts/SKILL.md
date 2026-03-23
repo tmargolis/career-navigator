@@ -24,12 +24,12 @@ Display the user's artifact inventory in a readable format.
 
 ### 1. Read the inventory
 
-Read `{user_dir}/artifacts-index.json`. If the file does not exist or the `artifacts` array is empty:
+Read `{user_dir}/CareerNavigator/artifacts-index.json`. If the file does not exist or the `artifacts` array is empty:
 > "No artifacts yet. Run `/career-navigator:tailor-resume` to generate your first tailored resume."
 
 ### 2. Cross-reference with tracker
 
-Read `{user_dir}/tracker/tracker.json`. For each artifact, check whether it appears in any application's `artifacts[]` array. If so, note the application's current `status` — this lets the user see which resumes and cover letters are attached to live applications and what outcome (if any) they produced.
+Read `{user_dir}/CareerNavigator/tracker.json`. For each artifact, check whether it appears in any application's `artifacts[]` array. If so, note the application's current `status` — this lets the user see which resumes and cover letters are attached to live applications and what outcome (if any) they produced.
 
 ### 3. Organize the output
 

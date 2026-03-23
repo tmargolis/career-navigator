@@ -27,9 +27,9 @@ Surface follow-up priorities for all active applications using company-specific 
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/tracker/tracker.json` | Active applications with stage history and dates |
-| `{user_dir}/tracker/company-windows.json` | Per-user company response window data, researched on demand |
-| `{user_dir}/profile/profile.md` | Target companies, industries, and role context |
+| `{user_dir}/CareerNavigator/tracker.json` | Active applications with stage history and dates |
+| `{user_dir}/CareerNavigator/company-windows.json` | Per-user company response window data, researched on demand |
+| `{user_dir}/CareerNavigator/profile.md` | Target companies, industries, and role context |
 
 ---
 
@@ -43,7 +43,7 @@ For each active application, extract: `company`, `role`, `date_applied`, `status
 
 ### 2. Load or initialize company-windows.json
 
-Read `{user_dir}/tracker/company-windows.json`. If it does not exist, initialize it:
+Read `{user_dir}/CareerNavigator/company-windows.json`. If it does not exist, initialize it:
 
 ```json
 {
@@ -231,5 +231,5 @@ I'm excited about the opportunity and look forward to next steps.
 - Do not mark an application as overdue before its research-backed window has elapsed — do not use the flat 7-day rule
 - Do not draft a follow-up for an application still within its window
 - Do not fabricate contact names — use "there" if no contact is on file
-- Do not store company window data outside of `{user_dir}/tracker/company-windows.json`
+- Do not store company window data outside of `{user_dir}/CareerNavigator/company-windows.json`
 - Do not re-research a company already present in `company-windows.json` unless the entry is more than 90 days old

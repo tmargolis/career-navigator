@@ -158,7 +158,7 @@ Required for a new record: `company`, `role`, `status`. Ask only for `company` a
 
 **Setting follow_up_date for new applications:**
 
-Read `{user_dir}/tracker/company-windows.json`. Look up the company:
+Read `{user_dir}/CareerNavigator/company-windows.json`. Look up the company:
 - If found: `follow_up_date` = `date_applied` + `follow_up_after_days`
 - If not found: research the company using web search (same method as the `follow-up` skill — Glassdoor, LinkedIn, Blind) and store the result in `company-windows.json` before setting the date. If research returns no usable data, fall back to the size-tier default (startup: +10d, mid-market: +14d, enterprise: +21d).
 

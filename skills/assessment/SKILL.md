@@ -21,24 +21,24 @@ Invoke the `honest-advisor` agent to run a norm/exception/strategy assessment, t
 
 ### 1. Confirm data exists
 
-Read `{user_dir}/profile/profile.md`. If it has no `target_roles` (or equivalent target-role fields):
+Read `{user_dir}/CareerNavigator/profile.md`. If it has no `target_roles` (or equivalent target-role fields):
 
-> "I need your target role(s) to run an assessment. Run `/career-navigator:setup` (or update your `profile/profile.md`)."
+> "I need your target role(s) to run an assessment. Run `/career-navigator:setup` (or update your `CareerNavigator/profile.md`)."
 
-Read `{user_dir}/profile/ExperienceLibrary.json`. If the ExperienceLibrary `units` array is empty:
+Read `{user_dir}/CareerNavigator/ExperienceLibrary.json`. If the ExperienceLibrary `units` array is empty:
 
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first."
 
-Optionally read `{user_dir}/tracker/tracker.json` to estimate how strong your evidence base is. If resolved outcomes are < 5, expect confidence to be `Preliminary`.
+Optionally read `{user_dir}/CareerNavigator/tracker.json` to estimate how strong your evidence base is. If resolved outcomes are < 5, expect confidence to be `Preliminary`.
 
 ### 2. Invoke honest-advisor — assessment + gap analysis
 
-For each target role in `profile/profile.md`, hand off to the `honest-advisor` agent with:
+For each target role in `CareerNavigator/profile.md`, hand off to the `honest-advisor` agent with:
 
 - `target_role_type` for that role
 - `target_level` (from profile if present; otherwise infer from role title)
 - `target_geography` (from profile; if remote/national, treat as "Remote (national pool)")
-- Instruction: "Treat your `EXCEPTIONS` as the concrete gaps vs. the target requirements in `profile/profile.md`. Explicitly map each exception back to which requirement(s) are most likely under-covered (ATS relevance, narrative/seniority fit, or targeting)."
+- Instruction: "Treat your `EXCEPTIONS` as the concrete gaps vs. the target requirements in `CareerNavigator/profile.md`. Explicitly map each exception back to which requirement(s) are most likely under-covered (ATS relevance, narrative/seniority fit, or targeting)."
 
 If multiple target roles exist, run the roles sequentially and label each section.
 

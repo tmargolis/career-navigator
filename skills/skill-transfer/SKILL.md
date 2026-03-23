@@ -23,7 +23,7 @@ Invoke the `analyst` agent to identify the user's transferable strengths and map
 
 ### 1. Confirm data exists
 
-Read `{user_dir}/profile/ExperienceLibrary.json` and `{user_dir}/profile/profile.md`. If the ExperienceLibrary `units` array is empty:
+Read `{user_dir}/CareerNavigator/ExperienceLibrary.json` and `{user_dir}/CareerNavigator/profile.md`. If the ExperienceLibrary `units` array is empty:
 
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first."
 
@@ -32,8 +32,8 @@ Otherwise, proceed.
 ### 2. Invoke analyst — Operation 2
 
 Hand off to the `analyst` agent with:
-- The full `profile/ExperienceLibrary.json`
-- The full `profile/profile.md`
+- The full `CareerNavigator/ExperienceLibrary.json`
+- The full `CareerNavigator/profile.md`
 
 The agent will identify core capabilities, their transferable form, and the role types and industries where they have high value — including destinations the user may not have considered.
 

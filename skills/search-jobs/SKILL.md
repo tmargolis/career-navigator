@@ -21,7 +21,7 @@ Search Indeed for job listings that match the user's profile using the Indeed co
 
 ### 1. Load search parameters
 
-Read `{user_dir}/profile/profile.md` and extract:
+Read `{user_dir}/CareerNavigator/profile.md` and extract:
 - **Role/query** — use the first 1–2 entries from `## Target Roles` as the search query
 - **Location** — use the value from `## Location`; if the user is open to remote, run a second search with `location: "remote"`
 
@@ -49,7 +49,7 @@ Run all 5 `get_job_details` calls in parallel.
 ### 4. Score and rank with job-scout
 
 Pass all retrieved listings to the `job-scout` agent for outcome-weighted scoring. Job-scout will:
-- Read `search_performance` and `strategy_signals` from `tracker.json`, plus `performance_weights` from `profile/ExperienceLibrary.json`
+- Read `search_performance` and `strategy_signals` from `tracker.json`, plus `performance_weights` from `CareerNavigator/ExperienceLibrary.json`
 - Score each listing across outcome signals, ExperienceLibrary fit, profile fit, and strategy signals
 - Return the listings in ranked order with composite scores and per-factor rationale
 

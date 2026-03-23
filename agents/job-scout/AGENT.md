@@ -28,9 +28,9 @@ Always read these files before scoring — do not ask for information already th
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/tracker/tracker.json` | `search_performance` and `strategy_signals` — outcome-derived and advisor/market-derived ranking signals |
-| `{user_dir}/profile/ExperienceLibrary.json` | Experience units with `performance_weights` — identifies the user's strongest material |
-| `{user_dir}/profile/profile.md` | Target roles, compensation floor, location preferences |
+| `{user_dir}/CareerNavigator/tracker.json` | `search_performance` and `strategy_signals` — outcome-derived and advisor/market-derived ranking signals |
+| `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with `performance_weights` — identifies the user's strongest material |
+| `{user_dir}/CareerNavigator/profile.md` | Target roles, compensation floor, location preferences |
 
 The job listings to score are passed in by the `search-jobs` skill with their full job descriptions and metadata.
 
@@ -53,7 +53,7 @@ Read `search_performance` from `tracker.json`. If this field is absent or empty,
 
 ### Dimension 2: ExperienceLibrary Fit (30 points)
 
-Read `profile/ExperienceLibrary.json`. Identify the top experience units by `performance_weight` (weight ≥ 0.7 = high-weight).
+Read `CareerNavigator/ExperienceLibrary.json`. Identify the top experience units by `performance_weight` (weight ≥ 0.7 = high-weight).
 
 For each listing:
 - Extract the 8–10 most prominent keywords from the full job description

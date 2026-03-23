@@ -32,17 +32,17 @@ Assemble the best possible resume for a specific role, drawn from the user's Exp
 
 **Target role and company** — extract from the JD if not stated explicitly.
 
-**ExperienceLibrary** — read `{user_dir}/profile/ExperienceLibrary.json`. If the file is missing or the `units` array is empty:
+**ExperienceLibrary** — read `{user_dir}/CareerNavigator/ExperienceLibrary.json`. If the file is missing or the `units` array is empty:
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first, then I can tailor one for this role."
 
-**Profile** — read `{user_dir}/profile/profile.md` for differentiators, skills, and target preferences. Do not ask the user for anything that is already in the profile.
+**Profile** — read `{user_dir}/CareerNavigator/profile.md` for differentiators, skills, and target preferences. Do not ask the user for anything that is already in the profile.
 
 ### 2. Invoke resume-coach
 
 Hand off to the `resume-coach` agent with:
 - The full job description text
-- The full ExperienceLibrary (`profile/ExperienceLibrary.json`)
-- The user profile (`profile/profile.md`)
+- The full ExperienceLibrary (`CareerNavigator/ExperienceLibrary.json`)
+- The user profile (`CareerNavigator/profile.md`)
 - Any specific instructions the user provided (emphasis, exclusions, tone)
 
 `resume-coach` will:
@@ -78,7 +78,7 @@ Once the user confirms (or if the score is ≥ 70 with no gaps flagged), save th
 
 - **Filename format**: `{Company} — {Role Title} Resume ({YYYY-MM-DD}).md`
 - **Path**: `{user_dir}/`
-- **Write to `{user_dir}/artifacts-index.json`**:
+- **Write to `{user_dir}/CareerNavigator/artifacts-index.json`**:
 
 ```json
 {

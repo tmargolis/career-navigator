@@ -25,10 +25,10 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 
 | File | Path |
 |---|---|
-| Profile | `{user_dir}/profile/profile.md` |
-| ExperienceLibrary | `{user_dir}/profile/ExperienceLibrary.json` |
-| Tracker | `{user_dir}/tracker/tracker.json` |
-| Artifacts index | `{user_dir}/artifacts-index.json` |
+| Profile | `{user_dir}/CareerNavigator/profile.md` |
+| ExperienceLibrary | `{user_dir}/CareerNavigator/ExperienceLibrary.json` |
+| Tracker | `{user_dir}/CareerNavigator/tracker.json` |
+| Artifacts index | `{user_dir}/CareerNavigator/artifacts-index.json` |
 
 If none of these can be found, treat this as a first-run session (no data) and go to **First Run**.
 
@@ -52,11 +52,11 @@ Output this onboarding message:
 
 #### Returning Session (configs found)
 
-Read `tracker/tracker.json` and `artifacts-index.json` from `{user_dir}`. Then output a brief using the format below.
+Read `CareerNavigator/tracker.json` and `artifacts-index.json` from `{user_dir}`. Then output a brief using the format below.
 
 **Pipeline counts** — count `applications` entries by `status`. Recognized statuses: `considering`, `applied`, `phone_screen`, `interview`, `offer`, `accepted`, `declined`, `inactive`. Group anything unrecognized under `other`.
 
-**Overdue follow-up** — read `{user_dir}/tracker/company-windows.json` to determine overdue status per application. An application is overdue if:
+**Overdue follow-up** — read `{user_dir}/CareerNavigator/company-windows.json` to determine overdue status per application. An application is overdue if:
 - `days elapsed since date_applied` exceeds the company's `typical_first_response_days.max` (from `company-windows.json`), AND
 - Its `status` is not `accepted`, `declined`, `rejected`, or `inactive`
 
