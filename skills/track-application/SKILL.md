@@ -278,6 +278,9 @@ If outcome is `"hired"`:
 If outcome is `"rejected"` and a reason was given:
 > "Noted. The analyst will factor this in next time you run a pattern analysis."
 
+**Pattern analysis nudge** — after writing any terminal outcome, count the total number of applications in `tracker.json` where `outcome` is not `"pending"`. If that count is exactly 5, 10, 15, or a multiple of 10 thereafter, append:
+> "You now have {count} resolved outcomes — enough to run a pattern analysis. `/pattern-analysis` will update your corpus weights and job-scout scoring based on what's worked so far."
+
 ---
 
 ### 8. Link artifacts

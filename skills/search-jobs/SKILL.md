@@ -46,9 +46,22 @@ From the search results, identify the top 5 most relevant listings. For each one
 
 Run all 5 `get_job_details` calls in parallel.
 
-### 4. Present results
+### 4. Score and rank with job-scout
+
+Pass all retrieved listings to the `job-scout` agent for outcome-weighted scoring. Job-scout will:
+- Read `search_performance` from `tracker.json` and `performance_weights` from `corpus/index.json`
+- Score each listing across outcome signals, corpus fit, and profile fit
+- Return the listings in ranked order with composite scores and per-factor rationale
+
+Use job-scout's ranked order for the final presentation. If job-scout returns a tie (within 5 points), preserve the original Indeed relevance order within the tied group.
+
+### 5. Present results
 
 Output a formatted summary. **Always embed the apply link in the job title** so the user can click directly to apply — this is required by the Indeed connector.
+
+Open with a one-line header showing the confidence tier from job-scout:
+
+> *Scoring: {Preliminary | Directional | Moderate | High confidence} — {reason, e.g., "based on 3 resolved outcomes" or "no outcome data yet, profile-match only"}*
 
 Use this format for each listing:
 
@@ -58,15 +71,14 @@ Use this format for each listing:
 Company: {Company Name}
 Location: {City, State | Remote | Hybrid}
 Salary: {range if listed, otherwise "Not listed"}
+Score: {composite}/100 · {corpus fit %}% corpus fit{avoid signal warning if present}
 
 > {2–3 sentence summary of the role drawn from the job description — focus on scope, key responsibilities, and what makes it notable}
 
 ---
 
-After all 5, add:
+After all listings, add:
 > Listings sourced from Indeed on {today's date}. Run `/career-navigator:track-application` to log any you apply to.
-
-### 5. Error handling
 
 **If `search_jobs` returns no results:**
 > "Indeed returned no results for '{query}' in '{location}'. Try a broader title or a different location."
