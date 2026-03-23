@@ -126,7 +126,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 | Plugin Name | career-navigator |
 | :---- | :---- |
-| **Version** | 1.1.0 |
+| **Version** | 1.3.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | node-cron (cross-platform) |
@@ -245,6 +245,7 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **add-source** | Skill | Fires when the user uploads or references a new resume, CV, or portfolio document. Extracts experience units and adds them to the corpus. Also invocable via `/career-navigator:add-source`. |
 | **resume-score** | Skill | Fires when the user shares a resume alongside a job description without explicitly requesting tailoring. Scores ATS keyword match, formatting compliance, and narrative strength. Also invocable via `/career-navigator:resume-score`. |
 | **list-artifacts** | Skill | Fires when the user asks to see their generated documents, artifact history, or what has been created so far. Also invocable via `/career-navigator:list-artifacts`. |
+| **assessment** | Skill | Fires when the user asks for an honest assessment and gap analysis vs. their target role requirements. Uses the `honest-advisor` agent's norm/exception/strategy pattern to surface evidence-based gaps and repositioning options. |
 
 **Context skills** fire on ambient signals throughout any session:
 
@@ -507,23 +508,25 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 
 * D3 pipeline dashboard with timeline view and benchmark comparisons
 
-* `/career-navigator:pipeline`, `/career-navigator:follow-up`, `/career-navigator:market-brief`
+* `/career-navigator:pipeline`, `/career-navigator:follow-up`
 
 ### **Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI**
 
-* **Agents introduced:** `honest-advisor` (candid role competitiveness assessment, norm/exception/strategy pattern), `market-researcher` (role demand trends, AI/automation displacement, geographic signals)
+* **Agents introduced:** 
 
-* Honest advisor integration with three-step norm/exception/strategy pattern
+    * `honest-advisor` candid role competitiveness assessment, norm/exception/strategy pattern
 
-* Market researcher: role demand trends, AI/automation displacement, geographic signals
+    * `market-researcher` role demand trends, AI/automation displacement, geographic signals
 
-* Skills self-assessment and gap analysis against target role requirements
+        triggered through `/career-navigator:market-brief` skill
+
+* Skills assessment and gap analysis against target role requirements
 
 * Training recommendation engine with cost-benefit-time ROI analysis (certifications, degrees, bootcamps, self-study)
 
 * `/career-navigator:suggest-roles`, job scout scoring improvements driven by outcome data
 
-* Note: skills assessment becomes significantly richer once Phase 2B mock interview performance data feeds back into the profile
+    * Note: skills assessment becomes significantly richer once Phase 2B mock interview performance data feeds back into the profile
 
 ### **Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring**
 

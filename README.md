@@ -183,7 +183,7 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 
 ### Phase 1 — Core Platform
 
-**Phase 1A (shipped — v1.1.0):** Plugin scaffold, setup wizard (builds profile and corpus from existing documents), live job search via Indeed, session start hook with pipeline digest.
+**Phase 1A (shipped — v1.3.0):** Plugin scaffold, setup wizard (builds profile and corpus from existing documents), live job search via Indeed, session start hook with pipeline digest.
 
 **Phase 1B (in progress):** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach` and `analyst` agents. Feedback loop connecting outcomes to corpus weights. AI displacement assessment via Anthropic Economic Index. Follow-up timeline intelligence. Pipeline dashboard.
 
