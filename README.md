@@ -187,7 +187,7 @@ White-label version for career coaching practices and staffing agencies. API for
 
 ## Specification
 
-See [career-navigator-spec.md](career-navigator-spec.md) for the full product specification covering all agents, skills, hooks, data model, and design philosophy.
+See [career-navigator-spec.md](references/career-navigator-spec.md) for the full product specification covering all agents, skills, hooks, data model, and design philosophy.
 
 ## Contributing
 
