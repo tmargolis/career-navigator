@@ -215,7 +215,7 @@ Use your own token and never commit it to this repository.
 
 **Phase 1C ([Release v1.3](https://github.com/tmargolis/career-navigator/releases/tag/v1.3)):** `honest-advisor` and `market-researcher` agents. Candid role competitiveness assessment. Skills gap analysis and training ROI engine. Market trend and AI/automation displacement signals (`/career-navigator:suggest-roles`).
 
-**Phase 1D (completed):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
+**Phase 1D ([Release v1.4](https://github.com/tmargolis/career-navigator/releases/tag/v1.4)):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
 **Phase 1E (in progress):** `networking-strategist`, `content-advisor`, and `event-intelligence` agents. Network map and gap analysis. Event radar. LinkedIn content advisor and post evaluator with cultural risk assessment.
 
