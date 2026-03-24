@@ -206,8 +206,8 @@ Use your own token and never commit it to this repository.
 - Phase 1A: Completed
 - Phase 1B: Completed
 - Phase 1C: Completed
-- Phase 1D: In progress
-- Phase 1E: Not started
+- Phase 1D: Completed
+- Phase 1E: In progress
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, setup wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and session-start automation.
 
@@ -215,9 +215,9 @@ Use your own token and never commit it to this repository.
 
 **Phase 1C ([Release v1.3](https://github.com/tmargolis/career-navigator/releases/tag/v1.3)):** `honest-advisor` and `market-researcher` agents. Candid role competitiveness assessment. Skills gap analysis and training ROI engine. Market trend and AI/automation displacement signals (`/career-navigator:suggest-roles`).
 
-**Phase 1D (in progress):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
+**Phase 1D (completed):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
-**Phase 1E:** `networking-strategist`, `content-advisor`, and `event-intelligence` agents. Network map and gap analysis. Event radar. LinkedIn content advisor and post evaluator with cultural risk assessment.
+**Phase 1E (in progress):** `networking-strategist`, `content-advisor`, and `event-intelligence` agents. Network map and gap analysis. Event radar. LinkedIn content advisor and post evaluator with cultural risk assessment.
 
 ### Phase 2 — Integrations
 

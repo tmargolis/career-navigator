@@ -128,7 +128,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 | Plugin Name | career-navigator |
 | :---- | :---- |
-| **Version** | 1.4.0 |
+| **Version** | 1.5.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | User-configured in Claude Cowork — skills are the payload; recommended cadences are documented in skill files (e.g. run `daily-schedule` daily via `/schedule`) |
@@ -504,8 +504,8 @@ Phase status:
 - Phase 1A: Completed
 - Phase 1B: Completed
 - Phase 1C: Completed
-- Phase 1D: In progress
-- Phase 1E: Not started
+- Phase 1D: Completed
+- Phase 1E: In progress
 
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
@@ -569,7 +569,7 @@ Status: Completed
 
 ### **Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring**
 
-Status: In progress
+Status: Completed
 
 * Expanded/tuned `job-scout` weighting and ranking behavior as outcome history matures
 
@@ -580,6 +580,8 @@ Status: In progress
 * Role demand forecasting incorporating AI/automation displacement signals
 
 ### **Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn content advisor**
+
+Status: In progress
 
 * **Agents introduced:** `networking-strategist` (network analysis, gap identification, outreach drafting), `content-advisor` (LinkedIn content evaluation, cultural risk flagging, topic recommendations), `event-intelligence` (global event discovery, ROI assessment, presentation opportunity flagging)
 
