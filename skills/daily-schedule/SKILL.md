@@ -1,10 +1,13 @@
 ---
 name: daily-schedule
-description: >
-  Runs on the daily scheduler. Delivers the routine operating brief: pipeline
-  digest, overdue follow-ups, interview context, market summary, and action
-  prompts.
-triggers: []
+description: "Runs on the daily scheduler. Delivers the routine operating brief (pipeline digest, overdue follow-ups, interview context, market summary, and action prompts)."
+triggers:
+  - "daily job search brief"
+  - "career navigator daily digest"
+  - "pipeline summary for my applications"
+  - "morning job search summary"
+  - "run my daily career brief"
+  - "/career-navigator:daily-schedule"
 ---
 
 ### Scheduling (Claude Cowork)
@@ -36,6 +39,20 @@ If one or more artifact files are present, run `artifact-saved` first so
 `artifacts-index.json` is synchronized before counts are calculated.
 
 If no artifacts are found, continue without running `artifact-saved`.
+
+### 2.5 Auto-ingest new source documents
+
+Before finalizing the brief, detect whether newly discovered resume/CV-style files are present in `{user_dir}` but not yet represented as source entries in `ExperienceLibrary`.
+
+When such files are found:
+- Automatically run `add-source` for each newly discovered source document (no manual prompt required).
+- After each successful ingest, re-run `artifact-saved` once to keep `artifacts-index.json` consistent.
+- In the final brief, include a one-line note listing how many files were auto-ingested.
+
+If an ingest fails for any file:
+- Continue with the daily brief.
+- List failed filenames under a short "Needs attention" line.
+- Recommend rerunning `/career-navigator:add-source` for those specific files.
 
 ### 3. Build the daily operating brief
 

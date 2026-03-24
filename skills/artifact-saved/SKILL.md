@@ -1,12 +1,19 @@
 ---
 name: artifact-saved
-description: >
-  Runs after artifact writes. Reconciles artifacts-index with files present in
-  {user_dir} and prepares an analytics-ready artifact event payload.
-triggers: []
+description: "Runs after artifact writes. Reconciles artifacts-index with files on disk in the user job search folder and prepares an analytics-ready artifact event summary."
+triggers:
+  - "reconcile artifacts index"
+  - "sync artifacts index with files"
+  - "fix artifacts-index.json"
+  - "refresh artifact inventory from disk"
+  - "/career-navigator:artifact-saved"
 ---
 
 Run **after** new resumes or cover letters are saved to disk (e.g. from `tailor-resume` / `cover-letter`), and/or at the start of `daily-schedule` when PDF/DOCX artifacts exist in `{user_dir}`. There is no separate plugin hook file in this repository.
+
+Important behavior:
+- This workflow must also auto-trigger `add-source` for newly discovered resume/CV source files that are not yet ingested into `ExperienceLibrary`.
+- Do not ask the user to manually run `add-source` when auto-ingest can be performed.
 
 ## Workflow
 
@@ -34,6 +41,20 @@ For newly added records, set:
 Update `meta` with:
 - `updated_at`: `{today}`
 
+### 2.5 Auto-ingest source documents
+
+From discovered PDF/DOCX files, identify likely source documents (resume/CV variants).
+
+For each likely source doc not yet represented in `ExperienceLibrary`:
+- Run `add-source` automatically with that file path.
+- Record whether ingest succeeded or failed.
+
+After auto-ingest attempts, re-read:
+- `{user_dir}/CareerNavigator/ExperienceLibrary.json`
+- `{user_dir}/CareerNavigator/artifacts-index.json`
+
+Then finalize reconciliation counts.
+
 ### 3. Prepare analytics event handoff
 
 Create an event summary payload (for current local logging and future connector handoff):
@@ -53,6 +74,8 @@ ArtifactSaved processed.
 Added: {n}
 Removed: {n}
 Unchanged: {n}
+Auto-ingested source docs: {n}
+Ingest failed: {n}
 ```
 
 If `Added` or `Removed` > 0, append one short line:
@@ -62,4 +85,5 @@ If `Added` or `Removed` > 0, append one short line:
 
 - Do not fabricate file paths or metadata not supported by file/index evidence
 - Do not delete real files from disk; only reconcile index records
+- Do not edit `ExperienceLibrary.json` with brittle line-based string replacement; treat JSON as structured data and rewrite safely.
 - Keep output concise and operational

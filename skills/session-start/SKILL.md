@@ -1,10 +1,12 @@
 ---
 name: session-start
-description: >
-  Surfaces only critical, time-sensitive notifications when the user begins a
-  session or runs this skill on a cadence they configured in Cowork. Routine
-  summaries belong in daily-schedule.
-triggers: []
+description: "Surfaces only critical, time-sensitive notifications when the user begins a session or runs this skill on a cadence they configured in Cowork. Routine summaries belong in daily-schedule."
+triggers:
+  - "career navigator critical alerts"
+  - "any urgent job search deadlines"
+  - "critical application alerts"
+  - "session start job search"
+  - "/career-navigator:session-start"
 ---
 
 Run when the user opens a new Cowork session with Career Navigator, **or** when they have scheduled this skill via Cowork **`/schedule`** (optional — for tighter proactive critical checks).

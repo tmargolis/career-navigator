@@ -15,6 +15,11 @@ triggers:
 
 Invoke both `honest-advisor` and `market-researcher` to generate role suggestions and write actionable signals that improve `job-scout` ranking.
 
+Important invocation rule:
+- Use the exact agent names `honest-advisor` and `market-researcher`.
+- Do not invent or alias agent types (for example, do not call "career-assessment" or "market-analysis" agent types).
+- If either agent invocation fails, retry once using the exact names above before returning an error.
+
 ## Workflow
 
 ### 1. Confirm data exists
@@ -103,4 +108,7 @@ Job-scout update
 After presenting:
 - Suggest `/career-navigator:search-jobs` to run ranking with the updated role/geography strategy signals.
 - Suggest `/career-navigator:tailor-resume` for the top suggested role.
+
+Failure fallback:
+- If one agent still fails after retry, continue with the successful agent output, clearly label partial-completion status, and tell the user which exact agent failed.
 
