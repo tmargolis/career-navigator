@@ -38,7 +38,64 @@ The job listings to score are passed in by the `search-jobs` skill with their fu
 
 ## Scoring Framework
 
-Score each listing across four dimensions. Combine into a composite score (0–100) for ranking.
+Score each listing across four dimensions. Then apply confidence-tier weighting so ranking adapts to evidence quality, not just static defaults.
+
+### Step 0: Determine confidence tier first
+
+Use resolved outcomes in `tracker.json` (`outcome` != `"pending"`):
+
+| Resolved outcomes | Confidence tier |
+|---|---|
+| 0–4 | **Preliminary** |
+| 5–14 | **Directional** |
+| 15–29 | **Moderate** |
+| 30+ | **High** |
+
+### Step 1: Calculate raw dimension scores
+
+Calculate each dimension as a normalized score:
+- `outcome_raw` in range 0–35
+- `experience_raw` in range 0–30
+- `profile_raw` in range 0–20
+- `strategy_raw` in range 0–15
+
+Normalize each raw score to 0–100:
+- `outcome_norm = (outcome_raw / 35) * 100`
+- `experience_norm = (experience_raw / 30) * 100`
+- `profile_norm = (profile_raw / 20) * 100`
+- `strategy_norm = (strategy_raw / 15) * 100`
+
+### Step 2: Apply adaptive weighting by confidence tier
+
+Use these effective weights:
+
+| Confidence tier | Outcome | ExperienceLibrary | Profile | Strategy |
+|---|---:|---:|---:|---:|
+| Preliminary | 0% | 45% | 40% | 15% |
+| Directional | 20% | 40% | 25% | 15% |
+| Moderate | 30% | 35% | 20% | 15% |
+| High | 35% | 30% | 20% | 15% |
+
+Composite score:
+`composite = (outcome_norm*w1) + (experience_norm*w2) + (profile_norm*w3) + (strategy_norm*w4)`
+
+### Step 3: Apply calibration/tuning adjustments (bounded)
+
+After composite is computed, apply these bounded adjustments:
+
+1. **Recency calibration (max +/-5):**
+   - If role/industry patterns in `search_performance` are stale (older than 90 days based on `search_performance.as_of`), reduce outcome influence by 5 points.
+   - If outcome evidence is recent (as_of within 30 days), add up to +3 for matches to top-performing role/industry patterns.
+
+2. **Outcome quality calibration (max +/-5):**
+   - Prefer patterns that historically reached deeper stages (`interview`, `offer`, `accepted`) over shallow responses.
+   - If evidence mostly reflects early-stage activity with no deep-stage conversions, apply -2 to -5 on outcome-heavy matches.
+
+3. **Transferability calibration (max +4):**
+   - Add up to +4 when a listing matches `adjacent_role_types` and has strong ExperienceLibrary keyword overlap (>=60% of extracted keywords matched by high-weight units).
+   - This prevents overfitting to only exact past role labels.
+
+Clamp final score to 0–100.
 
 ### Dimension 1: Outcome Signals (35 points)
 
@@ -50,6 +107,8 @@ Read `search_performance` from `tracker.json`. If this field is absent or empty,
 | Industry matches `top_performing_industries` | +13 |
 | Company size matches `top_performing_company_sizes` | +10 |
 | Any `avoid_signals` present in the listing | −20 (floor at 0) |
+
+If `search_performance.as_of` exists and is older than 90 days, keep scoring but label it as stale outcome evidence.
 
 ### Dimension 2: ExperienceLibrary Fit (30 points)
 
@@ -90,6 +149,24 @@ If `strategy_signals` is missing, Dimension 4 = 0 and note "No strategy signals 
 
 ---
 
+## Proactive Opportunity Alerting (within search-jobs results)
+
+For each listing, assign an alert tier:
+
+| Tier | Criteria |
+|---|---|
+| **critical** | Score >= 85 and a concrete deadline signal exists within 72 hours (e.g., explicit apply deadline in listing metadata) |
+| **high** | Score >= 80 with no major avoid signal hit |
+| **watch** | Score 70–79 or strong transferability signal but lower outcome confidence |
+| **none** | Score < 70 |
+
+When listing metadata includes posting recency:
+- Add urgency note for listings posted in last 72 hours when score >= 75.
+
+If deadline/posting recency fields are unavailable, do not fabricate urgency. Use score-only tiering and state "No explicit timing signal available."
+
+---
+
 ## Confidence Tiers
 
 Label the result set with a confidence tier based on the number of resolved outcomes in `tracker.json` — applications where `outcome` is not `"pending"`:
@@ -112,15 +189,25 @@ Return the listings in ranked order (highest composite score first). Structure y
 For each listing, return:
 - Composite score (0–100)
 - Per-dimension breakdown: outcome signal match, ExperienceLibrary fit %, profile fit, strategy signals
+- Effective weights used (based on confidence tier)
+- Any calibration adjustments applied (recency/outcome-quality/transferability)
+- Alert tier (`critical` | `high` | `watch` | `none`) and urgency reason
 - One-line scoring rationale
 
 If two listings score within 5 points of each other, note the tie rather than forcing a false rank.
+
+Also return a compact alert summary:
+- `critical_count`
+- `high_count`
+- `watch_count`
+- `top_alert_ids` (up to 3 listings)
 
 ---
 
 ## What You Never Do
 
 - Do not fabricate outcome signals — if `search_performance` is empty, skip Dimension 1 and say so
+- Do not invent listing deadlines or posting recency if metadata does not include them
 - Do not penalize listings for missing salary data — treat as neutral
 - Do not reorder listings arbitrarily — every rank must reflect a score differential
 - Do not claim "High" confidence with fewer than 30 resolved outcomes

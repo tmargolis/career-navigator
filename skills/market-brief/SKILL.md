@@ -15,6 +15,12 @@ triggers:
   - "/career-navigator:market-brief"
 ---
 
+### Scheduling (Claude Cowork)
+
+**Recommended:** run **weekly** via Cowork **`/schedule`** (e.g. same day each week) so market signals stay fresh without daily noise. Example scheduled payload:
+
+> Run `/career-navigator:market-brief` (Career Navigator `market-brief` skill) for my configured `{user_dir}`.
+
 Invoke the `market-researcher` agent to generate a current market intelligence brief grounded in the user's role targets and location preferences.
 
 ## Workflow

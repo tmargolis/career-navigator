@@ -34,7 +34,9 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [**5\. Skills	9**](#5-skills)
 
-[**6\. Hooks	10**](#6-hooks)
+[**6\. Scheduling & recurring runs	10**](#6-scheduling--recurring-runs)
+
+[6.1 Host hooks (`hooks/hooks.json`)	10](#61-host-hooks-hookshooksjson)
 
 [**7\. Storage Connectors	11**](#7-storage-connectors)
 
@@ -58,9 +60,9 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [**12\. Daily Rhythm & Scheduling	17**](#12-daily-rhythm--scheduling)
 
-[12.1 Scheduled Events (node-cron)	17](#121-scheduled-events-node-cron)
+[12.1 Recommended cadences (Cowork `/schedule`)	17](#121-recommended-cadences-cowork-schedule)
 
-[12.2 Event-Driven Notifications (node-notifier)	17](#122-event-driven-notifications-node-notifier)
+[12.2 Time-sensitive vs routine surfacing	17](#122-time-sensitive-vs-routine-surfacing)
 
 [**13\. Interview Capture (Phase 2B)	18**](#phase-2b--interview-audio-capture)
 
@@ -118,7 +120,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 * Privacy-first — sensitive features like audio capture require explicit opt-in
 
-* Cross-platform — all scheduling, notifications, and services work on macOS, Windows, and Linux
+* Cross-platform — skills and data work on macOS, Windows, and Linux; recurring runs are configured by the user in Claude Cowork via `/schedule` (or equivalent), not by a plugin-shipped daemon
 
 * Empathetic — the system understands job searching is stressful and calibrates tone accordingly
 
@@ -129,8 +131,8 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Version** | 1.4.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
-| **Scheduling** | node-cron (cross-platform) |
-| **Notifications** | node-notifier (cross-platform native notifications) |
+| **Scheduling** | User-configured in Claude Cowork — skills are the payload; recommended cadences are documented in skill files (e.g. run `daily-schedule` daily via `/schedule`) |
+| **Notifications / surfacing** | In-session UX (e.g. `session-start` for critical items) plus whatever Cowork provides when a scheduled task runs — the plugin does not ship a separate notification daemon |
 | **Storage Layer (Phase 1\)** | Local filesystem — `{user_dir}` (cloud connectors in Phase 2C) |
 | **Analytics Layer (Phase 1\)** | SQLite \+ D3 visualization (additional connectors in Phase 2D) |
 | **AI Services** | Claude API (via MCP), Whisper (audio transcription — Phase 2B) |
@@ -144,23 +146,19 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 **│   └── plugin.json**
 
-**├── commands/**
-
 **├── agents/**
 
 **├── skills/**
 
 **├── hooks/**
 
-**├── .mcp.json**
+**│   ├── hooks.json**
 
-**├── services/**
+**│   └── context/** — e.g. `session-start.md` injected on `SessionStart`
 
-**│   ├── scheduler/**
+**├── references/**
 
-**│   ├── connectors/**
-
-**│   └── notifications/**
+**├── career/** _(example `{user_dir}` — gitignored when personal)_**
 
 **└── README.md**
 
@@ -260,14 +258,32 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **cultural-risk-flag** | Skill | Fires when drafting LinkedIn content or outreach messages. Cross-references content against known company cultural profiles and flags potential misalignments. |
 | **contact-context** | Skill | Fires when a contact at a target company is identified. Searches email and calendar history for prior correspondence and surfaces relevant context for outreach drafting. Requires user approval before use. |
 
-# **6\. Hooks**
+# **6\. Scheduling & recurring runs**
+
+Career Navigator does **not** ship its own cron daemon or hook runtime inside the plugin repo. In **Claude Cowork**, the practical pattern is:
+
+1. **Skills are the payload** — each skill (`daily-schedule`, `session-start`, etc.) defines what to do and where to read data (`{user_dir}/CareerNavigator/...`).
+2. **The user schedules execution** — e.g. create a recurring task that runs `/career-navigator:daily-schedule` (or natural language that invokes the `daily-schedule` skill) on a cadence using Cowork’s **`/schedule`** (or equivalent scheduling UI).
+3. **Cowork learns the prompt** — after the first successful run, the host refines the scheduled prompt with resolved paths, connectors, and context. That is Cowork’s analogue to a traditional “hook.”
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **SessionStart** | Hook | On every Claude Cowork (or Claude Code) session start, checks for: interviews scheduled today (triggers morning-brief), applications requiring follow-up (notifies user), and any pending daily insights from the insight engine. |
-| **DailySchedule** | Hook | Triggered by node-cron at user-configured time. Delivers daily pipeline digest, market brief summary, and prompts for any application updates needed. Sends cross-platform notification via node-notifier. |
-| **ApplicationUpdate** | Hook | Fires whenever an application record is updated. Triggers the insight engine to re-evaluate patterns and updates job-scout scoring weights if outcome data has been added. |
-| **ArtifactSaved** | Hook | Fires when a new artifact is saved. Logs metadata to the artifact inventory and pushes the record to the configured analytics connector. |
+| **session-start** | Skill | Run when the user opens a session (or on a tight cadence via `/schedule` if they want proactive critical checks). Surfaces **critical-only** alerts (imminent deadlines, same-day follow-ups, urgent interview-day actions). |
+| **daily-schedule** | Skill | **Recommended daily** via `/schedule`. Before the digest, checks `{user_dir}` for artifact files and runs `artifact-saved` when present; then pipeline digest, follow-ups, interviews today, market/strategy prompts. |
+| **application-update** | Skill | Run **after** `track-application` writes to `tracker.json` (same turn). Classifies refresh priority for outcome-weighted scoring and nudges `pattern-analysis` at milestones. |
+| **artifact-saved** | Skill | Run **after** new resumes/cover letters are saved, and/or from `daily-schedule` when PDF/DOCX artifacts exist. Reconciles `artifacts-index.json` with files on disk; prepares analytics handoff metadata when connectors exist. |
+
+## **6.1 Host hooks (`hooks/hooks.json`)**
+
+Claude Cowork supports a plugin-level **`hooks/hooks.json`** (see **cowork-plugin-management**). Available host events include `SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop`, `PreToolUse`, `PostToolUse`, `SubagentStop`, `PreCompact`, `Notification`, and others as documented by the host.
+
+Career Navigator ships a minimal configuration:
+
+* **`SessionStart`** — `command` hook runs `cat "${CLAUDE_PLUGIN_ROOT}/hooks/context/session-start.md"` to inject instructions so the model runs the **`session-start`** skill (`skills/session-start/SKILL.md`) for critical-only alerts.
+
+**Prompt-based** hooks (`type: "prompt"`) are supported on a subset of events per host docs; **command-based** hooks work for deterministic context injection (as in the `SessionStart` example above).
+
+This is **orthogonal** to **`/schedule`**: host hooks fire on session/tool lifecycle events; the **`daily-schedule`** skill remains the recommended **daily** payload for recurring tasks the user configures in Cowork.
 
 # **7\. Storage Connectors**
 
@@ -403,23 +419,30 @@ Over time, the system builds a personalized model of what works for this specifi
 
 # **12\. Daily Rhythm & Scheduling**
 
-## **12.1 Scheduled Events (node-cron)**
+Scheduling split (single source of truth):
+- **`session-start` skill** = critical-only, time-sensitive surfacing (typically when the user opens a session; optionally on a short cadence via `/schedule` if they want).
+- **`daily-schedule` skill** = routine operating brief — **intended to be run daily** via Claude Cowork **`/schedule`** (user configures time/cadence).
 
-| Name | Type | Description |
+The plugin documents **recommended cadences** inside skills; **execution** is owned by Cowork’s scheduler.
+
+## **12.1 Recommended cadences (Cowork `/schedule`)**
+
+| Name | Suggested cadence | How to run |
 | :---- | :---- | :---- |
-| **Morning Digest** | Daily (configurable time) | Pipeline status, benchmark comparison, action items, interview brief if applicable, market news summary |
-| **Follow-up Alerts** | Daily | Applications exceeding normal response window for their stage and company type |
-| **Weekly Market Brief** | Weekly (configurable day) | Deeper market intelligence report: role trend shifts, new opportunity signals, event radar updates |
-| **Insight Report** | Weekly | Pattern analysis from outcome data with specific recommendations for adjusting strategy |
+| **Daily operating brief** | Daily (user picks time) | Schedule a task whose payload invokes the `daily-schedule` skill (e.g. `/career-navigator:daily-schedule` or natural language equivalent). |
+| **Follow-up / pipeline hygiene** | Daily (often same task as above) | Covered by `daily-schedule` + conversational `follow-up` as needed. |
+| **Market intelligence** | Weekly | Schedule `/career-navigator:market-brief` (or invoke `market-brief` skill). |
+| **Outcome pattern refresh** | Weekly or after milestone outcomes | User runs `/career-navigator:pattern-analysis` or schedules it after major tracker updates. |
 
-## **12.2 Event-Driven Notifications (node-notifier)**
+## **12.2 Time-sensitive vs routine surfacing**
 
-| Name | Type | Description |
-| :---- | :---- | :---- |
-| **High-Value Event Alert** | Immediate | Fires when event radar identifies a conference or meetup with strong match and presentation opportunity |
-| **Application Action Due** | Same-day | Follow-up or thank-you note due based on timeline intelligence |
-| **Interview Today** | Morning of | Triggers morning-brief generation and delivery |
-| **Offer Received** | Immediate | Prompts offer evaluation flow with market salary data and negotiation guidance |
+| Situation | Where it lives |
+| :---- | :---- |
+| Imminent deadlines, same-day follow-ups, urgent interview-day actions | `session-start` skill (critical-only). |
+| Pipeline digest, artifact counts, weekly-style prompts | `daily-schedule` skill (scheduled). |
+| Post-save inventory drift (PDF/DOCX on disk vs index) | `artifact-saved` skill (from `daily-schedule` when files exist, or after saves). |
+
+Future phases may add richer “event radar” and offer/interview prompts; those remain **skill payloads** scheduled or invoked by the user in Cowork unless the host adds first-class hooks later.
 
 # **13\. Interview Capture (Phase 2B)**
 
@@ -496,7 +519,7 @@ Status: Completed
 
 * `search-jobs` skill — live job search via Indeed connector; assisted-manual fallback
 
-* `session-start` skill — `SessionStart` hook with pipeline digest on every session open; onboarding on first run
+* `session-start` skill — critical-only alerts when the user begins a session (or on a user-scheduled cadence via Cowork `/schedule`); onboarding on first run
 
 * Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
 
@@ -504,7 +527,7 @@ Status: Completed
 
 Status: Completed
 
-* **Agents introduced:** `resume-coach` (resume assembly, ATS optimization, narrative coaching), `analyst` (outcome pattern analysis, transferable strengths identification, AI displacement assessment)
+* **Agents introduced:** `resume-coach` (resume assembly, ATS optimization, narrative coaching), `analyst` (outcome pattern analysis, transferable strengths identification, AI displacement assessment), `job-scout` (full outcome-weighted job ranking, proactive opportunity alerts, transferable skills analysis)
 
 * Workflow skills built and auto-triggered: `tailor-resume`, `cover-letter`, `track-application`, `add-source`, `resume-score`, `list-artifacts` — activate from conversational intent; also invocable via explicit commands
 
@@ -548,9 +571,7 @@ Status: Completed
 
 Status: In progress
 
-* **Agent introduced:** `job-scout` (full outcome-weighted job ranking, proactive opportunity alerts, transferable skills analysis)
-
-* Job scout with full outcome-driven scoring and proactive opportunity alerts
+* Expanded/tuned `job-scout` weighting and ranking behavior as outcome history matures
 
 * Non-obvious role suggestions based on transferable skills
 

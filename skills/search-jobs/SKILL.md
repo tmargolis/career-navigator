@@ -50,8 +50,9 @@ Run all 5 `get_job_details` calls in parallel.
 
 Pass all retrieved listings to the `job-scout` agent for outcome-weighted scoring. Job-scout will:
 - Read `search_performance` and `strategy_signals` from `tracker.json`, plus `performance_weights` from `CareerNavigator/ExperienceLibrary.json`
-- Score each listing across outcome signals, ExperienceLibrary fit, profile fit, and strategy signals
-- Return the listings in ranked order with composite scores and per-factor rationale
+- Score each listing across outcome signals, ExperienceLibrary fit, profile fit, and strategy signals using confidence-tier adaptive weights
+- Apply bounded calibration (recency, outcome quality, transferability)
+- Return the listings in ranked order with composite scores, per-factor rationale, and alert tiers (`critical` | `high` | `watch` | `none`)
 
 Use job-scout's ranked order for the final presentation. If job-scout returns a tie (within 5 points), preserve the original Indeed relevance order within the tied group.
 
@@ -71,7 +72,7 @@ Use this format for each listing:
 Company: {Company Name}
 Location: {City, State | Remote | Hybrid}
 Salary: {range if listed, otherwise "Not listed"}
-Score: {composite}/100 · {ExperienceLibrary fit %}% ExperienceLibrary fit{avoid signal warning if present}
+Score: {composite}/100 · {ExperienceLibrary fit %}% ExperienceLibrary fit · Alert: {critical|high|watch|none}{avoid signal warning if present}
 
 > {2–3 sentence summary of the role drawn from the job description — focus on scope, key responsibilities, and what makes it notable}
 
@@ -79,6 +80,9 @@ Score: {composite}/100 · {ExperienceLibrary fit %}% ExperienceLibrary fit{avoid
 
 After all listings, add:
 > Listings sourced from Indeed on {today's date}. Run `/career-navigator:track-application` to log any you apply to.
+
+If any listing is `critical` or `high`, append:
+> Priority alerts: {critical_count} critical, {high_count} high. Start with the top alert first.
 
 **If `search_jobs` returns no results:**
 > "Indeed returned no results for '{query}' in '{location}'. Try a broader title or a different location."

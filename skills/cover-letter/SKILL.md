@@ -80,6 +80,8 @@ After confirmation, save the letter:
 }
 ```
 
+If other artifact files (PDF/DOCX) exist in `{user_dir}`, run the **`artifact-saved`** workflow once after saving so `artifacts-index.json` stays aligned with disk.
+
 Confirm:
 > "Saved as **{filename}**."
 

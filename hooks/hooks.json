@@ -1,12 +1,12 @@
 {
   "SessionStart": [
     {
-      "matcher": "session start",
+      "matcher": "",
       "hooks": [
         {
           "type": "command",
-          "command": "echo '## Team Context\n\nSprint cycle: 2 weeks. Standup: daily at 9:30 AM. Use ~~project tracker for ticket management.'",
-          "timeout": 5
+          "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/context/session-start.md\"",
+          "timeout": 10
         }
       ]
     }
