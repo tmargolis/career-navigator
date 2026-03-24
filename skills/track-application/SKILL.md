@@ -172,6 +172,8 @@ After setting the date, note it in the confirmation output.
 
 **After any write**, recalculate and update `pipeline_summary` counts in `tracker.json`.
 
+**Immediately after the write**, run the **`application-update`** skill workflow (refresh guidance for job-scout / pattern-analysis nudges) before ending the turn.
+
 ---
 
 ### 4. Contact Management

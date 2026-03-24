@@ -15,7 +15,19 @@ triggers:
   - "/career-navigator:market-brief"
 ---
 
+### Scheduling (Claude Cowork)
+
+**Recommended:** run **weekly** via Cowork **`/schedule`** (e.g. same day each week) so market signals stay fresh without daily noise. Example scheduled payload:
+
+> Run `/career-navigator:market-brief` (Career Navigator `market-brief` skill) for my configured `{user_dir}`.
+
 Invoke the `market-researcher` agent to generate a current market intelligence brief grounded in the user's role targets and location preferences.
+
+Important invocation/data-source rules:
+- Use the exact agent name `market-researcher` (no aliases).
+- Do not fail the skill because external web connectors are unavailable.
+- Default to local evidence (`profile.md`, `tracker.json`, `ExperienceLibrary.json`, analyst norm tables, and AI report) unless the user explicitly asks for live web sourcing.
+- If external sourcing is requested and unavailable, continue with local evidence and label confidence limits.
 
 ## Workflow
 
@@ -44,6 +56,10 @@ Hand off to `market-researcher` with:
   3. Geographic competitiveness signals
 
 If the user asks about a specific role/geography, prioritize that in the brief and treat other profile targets as secondary.
+
+If invocation fails due to agent naming/tooling:
+- Retry once with the exact `market-researcher` name.
+- If still failing, return a structured partial result from local files and clearly state that agent invocation failed.
 
 ### 3. Present the brief
 

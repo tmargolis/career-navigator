@@ -75,7 +75,10 @@ Career Navigator is designed skill-first: most workflows trigger automatically f
 | Skill / Command | Trigger | Purpose |
 |---------|---------|---------|
 | `/career-navigator:setup` | Explicit (run first) | Configure job search folder and initialize `CareerNavigator` data files |
-| `session-start` | Session open | Surface pipeline status, overdue follow-ups, and interview-day context |
+| `session-start` | Session open (or user-scheduled via Cowork `/schedule`) | Surface only critical, time-sensitive alerts (for example: offer/follow-up due today) |
+| `daily-schedule` | **Recommended:** daily via Cowork `/schedule` | Routine digest; first reconcile artifact inventory with `artifact-saved` when PDF/DOCX files exist in `{user_dir}` |
+| `application-update` | After `track-application` writes `tracker.json` | Flag whether job-scout refresh is needed and nudge pattern-analysis at key outcome milestones |
+| `artifact-saved` | After saves or from `daily-schedule` | Reconcile `artifacts-index.json` with files present in `{user_dir}`; prepare analytics handoff summary |
 | `add-source` | Upload or reference a resume/CV | Add source documents into `CareerNavigator/ExperienceLibrary.json` |
 | `tailor-resume` | Paste a job description, or say "I want to apply to X" | Assemble an optimized resume from your ExperienceLibrary for a specific role |
 | `cover-letter` | After tailoring a resume, or "write me a cover letter for X" | Generate a targeted cover letter |
@@ -138,9 +141,9 @@ Run `/career-navigator:setup` to configure integrations. The wizard handles ever
 
 **Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. Cloud storage connectors (Google Drive, OneDrive, Dropbox) are available in Phase 2. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
 
-### Apify MCP for salary benchmarking (manual setup)
+### Apify MCP for salary benchmarking (optional manual setup)
 
-`/career-navigator:salary-research` uses Apify via MCP. Right now this connector should be added in **Claude Desktop Local MCP servers** (not only in the plugin `.mcp.json`).
+`/career-navigator:salary-research` uses Apify via MCP. It is **currently not in the plugin `.mcp.json`** — add the connector in **Claude Desktop Local MCP servers** (or your environment’s MCP settings) when you want salary benchmarking.
 
 1. Create an account at [apify.com](https://apify.com).
 2. In Apify, copy your API token from **Console -> Settings -> Integrations**.
@@ -170,16 +173,18 @@ Use your own token and never commit it to this repository.
 
 ---
 
-## Session Start Hook
+## Scheduling & session behavior
 
-Every time you open Claude Cowork with this plugin active, Career Navigator runs a brief session-start check. If you have application data, it surfaces:
+**Skills are the payload; Cowork runs them on a cadence you choose.**
 
-- Pipeline status counts by stage
-- Applications overdue for follow-up (>7 days without a status change)
-- Any interviews scheduled today
-- A summary of your artifact inventory
+- **`session-start`** — Use when you open a session (or schedule a tight cadence with `/schedule` if you want proactive critical checks). Surfaces only urgent items: imminent offer deadlines, follow-ups due today, same-day interview actions.
+- **`daily-schedule`** — **Recommended daily** via Claude Cowork **`/schedule`**. Delivers the routine digest (pipeline, follow-ups, interviews today, artifacts). Before counts, it runs **`artifact-saved`** when PDF/DOCX artifacts exist in `{user_dir}` so `artifacts-index.json` stays aligned with disk.
+- **`application-update`** — After **`track-application`** updates `tracker.json`, run this workflow in the same turn for refresh guidance and pattern-analysis nudges.
+- **`artifact-saved`** — After saving tailored resumes/cover letters, or when `daily-schedule` detects artifact files on disk.
 
-On first run (no data yet), it delivers an onboarding welcome with setup instructions.
+**Cowork host hooks:** `hooks/hooks.json` uses Claude Cowork’s native hook events (per cowork-plugin-management). This repo wires **`SessionStart`** to inject `hooks/context/session-start.md` so the **`session-start`** skill runs at session open.
+
+**recurring** digests are **user-configured in Cowork** (e.g. **`/schedule`** for `daily-schedule`). After the first successful scheduled run, Cowork refines the prompt from what it learned (paths, connectors, context).
 
 ---
 
@@ -200,17 +205,17 @@ On first run (no data yet), it delivers an onboarding welcome with setup instruc
 **Phase status tracker**
 - Phase 1A: Completed
 - Phase 1B: Completed
-- Phase 1C: In progress
-- Phase 1D: Not started
+- Phase 1C: Completed
+- Phase 1D: In progress
 - Phase 1E: Not started
 
-**Phase 1A (shipped — v1.3.0):** Plugin scaffold, setup wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, session start hook with pipeline digest.
+**Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, setup wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and session-start automation.
 
-**Phase 1B (completed):** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach` and `analyst` agents. Feedback loop connecting outcomes to ExperienceLibrary weights. AI displacement assessment via Anthropic Economic Index. Follow-up timeline intelligence. Pipeline dashboard.
+**Phase 1B ([Release v1.2](https://github.com/tmargolis/career-navigator/releases/tag/v1.2)):** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach`, `analyst`, and `job-scout` agents. `job-scout` performs full outcome-weighted job ranking, proactive opportunity alerts, and transferable skills analysis. Feedback loop connecting outcomes to ExperienceLibrary weights. AI displacement assessment via Anthropic Economic Index. Follow-up timeline intelligence. Pipeline dashboard.
 
-**Phase 1C (in progress):** `honest-advisor` and `market-researcher` agents. Candid role competitiveness assessment. Skills gap analysis and training ROI engine. Market trend and AI/automation displacement signals (`/career-navigator:suggest-roles`).
+**Phase 1C ([Release v1.3](https://github.com/tmargolis/career-navigator/releases/tag/v1.3)):** `honest-advisor` and `market-researcher` agents. Candid role competitiveness assessment. Skills gap analysis and training ROI engine. Market trend and AI/automation displacement signals (`/career-navigator:suggest-roles`).
 
-**Phase 1D:** `job-scout` agent with full outcome-weighted scoring and proactive opportunity alerts. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
+**Phase 1D (in progress):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
 **Phase 1E:** `networking-strategist`, `content-advisor`, and `event-intelligence` agents. Network map and gap analysis. Event radar. LinkedIn content advisor and post evaluator with cultural risk assessment.
 
@@ -238,7 +243,7 @@ White-label version for career coaching practices and staffing agencies. API for
 
 ## Specification
 
-See [career-navigator-spec.md](references/career-navigator-spec.md) for the full product specification covering all agents, skills, hooks, data model, and design philosophy.
+See [career-navigator-spec.md](references/career-navigator-spec.md) for the full product specification covering all agents, skills, scheduling, data model, and design philosophy.
 
 ## Contributing
 

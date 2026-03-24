@@ -97,6 +97,8 @@ Once the user confirms (or if the score is ≥ 70 with no gaps flagged), save th
 }
 ```
 
+If other artifact files (PDF/DOCX) exist in `{user_dir}`, run the **`artifact-saved`** workflow once after saving so `artifacts-index.json` stays aligned with disk.
+
 Confirm to the user:
 > "Saved as **{filename}**. Run `/career-navigator:cover-letter` to generate a matching cover letter."
 
