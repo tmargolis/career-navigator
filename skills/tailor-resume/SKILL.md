@@ -51,6 +51,8 @@ Hand off to the `resume-coach` agent with:
 - Ensure all required JD keywords are present (ATS pass)
 - Return the completed resume text and an ATS score
 
+**Voice-aligned Summary (optional):** If the user explicitly asks to match their **LinkedIn voice** / **`voice-profile.md`** for the **Summary only**, ask `resume-coach` for a **ResumeSummaryBrief** per `agents/resume-coach/AGENT.md`. **Before** invoking **`content-advisor`**, run the same **voice preflight** as **`draft-outreach`** (ask for **`## User writing samples`** / **`## User writing samples (launch)`** or **skip**). Then invoke **`content-advisor`** in **`resume-summary`** mode, substitute the returned **## Summary** into the draft, then continue to ATS presentation below.
+
 ### 3. Score and review
 
 Present the full assessment returned by `resume-coach` before saving:

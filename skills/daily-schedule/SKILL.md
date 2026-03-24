@@ -29,7 +29,7 @@ Check:
 - `{user_dir}/CareerNavigator/artifacts-index.json`
 
 If missing, output:
-> Daily brief skipped: run `/career-navigator:setup` to initialize Career Navigator.
+> Daily brief skipped: run `/career-navigator:launch` to initialize Career Navigator.
 
 ### 2. Reconcile artifacts before summary
 

@@ -1,19 +1,22 @@
 ---
-name: setup
+name: launch
 description: >
-  The single entry point for all Career Navigator configuration. Sets up the
-  job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents,
+  Launch your job search with Career Navigator: the single entry point for configuration.
+  Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents,
   walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, and Google Drive when applicable.
   No Customize button required — run this command to do everything.
 triggers:
+  - "/career-navigator:launch"
   - "launch career"
+  - "launch career navigator"
+  - "begin my job search with career navigator"
   - "set up career"
   - "set up career navigator"
   - "configure career navigator"
   - "get started with career navigator"
 ---
 
-Use this after installing the plugin — it handles everything: registering your job search folder, reading your existing documents, building your profile and ExperienceLibrary, and configuring integrations. 
+Use this after installing the plugin — it is how you **launch** Career Navigator: registering your job search folder, reading your existing documents, building your profile and ExperienceLibrary, and configuring integrations (the same setup flow as before, framed as starting your search).
 
 The working directory (or relevant sub-directory) should be configured as the user's job search directory to be referred to as `{user_dir}`. All data this plugin produces— profile, ExperienceLibrary, tracker, generated artifacts — lives in subdirectories of the `{user_dir}` folder alongside the user's raw documents.
 
@@ -65,7 +68,7 @@ After validation, report to the user:
 5. Inform the user which documents were used and what was created.
 
 If no source documents exist in `{user_dir}` at all, create minimal placeholder files and prompt the user to add their resume:
-> "I didn't find any resumes or documents in your job search folder. Add a resume (PDF or DOCX) and run `/career-navigator:setup` again to build your profile and ExperienceLibrary."
+> "I didn't find any resumes or documents in your job search folder. Add a resume (PDF or DOCX) and run `/career-navigator:launch` again to build your profile and ExperienceLibrary."
 
 #### Schemas for newly created files
 
@@ -139,7 +142,7 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
   "artifacts": [
     {
       "id": "artifact-001",
-      "type": "resume",          // "resume" | "cover_letter"
+      "type": "resume",          // "resume" | "cover_letter" | "linkedin_post"
       "filename": "...",
       "path": "...",
       "target_company": "...",   // null if generic/base resume
@@ -151,6 +154,65 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
   ]
 }
 ```
+
+### 2.5 Voice profile (launch)
+
+After core files exist, build or refresh `{user_dir}/CareerNavigator/voice-profile.md` so **`content-advisor`** has real tone signal—not a single auto-generated markdown artifact when résumés/CVs/letters live elsewhere.
+
+**Order:** Run **2.5b** first (inventory + read Tier A PDFs/DOCX), then **2.5a** (LinkedIn prompt), then incorporate paste or a **continue** re-scan into **2.5c**. If the user adds new files after **2.5a**, re-run **2.5b** before writing.
+
+#### 2.5a Ask for LinkedIn / social writing (same session)
+
+After **2.5b** (and any re-scan if the user drops new files), prompt once before writing **2.5c**:
+
+> **Voice & tone:** To match how you sound on LinkedIn and in messages—not only on résumés—please choose one:
+> 1. **Paste** 2–5 recent LinkedIn posts (or other short professional writing) here, **or**
+> 2. **Add** them as files in this folder (e.g. `linkedin-posts.md`, `.txt`, or a PDF export), then tell me when they’re saved **or** say **continue** so I can re-read the folder, **or**
+> 3. Reply **skip** and I’ll rely on résumés/cover letters only (**weaker match** for social and DMs).
+
+If they **paste**: append a dated **`## User writing samples (launch)`** section with excerpts (trimmed), label **source: user paste (launch)**.
+
+If they **skip**: record one line under **`## Launch — LinkedIn prompt`**: *User skipped LinkedIn samples at launch; content-advisor may ask again before drafting.*
+
+#### 2.5b Gather prose from disk (priority order)
+
+**Goal:** Use **CVs, résumés, and cover letters** as primary voice sources, not stray `.md` alone.
+
+1. **Scope:** Walk **`{user_dir}`** recursively (or top level **plus** all non-hidden subfolders—minimum depth that finds `Documents/`, `resumes/`, etc.). **Skip:** `.git`, `node_modules`, `.Trash`, and anything that is clearly not user documents.
+
+2. **Always ignore as corpus input:**
+   - `{user_dir}/CareerNavigator/voice-profile.md` (don’t read this file to infer voice).
+   - All **`CareerNavigator/*.json`** (schemas/data, not voice).
+
+3. **Classify every candidate file** (by path + name + `artifacts-index.json` when present):
+   - **Tier A — Raw career documents (prefer):** `*.pdf`, `*.docx`, `*.txt`, `*.md` whose names/paths suggest **resume**, **cv**, **curriculum vitae**, **cover**, **letter**, **bio**, **about**, or obvious user-upload basenames. **You must read PDF and DOCX** the same way you do when building `profile.md` / ExperienceLibrary—extract **professional summary / profile**, **cover letter body** (if present in file), and **representative bullet lines** (not the entire work history). If a file is only bullet lists with no narrative, note register (density, metrics, voice in bullets).
+   - **Tier B — Other prose:** remaining `.md` / `.txt` that look like user writing (not changelogs, not unrelated repo readmes).
+   - **Tier C — Plugin-generated artifacts (use with care):** entries in **`artifacts-index.json`** with `"source": "generated"` (and matching files on disk). **Do not** let Tier C be the **only** narrative basis if any **Tier A** file exists. If only Tier C supplies paragraph prose, use it but label **Source: generated artifact** and flag **lower confidence** for “natural” voice.
+
+4. **Minimum bar:** If you find **multiple sources** with **clearly different tone** (e.g. formal cover letter vs casual LinkedIn paste), **do not** flatten into one voice—use **2.5c** multi-context sections and/or **Open questions**.
+
+5. **If no narrative at all:** only bullets and structure—still write voice notes (brevity, metrics, keyword density); flag that **`content-advisor`** needs pasted prose for paragraph-level match.
+
+#### 2.5c Write `voice-profile.md` (structure)
+
+Create or update with dated sections (you may keep older dated blocks below for history).
+
+1. **`## Launch voice harvest (YYYY-MM-DD)`** (or retain **`## Setup scan (YYYY-MM-DD)`** if you prefer that heading—but use one dated harvest per run):
+   - Table **Source files scanned**: **Path** (relative to `{user_dir}`), **Tier** (A/B/C), **Doc type** (résumé / CV / cover / LinkedIn file / other), **Voice notes** (short).
+   - **Include every qualifying file** you found—not only the first markdown file.
+
+2. **`## Voice by context`** (when tones diverge or user supplied formal + casual samples):
+   - Subsections e.g. **`### Applications (résumé / cover letter)`**, **`### Public (LinkedIn)`**, **`### Other`**. Register, sentence length, humor, CTAs per subsection.
+   - If tones conflict and intent is unclear, add **`## Open questions`** (1–4 bullets): default voice for cover letter vs DM vs post; intentional **multiple personas** for different audiences; etc.
+
+3. **`## Voice quality flags (launch)`** — candid risks (job-search pragmatism, not personal attack):
+   - Examples: **snark / sarcasm** that may read poorly to conservative employers; **try-hard** or overselling; **generic “AI slop” tells** (empty grandiosity, filler transitions, buzzword stacks without proof); **apology / hedging** loops; **political or divisive edge** in public samples; **over-share**. For each: **low / medium / high** concern + **why**. If clean: *No major flags from available samples.*
+
+4. **Optional `voice_profile_v1` JSON** at end: include `"tones": { "applications": "…", "public": "…" }` when multi-context sections exist.
+
+5. **`## Usage guidance for content-advisor`:** Which context to use for **cover letter** vs **LinkedIn** vs **DM**; if ambiguous, **ask the user once** in this launch session before moving on.
+
+**Do not** treat a lone plugin-generated cover letter as sufficient if Tier A résumés/CVs exist in the same folder—**ingest those files** for this section.
 
 ### 3. Connect the Indeed MCP connector (live job search)
 
@@ -209,4 +271,4 @@ First check if the Apify MCP is already connected. It may be in a deferred state
 
 **If no or skipped:**
 
-> "No problem — salary benchmarking is off for now. You can set it up any time by running `/career-navigator:setup` again."
+> "No problem — salary benchmarking is off for now. You can set it up any time by running `/career-navigator:launch` again."

@@ -25,7 +25,7 @@ Display the user's artifact inventory in a readable format.
 ### 1. Read the inventory
 
 Read `{user_dir}/CareerNavigator/artifacts-index.json`. If the file does not exist or the `artifacts` array is empty:
-> "No artifacts yet. Run `/career-navigator:tailor-resume` to generate your first tailored resume."
+> "No artifacts yet. Run `/career-navigator:tailor-resume` for a resume, or `/career-navigator:content-suggest` and ask for a full post draft to save a LinkedIn draft to disk."
 
 ### 2. Cross-reference with tracker
 
@@ -33,22 +33,24 @@ Read `{user_dir}/CareerNavigator/tracker.json`. For each artifact, check whether
 
 ### 3. Organize the output
 
-Group artifacts by type: resumes first, then cover letters, then any other types. Within each group, sort by `date_created` descending (most recent first).
+Group artifacts by type: **resumes** first, then **cover letters**, then **`linkedin_post`** (saved post drafts from **`content-advisor`**), then any other types. Within each group, sort by `date_created` descending (most recent first).
 
 **Format for each artifact:**
 
 ```
 {n}. {filename}
-   Target:   {Company} — {Role}  (or "Base / unattached" if no target)
+   Target:   {Company} — {Role}  (or "Base / unattached" if no target; for linkedin_post use "—" or notes topic)
    Created:  {date_created}
-   ATS score: {ats_score}/100  (omit if not available)
+   ATS score: {ats_score}/100  (omit if not available or not applicable)
    Used in:  {Company — Role, status: {status}}  (omit if not linked to any application)
 ```
+
+For **`type: "linkedin_post"`**, omit ATS and usually **Used in**; show **`notes`** or path if helpful so the user can find the draft on disk.
 
 **Summary line at the top** (before the list):
 
 ```
-Artifacts: {total_resume_count} resume(s), {total_cover_letter_count} cover letter(s)
+Artifacts: {total_resume_count} resume(s), {total_cover_letter_count} cover letter(s), {total_linkedin_post_count} LinkedIn post draft(s)
 ```
 
 ### 4. Offer next steps

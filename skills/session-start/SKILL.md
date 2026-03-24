@@ -31,7 +31,7 @@ If these are missing, treat as first run and output:
 
 > **Welcome to Career Navigator**
 >
-> Run `/career-navigator:setup` to initialize your `CareerNavigator` data files and enable automation.
+> Run `/career-navigator:launch` to initialize your `CareerNavigator` data files and enable automation.
 
 ### 2. Returning session: critical-only checks
 

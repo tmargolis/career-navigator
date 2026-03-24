@@ -26,7 +26,7 @@ Read:
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
 
 If target roles are missing:
-> "I need your target role(s) to run a training ROI analysis. Run `/career-navigator:setup` (or update `CareerNavigator/profile.md`) first."
+> "I need your target role(s) to run a training ROI analysis. Run `/career-navigator:launch` (or update `CareerNavigator/profile.md`) first."
 
 If ExperienceLibrary `units` are missing/empty:
 > "I need your ExperienceLibrary to estimate learning ROI. Run `/career-navigator:add-source` to add a resume first."

@@ -30,7 +30,7 @@ Before doing anything else, confirm Apify MCP tools are available in this sessio
 `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`
 
 If those tools are **not** available:
-> "Salary benchmarking needs the Apify Desktop connector. In Claude Desktop: **Customize → Connectors → Desktop → Apify → Configure** — add your Apify token, set **Enabled tools** to `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`, save, enable the connector, then open a **new chat** and try again. Or run `/career-navigator:setup` Step 4 for the full walkthrough."
+> "Salary benchmarking needs the Apify Desktop connector. In Claude Desktop: **Customize → Connectors → Desktop → Apify → Configure** — add your Apify token, set **Enabled tools** to `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`, save, enable the connector, then open a **new chat** and try again. Or run `/career-navigator:launch` Step 4 for the full walkthrough."
 
 Stop here — do not proceed without the MCP connection.
 
@@ -149,4 +149,4 @@ Only include this if there is a specific figure to compare against. Do not fabri
 > "Found {n} listings for '{keyword}' in '{location}', but none included salary information. This is common for roles where compensation is listed as 'competitive' or 'DOE'. Try adding a `minSalary` filter to surface listings that disclose pay."
 
 **MCP call fails or times out:**
-> "The Apify request didn't complete. In Claude Desktop, open **Customize → Connectors → Apify**, confirm your token and **Enabled tools** (`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`), save, enable the connector, and try again in a **new chat**. See `/career-navigator:setup` Step 4 if you need the full walkthrough."
+> "The Apify request didn't complete. In Claude Desktop, open **Customize → Connectors → Apify**, confirm your token and **Enabled tools** (`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`), save, enable the connector, and try again in a **new chat**. See `/career-navigator:launch` Step 4 if you need the full walkthrough."

@@ -26,7 +26,7 @@ Invoke the `analyst` agent to assess AI and automation displacement risk for the
 
 Read `{user_dir}/CareerNavigator/ExperienceLibrary.json` and `{user_dir}/CareerNavigator/profile.md`. If the ExperienceLibrary `units` array is empty or `profile.md` has no target roles:
 
-> "I need your ExperienceLibrary and target roles to run a displacement assessment. Run `/career-navigator:add-source` to add a resume, then `/career-navigator:setup` to set your target roles."
+> "I need your ExperienceLibrary and target roles to run a displacement assessment. Run `/career-navigator:add-source` to add a resume, then `/career-navigator:launch` to set your target roles."
 
 Otherwise, proceed.
 

@@ -36,7 +36,7 @@ Important invocation/data-source rules:
 Read `{user_dir}/CareerNavigator/profile.md`.
 
 If target roles are missing:
-> "I need your target role(s) to generate a market brief. Run `/career-navigator:setup` (or update `CareerNavigator/profile.md`) with your target roles first."
+> "I need your target role(s) to generate a market brief. Run `/career-navigator:launch` (or update `CareerNavigator/profile.md`) with your target roles first."
 
 If location preferences are missing, continue but mark geographic confidence as limited.
 

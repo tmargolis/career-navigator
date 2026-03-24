@@ -4,8 +4,9 @@ description: >
   Surfaces follow-up priorities across all active applications using
   company-specific response window data. Classifies each application as
   within window, approaching, overdue, or critical. Researches and stores
-  response window data for any company not yet on file. Drafts follow-up
-  messages for overdue and critical applications.
+  response window data for any company not yet on file. Builds FollowUpBrief
+  entries and invokes content-advisor for send-ready messages. Phase 2A
+  enriches briefs with email/calendar context.
 triggers:
   - "follow up on my applications"
   - "what needs a follow-up"
@@ -181,54 +182,43 @@ Order: critical → offer deadlines → thank-you due/overdue → overdue → ap
 If the queue is empty (all active applications are within window and no thank-yous outstanding):
 > "All active applications are within their expected response windows. Nothing to follow up on yet."
 
-### 8. Draft follow-up messages
+### 8. Follow-up copy via content-advisor
 
-For each application classified as `overdue` or `critical` (and `thank_you_due` / `thank_you_overdue`):
+For each application classified as `overdue` or `critical` (and `thank_you_due` / `thank_you_overdue`), **do not draft send-ready text in this skill.**
 
-Draft a brief, specific follow-up message the user can send. Tailor it to:
-- The contact in `contacts[]` (use their name and title if present — address the recruiter or hiring manager by name)
-- The role title and company
-- The time elapsed
-- The stage (post-application check-in vs. post-interview thank-you vs. offer follow-up)
+#### 8a. Build FollowUpBrief entries
 
-Keep messages to 3–5 sentences. Do not be sycophantic ("I hope you're doing well"). Be direct and easy to respond to.
+For each row that needs a message, add an object to a list:
 
-Present each draft under its application entry:
+- `company`, `role`
+- `stage_kind`: `post_application` | `thank_you_post_interview` | `offer_nudge` | other (infer from `stage_history`)
+- `channel`: `email` default; `linkedin` if user or notes indicate
+- `recipient_name`, `recipient_title` from `contacts[]` if present—else `null` and use neutral greeting instruction
+- `applied_or_event_date`, `days_elapsed` (or interview date for thank-yous)
+- `facts_hooks`: 1–3 bullets from `notes` / `stage_history.post_notes`—**no invention**
+- `tone`: direct, not sycophantic; 3–5 sentences target for email body
+- `phase_2a_context`: `null` — **Phase 2A** will allow inbox/calendar snippets here
 
-```
-Draft for {Company}:
----
-Subject: Following up — {Role} application
+Read `{user_dir}/CareerNavigator/profile.md` and **`voice-profile.md`** for sign-off name and voice.
 
-Hi {Name / "there" if no contact},
+**Voice preflight (once per session before 8b):** If you will invoke **`content-advisor`** and `voice-profile.md` lacks substantive pasted prose under **`## User writing samples`** or **`## User writing samples (launch)`**, ask the user for **2–5 LinkedIn posts** or short writing (or **skip** for neutral tone). Append pastes to `voice-profile.md`. If samples already exist or the user skips, proceed.
 
-I applied for the {Role} position on {date} and wanted to check on the status of my application. I remain very interested in the role and would welcome any update when you have a moment.
+#### 8b. Invoke content-advisor
 
-{Optional one sentence on why the fit is strong, if there's a natural hook from notes or stage history}
+- Use the exact agent name **`content-advisor`** with mode **`follow-up`**. Pass all **FollowUpBrief** objects in one invocation when possible. Retry once on failure.
 
-[Name]
----
-```
+#### 8c. Present output
 
-**For thank-you notes:**
+Under each application entry, show **`content-advisor`** output (subject line if email, body, LinkedIn variant if requested).
 
-```
-Subject: Thank you — {interview_type} interview for {Role}
-
-Hi {interviewer name},
-
-Thank you for the time today to discuss the {Role} role. {One specific sentence referencing something from the interview — pull from post_notes in stage_history if available, otherwise leave a placeholder: [reference one specific topic discussed]}.
-
-I'm excited about the opportunity and look forward to next steps.
-
-[Name]
-```
+**Phase 2A:** When email/calendar connectors exist, enrich briefs with approved prior-thread context before invoking **`content-advisor`**.
 
 ---
 
 ## What You Never Do
 
 - Do not mark an application as overdue before its research-backed window has elapsed — do not use the flat 7-day rule
+- Do not draft **send-ready** follow-up prose in this skill—only **FollowUpBrief** objects; **`content-advisor`** writes the message
 - Do not draft a follow-up for an application still within its window
 - Do not fabricate contact names — use "there" if no contact is on file
 - Do not store company window data outside of `{user_dir}/CareerNavigator/company-windows.json`

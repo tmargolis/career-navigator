@@ -23,7 +23,7 @@ Search Indeed for job listings that match the user's profile using the Indeed co
 
 **No Indeed MCP in this session:** Do **not** invent tool results. Do both of the following:
 
-1. Explain how to enable live search on **Claude Desktop**: **Customize → Connectors** → **Indeed** → **Connect** → complete **Grant access to Indeed** in the browser (Indeed OAuth on **secure.indeed.com** — sign in and **Continue**), then a **new chat**. Point to **`/career-navigator:setup` Step 3** for the full walkthrough.
+1. Explain how to enable live search on **Claude Desktop**: **Customize → Connectors** → **Indeed** → **Connect** → complete **Grant access to Indeed** in the browser (Indeed OAuth on **secure.indeed.com** — sign in and **Continue**), then a **new chat**. Point to **`/career-navigator:launch` Step 3** for the full walkthrough.
 
 2. **Assisted manual:** Skip **`search_jobs`** / **`get_job_details`**. After loading parameters from **§1**, output 2–3 tight search queries or direct links (Indeed + LinkedIn + Google Jobs) for that role/location. Ask the user to paste back listings (title, company, location, link, optional pay line). Pass what they provide to **`job-scout`** for ranking; present with the **§5** layout where links exist. Footer: note listings were **user-provided** (not live Indeed MCP) until the connector is connected.
 
