@@ -191,7 +191,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | :---- | :---- | :---- |
 | **/career-navigator:search-jobs** | Command | Searches configured job boards and returns ranked results. Ranking incorporates skill match, outcome history, and market intelligence. Supports filters for role, location, company size, industry, and salary range. |
 | **/career-navigator:track-application** | Command | Logs a new application or updates an existing one. Accepts conversational input and structures it automatically into the tracker database. |
-| **/career-navigator:pipeline** | Command | Displays the full application pipeline dashboard with timeline view, benchmark comparisons, and action items flagged by stage age. |
+| **/career-navigator:pipeline** | Command | Displays the full application pipeline dashboard with timeline view, benchmark comparisons, and action items flagged by stage age. **Roadmap:** add a **forecast** layer on the same timeline for time-indexed recommendations from **`networking-strategist`** (relationship moves, event targets, visibility milestones)—see Phase 1E visualization note in §15. |
 | **/career-navigator:follow-up** | Command | Generates a contextual follow-up message for a specific application based on elapsed time, last communication, and company norms. |
 | **/career-navigator:market-brief** | Command | Generates a current market intelligence report for the user's target roles and industries, including trend data, competition levels, and AI/automation impact assessment. |
 | **/career-navigator:suggest-roles** | Command | Analyzes the user's full ExperienceLibrary and suggests non-obvious role types their skills could be applied to, with rationale for each suggestion. |
@@ -209,11 +209,13 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
-| **/career-navigator:network-map** | Command | Visualizes the user's network relative to target companies, showing direct connections, second-degree paths, and identified gaps. |
-| **/career-navigator:draft-outreach** | Command | Drafts a LinkedIn message or email to a specific contact. Searches email and calendar history for prior context and incorporates it with user approval. |
-| **/career-navigator:content-suggest** | Command | Suggests LinkedIn post topics based on current industry trends, the user's target roles, and recent activity in their field. |
-| **/career-navigator:evaluate-post** | Command | Evaluates a draft LinkedIn post for audience fit, likely algorithmic performance, and cultural alignment with target companies. |
-| **/career-navigator:event-radar** | Command | Searches for relevant local, national, and international networking events and conferences. Returns ranked recommendations with ROI assessment and presentation opportunity flags. |
+| **/career-navigator:networking-strategy** | Command | Builds an evidence-based networking plan (priorities, sequencing, gaps). Optional handoff brief for **`content-advisor`** when messaging is needed. Invokes **`networking-strategist`**. |
+| **/career-navigator:network-map** | Command | Maps plausible paths and gaps to target employers; outputs narrative plus **`network_map_v1`** JSON for a future graph visualization phase. Invokes **`networking-strategist`**. |
+| **/career-navigator:draft-outreach** | Command | Drafts outreach copy (LinkedIn, email, InMail, etc.). Invokes **`content-advisor`**. Searches email and calendar history for prior context with user approval when Phase 2A connectors exist. |
+| **/career-navigator:event-intelligence** | Command | Deep evaluation of specific events: ROI, audience fit, cost/time, and **presentation / speaking** opportunity flagging. Invokes **`networking-strategist`**. |
+| **/career-navigator:content-suggest** | Command | Suggests LinkedIn post topics based on current industry trends, the user's target roles, and recent activity in their field. Invokes **`content-advisor`**. |
+| **/career-navigator:evaluate-post** | Command | Evaluates a draft LinkedIn post for audience fit, likely algorithmic performance, and cultural alignment with target companies. Invokes **`content-advisor`**. |
+| **/career-navigator:event-radar** | Command | Discovers events across **local, regional, national, and international** scopes (as appropriate); ranked with ROI tiers and presentation flags. Invokes **`networking-strategist`**. |
 
 # **4\. Agents**
 
@@ -226,9 +228,8 @@ Agents are specialized Claude instances with focused roles. They can be invoked 
 | **honest-advisor** | 1C | Provides candid assessments of the user's competitiveness for specific roles, potential recruiter concerns, and strategies for overcoming barriers. Researches company/industry-specific deviations from general norms. Empathetic but unsparing. |
 | **market-researcher** | 1C | Monitors macro hiring trends, role-specific demand signals, AI/automation displacement risks, geographic demand patterns, and sector-specific cycles. Feeds the `market-brief` command and the `job-scout` agent. |
 | **job-scout** | 1D | Searches and ranks job opportunities across all configured job boards. Incorporates outcome history and market intelligence into scoring. Ranking improves over time as the user logs outcomes. Proactively surfaces high-match opportunities. |
-| **networking-strategist** | 1E | Analyzes the user's network relative to their goals, identifies gaps and paths, drafts outreach, and evaluates content strategy. Searches email and calendar history for contact context with user approval. |
-| **content-advisor** | 1E | Evaluates LinkedIn content for audience fit, algorithmic performance, and cultural alignment with target companies. Flags political/cultural risks relative to specific employer profiles. Recommends topics proactively. |
-| **event-intelligence** | 1E | Continuously discovers and evaluates networking events globally. Assesses ROI using attendee quality, user target overlap, and historical conversion data. Flags high-value presentation opportunities. |
+| **networking-strategist** | 1E | Network analysis, gap identification, and warm-path planning. Event discovery and evaluation with ROI assessment, **presentation-opportunity** flagging, and multi-scope **event radar** (via **`event-intelligence`** and **`event-radar`** skills). May emit a structured **handoff brief** for **`content-advisor`** when messaging is needed; does **not** draft outreach copy. |
+| **content-advisor** | 1E | Owns **all outreach activities**—drafting LinkedIn/email/InMail, connection requests, and related message copy (including **`/career-navigator:draft-outreach`**). Also evaluates LinkedIn posts for audience fit, algorithmic performance, and cultural alignment with target companies; flags political/cultural risks; recommends topics proactively. Consumes handoff bullets from **`networking-strategist`** when present. Email/calendar enrichment deferred to Phase 2A with explicit user approval. |
 | **interview-coach** | 2B | Conducts mock interviews across all stages and vibes (supportive, neutral, challenging, antagonistic, bored). Adapts difficulty based on user performance in adaptive mode. Incorporates current events and company-specific research into questions. |
 | **interview-capture** | 2B | Processes audio transcription from interviews (via Whisper), extracts structured data, and auto-populates the tracker. Only active with explicit user opt-in. Full privacy framework required before activation. |
 
@@ -250,6 +251,10 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **market-brief** | Skill | Fires when the user asks for current market conditions. Invokes `market-researcher` to summarize role demand trends, AI/automation displacement signals, and geography-specific competitiveness. Also invocable via `/career-navigator:market-brief`. |
 | **suggest-roles** | Skill | Fires when the user asks what adjacent or non-obvious roles they should target. Invokes `honest-advisor` and `market-researcher`, then writes `strategy_signals` to `tracker.json` for job-scout scoring improvements. Also invocable via `/career-navigator:suggest-roles`. |
 | **training-roi** | Skill | Fires when the user asks what to learn next. Compares certifications, degrees, bootcamps, and self-study using a cost-benefit-time ROI framework and recommends a primary and fallback path. |
+| **networking-strategy** | Skill | Fires when the user wants a networking plan for their search. Invokes **`networking-strategist`** in **networking-strategy** mode (strategy and handoff bullets only; outreach copy via **`content-advisor`**). Also invocable via `/career-navigator:networking-strategy`. |
+| **network-map** | Skill | Fires when the user wants a structured map of paths and gaps toward target employers (including dream-job leverage). Produces **`network_map_v1`** JSON for a future visualization phase. Invokes **`networking-strategist`**. Also invocable via `/career-navigator:network-map`. |
+| **event-intelligence** | Skill | Fires when the user asks whether to attend specific events, wants ROI or speaker/CFP assessment, or asks about presentation opportunities. Invokes **`networking-strategist`** in **event-intelligence** mode. Also invocable via `/career-navigator:event-intelligence`. |
+| **event-radar** | Skill | Fires when the user wants ongoing discovery of events across local, regional, national, and international scope. Invokes **`networking-strategist`** in **event-radar** mode. Also invocable via `/career-navigator:event-radar`. |
 
 **Context skills** fire on ambient signals throughout any session:
 
@@ -550,7 +555,7 @@ Status: Completed
 
 * Follow-up timeline intelligence with company-specific response window data
 
-* D3 pipeline dashboard with timeline view and benchmark comparisons
+* D3 pipeline dashboard with timeline view and benchmark comparisons _(forecast overlay from **`networking-strategist`** is specified in Phase 1E §15 visualization roadmap—not part of initial Phase 1B scope)_
 
 * `/career-navigator:pipeline`, `/career-navigator:follow-up`
 
@@ -590,19 +595,21 @@ Status: Completed
 
 Status: In progress
 
-* **Agents introduced:** `networking-strategist` (network analysis, gap identification, outreach drafting), `content-advisor` (LinkedIn content evaluation, cultural risk flagging, topic recommendations), `event-intelligence` (global event discovery, ROI assessment, presentation opportunity flagging)
+* **Agents introduced:** `networking-strategist` (network analysis, gap identification, warm-path planning, event ROI and presentation-opportunity flagging, multi-scope event radar; handoff briefs for messaging only); `content-advisor` (all outreach copy + LinkedIn content evaluation, cultural risk flagging, topic recommendations)
 
-* Networking strategy and `/career-navigator:network-map`
+* **Skills:** `networking-strategy`, `network-map` (includes **`network_map_v1`** JSON for a **later-phase graph visualization**), `event-intelligence`, `event-radar`
 
-* Event radar with local, national, and international discovery
+* **Visualization roadmap (timeline):** extend the **`/career-navigator:pipeline`** (D3) **timeline** so it can show a forward-looking **forecast** from **`networking-strategist`**—e.g. scheduled or recommended relationship moves, high-ROI events, and visibility milestones—alongside **historical** application stage data. Requires a stable machine-readable interchange (new or extended schema; may align with `network_map_v1`, `event_radar_v1`, and/or persisted `networking-strategy` outputs). **Flag:** not implemented in Phase 1E skills-only delivery; track for the dashboard/visualization milestone.
 
-* Presentation opportunity flagging with proposal drafting assistance
+* Event radar with **local, regional, national, and international** discovery where appropriate
+
+* Presentation opportunity flagging; CFP / visibility assessment in **`event-intelligence`**
 
 * LinkedIn content advisor with topic recommendations
 
 * Post evaluator with cultural/political risk assessment against target company profiles
 
-* `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`, `/career-navigator:event-radar`
+* `/career-navigator:networking-strategy`, `/career-navigator:network-map`, `/career-navigator:event-intelligence`, `/career-navigator:event-radar`, `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`
 
 * Note: outreach enrichment with email/calendar history deferred to Phase 2A
 
@@ -715,6 +722,7 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 | **Data Retention Policy** | Privacy | How long application data, artifacts, and event logs are retained. User-controlled deletion scope to be specified. |
 | **Salary Negotiation** | Scope | Offer evaluation and negotiation guidance mentioned briefly — full scope not yet specified. Candidate for Phase 3\. |
 | **Training ROI Data Sources** | Technical | Sources for certification value, bootcamp outcomes, and degree ROI data need to be identified and validated for Phase 1C training recommendation engine. |
+| **Pipeline timeline + strategist forecast** | UX / Data | The pipeline **timeline** visualization should gain a **forecast** lane or overlay driven by **`networking-strategist`** outputs (planned moves, events, milestones). Interchange format, refresh cadence, and implementation phase TBD; depends on persisting or deriving structured recommendations from `networking-strategy`, `event-radar`, and related outputs. |
 
 # **Appendix: Command Quick Reference**
 
@@ -728,16 +736,20 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 | **/career-navigator:list-artifacts** | List all generated artifacts |
 | **/career-navigator:search-jobs** | Search and rank job opportunities |
 | **/career-navigator:track-application** | Log or update an application |
-| **/career-navigator:pipeline** | View full application dashboard |
+| **/career-navigator:pipeline** | View full application dashboard (timeline; roadmap: strategist **forecast** overlay) |
 | **/career-navigator:follow-up** | Generate contextual follow-up message |
 | **/career-navigator:market-brief** | Current market intelligence report |
 | **/career-navigator:suggest-roles** | Discover non-obvious role opportunities |
+| **/career-navigator:networking-strategy** | Networking plan (strategy; outreach via **content-advisor**) |
+| **/career-navigator:network-map** | Network paths/gaps + JSON for future graph viz |
+| **/career-navigator:event-intelligence** | Event ROI and presentation opportunity assessment |
+| **/career-navigator:event-radar** | Multi-scope event discovery |
 | **/career-navigator:prep-interview** | Full interview preparation session |
 | **/career-navigator:mock-interview** | Mock interview (guided/random/adaptive) |
 | **/career-navigator:interview-debrief** | Post-interview Q\&A capture |
 | **/career-navigator:morning-brief** | Day-of interview briefing |
 | **/career-navigator:network-map** | Visualize network relative to targets |
-| **/career-navigator:draft-outreach** | Draft LinkedIn/email outreach message |
+| **/career-navigator:draft-outreach** | Draft outreach message (**`content-advisor`**) |
 | **/career-navigator:content-suggest** | Suggest LinkedIn post topics |
 | **/career-navigator:evaluate-post** | Evaluate LinkedIn post before publishing |
 | **/career-navigator:event-radar** | Discover relevant networking events |

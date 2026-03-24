@@ -68,7 +68,7 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 ---
 
-## All Phase 1ABC Skills
+## Phase 1 skills
 
 Career Navigator is designed skill-first: most workflows trigger automatically from conversational context — paste a job description and a resume is assembled; say "I just applied to Acme" and the tracker updates. Commands are available for users who prefer explicit invocation.
 
@@ -98,6 +98,10 @@ Career Navigator is designed skill-first: most workflows trigger automatically f
 | `market-brief` | "market brief", "is this role in demand", "/career-navigator:market-brief" | Surface role demand trends, AI/automation displacement signals, and geographic competitiveness |
 | `suggest-roles` | "suggest roles", "what else could I apply to", "/career-navigator:suggest-roles" | Suggest non-obvious role opportunities and write strategy signals that improve job-scout ranking |
 | `training-roi` | "training roi", "what should I learn next", "is a bootcamp/certification/degree worth it" | Compare certifications, degrees, bootcamps, and self-study with cost-benefit-time ROI analysis |
+| `networking-strategy` | "networking strategy", "how should I network", "/career-navigator:networking-strategy" | Plan: priorities, sequencing, gaps via **`networking-strategist`**; outreach copy via **`content-advisor`** |
+| `network-map` | "network map", "who can introduce me", "/career-navigator:network-map" | Paths/gaps toward targets; **`network_map_v1`** JSON for a future graph visualization |
+| `event-intelligence` | "conference ROI", "speaking opportunity", "/career-navigator:event-intelligence" | Event ROI, audience fit, presentation/CFP-style opportunity flagging |
+| `event-radar` | "event radar", "upcoming conferences", "/career-navigator:event-radar" | Local → international event discovery with ROI tiers |
 
 All skills are also invocable as explicit commands using the `/career-navigator:` prefix.
 
@@ -206,7 +210,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 **Phase 1D ([Release v1.4](https://github.com/tmargolis/career-navigator/releases/tag/v1.4)):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
-**Phase 1E (in progress):** `networking-strategist`, `content-advisor`, and `event-intelligence` agents. Network map and gap analysis. Event radar. LinkedIn content advisor and post evaluator with cultural risk assessment.
+**Phase 1E (in progress):** **`networking-strategist`** (strategy, paths, gaps, events—not message copy) with skills **`networking-strategy`**, **`network-map`** (JSON interchange for a later graph viz), **`event-intelligence`**, and **`event-radar`**. **`content-advisor`** (next): all **outreach** drafting plus LinkedIn content evaluation, topics, and cultural risk.
 
 ### Phase 2 — Integrations
 

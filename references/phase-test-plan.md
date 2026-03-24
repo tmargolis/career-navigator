@@ -88,16 +88,161 @@ Use it as a release gate before tagging a phase complete.
 ## Phase 1E — Professional Presence
 
 ### Scope
-- Networking strategy, event radar, content advisor workflows.
+- **`networking-strategist`** agent, invoked by skills **`networking-strategy`**, **`network-map`**, **`event-intelligence`**, and **`event-radar`**.
+- **`content-advisor`** (when shipped): all outreach copy plus LinkedIn topic/evaluation workflows; consumes optional handoff briefs from **`networking-strategist`**.
 
-### Tests
-- Run network-mapping workflow and confirm gap identification output quality.
-- Run outreach drafting with and without prior context; verify context-aware output handling.
-- Run content suggestion and post evaluation; verify risk flags and audience-fit rationale.
-- Run event radar and verify event prioritization logic.
+### Test data (recommended)
+- `CareerNavigator/profile.md` with **Target Roles**, **Target Companies** (or infer from `tracker.json`), and **Location** (local-only vs remote/travel-open affects event-radar scope).
+- `tracker.json` with at least one application listing **`contacts`** (can be empty) to validate gap/path logic.
+- Optional: stale or missing `CareerNavigator/network-map.md` to validate create vs update behavior.
+
+### Example prompts (copy/paste)
+
+Use natural language or the equivalent **`/career-navigator:…`** command. Swap company names, roles, and events to match your **`CareerNavigator`** data.
+
+#### **`networking-strategy`** — baseline plan
+
+```text
+I need a networking strategy for my job search. Use my CareerNavigator profile and tracker—prioritize the next 90 days and the top 5 relationship moves I should make.
+```
+
+```text
+/career-navigator:networking-strategy
+```
+
+#### **`networking-strategy`** — outreach boundary (strategist must not draft send-ready copy)
+
+```text
+Run my networking strategy using profile + tracker, and in the same answer write the exact LinkedIn DM I should send to a hiring manager at my top target company—ready to paste.
+```
+
+**Expect:** Handoff brief + direction to **`content-advisor`** or **`/career-navigator:draft-outreach`**, not a finished DM from **`networking-strategist`**.
+
+#### **`network-map`** — paths, gaps, and JSON
+
+```text
+Map my network toward my dream roles and target companies. Label confirmed vs hypothetical paths, call out gaps, and include the network_map_v1 JSON block for later visualization.
+```
+
+```text
+/career-navigator:network-map
+```
+
+#### **`network-map`** — persistence offer
+
+```text
+After you produce the network map, save the narrative and the network_map_v1 JSON to CareerNavigator/network-map.md in my job search folder.
+```
+
+#### **`event-intelligence`** — named event (ROI + presentation flag)
+
+```text
+Should I attend [name a real conference or meetup you are considering] for my job search? Assess ROI, audience quality, whether it's worth travel/time/money, and flag if there's a realistic speaking or visibility opportunity. If you don't have verified dates or prices, tell me exactly what to look up instead of guessing.
+```
+
+```text
+/career-navigator:event-intelligence
+```
+*(Then paste the event name and constraints in the same thread.)*
+
+#### **`event-radar`** — multi-scope discovery
+
+```text
+Run an event radar for my interests and target roles: local and regional events first, then national, then international if my profile supports travel. Give ROI tiers, presentation flags, and real links—or search queries if links aren't available.
+```
+
+```text
+I'm only looking locally—no travel. Scan my metro area for the next 3 months for meetups and conferences relevant to my target role. Skip national/international unless virtual.
+```
+
+```text
+/career-navigator:event-radar
+```
+
+#### **Phase 2A honesty** (no inbox unless connected)
+
+```text
+Before we draft any outreach, summarize what I last emailed anyone at [Company X] and pull thread context from my inbox.
+```
+
+**Expect:** Clear statement that email/calendar access is not available (or requires Phase 2A + user approval)—**no** fabricated thread summaries.
+
+#### **`content-advisor`** — when shipped
+
+**Draft outreach**
+
+```text
+/career-navigator:draft-outreach
+```
+```text
+Draft a short LinkedIn note to a [peer IC | recruiter | hiring manager] at [Company]. Goal: informational conversation, not asking for a job in the first message. Tone: direct and respectful. Here's the handoff from my networking strategy: [paste handoff bullets].
+```
+
+**Topic ideas**
+
+```text
+/career-navigator:content-suggest
+```
+```text
+Suggest three LinkedIn post ideas for the next month that support my target roles without sounding desperate. Flag any that might clash with employers I'm targeting.
+```
+
+**Post review**
+
+```text
+/career-navigator:evaluate-post
+```
+```text
+Evaluate this draft post for audience fit and cultural risk relative to my target companies: [paste draft].
+```
+
+#### **Agent invocation / retry** (host-dependent)
+
+Retry behavior is validated by observing logs or the host’s agent tool—not a single user prompt. Optionally run the same **`network-map`** or **`event-radar`** prompt twice after a transient failure to confirm recovery after one retry per skill rules.
+
+### Agent: **`networking-strategist`**
+
+#### Invocation and orchestration
+- From each skill body, confirm the model uses the **exact** agent name **`networking-strategist`** (no aliases such as “network” or “strategy agent”).
+- Simulate or observe one failed subagent call; confirm **one retry** with the same name before surfacing an error (per skill instructions).
+
+#### Role boundary (outreach vs strategy)
+- Run **`networking-strategy`** with an explicit ask to “write my LinkedIn message” in the same turn.
+  - **Expect:** no ready-to-send DM/email body from **`networking-strategist`**; instead a **handoff brief** (objective, audience archetype, evidence-backed hooks, tone, avoid list) and explicit pointer to **`content-advisor`** or **`/career-navigator:draft-outreach`** for final copy.
+- Run **`network-map`**; confirm output does not include full outreach drafts—only strategy, path labels, gaps, JSON, and optional handoff bullets.
+
+#### Phase 2A honesty
+- Without email/calendar connectors, confirm the agent **does not** claim access to inbox or prior threads; if it mentions Phase 2A, it should describe what would be needed—not invent correspondence.
+
+### Skills
+
+#### **`networking-strategy`**
+- Confirm the plan includes a **time-bounded** arc (e.g. 90-day framing), **prioritized moves**, and **what to avoid**.
+- If the user saves output, confirm optional persistence to `CareerNavigator/networking-strategy.md` (or equivalent dated section) does not corrupt other `CareerNavigator` files.
+
+#### **`network-map`**
+- **confirmed** vs **hypothesis** paths are labeled; bridge **personas** are archetypes unless the user supplied real names.
+- A fenced **`network_map_v1`** JSON block is present with `schema`, `as_of`, `nodes`, `edges`, `gaps`, and **`viz_note`** (graph viz deferred).
+- Offer to write/update **`CareerNavigator/network-map.md`** when the user agrees; re-read file to ensure narrative + JSON coexist.
+
+#### **`event-intelligence`**
+- For a **named** event: ROI assessment, audience/readiness signal, **presentation opportunity** (`yes` / `maybe` / `no`), and **risks** (pay-to-play, low signal).
+- **No fabricated** dates, prices, or CFP deadlines—either cite a verifiable source or give **queries/URLs to verify**.
+
+#### **`event-radar`**
+- Results grouped or labeled by **local → regional → national → international** as appropriate to profile (skip international when profile is strictly local and user confirms no travel).
+- Each candidate has **ROI tier** (e.g. A/B/C), **presentation flag**, and **link or explicit verification step**; no invented conferences.
+
+### **`content-advisor`** (when shipped)
+
+- **`/career-navigator:draft-outreach`:** produces send-ready copy (or clearly marked drafts), respects tone/length asks, and does **not** fabricate shared history; can consume **`networking-strategist`** handoff bullets when pasted or referenced.
+- **`/career-navigator:content-suggest`:** topics align with profile targets and are actionable.
+- **`/career-navigator:evaluate-post`:** audience-fit + **cultural/political risk** flags with rationale tied to target employer context when provided.
 
 ### Pass Criteria
-- Presence workflows produce actionable outputs with explicit rationale and risk notes.
+- **`networking-strategist`** outputs are evidence-grounded, confidence-labeled, and **do not** substitute for **`content-advisor`** on outreach copy.
+- Event outputs avoid hallucinated logistics; uncertainty is stated explicitly.
+- **`content-advisor`** (when present) owns message copy and integrates handoffs cleanly without duplicating strategist scope.
 
 ---
 
