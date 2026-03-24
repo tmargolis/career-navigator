@@ -56,7 +56,7 @@ Career Navigator monitors your job search folder automatically. Add a resume or 
 /career-navigator:search-jobs
 ```
 
-With JobSearch configured: searches live job listings automatically and returns ranked results. Without it: generates optimized search strings for Indeed, LinkedIn, and Google Jobs, then ranks the results you bring back.
+With the **Indeed** MCP connector connected (see **Job Search & Storage Setup** below): live search and ranked results. Without it: `search-jobs` explains how to **Connect** Indeed (browser OAuth) and can fall back to **assisted manual** search strings until the connector is available (`/career-navigator:setup` Step 3).
 
 ### 5. Tailor your first resume
 
@@ -137,7 +137,7 @@ No data leaves your machine unless you configure a cloud connector (see [CONNECT
 
 Run `/career-navigator:setup` to configure integrations. The wizard handles everything conversationally — no file editing required.
 
-**Job search:** Career Navigator uses the built-in **Indeed connector** (Claude Cowork integration) for live job listings. No token or configuration required — job search works out of the box.
+**Job search:** Career Navigator uses the **Indeed** MCP connector for live listings (`search_jobs`, `get_job_details`). In **Claude Desktop**, add it under **Customize → Connectors**, open **Indeed**, click **Connect**, then complete **Grant access to Indeed** in the browser (Indeed OAuth on **secure.indeed.com** — sign in and **Continue**). Start a **new chat** if tools don’t load. See `/career-navigator:setup` Step 3 for the full walkthrough.
 
 **Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. Cloud storage connectors (Google Drive, OneDrive, Dropbox) are available in Phase 2. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
 

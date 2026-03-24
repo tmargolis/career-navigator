@@ -3,7 +3,7 @@ name: setup
 description: >
   The single entry point for all Career Navigator configuration. Sets up the
   job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents,
-  configures JobSearch for live job search, and optionally connects Google Drive.
+  walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, and Google Drive when applicable.
   No Customize button required — run this command to do everything.
 triggers:
   - "launch career"
@@ -152,11 +152,30 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 }
 ```
 
-### 3. Confirm job search integration
+### 3. Connect the Indeed MCP connector (live job search)
 
-Career Navigator uses the **Indeed connector** (built-in Claude Cowork integration) for live job search. No token or configuration is required — confirm it's available and continue:
+Career Navigator’s **`search-jobs`** skill expects the **Indeed** MCP tools **`search_jobs`** and **`get_job_details`**. On **Claude Desktop**, those tools appear only after the user connects **Indeed** under **Customize → Connectors** and finishes **browser-based OAuth** with Indeed (this is **not** a static API key you paste into `.mcp.json`).
 
-> "Job search is powered by the Indeed connector. No additional setup needed — run `/career-navigator:search-jobs` any time to find live listings."
+**What to expect in Claude Desktop:**
+
+- The **Indeed** connector page describes **“Search for jobs on Indeed”**, developer **Indeed**, and under **Tools** lists **`search_jobs`** and **`get_job_details`**. **Details** may show the connector URL `https://mcp.indeed.com/claude/mcp` (for reference only — connect through the app, not by editing JSON).
+- Tapping **Connect** starts the link flow. Claude shows **“Grant access to Indeed”** with a prompt to **complete the sign-in steps in the new browser tab** (and **“Didn’t work? Relaunch the tab”** if needed).
+- In the browser, **Indeed** opens an OAuth page on **`secure.indeed.com`** (**“Claude would like to access your account”**). The user signs in (or confirms the right Indeed account), reviews permissions (e.g. search jobs on their behalf, profile access), then clicks **Continue** to authorize.
+
+**Walk the user through:**
+
+1. **Customize** (or **Settings**) → **Connectors** → find **Indeed** in the catalog.
+2. Open **Indeed** → confirm **Tools** includes **`search_jobs`** and **`get_job_details`**.
+3. Click **Connect**. When **Grant access to Indeed** appears, tell them to switch to the **new browser tab**, finish **Indeed** sign-in / consent, and click **Continue** on the OAuth screen.
+4. After success, Claude should show the connector as connected (e.g. **Disconnect** visible instead of **Connect**). If tools still don’t appear, start a **new chat**.
+
+**Validation:** In this session (or after a fresh chat), confirm **`search_jobs`** / **`get_job_details`** are available. If yes:
+
+> "Indeed is connected. Run `/career-navigator:search-jobs` any time, or ask me to find jobs for your target role and location."
+
+If tools are missing after OAuth, have them verify: Indeed account authorized, connector still enabled, **new chat** after connecting.
+
+**Claude Cowork / other hosts:** Use the host’s documented way to enable **Indeed** job search MCP (same tool names when available). Do not invent credentials or scrape Indeed without the official connector.
 
 ### 4. Configure Apify for salary benchmarking (optional)
 
@@ -164,7 +183,7 @@ The `salary-research` skill uses the **Apify** MCP tools to pull live compensati
 
 **Do not** ask the user to paste their Apify token into chat, edit `claude_desktop_config.json`, or rely on `.env` / `APIFY_TOKEN` for MCP startup — Claude Desktop does not expand `${APIFY_TOKEN}` inside MCP `args` the way a shell would.
 
-Ask the user:
+First check if the Apify MCP is already connected. It may be in a deferred state, so double check and make sure to activate them if you need to. If they are active, suggest they run `/career-navigator:salary-research` for a role and location from their profile. If not, Ask the user:
 > "Would you like to set up salary benchmarking? It uses Apify's free tier ($5/month in credits — enough for personal job search use) to pull live salary data by role and location."
 
 **If yes — Claude Desktop connector flow:**
@@ -184,7 +203,7 @@ Ask the user:
 
    - **Save**, turn the connector **on**, start a **new chat** so MCP tools load
 
-4. Validation: in a new session, confirm Apify tools are available (e.g. **Call Actor**, **Get Actor run**, **Get dataset items**). If they are, suggest they run `/career-navigator:salary-research` for a role and location from their profile. If tools are missing, summarize what they should double-check (token, enabled tools string, connector enabled, new session).
+4. Validation: Confirm Apify tools are available (e.g. **Call Actor**, **Get Actor run**, **Get dataset items**). If tools need to be activated from a deferred state, then do that. If the tools are missing, summarize what they should double-check (token, enabled tools string, connector enabled, new session).
 
 **Cowork / other hosts:** If the user is not on Claude Desktop, tell them to add Apify MCP the way their host documents (same **Enabled tools** string and a secure token field if the UI offers one). Do not invent a JSON config that embeds the token.
 
