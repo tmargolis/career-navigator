@@ -525,7 +525,7 @@ Phase status:
 - Phase 1B: Completed
 - Phase 1C: Completed
 - Phase 1D: Completed
-- Phase 1E: In progress
+- Phase 1E: Completed
 
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
@@ -601,23 +601,9 @@ Status: Completed
 
 ### **Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn content advisor**
 
-Status: In progress
+Status: Completed
 
 **Scope (what 1E is responsible for):** conversational **skills + agents + slash commands** for networking strategy, network mapping (**`network_map_v1`** / optional `network-map.md` persistence), event intelligence and multi-scope **event-radar** (including optional **`event_radar_v1`** / `event-radar.md`), and all **user-facing copy** via **`content-advisor`** (outreach, cover letters, follow-ups, resume Summary polish, topic ideas, post drafts, risk evaluation). **`/career-navigator:launch`** seeds **`voice-profile.md`** from on-disk résumés/CVs/covers and prompts for LinkedIn samples; **`content-advisor`** maintains samples, multi-context tone notes, and quality flags. Full **post drafts** for review are **saved** under **`{user_dir}/LinkedIn Posts/`** and indexed as **`linkedin_post`** in **`artifacts-index.json`**.
-
-**Still missing or partial before calling 1E “complete” (skills layer):**
-
-* **Hardening & QA** — run **`references/phase-test-plan.md`** (and live connector) checks for all 1E commands; confirm **`networking-strategist`** / **`content-advisor`** handoffs match **`AGENT.md`** schemas in real sessions.
-
-* **Event discovery depth** — §9 lists **Meetup / Eventbrite / Luma** MCP-style integrations; **1E** may rely on **web-assisted** discovery until those connectors exist. Treat **connector-backed event feeds** as **Phase 2C** (or host-specific connector work), not a blocker for shipping 1E narrative + radar skills.
-
-* **Interview prep commands** (`prep-interview`, `mock-interview`, `morning-brief`, `interview-debrief`) remain **Phase 2B** — they appear in the command table for roadmap alignment but are **out of 1E scope**.
-
-**Explicitly not in Phase 1E (moved to roadmap):**
-
-* **Pipeline timeline forecast**, **voice cadence on timeline**, and **interactive network graph** from **`network_map_v1`** — **Phase 2D — Dashboard & visualization enhancements** (§15).
-
-* **Warm outreach enrichment** (email/calendar context, **`contact-context`** skill) — **Phase 2A**.
 
 **1E deliverables (target checklist):**
 
