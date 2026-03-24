@@ -160,43 +160,33 @@ Career Navigator uses the **Indeed connector** (built-in Claude Cowork integrati
 
 ### 4. Configure Apify for salary benchmarking (optional)
 
-The `salary-research` skill uses the Apify MCP server to pull live compensation data. This step is optional — skip it if the user doesn't need salary benchmarking.
+The `salary-research` skill uses the **Apify** MCP tools to pull live compensation data. This step is optional — skip it if the user doesn't need salary benchmarking.
 
-Important: for now, users should configure Apify in **Claude Desktop Local MCP servers**. Do not assume plugin `.mcp.json` alone will register Apify in Cowork.
+**Do not** ask the user to paste their Apify token into chat, edit `claude_desktop_config.json`, or rely on `.env` / `APIFY_TOKEN` for MCP startup — Claude Desktop does not expand `${APIFY_TOKEN}` inside MCP `args` the way a shell would.
 
 Ask the user:
 > "Would you like to set up salary benchmarking? It uses Apify's free tier ($5/month in credits — enough for personal job search use) to pull live salary data by role and location."
 
-**If yes:**
+**If yes — Claude Desktop connector flow:**
 
 1. Direct them to sign up at **https://apify.com** (free account).
 
-2. Retrieve their Personal API token:
-   > "Once you're signed in, go to **Console → Settings → Integrations** and copy your Personal API token."
+2. They copy their **Personal API token** from **Console → Settings → Integrations** (they keep it private — **do not** ask them to paste it into this conversation).
 
-3. Tell them to configure Claude Desktop Local MCP:
-   > "In Claude Desktop, go to **Settings → Developer → Local MCP servers** and add an `apify` server. If editing config directly, use a snippet like this:"
-   ```json
-   {
-     "mcpServers": {
-       "apify": {
-         "command": "npx",
-         "args": [
-           "-y",
-           "mcp-remote",
-           "https://mcp.apify.com/?tools=call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search",
-           "--header",
-           "Authorization: Bearer APIFY_API_KEY"
-         ]
-       }
-     }
-   }
-   ```
+3. Walk them through the host UI:
+   - Open **Customize** (or **Settings**) → **Connectors**
+   - Under **Desktop**, choose **Apify** (may show as **apify-mcp-server**)
+   - Open **Configure**
+   - Paste the token into **Apify token (Required)**
+   - Set **Enabled tools** to this exact string (comma-separated, no spaces):
 
-4. Remind them to replace `APIFY_API_KEY` with their own token and keep it private.
+     `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`
 
-5. Tell them to restart Claude Desktop (or start a new Cowork session):
-   > "Once restarted, the Apify MCP server should be available. Then run `/career-navigator:salary-research` or say 'what's the salary range for a Senior PM in Chicago?' to test it."
+   - **Save**, turn the connector **on**, start a **new chat** so MCP tools load
+
+4. Validation: in a new session, confirm Apify tools are available (e.g. **Call Actor**, **Get Actor run**, **Get dataset items**). If they are, suggest they run `/career-navigator:salary-research` for a role and location from their profile. If tools are missing, summarize what they should double-check (token, enabled tools string, connector enabled, new session).
+
+**Cowork / other hosts:** If the user is not on Claude Desktop, tell them to add Apify MCP the way their host documents (same **Enabled tools** string and a secure token field if the UI offers one). Do not invent a JSON config that embeds the token.
 
 **If no or skipped:**
 

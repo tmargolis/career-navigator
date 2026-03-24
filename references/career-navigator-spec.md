@@ -137,6 +137,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Analytics Layer (Phase 1\)** | SQLite \+ D3 visualization (additional connectors in Phase 2D) |
 | **AI Services** | Claude API (via MCP), Whisper (audio transcription — Phase 2B) |
 | **Job Search (Phase 1\)** | Indeed connector (built-in, no token required) \+ assisted-manual fallback |
+| **Salary benchmarks (Phase 1, optional)** | Apify MCP added in Claude Desktop **Customize → Connectors → Desktop → Apify** (token + **Enabled tools** list in connector UI); plugin **`.mcp.json`** ships **`mcpServers: {}`** |
 
 # **2\. Plugin File Structure**
 
@@ -145,6 +146,8 @@ The plugin is architected around a feedback loop: every action taken and outcome
 **├── .claude-plugin/**
 
 **│   └── plugin.json**
+
+**├── .mcp.json** — ships **`mcpServers: {}`**; optional MCPs (e.g. Apify for salary) are configured in the host app
 
 **├── agents/**
 
@@ -320,10 +323,13 @@ The analytics layer consumes structured event data from the storage connector an
 
 # **9\. External Service Integrations (.mcp.json)**
 
-External services are configured via the plugin's .mcp.json file. Run `/career-navigator:setup` to configure integrations — the wizard handles all file edits automatically. Each integration is optional and activates the relevant agents and skills when configured.
+The plugin ships **`.mcp.json`** with **`mcpServers: {}`**. Host-specific MCP setup (tokens, enabled tools) belongs in the **client** where the user runs Claude — for **salary-research**, users add the **Apify** **Desktop** connector in **Claude Desktop → Customize → Connectors**, paste their **Apify token** in the connector form (not in repo files or chat), and set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, then save, enable, and start a new session. This avoids brittle `npx mcp-remote` configs where **`${APIFY_TOKEN}`** in JSON args is passed literally and never expanded.
+
+Run `/career-navigator:setup` for a conversational walkthrough. Each integration is optional; skills degrade when a connector is absent.
 
 | Name | Type | Description |
 | :---- | :---- | :---- |
+| **Apify** | MCP (Desktop connector) | Powers **`salary-research`** via **cheapget/best-job-search** and related tools. Configured in Claude Desktop connector UI, not committed in `.mcp.json`. |
 | **LinkedIn** | MCP | Job posting search, connection graph access, InMail drafting, post publishing and analytics. Required for networking strategy features. |
 | **JobSearch** | MCP | Web scraping API providing live job listings from Indeed, LinkedIn, and other boards. Free tier available. Primary source for broad job discovery in Phase 1A. Configured via `/career-navigator:setup`. |
 | **Glassdoor** | MCP | Company culture research, interview experience data, salary benchmarks, and recruiter process timelines. |

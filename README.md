@@ -141,35 +141,24 @@ Run `/career-navigator:setup` to configure integrations. The wizard handles ever
 
 **Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. Cloud storage connectors (Google Drive, OneDrive, Dropbox) are available in Phase 2. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
 
-### Apify MCP for salary benchmarking (optional manual setup)
+### Apify MCP for salary benchmarking (optional — Claude Desktop connector)
 
-`/career-navigator:salary-research` uses Apify via MCP. It is **currently not in the plugin `.mcp.json`** — add the connector in **Claude Desktop Local MCP servers** (or your environment’s MCP settings) when you want salary benchmarking.
+`/career-navigator:salary-research` uses **Apify** over MCP. The plugin does **not** put your token in `.mcp.json` (environment variable substitution in MCP `args` is not expanded reliably). Instead, add Apify as a **Desktop connector** in Claude so the app stores your token and tool list for you.
 
-1. Create an account at [apify.com](https://apify.com).
-2. In Apify, copy your API token from **Console -> Settings -> Integrations**.
-3. In Claude Desktop, open **Settings -> Developer -> Local MCP servers** and add Apify (or edit your config file directly).
-4. Use a config like:
+1. Create an account at [apify.com](https://apify.com) and copy your **Personal API token** from **Console → Settings → Integrations**.
+2. In Claude Desktop, open **Customize** (or **Settings**) and go to **Connectors**.
+3. Under **Desktop**, select **Apify** (may appear as **apify-mcp-server**).
+4. Click **Configure** (or open the connector’s settings).
+5. Paste your token into **Apify token (Required)**.
+6. In **Enabled tools**, replace the default with this exact comma-separated list (no spaces):
 
-```json
-{
-  "mcpServers": {
-    "apify": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://mcp.apify.com/?tools=call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search",
-        "--header",
-        "Authorization: Bearer APIFY_API_KEY"
-      ]
-    }
-  }
-}
-```
+   `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`
 
-5. Restart Claude Desktop (or start a new Cowork chat), then run `/career-navigator:salary-research`.
+7. Click **Save**, ensure the connector is **enabled**, then **start a new chat** so tools load.
 
-Use your own token and never commit it to this repository.
+8. Run `/career-navigator:salary-research` or ask for a salary range for a role and location.
+
+Never paste your token into this repository or into chat logs you do not trust. Tool permission prompts (e.g. “needs approval”) are normal — approve when you intend to run salary research.
 
 ---
 

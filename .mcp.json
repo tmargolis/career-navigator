@@ -1,14 +1,3 @@
 {
-  "mcpServers": {
-    "apify": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://mcp.apify.com/?tools=call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search",
-        "--header",
-        "Authorization: Bearer ${APIFY_TOKEN}"
-      ]
-    }
-  }
+  "mcpServers": {}
 }
