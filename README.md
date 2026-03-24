@@ -70,43 +70,101 @@ Paste a job description. Career Navigator assembles the optimal resume from your
 
 ## Phase 1 skills
 
-Career Navigator is designed skill-first: most workflows trigger automatically from conversational context — paste a job description and a resume is assembled; say "I just applied to Acme" and the tracker updates. Commands are available for users who prefer explicit invocation.
+Career Navigator is **skill-first**: most workflows start from normal conversation (paste a job description, say you applied somewhere, ask for a market read). Slash commands exist where listed below.
 
-| Skill / Command | Trigger | Purpose |
-|---------|---------|---------|
-| `/career-navigator:launch` | Explicit (run first) | Launch your job search workspace: configure `{user_dir}` and initialize `CareerNavigator` data files |
-| `session-start` | Session open (or user-scheduled via Cowork `/schedule`) | Surface only critical, time-sensitive alerts (for example: offer/follow-up due today) |
-| `daily-schedule` | **Recommended:** daily via Cowork `/schedule` | Routine digest; first reconcile artifact inventory with `artifact-saved` when PDF/DOCX files exist in `{user_dir}` |
-| `application-update` | After `track-application` writes `tracker.json` | Flag whether job-scout refresh is needed and nudge pattern-analysis at key outcome milestones |
-| `artifact-saved` | After saves or from `daily-schedule` | Reconcile `artifacts-index.json` with files present in `{user_dir}`; prepare analytics handoff summary |
-| `add-source` | Upload or reference a resume/CV | Add source documents into `CareerNavigator/ExperienceLibrary.json` |
-| `tailor-resume` | Paste a job description, or say "I want to apply to X" | Assemble an optimized resume via **`resume-coach`**; optional **`content-advisor`** Summary polish for LinkedIn voice |
-| `cover-letter` | After tailoring a resume, or "write me a cover letter for X" | **CoverLetterBrief** + **`content-advisor`** final prose |
-| `resume-score` | Share a resume + job description together | Score ATS match, formatting, and narrative strength |
-| `ats-optimization` | "optimize for ATS", "fix ATS issues" | Surface ATS-hostile formatting/keyword issues with prioritized fixes |
-| `/career-navigator:list-artifacts` | Explicit | View generated resumes/cover letters and linked outcomes |
-| `track-application` | "I just applied to X", "log this application" | Log or update a job application |
-| `search-jobs` | "find jobs", "search for X roles" | Find and rank job opportunities with outcome + strategy signals |
-| `follow-up` | "follow up with X", "is this overdue?" | **FollowUpBrief** queue + **`content-advisor`** send-ready messages (Phase 2A: inbox/calendar enrichment) |
-| `pattern-analysis` | "what's converting?", "analyze my search" | Update ExperienceLibrary performance weights from outcome patterns |
-| `skill-transfer` | "what else could I do?" | Map transferable strengths to adjacent role/industry opportunities |
-| `ai-analysis` | "AI risk", "future-proof my career" | Assess task-level AI displacement risk and durable differentiators |
-| `benchmark` | "how am I doing vs market?" | Compare funnel metrics against role/market/company-size norms |
-| `report` | "run full analysis" | Generate integrated analyst report + dashboard data |
-| `pipeline-dashboard` | Dashboard generation | Build/open interactive pipeline dashboard |
-| `salary-research` | "salary range for X in Y" | Pull live compensation benchmarks via Apify MCP |
-| `market-brief` | "market brief", "is this role in demand", "/career-navigator:market-brief" | Surface role demand trends, AI/automation displacement signals, and geographic competitiveness |
-| `suggest-roles` | "suggest roles", "what else could I apply to", "/career-navigator:suggest-roles" | Suggest non-obvious role opportunities and write strategy signals that improve job-scout ranking |
-| `training-roi` | "training roi", "what should I learn next", "is a bootcamp/certification/degree worth it" | Compare certifications, degrees, bootcamps, and self-study with cost-benefit-time ROI analysis |
-| `networking-strategy` | "networking strategy", "how should I network", "/career-navigator:networking-strategy" | Plan: priorities, sequencing, gaps via **`networking-strategist`**; outreach copy via **`content-advisor`** |
-| `network-map` | "network map", "who can introduce me", "/career-navigator:network-map" | Paths/gaps toward targets; **`network_map_v1`** JSON for a future graph visualization |
-| `event-intelligence` | "conference ROI", "speaking opportunity", "/career-navigator:event-intelligence" | Event ROI, audience fit, presentation/CFP-style opportunity flagging |
-| `event-radar` | "event radar", "upcoming conferences", "/career-navigator:event-radar" | Local → international event discovery with ROI tiers |
-| `draft-outreach` | "draft outreach", "linkedin message to", "/career-navigator:draft-outreach" | Outreach copy via **`content-advisor`** |
-| `content-suggest` | "linkedin post ideas", "/career-navigator:content-suggest" | Topic recommendations via **`content-advisor`** |
-| `evaluate-post` | "review my post", "cultural risk", "/career-navigator:evaluate-post" | Audience + cultural/political/reputational risk vs targets |
+**How the pieces fit** — six domains, roughly in lifecycle order:
 
-All skills are also invocable as explicit commands using the `/career-navigator:` prefix.
+```text
+Launch & rhythm          →  keep {user_dir} healthy and time-sensitive items visible
+        ↓
+Documents & ATS          →  ingest sources, tailor résumés/letters, score and fix ATS
+        ↓
+Discovery & pipeline     →  search roles, log applications, learn from outcomes
+        ↓
+Market & role strategy   →  demand, salary, adjacent roles, AI risk, training ROI
+        ↓
+Networking & presence    →  plan, map paths, events, outreach & LinkedIn content
+        ↓
+Insight & dashboard      →  full analyst report + pipeline visualization
+```
+
+---
+
+### 1. Launch & session rhythm
+
+| Skill / command | When it runs | Purpose |
+|-----------------|--------------|---------|
+| **`/career-navigator:launch`** | Run once (or again to reconfigure) | Configure `{user_dir}`, core `CareerNavigator/` files, connectors walkthrough, voice harvest |
+| **`session-start`** | New session (hook) or `/schedule` | Critical-only: deadlines, same-day follow-ups, urgent interview actions |
+| **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling |
+| **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
+
+---
+
+### 2. Documents, letters & ATS
+
+| Skill / command | When it runs | Purpose |
+|-----------------|--------------|---------|
+| **`add-source`** | New resume/CV uploaded or referenced | Ingest into **`ExperienceLibrary.json`** |
+| **`tailor-resume`** | JD pasted or “apply to X” intent | Assemble resume via **`resume-coach`**; optional **`content-advisor`** Summary voice |
+| **`cover-letter`** | After tailoring or explicit ask | **CoverLetterBrief** → **`content-advisor`** final letter |
+| **`resume-score`** | Resume + JD together, no tailor ask | ATS + narrative score |
+| **`ats-optimization`** | “Fix ATS”, formatting/keyword issues | Prioritized ATS fixes |
+| **`/career-navigator:list-artifacts`** | Explicit | List generated résumés, cover letters, LinkedIn drafts, linked outcomes |
+
+---
+
+### 3. Job discovery, applications & learning loop
+
+| Skill / command | When it runs | Purpose |
+|-----------------|--------------|---------|
+| **`search-jobs`** | “Find jobs…”, `/career-navigator:search-jobs` | Ranked search (Indeed MCP when connected) |
+| **`track-application`** | “I applied…”, status updates | **`tracker.json`** application records |
+| **`application-update`** | Right after **`track-application`** writes | Nudge job-scout refresh / **pattern-analysis** at milestones |
+| **`follow-up`** | Queue / overdue / “ghosted?” | Company windows → **FollowUpBrief** → **`content-advisor`** messages (Phase **2A**: inbox context) |
+| **`pattern-analysis`** | “What’s converting?”, outcome review | Refresh ExperienceLibrary **performance_weights** from your history |
+
+---
+
+### 4. Market, roles & “what should I do?”
+
+| Skill / command | When it runs | Purpose |
+|-----------------|--------------|---------|
+| **`market-brief`** | Demand, trends, `/career-navigator:market-brief` | **`market-researcher`**: role demand, displacement, geography |
+| **`suggest-roles`** | Adjacent / non-obvious targets, `/career-navigator:suggest-roles` | Role ideas + **`strategy_signals`** for **`job-scout`** |
+| **`salary-research`** | Comp questions | Benchmarks via Apify MCP (when connected) |
+| **`benchmark`** | “Vs market”, funnel health | Norms by role / level / company size |
+| **`ai-analysis`** | AI displacement, future-proofing | Task-level risk + differentiators (**`analyst`**) |
+| **`skill-transfer`** | “What else could I do?” | Transferable strengths → adjacent roles/industries |
+| **`training-roi`** | Certs, bootcamps, degrees | Cost–time–benefit learning paths |
+| **`assessment`** | Honest competitiveness vs a role | **`honest-advisor`** gap / repositioning read |
+
+---
+
+### 5. Networking, events & public voice
+
+| Skill / command | When it runs | Purpose |
+|-----------------|--------------|---------|
+| **`networking-strategy`** | Plan who/when/how to engage | **`networking-strategist`**; messaging handoff → **`content-advisor`** |
+| **`network-map`** | Paths to target employers | Narrative + **`network_map_v1`** (graph UI = Phase **2D**) |
+| **`event-intelligence`** | Specific event ROI, speaking/CFP | Deep evaluation |
+| **`event-radar`** | Ongoing discovery | Local → international, ROI tiers |
+| **`draft-outreach`** | DMs, email, InMail drafts | **`content-advisor`** |
+| **`content-suggest`** | Post ideas, full drafts | Topics + saved **`linkedin_post`** drafts under **`LinkedIn Posts/`** |
+| **`evaluate-post`** | Before publish | Audience + cultural/political/reputational risk vs **`profile.md`** targets |
+
+---
+
+### 6. Insight & dashboard
+
+| Skill / command | When it runs | Purpose |
+|-----------------|--------------|---------|
+| **`report`** | “Full analysis”, integrated read | **`analyst`** + tracker + EL + artifacts |
+| **`pipeline-dashboard`** | Dashboard refresh | **`pipeline-dashboard.html`** + graph data |
+
+---
+
+**Slash commands:** Only some skills have a **`/career-navigator:…`** alias (shown above). The rest are invoked by **natural language** matching each skill’s triggers in `skills/<name>/SKILL.md`, or by naming the skill in chat.
 
 ---
 
