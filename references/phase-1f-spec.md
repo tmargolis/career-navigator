@@ -1,12 +1,12 @@
 # Phase 1F — Career Planning, Offer Evaluation & Compensation Negotiation
 
-**Summary:** Phase 1F closes three capabilities explicitly deferred in the spec (Salary Negotiation — §16 Open Questions; Phase 3 Salary Negotiation & Offer Evaluation module) and accelerates them into Phase 1, because they are high-value, locally self-contained, and naturally extend the `honest-advisor` and `market-researcher` agents already delivered in Phase 1C. This phase adds four new skills, four new slash commands, and no new agents. All skills are orchestrated by `honest-advisor` (primary) with structured input from `market-researcher`, and the negotiation skill emits a handoff brief for `content-advisor` to draft send-ready messaging. Phase 1F also extends `job-scout` to consume trajectory data, extends `daily-schedule` with a monthly career-plan refresh cadence, and explicitly wires the `evaluate-offer` → `negotiate-offer` handoff through the tracker and `follow-up-timing` context skill.
+**Summary:** Phase 1F closes three capabilities explicitly deferred in the spec (Salary Negotiation — §16 Open Questions; Phase 3 Salary Negotiation & Offer Evaluation module) and accelerates them into Phase 1, because they are high-value, locally self-contained, and naturally extend the `honest-advisor` and `market-researcher` agents already delivered in Phase 1C. This phase adds four new skills, four new slash commands, and no new agents. All skills are orchestrated by `honest-advisor` (primary) with structured input from `market-researcher`, and the negotiation skill emits a handoff brief for `writer` to draft send-ready messaging. Phase 1F also extends `job-scout` to consume trajectory data, extends `daily-schedule` with a monthly career-plan refresh cadence, and explicitly wires the `evaluate-offer` → `negotiate-offer` handoff through the tracker and `follow-up-timing` context skill.
 
 ---
 
 ## New Skills
 
-### `career-trajectory`
+### `career-plan`
 
 **Agent:** `honest-advisor` (primary), `market-researcher` (input feed)
 
@@ -72,7 +72,7 @@ Produces an **OfferEvaluationReport** covering:
 
 ### `negotiate-offer`
 
-**Agent:** `honest-advisor` (primary), `market-researcher` (input feed), `content-advisor` (output handoff)
+**Agent:** `honest-advisor` (primary), `market-researcher` (input feed), `writer` (output handoff)
 
 **Trigger:** Fires when the user wants to negotiate a salary, starting offer, raise, or promotion. Also invocable via `/career-navigator:negotiate`.
 
@@ -90,9 +90,9 @@ Identifies the user's specific leverage points — credentials, accomplishments,
   - Raise / promotion: how to frame the conversation; when to have it; what documentation to bring; how to handle "budget freeze" or "not the right time" responses
 - **Risk calibration** — honest assessment of whether negotiating carries risk in this specific context (early-stage startup equity vs. cash, government/nonprofit salary bands, etc.); what the realistic downside is of asking
 
-Emits a structured **NegotiationHandoffBrief** to `content-advisor` containing: the ask amount, key leverage points, tone guidance (assertive vs. collaborative), channel (email vs. verbal), and any specific phrasing the advisor recommends. `content-advisor` drafts the send-ready negotiation message in the user's voice using this brief. The user reviews before sending.
+Emits a structured **NegotiationHandoffBrief** to `writer` containing: the ask amount, key leverage points, tone guidance (assertive vs. collaborative), channel (email vs. verbal), and any specific phrasing the advisor recommends. `writer` drafts the send-ready negotiation message in the user's voice using this brief. The user reviews before sending.
 
-**Output:** Conversational brief + `content-advisor` drafts negotiation message. Does not send without explicit user approval.
+**Output:** Conversational brief + `writer` drafts negotiation message. Does not send without explicit user approval.
 
 ---
 
@@ -122,9 +122,9 @@ Produces a structured **OfferComparisonReport** covering:
 
 | Command | Description |
 |---|---|
-| **/career-navigator:career-plan** | Runs the `career-trajectory` skill. Optional argument: `[ideal_role]` for targeted gap analysis against a specific target title. |
+| **/career-navigator:career-plan** | Runs the `career-plan` skill. Optional argument: `[ideal_role]` for targeted gap analysis against a specific target title. |
 | **/career-navigator:evaluate-offer** | Runs the `evaluate-offer` skill. Accepts offer details conversationally or as pasted text. Emits OfferContext for downstream use by `negotiate-offer` and `compare-offers`. |
-| **/career-navigator:negotiate** | Runs the `negotiate-offer` skill. Works for new offers, raises, and promotions. Loads OfferContext from a prior `evaluate-offer` run if available. Produces a `content-advisor` negotiation draft. |
+| **/career-navigator:negotiate** | Runs the `negotiate-offer` skill. Works for new offers, raises, and promotions. Loads OfferContext from a prior `evaluate-offer` run if available. Produces a `writer` negotiation draft. |
 | **/career-navigator:compare-offers** | Runs the `compare-offers` skill. Loads all active OfferEvaluationReports; runs `evaluate-offer` inline for any offer not yet evaluated. Produces a side-by-side comparison with an honest recommendation. |
 
 ---
@@ -133,9 +133,9 @@ Produces a structured **OfferComparisonReport** covering:
 
 | Agent | Update |
 |---|---|
-| **honest-advisor** | Extended to serve as the primary agent for `career-trajectory`, `evaluate-offer`, `negotiate-offer`, and `compare-offers`. No change to the agent's design philosophy (§14) — the norm/exception/strategy pattern applies throughout. |
+| **honest-advisor** | Extended to serve as the primary agent for `career-plan`, `evaluate-offer`, `negotiate-offer`, and `compare-offers`. No change to the agent's design philosophy (§14) — the norm/exception/strategy pattern applies throughout. |
 | **market-researcher** | Extended to respond to structured input requests from Phase 1F skills: compensation benchmarks (role + level + geography + company type), trajectory demand signals, and AI/automation displacement risk at career-planning horizon lengths. |
-| **content-advisor** | Extended to accept **NegotiationHandoffBrief** as a new input type, producing a send-ready negotiation message in the user's voice. Follows the same handoff pattern as CoverLetterBrief and FollowUpBrief. |
+| **writer** | Extended to accept **NegotiationHandoffBrief** as a new input type, producing a send-ready negotiation message in the user's voice. Follows the same handoff pattern as CoverLetterBrief and FollowUpBrief. |
 | **job-scout** | Extended to read `career_trajectory_v1` from `{user_dir}/CareerNavigator/career-trajectory.md` at scoring time. When this artifact is present, job-scout incorporates trajectory alignment as a scoring dimension alongside profile keyword match and outcome history — surfacing roles that serve the user's near-term trajectory targets, not just current profile fit. If the file is absent, scoring falls back to existing behavior. |
 
 ---
@@ -152,7 +152,7 @@ The `daily-schedule` skill is extended with a **monthly career-plan checkpoint**
 
 If any condition is met, `daily-schedule` surfaces a prompt: *"Your career plan was last updated [date]. Based on recent activity, it may be worth a refresh — run `/career-navigator:career-plan` to update your trajectory analysis."*
 
-The skill does not auto-run `career-trajectory` without user confirmation, as the skill involves a meaningful market-researcher call and conversational output. It nudges; the user initiates.
+The skill does not auto-run `career-plan` without user confirmation, as the skill involves a meaningful market-researcher call and conversational output. It nudges; the user initiates.
 
 ---
 
@@ -169,14 +169,14 @@ This prevents the user from missing the evaluation step under the time pressure 
 The full Phase 1F handoff chain, in sequence:
 
 ```
-market-researcher ──► career-trajectory ──► career_trajectory_v1 ──► job-scout (scoring)
+market-researcher ──► career-plan ──► career_trajectory_v1 ──► job-scout (scoring)
                                                                   └──► daily-schedule (monthly refresh nudge)
 
 market-researcher ──► evaluate-offer ──► OfferContext (persisted) ──► negotiate-offer
                                      └──► OfferEvaluationReport ───► compare-offers
                                      └──► follow-up-timing nudge (if offer in tracker, no eval yet)
 
-negotiate-offer ──► NegotiationHandoffBrief ──► content-advisor (send-ready draft)
+negotiate-offer ──► NegotiationHandoffBrief ──► writer (send-ready draft)
 ```
 
 ---
@@ -193,5 +193,5 @@ negotiate-offer ──► NegotiationHandoffBrief ──► content-advisor (sen
 
 | Artifact | Location | Producer | Consumers |
 |---|---|---|---|
-| `career-trajectory.md` / `career_trajectory_v1` | `{user_dir}/CareerNavigator/career-trajectory.md` | `career-trajectory` skill | `job-scout`, `daily-schedule`, `compare-offers` |
+| `career-trajectory.md` / `career_trajectory_v1` | `{user_dir}/CareerNavigator/career-trajectory.md` | `career-plan` skill | `job-scout`, `daily-schedule`, `compare-offers` |
 | `offer-context-{application_id}.json` | `{user_dir}/CareerNavigator/` | `evaluate-offer` skill | `negotiate-offer`, `compare-offers` |

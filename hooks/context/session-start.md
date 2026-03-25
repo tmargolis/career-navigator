@@ -2,7 +2,7 @@
 
 The **Career Navigator** plugin is active in this session.
 
-**Do this now:** run the **`session-start`** skill exactly as defined in `skills/session-start/SKILL.md`:
+**Do this now:** run the **`focus-career`** skill exactly as defined in `skills/session-start/SKILL.md`:
 
 - Resolve `{user_dir}` (the user’s job search folder — often the workspace or folder they attached in Cowork).
 - If `CareerNavigator/` data is missing, deliver first-run onboarding from that skill.

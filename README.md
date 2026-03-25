@@ -95,7 +95,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
 | **`/career-navigator:launch`** | Run once (or again to reconfigure) | Configure `{user_dir}`, core `CareerNavigator/` files, connectors walkthrough, voice harvest |
-| **`session-start`** | New session (hook) or `/schedule` | Critical-only: deadlines, same-day follow-ups, urgent interview actions |
+| **`focus-career`** | New session (hook) or `/schedule` | Critical-only: deadlines, same-day follow-ups, urgent interview actions |
 | **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling |
 | **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
 
@@ -106,8 +106,8 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
 | **`add-source`** | New resume/CV uploaded or referenced | Ingest into **`ExperienceLibrary.json`** |
-| **`tailor-resume`** | JD pasted or “apply to X” intent | Assemble resume via **`resume-coach`**; optional **`content-advisor`** Summary voice |
-| **`cover-letter`** | After tailoring or explicit ask | **CoverLetterBrief** → **`content-advisor`** final letter |
+| **`tailor-resume`** | JD pasted or “apply to X” intent | Assemble resume via **`resume-coach`**; optional **`writer`** Summary voice |
+| **`cover-letter`** | After tailoring or explicit ask | **CoverLetterBrief** → **`writer`** final letter |
 | **`resume-score`** | Resume + JD together, no tailor ask | ATS + narrative score |
 | **`ats-optimization`** | “Fix ATS”, formatting/keyword issues | Prioritized ATS fixes |
 | **`/career-navigator:list-artifacts`** | Explicit | List generated résumés, cover letters, LinkedIn drafts, linked outcomes |
@@ -121,7 +121,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`search-jobs`** | “Find jobs…”, `/career-navigator:search-jobs` | Ranked search (Indeed MCP when connected) |
 | **`track-application`** | “I applied…”, status updates | **`tracker.json`** application records |
 | **`application-update`** | Right after **`track-application`** writes | Nudge job-scout refresh / **pattern-analysis** at milestones |
-| **`follow-up`** | Queue / overdue / “ghosted?” | Company windows → **FollowUpBrief** → **`content-advisor`** messages (Phase **2A**: inbox context) |
+| **`follow-up`** | Queue / overdue / “ghosted?” | Company windows → **FollowUpBrief** → **`writer`** messages (Phase **2A**: inbox context) |
 | **`pattern-analysis`** | “What’s converting?”, outcome review | Refresh ExperienceLibrary **performance_weights** from your history |
 
 ---
@@ -145,11 +145,11 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
-| **`networking-strategy`** | Plan who/when/how to engage | **`networking-strategist`**; messaging handoff → **`content-advisor`** |
+| **`networking-strategy`** | Plan who/when/how to engage | **`networking-strategist`**; messaging handoff → **`writer`** |
 | **`network-map`** | Paths to target employers | Narrative + **`network_map_v1`** (graph UI = Phase **2D**) |
 | **`event-intelligence`** | Specific event ROI, speaking/CFP | Deep evaluation |
 | **`event-radar`** | Ongoing discovery | Local → international, ROI tiers |
-| **`draft-outreach`** | DMs, email, InMail drafts | **`content-advisor`** |
+| **`draft-outreach`** | DMs, email, InMail drafts | **`writer`** |
 | **`content-suggest`** | Post ideas, full drafts | Topics + saved **`linkedin_post`** drafts under **`LinkedIn Posts/`** |
 | **`evaluate-post`** | Before publish | Audience + cultural/political/reputational risk vs **`profile.md`** targets |
 
@@ -188,7 +188,7 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── tracker.json             — application records with full stage history
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
-│   ├── voice-profile.md         — optional: pasted posts + **`content-advisor`** voice notes / `voice_profile_v1`
+│   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`
 │   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering
 │   └── pipeline-dashboard.html  — generated interactive dashboard artifact
 ```
@@ -232,12 +232,14 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 **Skills are the payload; Cowork runs them on a cadence you choose.**
 
-- **`session-start`** — Use when you open a session (or schedule a tight cadence with `/schedule` if you want proactive critical checks). Surfaces only urgent items: imminent offer deadlines, follow-ups due today, same-day interview actions.
+- **`focus-career`** — Use when you open a session (or schedule a tight cadence with `/schedule` if you want proactive critical checks). Surfaces only urgent items: imminent offer deadlines, follow-ups due today, same-day interview actions.
 - **`daily-schedule`** — **Recommended daily** via Claude Cowork **`/schedule`**. Delivers the routine digest (pipeline, follow-ups, interviews today, artifacts). Before counts, it runs **`artifact-saved`** when PDF/DOCX artifacts exist in `{user_dir}` so `artifacts-index.json` stays aligned with disk.
 - **`application-update`** — After **`track-application`** updates `tracker.json`, run this workflow in the same turn for refresh guidance and pattern-analysis nudges.
 - **`artifact-saved`** — After saving tailored resumes/cover letters, or when `daily-schedule` detects artifact files on disk.
 
-**Cowork host hooks:** `hooks/hooks.json` uses Claude Cowork’s native hook events (per cowork-plugin-management). This repo wires **`SessionStart`** to inject `hooks/context/session-start.md` so the **`session-start`** skill runs at session open.
+**Cowork host hooks:** `hooks/hooks.json` uses Claude Cowork’s native hook events (per cowork-plugin-management). This repo wires **`SessionStart`** to inject `hooks/context/session-start.md` so the **`focus-career`** skill runs at session open.
+
+**Important (current behavior):** In some new Cowork tasks/sessions, SessionStart hook auto-execution may not trigger consistently. If you do not see critical-only output at session start, run **`/career-navigator:focus-career`** manually as the first command in that task.
 
 **recurring** digests are **user-configured in Cowork** (e.g. **`/schedule`** for `daily-schedule`). After the first successful scheduled run, Cowork refines the prompt from what it learned (paths, connectors, context).
 
@@ -265,7 +267,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 - Phase 1E: Completed
 - Phase 1F: In progress
 
-**Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and session-start automation.
+**Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
 **Phase 1B ([Release v1.2](https://github.com/tmargolis/career-navigator/releases/tag/v1.2)):** Application tracker, ATS scoring, and core workflow skills (tailor-resume, cover-letter, add-source, resume-score) — all auto-triggered from conversational context. `resume-coach`, `analyst`, and `job-scout` agents. `job-scout` performs full outcome-weighted job ranking, proactive opportunity alerts, and transferable skills analysis. Feedback loop connecting outcomes to ExperienceLibrary weights. AI displacement assessment via Anthropic Economic Index. Follow-up timeline intelligence. Pipeline dashboard.
 
@@ -273,7 +275,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 **Phase 1D ([Release v1.4](https://github.com/tmargolis/career-navigator/releases/tag/v1.4)):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
-**Phase 1E ([Release v1.5](https://github.com/tmargolis/career-navigator/releases/tag/v1.5)):** **`networking-strategist`** (strategy, maps, events; messaging handoffs only) and **`content-advisor`** (outreach, cover letters, follow-ups, optional resume Summary polish, LinkedIn topics + **saved post drafts** on disk, **`evaluate-post`**; **`voice-profile.md`** via launch + samples).
+**Phase 1E ([Release v1.5](https://github.com/tmargolis/career-navigator/releases/tag/v1.5)):** **`networking-strategist`** (strategy, maps, events; messaging handoffs only) and **`writer`** (outreach, cover letters, follow-ups, optional resume Summary polish, LinkedIn topics + **saved post drafts** on disk, **`evaluate-post`**; **`voice-profile.md`** via launch + samples).
 
 **Phase 1F (in progress):** `honest-advisor` + `market-researcher` add career planning and decision-grade offer evaluation + negotiation workflows (trajectory planning, scenario-aware evaluation, negotiation handoffs), with `job-scout` + `daily-schedule` consuming the new artifacts on a monthly cadence.
 

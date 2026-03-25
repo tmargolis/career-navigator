@@ -33,7 +33,7 @@ Read `{user_dir}/CareerNavigator/tracker.json`. For each artifact, check whether
 
 ### 3. Organize the output
 
-Group artifacts by type: **resumes** first, then **cover letters**, then **`linkedin_post`** (saved post drafts from **`content-advisor`**), then any other types. Within each group, sort by `date_created` descending (most recent first).
+Group artifacts by type: **resumes** first, then **cover letters**, then **`linkedin_post`** (saved post drafts from **`writer`**), then any other types. Within each group, sort by `date_created` descending (most recent first).
 
 **Format for each artifact:**
 

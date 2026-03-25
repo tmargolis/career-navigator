@@ -54,6 +54,28 @@ If an ingest fails for any file:
 - List failed filenames under a short "Needs attention" line.
 - Recommend rerunning `/career-navigator:add-source` for those specific files.
 
+### 2.6 Monthly career-plan checkpoint (Phase 1F)
+If `{user_dir}/CareerNavigator/career-trajectory.md` exists, determine whether it
+is stale:
+- Prefer to parse the report `as_of` date from the `career_trajectory_v1` JSON
+  block, or a heading like `## Career trajectory analysis ({YYYY-MM-DD})`.
+- Consider the file "stale" when:
+  - the file is missing (first run), OR
+  - it was generated more than 30 days ago, OR
+  - the tracker has 5 or more new outcome events since the file's `as_of`
+    (rejections, offers, accepted completions; do not count `pending`).
+
+If stale, set `career_plan_refresh_due = true`.
+
+### 2.7 Offer evaluation nudge (Phase 1F)
+Check tracker for any active application where:
+- `status` is `"offer"`
+- and `{user_dir}/CareerNavigator/offer-context-{application_id}.json` does
+  not exist (offer evaluation has not been run yet)
+
+If any exist, set `offer_evaluation_due = true` and capture up to 3 items
+with company, role, and deadline (if present).
+
 ### 3. Build the daily operating brief
 
 Read `{user_dir}/CareerNavigator/tracker.json` and `{user_dir}/CareerNavigator/artifacts-index.json`.
@@ -93,10 +115,14 @@ Artifacts
   Cover letters    {n}
 ```
 
-Then append at most 3 concise action bullets, highest urgency first.
+Then append at most 3 concise action bullets, highest urgency first. Include:
+- If `offer_evaluation_due`: an "Offer evaluation due" bullet with the top item(s)
+  and prompt to run `/career-navigator:evaluate-offer`.
+- If `career_plan_refresh_due`: a "Career plan refresh due" bullet prompting
+  the user to run `/career-navigator:career-plan`.
 
 ## Guardrails
 
-- Keep this as the primary place for routine summaries; do not duplicate in `session-start`
+- Keep this as the primary place for routine summaries; do not duplicate in `focus-career`
 - If data is sparse, say so explicitly and keep recommendations lightweight
 - Do not fabricate market news, dates, or deadlines

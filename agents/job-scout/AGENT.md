@@ -31,6 +31,7 @@ Always read these files before scoring — do not ask for information already th
 | `{user_dir}/CareerNavigator/tracker.json` | `search_performance` and `strategy_signals` — outcome-derived and advisor/market-derived ranking signals |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with `performance_weights` — identifies the user's strongest material |
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, compensation floor, location preferences |
+| `{user_dir}/CareerNavigator/career-trajectory.md` | Near/medium-term trajectory targets (optional; affects trajectory alignment bonus) |
 
 The job listings to score are passed in by the `search-jobs` skill with their full job descriptions and metadata.
 
@@ -38,7 +39,7 @@ The job listings to score are passed in by the `search-jobs` skill with their fu
 
 ## Scoring Framework
 
-Score each listing across four dimensions. Then apply confidence-tier weighting so ranking adapts to evidence quality, not just static defaults.
+Score each listing across four dimensions. Then apply confidence-tier weighting so ranking adapts to evidence quality, not just static defaults. If `{user_dir}/CareerNavigator/career-trajectory.md` exists, also apply a bounded `trajectory_alignment` bonus.
 
 ### Step 0: Determine confidence tier first
 
@@ -95,7 +96,14 @@ After composite is computed, apply these bounded adjustments:
    - Add up to +4 when a listing matches `adjacent_role_types` and has strong ExperienceLibrary keyword overlap (>=60% of extracted keywords matched by high-weight units).
    - This prevents overfitting to only exact past role labels.
 
-Clamp final score to 0–100.
+4. **Trajectory alignment bonus (max +10):**
+   - If `career-trajectory.md` is present, read the fenced `career_trajectory_v1` JSON block and extract the near-term ranked role titles (0–18 months) plus medium-term roles (18 months–4 years).
+   - Compute `trajectory_bonus` for each listing by matching the listing's role title to the nearest trajectory match:
+     - near-term rank 1–2: +10
+     - near-term rank 3–5: +7
+     - medium-term match: +4
+     - no match: +0
+   - Add `trajectory_bonus` to the composite, then clamp final score to 0–100.
 
 ### Dimension 1: Outcome Signals (35 points)
 
@@ -149,9 +157,9 @@ If `strategy_signals` is missing, Dimension 4 = 0 and note "No strategy signals 
 
 ---
 
-## Proactive Opportunity Alerting (within search-jobs results)
+## Proactive Opportunity Recommendations (within search-jobs results)
 
-For each listing, assign an alert tier:
+For each listing, assign a recommendation tier:
 
 | Tier | Criteria |
 |---|---|
@@ -188,19 +196,24 @@ Return the listings in ranked order (highest composite score first). Structure y
 
 For each listing, return:
 - Composite score (0–100)
-- Per-dimension breakdown: outcome signal match, ExperienceLibrary fit %, profile fit, strategy signals
+- Per-dimension breakdown: outcome signal match, ExperienceLibrary fit %, profile fit, strategy signals, trajectory alignment bonus (if `career-trajectory.md` exists)
 - Effective weights used (based on confidence tier)
-- Any calibration adjustments applied (recency/outcome-quality/transferability)
-- Alert tier (`critical` | `high` | `watch` | `none`) and urgency reason
+- Any calibration adjustments applied (recency/outcome-quality/transferability/trajectory alignment)
+- Recommendation tier (`critical` | `high` | `watch` | `none`) and urgency reason
 - One-line scoring rationale
+
+Also return one trajectory evidence block for the whole run:
+- `trajectory_context_status`: `used` | `missing` | `unparseable`
+- `trajectory_as_of`: `{YYYY-MM-DD|null}`
+- `trajectory_parse_notes`: short note if unparseable or stale
 
 If two listings score within 5 points of each other, note the tie rather than forcing a false rank.
 
-Also return a compact alert summary:
+Also return a compact recommendation summary:
 - `critical_count`
 - `high_count`
 - `watch_count`
-- `top_alert_ids` (up to 3 listings)
+- `top_recommendation_ids` (up to 3 listings)
 
 ---
 

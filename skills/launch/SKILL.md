@@ -47,6 +47,10 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 **If the file exists** — validate its format and content:
 
 - **`CareerNavigator/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (ExperienceLibrary, resume documents in `{user_dir}`). Inform the user of any gaps found and how they were resolved.
+- **`CareerNavigator/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (ExperienceLibrary, resume documents in `{user_dir}`). Also ensure Phase 1F support sections exist or are empty-but-ready to fill:
+  - `## Employment Context`
+  - `## Certifications & Credentials`
+  If they are missing or empty, resolve from documents and then ask the user to confirm/add missing details.
 
 - **`CareerNavigator/ExperienceLibrary.json`**: Must be valid JSON with a `meta` object and a non-empty `units` array. Each unit must have `id`, `type`, `company` (or `institution`), `title`, and `dates`. Flag any units missing required fields and prompt the user to supply them. If the array is empty, treat the file as missing and rebuild it.
 
@@ -93,6 +97,19 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 
 ## Key Differentiators
 (extracted from resume summary/highlights)
+
+## Employment Context
+- Employment status: employed | unemployed | unknown
+- If employed: current comp package (base/bonus/equity/benefits if available) and what issues might make you open to a new role (bullets).
+- If unemployed: last job (title/company/end date if known), income sources (unemployment/severance/other), and runway until you need a new job (weeks/months).
+- Notes / assumptions (no invention).
+
+## Certifications & Credentials
+- Degrees:
+- Certifications / professional licenses:
+- Clearance / security clearance:
+- Other credentials:
+- Notes (e.g., expiration/renewal if known).
 
 ## Current Search Status
 - Actively searching as of {today's date}
@@ -155,9 +172,40 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 }
 ```
 
+### 2.4 Phase 1F intake: employment situation + credentials (persist to profile.md)
+
+After core files exist (or after they are created/repaired), ensure your
+`{user_dir}/CareerNavigator/profile.md` has usable Phase 1F context:
+
+1. Read `{user_dir}/CareerNavigator/profile.md` and check whether:
+   - `## Employment Context` is present and not just placeholders, and
+   - `## Certifications & Credentials` is present and not just placeholders.
+
+2. Attempt to fill from documents already found in `{user_dir}`:
+   - From CV/resume/cover letter text: extract degrees, certifications,
+     professional licenses, and any clearance/security mentions.
+   - Extract employment clues (current employer, if they’re between roles,
+     unemployment/severance mentions, etc.).
+
+3. If `Employment Context` is missing/unclear, ask targeted questions and
+   then write the answers back into `profile.md` under:
+   - `## Employment Context`
+   - Scenario A (employed): ask current comp package and what issues/constraints might make a job change attractive.
+   - Scenario B (unemployed): ask unemployment benefits/severance/income sources,
+     last job (title/company/end date if known), and runway until you need a new job.
+   - Scenario C (unknown): ask one minimal clarifier question to distinguish employed vs unemployed.
+
+4. If `Certifications & Credentials` are missing/unclear, present what you found
+   (as a short list) and ask the user to confirm and add anything missing.
+
+5. Persistence rules:
+   - Do not overwrite other sections (Target Roles, Key Differentiators, etc.).
+   - Only update the content under the two Phase 1F headings.
+   - If the user says “not sure”, record `unknown` explicitly instead of inventing.
+
 ### 2.5 Voice profile (launch)
 
-After core files exist, build or refresh `{user_dir}/CareerNavigator/voice-profile.md` so **`content-advisor`** has real tone signal—not a single auto-generated markdown artifact when résumés/CVs/letters live elsewhere.
+After core files exist, build or refresh `{user_dir}/CareerNavigator/voice-profile.md` so **`writer`** has real tone signal—not a single auto-generated markdown artifact when résumés/CVs/letters live elsewhere.
 
 **Order:** Run **2.5b** first (inventory + read Tier A PDFs/DOCX), then **2.5a** (LinkedIn prompt), then incorporate paste or a **continue** re-scan into **2.5c**. If the user adds new files after **2.5a**, re-run **2.5b** before writing.
 
@@ -172,7 +220,7 @@ After **2.5b** (and any re-scan if the user drops new files), prompt once before
 
 If they **paste**: append a dated **`## User writing samples (launch)`** section with excerpts (trimmed), label **source: user paste (launch)**.
 
-If they **skip**: record one line under **`## Launch — LinkedIn prompt`**: *User skipped LinkedIn samples at launch; content-advisor may ask again before drafting.*
+If they **skip**: record one line under **`## Launch — LinkedIn prompt`**: *User skipped LinkedIn samples at launch; writer may ask again before drafting.*
 
 #### 2.5b Gather prose from disk (priority order)
 
@@ -191,7 +239,7 @@ If they **skip**: record one line under **`## Launch — LinkedIn prompt`**: *Us
 
 4. **Minimum bar:** If you find **multiple sources** with **clearly different tone** (e.g. formal cover letter vs casual LinkedIn paste), **do not** flatten into one voice—use **2.5c** multi-context sections and/or **Open questions**.
 
-5. **If no narrative at all:** only bullets and structure—still write voice notes (brevity, metrics, keyword density); flag that **`content-advisor`** needs pasted prose for paragraph-level match.
+5. **If no narrative at all:** only bullets and structure—still write voice notes (brevity, metrics, keyword density); flag that **`writer`** needs pasted prose for paragraph-level match.
 
 #### 2.5c Write `voice-profile.md` (structure)
 
@@ -210,7 +258,7 @@ Create or update with dated sections (you may keep older dated blocks below for 
 
 4. **Optional `voice_profile_v1` JSON** at end: include `"tones": { "applications": "…", "public": "…" }` when multi-context sections exist.
 
-5. **`## Usage guidance for content-advisor`:** Which context to use for **cover letter** vs **LinkedIn** vs **DM**; if ambiguous, **ask the user once** in this launch session before moving on.
+5. **`## Usage guidance for writer`:** Which context to use for **cover letter** vs **LinkedIn** vs **DM**; if ambiguous, **ask the user once** in this launch session before moving on.
 
 **Do not** treat a lone plugin-generated cover letter as sufficient if Tier A résumés/CVs exist in the same folder—**ingest those files** for this section.
 

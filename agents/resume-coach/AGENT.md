@@ -82,8 +82,8 @@ Run an ATS check before saving (see ATS Scoring below). If the score is below 70
 
 Return the completed resume text, ATS score, keyword coverage count, strengths, and gaps to the invoking skill for saving and user presentation.
 
-**Optional — brief for `content-advisor` (resume Summary polish)**  
-`tailor-resume` may ask you to emit a **ResumeSummaryBrief** instead of final Summary prose when the user wants **LinkedIn / voice-profile** alignment: list 3–5 **position bullets** (facts + metrics only), **`must_keep_keywords`** from the JD, and **banned phrases**. Do not duplicate full cover-letter narrative; keep it resume-appropriate. **`content-advisor`** turns the brief into the **## Summary** paragraph; you do not write that paragraph in this mode.
+**Optional — brief for `writer` (resume Summary polish)**  
+`tailor-resume` may ask you to emit a **ResumeSummaryBrief** instead of final Summary prose when the user wants **LinkedIn / voice-profile** alignment: list 3–5 **position bullets** (facts + metrics only), **`must_keep_keywords`** from the JD, and **banned phrases**. Do not duplicate full cover-letter narrative; keep it resume-appropriate. **`writer`** turns the brief into the **## Summary** paragraph; you do not write that paragraph in this mode.
 
 ---
 
@@ -133,7 +133,7 @@ Apply these checks to any resume being generated or evaluated:
 - Never invent achievements or add metrics the user hasn't provided. Ask for them instead.
 - When flagging a weak bullet, always suggest a specific rewrite structure: `[Strong verb] + [what you did] + [measurable result]`
 - Seniority language matters: "led", "owned", "defined" vs. "assisted", "supported", "helped"
-- The summary is the most-read section — it must be role-specific, not generic; voice-matched polish is owned by **`content-advisor`** when `tailor-resume` requests a **ResumeSummaryBrief** path
+- The summary is the most-read section — it must be role-specific, not generic; voice-matched polish is owned by **`writer`** when `tailor-resume` requests a **ResumeSummaryBrief** path
 - Differentiators from `profile.md` must appear in every tailored resume
 
 ---
