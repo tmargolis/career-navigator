@@ -559,6 +559,60 @@ Compare these two offers and tell me which one best matches my near-term traject
 /career-navigator:daily-schedule
 ```
 
+### Round 1 fixes — repackage regression pass
+
+Use this focused pass after repackaging to confirm the recent naming, orchestration,
+and startup-behavior fixes.
+
+#### Scope checks
+- `focus-career` naming + backward alias (`/career-navigator:session-start`) still works.
+- Session-start hook fallback guidance is clear when auto-hook does not fire.
+- `search-jobs` uses **Recommendation** label (not Alert).
+- `search-jobs`/`job-scout` trajectory consumption is explicit in output.
+
+#### Tests
+- Run startup manually with new command:
+  - Confirm skill invoked is `focus-career`.
+  - Confirm critical-only output format is unchanged.
+- Run startup with backward alias:
+  - Confirm `/career-navigator:session-start` still maps to the same behavior.
+- Run `search-jobs` with a valid `career-trajectory.md` present:
+  - Confirm output includes a trajectory context line:
+    - `Trajectory context: used (as_of YYYY-MM-DD)` (or unavailable reason)
+  - Confirm listing line uses `Recommendation: {critical|high|watch|none}`.
+- Temporarily force trajectory parse failure (or remove JSON block):
+  - Confirm search still works and reports trajectory as unavailable/unparseable.
+
+#### Pass criteria
+- `focus-career` is the primary startup skill name in context/output.
+- Manual fallback works in sessions where auto SessionStart hook does not fire.
+- No user-facing `Alert:` label remains in search results.
+- Trajectory usage is auditable in response text and scoring rationale.
+
+#### Example prompts (copy/paste)
+
+```text
+/career-navigator:focus-career
+```
+
+```text
+/career-navigator:session-start
+```
+
+```text
+/career-navigator:search-jobs
+Use my current profile targets and show top 5.
+```
+
+```text
+For each result, include the scoring header plus trajectory context status and recommendation tier.
+```
+
+```text
+I got an offer from Stripe for Senior Product Manager, and the decision deadline is tomorrow at 10am. Please update my tracker.
+Then run /career-navigator:focus-career.
+```
+
 ---
 
 ## Phase 2A — Email and Calendar Integration
