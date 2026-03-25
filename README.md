@@ -263,6 +263,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 - Phase 1C: Completed
 - Phase 1D: Completed
 - Phase 1E: Completed
+- Phase 1F: In progress
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and session-start automation.
 
@@ -273,6 +274,8 @@ Never paste your token into this repository or into chat logs you do not trust. 
 **Phase 1D ([Release v1.4](https://github.com/tmargolis/career-navigator/releases/tag/v1.4)):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
 **Phase 1E ([Release v1.5](https://github.com/tmargolis/career-navigator/releases/tag/v1.5)):** **`networking-strategist`** (strategy, maps, events; messaging handoffs only) and **`content-advisor`** (outreach, cover letters, follow-ups, optional resume Summary polish, LinkedIn topics + **saved post drafts** on disk, **`evaluate-post`**; **`voice-profile.md`** via launch + samples).
+
+**Phase 1F (in progress):** `honest-advisor` + `market-researcher` add career planning and decision-grade offer evaluation + negotiation workflows (trajectory planning, scenario-aware evaluation, negotiation handoffs), with `job-scout` + `daily-schedule` consuming the new artifacts on a monthly cadence.
 
 ### Phase 2 — Integrations
 
