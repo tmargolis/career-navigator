@@ -79,9 +79,11 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI	20](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
+[Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring](#phase-1d--proactive-discovery-outcome-weighted-job-scoring-and-market-trend-monitoring)
 
 [Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn content advisor](#phase-1e--professional-presence-networking-strategy-event-radar-and-linkedin-content-advisor)
+
+[Phase 1F — Career planning, offer evaluation & compensation negotiation](#phase-1f--career-planning-offer-evaluation--compensation-negotiation)
 
 [Phase 2 — Integrations](#phase-2--integrations)
 
@@ -498,6 +500,7 @@ Phase status:
 * Phase 1C: Completed
 * Phase 1D: Completed
 * Phase 1E: Completed
+* Phase 1F: In progress
 
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
@@ -569,6 +572,14 @@ Status: Completed
 * LinkedIn topic recommendations; full **post drafts** persisted to disk; **`evaluate-post`** (cultural/political/reputational risk via `market-researcher` + target profiles).
 * **`voice-profile.md`** / **`voice_profile_v1`** for tone matching (launch harvest + user samples).
 * Commands: `/career-navigator:networking-strategy`, `/career-navigator:network-map`, `/career-navigator:event-intelligence`, `/career-navigator:event-radar`, `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`.
+
+### **Phase 1F — Career planning, offer evaluation & compensation negotiation**
+
+Status: In progress
+
+Phase 1F adds “decision-grade” career planning and offer evaluation / negotiation capabilities into Phase 1 by extending `honest-advisor` + `market-researcher`. It introduces skills and slash commands for realistic trajectory planning, scenario-aware offer evaluation, and negotiation handoffs, and wires `job-scout` / `daily-schedule` to consume the new artifacts on a monthly cadence.
+
+More detail: [Phase 1F detailed spec](phase-1f-spec.md).
 
 ## **Phase 2 — Integrations**
 
