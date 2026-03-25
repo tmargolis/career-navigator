@@ -47,7 +47,7 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 **If the file exists** — validate its format and content:
 
 - **`CareerNavigator/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (ExperienceLibrary, resume documents in `{user_dir}`). Inform the user of any gaps found and how they were resolved.
-- **`CareerNavigator/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (ExperienceLibrary, resume documents in `{user_dir}`). Also ensure Phase 1F support sections exist or are empty-but-ready to fill:
+- **`CareerNavigator/profile.md`**: Must contain sections for target roles, compensation floor, location, and key differentiators. If any section is missing or empty, fill it in from other available sources (ExperienceLibrary, resume documents in `{user_dir}`). Also ensure support sections exist or are empty-but-ready to fill:
   - `## Employment Context`
   - `## Certifications & Credentials`
   If they are missing or empty, resolve from documents and then ask the user to confirm/add missing details.
@@ -172,10 +172,10 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 }
 ```
 
-### 2.4 Phase 1F intake: employment situation + credentials (persist to profile.md)
+### 2.4 employment situation + credentials instake (persist to profile.md)
 
 After core files exist (or after they are created/repaired), ensure your
-`{user_dir}/CareerNavigator/profile.md` has usable Phase 1F context:
+`{user_dir}/CareerNavigator/profile.md` has usable context:
 
 1. Read `{user_dir}/CareerNavigator/profile.md` and check whether:
    - `## Employment Context` is present and not just placeholders, and
@@ -200,7 +200,7 @@ After core files exist (or after they are created/repaired), ensure your
 
 5. Persistence rules:
    - Do not overwrite other sections (Target Roles, Key Differentiators, etc.).
-   - Only update the content under the two Phase 1F headings.
+   - Only update the content under the relevant headings.
    - If the user says “not sure”, record `unknown` explicitly instead of inventing.
 
 ### 2.5 Voice profile (launch)
