@@ -2,109 +2,106 @@
 
 Claude Cowork Plugin — Full Product Specification
 
-Version 0.21 — March 2026
+Version 0.22 — March 2026
 
 An AI-powered job search companion that combines the capabilities of
-
 recruiters, career coaches, reverse recruiters, and market analysts into a single intelligent platform.
 
 # **Table of Contents**
 
-[**Table of Contents	2**](#table-of-contents)
+[**1. Overview**](#1-overview)
 
-[**1\. Overview	3**](#1-overview)
+[1.1 Design Principles](#11-design-principles)
 
-[1.1 Design Principles	3](#11-design-principles)
+[1.2 Plugin Architecture](#12-plugin-architecture)
 
-[1.2 Plugin Architecture	3](#12-plugin-architecture)
+[**2. Plugin File Structure**](#2-plugin-file-structure)
 
-[**2\. Plugin File Structure	4**](#2-plugin-file-structure)
+[**3. Slash Commands**](#3-slash-commands)
 
-[**3\. Slash Commands	5**](#3-slash-commands)
+[3.1 Resume & Cover Letter Commands](#31-resume--cover-letter-commands)
 
-[3.1 Resume & Cover Letter Commands	5](#31-resume--cover-letter-commands)
+[3.2 Job Search & Tracking Commands](#32-job-search--tracking-commands)
 
-[3.2 Job Search & Tracking Commands	5](#32-job-search--tracking-commands)
+[3.3 Interview Prep Commands](#33-interview-prep-commands)
 
-[3.3 Interview Prep Commands	6](#33-interview-prep-commands)
+[3.4 Networking Commands](#34-networking-commands)
 
-[3.4 Networking Commands	6](#34-networking-commands)
+[**4. Agents**](#4-agents)
 
-[**4\. Agents	7**](#4-agents)
+[**5. Skills**](#5-skills)
 
-[**5\. Skills	9**](#5-skills)
+[**6. Scheduling & recurring runs**](#6-scheduling--recurring-runs)
 
-[**6\. Scheduling & recurring runs	10**](#6-scheduling--recurring-runs)
+[6.1 Host hooks (`hooks/hooks.json`)](#61-host-hooks-hookshooksjson)
 
-[6.1 Host hooks (`hooks/hooks.json`)	10](#61-host-hooks-hookshooksjson)
+[**7. Storage Connectors**](#7-storage-connectors)
 
-[**7\. Storage Connectors	11**](#7-storage-connectors)
+[7.1 Interface](#71-interface)
 
-[7.1 Interface	11](#71-interface)
+[7.2 Available Connectors](#72-available-connectors)
 
-[7.2 Available Connectors	11](#72-available-connectors)
+[**8. Analytics Connectors**](#8-analytics-connectors)
 
-[**8\. Analytics Connectors	12**](#8-analytics-connectors)
+[**9. External Service Integrations (.mcp.json)**](#9-external-service-integrations-mcpjson)
 
-[**9\. External Service Integrations (.mcp.json)	13**](#9-external-service-integrations-mcpjson)
+[**10. Core Data Model**](#10-core-data-model)
 
-[**10\. Core Data Model	14**](#10-core-data-model)
+[10.1 ExperienceLibrary](#101-experiencelibrary)
 
-[10.1 ExperienceLibrary	14](#101-experiencelibrary)
+[10.2 Application Record](#102-application-record)
 
-[10.2 Application Record	14](#102-application-record)
+[10.3 Artifact Record](#103-artifact-record)
 
-[10.3 Artifact Record	14](#103-artifact-record)
+[**11. The Intelligence Feedback Loop**](#11-the-intelligence-feedback-loop)
 
-[**11\. The Intelligence Feedback Loop	16**](#11-the-intelligence-feedback-loop)
+[**12. Daily Rhythm & Scheduling**](#12-daily-rhythm--scheduling)
 
-[**12\. Daily Rhythm & Scheduling	17**](#12-daily-rhythm--scheduling)
+[12.1 Recommended cadences (Cowork `/schedule`)](#121-recommended-cadences-cowork-schedule)
 
-[12.1 Recommended cadences (Cowork `/schedule`)	17](#121-recommended-cadences-cowork-schedule)
+[12.2 Time-sensitive vs routine surfacing](#122-time-sensitive-vs-routine-surfacing)
 
-[12.2 Time-sensitive vs routine surfacing	17](#122-time-sensitive-vs-routine-surfacing)
+[**13. Interview Capture (Phase 2B)**](#phase-2b--interview-audio-capture)
 
-[**13\. Interview Capture (Phase 2B)	18**](#phase-2b--interview-audio-capture)
+[13.1 MVP Audio Scope](#131-mvp-audio-scope)
 
-[13.1 Privacy Considerations (To Be Discussed)	18](#131-privacy-considerations-to-be-discussed)
+[13.2 Fallback: Post-Interview Q&A Flow](#132-fallback-post-interview-qa-flow)
 
-[13.2 Fallback: Post-Interview Q\&A Flow	18](#132-fallback-post-interview-qa-flow)
+[**14. The Honest Advisor Design Philosophy**](#14-the-honest-advisor-design-philosophy)
 
-[**14\. The Honest Advisor Design Philosophy	19**](#14-the-honest-advisor-design-philosophy)
+[**15. Phased Delivery Plan**](#15-phased-delivery-plan)
 
-[**15\. Phased Delivery Plan	20**](#15-phased-delivery-plan)
+[Phase 1 — Core Platform](#phase-1--core-platform)
 
-[Phase 1 — Core Platform	20](#phase-1--core-platform)
+[Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search](#phase-1a--core-platform-plugin-scaffold-setup-session-start-and-live-job-search)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search	20](#phase-1a--core-platform-plugin-scaffold-setup-session-start-and-live-job-search)
+[Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-analyst-agent)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent	20](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-analyst-agent)
+[Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
 
 [&nbsp;&nbsp;&nbsp;&nbsp;Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI	20](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring	20](#phase-1d--proactive-discovery-outcome-weighted-job-scoring-and-market-trend-monitoring)
+[Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn content advisor](#phase-1e--professional-presence-networking-strategy-event-radar-and-linkedin-content-advisor)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn content advisor	21](#phase-1e--professional-presence-networking-strategy-event-radar-and-linkedin-content-advisor)
+[Phase 2 — Integrations](#phase-2--integrations)
 
-[Phase 2 — Integrations	21](#phase-2--integrations)
+[Phase 2A — Email & Calendar Integration](#phase-2a--email--calendar-integration)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 2A — Email & Calendar Integration	21](#phase-2a--email--calendar-integration)
+[Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief	22](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
+[Phase 2C — Extended Integrations](#phase-2c--extended-integrations)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 2C — Extended Integrations	22](#phase-2c--extended-integrations)
+[Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements](#phase-2d--advanced-analytics-linkedin-automation--dashboard-enhancements)
 
-[&nbsp;&nbsp;&nbsp;&nbsp;Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements	22](#phase-2d--advanced-analytics-linkedin-automation--dashboard-enhancements)
+[Phase 3 — Platform Expansion](#phase-3--platform-expansion)
 
-[Phase 3 — Platform Expansion	22](#phase-3--platform-expansion)
+[Phase 4 — Enterprise & Ecosystem](#phase-4--enterprise--ecosystem)
 
-[Phase 4 — Enterprise & Ecosystem	22](#phase-4--enterprise--ecosystem)
+[**16. Open Questions & Deferred Decisions**](#16-open-questions--deferred-decisions)
 
-[**16\. Open Questions & Deferred Decisions	24**](#16-open-questions--deferred-decisions)
+[**Appendix: Command Quick Reference**](#appendix-command-quick-reference)
 
-[**Appendix: Command Quick Reference	25**](#appendix-command-quick-reference)
-
-# **1\. Overview**
+# **1. Overview**
 
 Career Navigator is a Claude Cowork plugin that provides end-to-end job search intelligence — from discovering roles and tailoring application materials, through interview preparation and networking strategy, to tracking outcomes and learning from results. It is designed to serve any job seeker regardless of experience level, target industry, or geographic location.
 
@@ -127,25 +124,25 @@ The plugin is architected around a feedback loop: every action taken and outcome
 ## **1.2 Plugin Architecture**
 
 | Plugin Name | career-navigator |
-| :---- | :---- |
+| --- | --- |
 | **Version** | 1.5.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | User-configured in Claude Cowork — skills are the payload; recommended cadences are documented in skill files (e.g. run `daily-schedule` daily via `/schedule`) |
 | **Notifications / surfacing** | In-session UX (e.g. `session-start` for critical items) plus whatever Cowork provides when a scheduled task runs — the plugin does not ship a separate notification daemon |
-| **Storage Layer (Phase 1\)** | Local filesystem — `{user_dir}` (cloud connectors in Phase 2C) |
-| **Analytics Layer (Phase 1\)** | SQLite \+ D3 visualization (additional connectors in Phase 2D) |
+| **Storage Layer (Phase 1)** | Local filesystem — `{user_dir}` (cloud connectors in Phase 2C) |
+| **Analytics Layer (Phase 1)** | SQLite + D3 visualization (additional connectors in Phase 2D) |
 | **AI Services** | Claude API (via MCP), Whisper (audio transcription — Phase 2B) |
-| **Job Search (Phase 1\)** | **Indeed** MCP via Claude Desktop **Customize → Connectors** — **Connect** → browser OAuth on **secure.indeed.com**; tools **`search_jobs`**, **`get_job_details`** (connector `https://mcp.indeed.com/claude/mcp`). User must complete OAuth; assisted-manual fallback when connector unavailable |
+| **Job Search (Phase 1)** | **Indeed** MCP via Claude Desktop **Customize → Connectors** — **Connect** → browser OAuth on **secure.indeed.com**; tools **`search_jobs`**, **`get_job_details`** (connector `https://mcp.indeed.com/claude/mcp`). User must complete OAuth; assisted-manual fallback when connector unavailable |
 | **Salary benchmarks (Phase 1, optional)** | Apify MCP added in Claude Desktop **Customize → Connectors → Desktop → Apify** (token + **Enabled tools** list in connector UI); plugin **`.mcp.json`** ships **`mcpServers: {}`** |
 
-# **2\. Plugin File Structure**
+# **2. Plugin File Structure**
 
 **career-navigator/**
 
 **├── .claude-plugin/**
 
-**│   └── plugin.json**
+**│ └── plugin.json**
 
 **├── .mcp.json** — ships **`mcpServers: {}`**; optional MCPs (e.g. Apify for salary) are configured in the host app
 
@@ -155,25 +152,25 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 **├── hooks/**
 
-**│   ├── hooks.json**
+**│ ├── hooks.json**
 
-**│   └── context/** — e.g. `session-start.md` injected on `SessionStart`
+**│ └── context/** — e.g. `session-start.md` injected on `SessionStart`
 
 **├── references/**
 
-**├── career/** _(example `{user_dir}` — gitignored when personal)_**
+**├── career/** *(example `{user_dir}` — gitignored when personal)*\*\*
 
 **└── README.md**
 
-# **3\. Slash Commands**
+# **3. Slash Commands**
 
 All commands are namespaced under career-navigator: and accessible via Claude Cowork's slash command interface (and Claude Code). Commands can also be triggered conversationally — the plugin recognizes natural language prompts that match command intent and invokes the appropriate command automatically.
 
 ## **3.0 Launch & configuration**
 
 | Name | Type | Description |
-| :---- | :---- | :---- |
-| **/career-navigator:launch** | Command | **Launch** the user’s job search workspace: conversational wizard that configures `{user_dir}`, reads existing documents, builds the user profile and ExperienceLibrary, and walks through connectors for live job search (Indeed, optional Apify, etc.). Same setup responsibilities as before; framed as the entry point to start searching. Validates inputs before saving; re-runnable to update keys or reconfigure. |
+| --- | --- | --- |
+| **/career-navigator:launch** | Command | **Launch** the user's job search workspace: conversational wizard that configures `{user_dir}`, reads existing documents, builds the user profile and ExperienceLibrary, and walks through connectors for live job search (Indeed, optional Apify, etc.). Same setup responsibilities as before; framed as the entry point to start searching. Validates inputs before saving; re-runnable to update keys or reconfigure. |
 
 ## **3.1 Resume & Cover Letter Commands**
 
