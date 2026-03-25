@@ -29,6 +29,7 @@ All reads/writes for this skill are under:
 - `{user_dir}/CareerNavigator/profile.md`
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
 - `{user_dir}/CareerNavigator/career-trajectory.md`
+- `{user_dir}/CareerNavigator/career-trajectory-{as_of}-{ideal_role_slug}.md` (versioned snapshot)
 
 Do not share the whole workspace or unrelated folders.
 
@@ -80,10 +81,24 @@ If `ideal_role` is set:
   realistically achievable, under what conditions/timeline, and what steps
   would most change the outcome probability.
 
-### 5. Save `career-trajectory.md` + `career_trajectory_v1`
+### 5. Save `career-trajectory.md` + `career_trajectory_v1` (with versioned history)
 Write the final markdown report (including a fenced `career_trajectory_v1`
 JSON block) to:
+1) A **versioned snapshot** that will not overwrite prior versions:
+
+`{user_dir}/CareerNavigator/career-trajectory-{as_of}-{ideal_role_slug}.md`
+
+Where:
+- `as_of` = current date `YYYY-MM-DD`
+- `ideal_role_slug` = `ideal_role` lowercased, trimmed, spaces collapsed to `-`, and any characters in `\ / : * ? " < > |` removed; if `ideal_role = null`, use `no-ideal-role`.
+
+2) The **canonical file** used by downstream consumers (overwritten each run):
+
 `{user_dir}/CareerNavigator/career-trajectory.md`
+
+**Write order (recommended):**
+- First write the **versioned snapshot**.
+- Then write the **canonical file** as a copy of the same markdown (so `job-scout` + `daily-schedule` behavior is unchanged).
 
 **Markdown heading requirement:**
 Include a line like:
@@ -112,9 +127,9 @@ Your JSON block must look like:
 If the write-to-disk tool fails:
 - Do not invent a save.
 - Show the full markdown report in a fenced code block and tell the user to
-  save it manually to the exact path above.
+  save it manually to both paths above (versioned snapshot + canonical `career-trajectory.md`).
 
 ### 6. Present result
 Present the conversational CareerTrajectoryReport in chat and confirm:
-> Saved to `{user_dir}/CareerNavigator/career-trajectory.md`.
+> Saved snapshot to `{user_dir}/CareerNavigator/career-trajectory-{as_of}-{ideal_role_slug}.md` (and updated `{user_dir}/CareerNavigator/career-trajectory.md` for downstream scoring).
 

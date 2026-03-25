@@ -8,7 +8,7 @@ triggers:
   - "session start job search"
   - "focus career"
   - "/career-navigator:focus-career"
-  - "/career-navigator:session-start"
+  - "start a new session with career navigator"
 ---
 
 Run when the user opens a new Cowork session with Career Navigator, **or** when they have scheduled this skill via Cowork **`/schedule`** (optional — for tighter proactive critical checks).
