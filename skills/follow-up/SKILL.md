@@ -5,7 +5,7 @@ description: >
   company-specific response window data. Classifies each application as
   within window, approaching, overdue, or critical. Researches and stores
   response window data for any company not yet on file. Builds FollowUpBrief
-  entries and invokes content-advisor for send-ready messages. Phase 2A
+  entries and invokes writer for send-ready messages. Phase 2A
   enriches briefs with email/calendar context.
 triggers:
   - "follow up on my applications"
@@ -182,7 +182,7 @@ Order: critical → offer deadlines → thank-you due/overdue → overdue → ap
 If the queue is empty (all active applications are within window and no thank-yous outstanding):
 > "All active applications are within their expected response windows. Nothing to follow up on yet."
 
-### 8. Follow-up copy via content-advisor
+### 8. Follow-up copy via writer
 
 For each application classified as `overdue` or `critical` (and `thank_you_due` / `thank_you_overdue`), **do not draft send-ready text in this skill.**
 
@@ -201,24 +201,24 @@ For each row that needs a message, add an object to a list:
 
 Read `{user_dir}/CareerNavigator/profile.md` and **`voice-profile.md`** for sign-off name and voice.
 
-**Voice preflight (once per session before 8b):** If you will invoke **`content-advisor`** and `voice-profile.md` lacks substantive pasted prose under **`## User writing samples`** or **`## User writing samples (launch)`**, ask the user for **2–5 LinkedIn posts** or short writing (or **skip** for neutral tone). Append pastes to `voice-profile.md`. If samples already exist or the user skips, proceed.
+**Voice preflight (once per session before 8b):** If you will invoke **`writer`** and `voice-profile.md` lacks substantive pasted prose under **`## User writing samples`** or **`## User writing samples (launch)`**, ask the user for **2–5 LinkedIn posts** or short writing (or **skip** for neutral tone). Append pastes to `voice-profile.md`. If samples already exist or the user skips, proceed.
 
-#### 8b. Invoke content-advisor
+#### 8b. Invoke writer
 
-- Use the exact agent name **`content-advisor`** with mode **`follow-up`**. Pass all **FollowUpBrief** objects in one invocation when possible. Retry once on failure.
+- Use the exact agent name **`writer`** with mode **`follow-up`**. Pass all **FollowUpBrief** objects in one invocation when possible. Retry once on failure.
 
 #### 8c. Present output
 
-Under each application entry, show **`content-advisor`** output (subject line if email, body, LinkedIn variant if requested).
+Under each application entry, show **`writer`** output (subject line if email, body, LinkedIn variant if requested).
 
-**Phase 2A:** When email/calendar connectors exist, enrich briefs with approved prior-thread context before invoking **`content-advisor`**.
+**Phase 2A:** When email/calendar connectors exist, enrich briefs with approved prior-thread context before invoking **`writer`**.
 
 ---
 
 ## What You Never Do
 
 - Do not mark an application as overdue before its research-backed window has elapsed — do not use the flat 7-day rule
-- Do not draft **send-ready** follow-up prose in this skill—only **FollowUpBrief** objects; **`content-advisor`** writes the message
+- Do not draft **send-ready** follow-up prose in this skill—only **FollowUpBrief** objects; **`writer`** writes the message
 - Do not draft a follow-up for an application still within its window
 - Do not fabricate contact names — use "there" if no contact is on file
 - Do not store company window data outside of `{user_dir}/CareerNavigator/company-windows.json`

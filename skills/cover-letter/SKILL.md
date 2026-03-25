@@ -1,7 +1,7 @@
 ---
 name: cover-letter
 description: >
-  Produces a targeted cover letter via a CoverLetterBrief and content-advisor
+  Produces a targeted cover letter via a CoverLetterBrief and writer
   final prose—honest, specific, voice-matched. Saves to the artifact inventory.
   Fires after tailoring or on request. Also /career-navigator:cover-letter.
 triggers:
@@ -14,7 +14,7 @@ triggers:
   - "cover letter for this job"
 ---
 
-Build a **CoverLetterBrief**, then invoke **`content-advisor`** for final letter prose. Do not write the full letter in this skill—**`content-advisor`** owns send-ready copy.
+Build a **CoverLetterBrief**, then invoke **`writer`** for final letter prose. Do not write the full letter in this skill—**`writer`** owns send-ready copy.
 
 ## Workflow
 
@@ -36,7 +36,7 @@ Before briefing, identify 1–2 **specific, verifiable** things about the compan
 - Team/culture signals from the JD
 - Notes in `tracker.json` or profile about this company
 
-Do not use generic praise. If no specific signals, say so in the brief—**`content-advisor`** will omit flattery.
+Do not use generic praise. If no specific signals, say so in the brief—**`writer`** will omit flattery.
 
 ### 2.5 Voice preflight (before the brief)
 
@@ -44,16 +44,16 @@ Read `{user_dir}/CareerNavigator/voice-profile.md`.
 
 - If there is **no** user-pasted block under **`## User writing samples`** or **`## User writing samples (launch)`** (substantive excerpts), **ask before** building the CoverLetterBrief:
 
-> "Before I draft your cover letter: paste **2–5 recent LinkedIn posts** or other short professional writing so **`content-advisor`** can match your voice. I may already have **launch voice harvest** hints (résumés/CVs/cover letters scanned during **`/career-navigator:launch`**)—LinkedIn still sharpens tone. Reply **skip** for a neutral tone (**low** voice match) if you’re fine with harvest-only signal."
+> "Before I draft your cover letter: paste **2–5 recent LinkedIn posts** or other short professional writing so **`writer`** can match your voice. I may already have **launch voice harvest** hints (résumés/CVs/cover letters scanned during **`/career-navigator:launch`**)—LinkedIn still sharpens tone. Reply **skip** for a neutral tone (**low** voice match) if you’re fine with harvest-only signal."
 
 - If the user **pastes** samples, append a dated **`## User writing samples`** section to `voice-profile.md` (trimmed excerpts + one-line source note).
-- If the user says **skip**, continue and pass **`voice_match: low`** intent into the brief for **`content-advisor`**.
+- If the user says **skip**, continue and pass **`voice_match: low`** intent into the brief for **`writer`**.
 
 If either **`## User writing samples`** or **`## User writing samples (launch)`** already has substantive pasted excerpts, skip this ask.
 
 ### 3. Build CoverLetterBrief (no full letter here)
 
-Assemble a structured brief for **`content-advisor`**:
+Assemble a structured brief for **`writer`**:
 
 ```markdown
 ## CoverLetterBrief
@@ -69,18 +69,18 @@ Assemble a structured brief for **`content-advisor`**:
 - **optional_contact_reference**: name/role only if in tracker and user confirmed
 ```
 
-### 4. Invoke content-advisor
+### 4. Invoke writer
 
-- Use the exact agent name **`content-advisor`** with mode **`cover-letter`**. Pass the full **CoverLetterBrief** and paths to **`voice-profile.md`** / **`profile.md`**. Retry once on failure.
+- Use the exact agent name **`writer`** with mode **`cover-letter`**. Pass the full **CoverLetterBrief** and paths to **`voice-profile.md`** / **`profile.md`**. Retry once on failure.
 
 ### 5. Present and confirm
 
-Show the letter from **`content-advisor`** in full. Ask:
-> "Does this look right? I can ask content-advisor to adjust tone, swap examples, or shorten."
+Show the letter from **`writer`** in full. Ask:
+> "Does this look right? I can ask writer to adjust tone, swap examples, or shorten."
 
 ### 6. Save the artifact
 
-After confirmation, save the letter (the **`content-advisor`** output).
+After confirmation, save the letter (the **`writer`** output).
 
 **Filenames (avoid host / MCP validation errors):** use **ASCII-safe** names only—hyphens `-`, no em dashes or smart quotes. **Sanitize** company and role: remove `\ / : * ? " < > |` and newlines; collapse whitespace; limit basename length (~100 chars).  
 **Example:** `Anthropic-PM-Claude-Code-Cover-Letter-2026-03-24.md`
@@ -103,7 +103,7 @@ After confirmation, save the letter (the **`content-advisor`** output).
   "date_created": "{today}",
   "source": "generated",
   "linked_resume": "{filename of tailored resume if used, else null}",
-  "notes": "Assembled via CoverLetterBrief + content-advisor"
+  "notes": "Assembled via CoverLetterBrief + writer"
 }
 ```
 

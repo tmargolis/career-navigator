@@ -110,7 +110,23 @@ Each listed action must include:
 
 ---
 
-## Output Format (required)
+## Output Formats (required)
+Your output format depends on what the invoking skill requests.
+
+When producing a **role competitiveness assessment** (the existing assessment
+and training-roi flows), follow the assessment structure below exactly.
+
+When producing Phase 1F artifacts, still use norm/exception/strategy
+reasoning, but follow the corresponding structures added after the assessment
+template.
+
+Use the requested artifact/report name in the invoking skill prompt (e.g.
+`CareerTrajectoryReport`, `OfferEvaluationReport`, `NegotiationBrief`,
+`OfferComparisonReport`) to select the right output structure. If no explicit
+task name is provided, default to the role competitiveness assessment template.
+
+---
+### Task: role competitiveness assessment
 Return the assessment in this exact structure:
 
 ## Assessment Header
@@ -146,6 +162,131 @@ Compounding investment:
 
 ## What would make this more reliable
 {A short list of missing data fields or logs that would improve the next assessment}
+
+---
+### Task: career-trajectory (Phase 1F)
+Return a **CareerTrajectoryReport** in this structure:
+
+## Career Trajectory Report Header
+As of: {YYYY-MM-DD} | Ideal role: {ideal_role|null} | Confidence: {Preliminary/Directional/Moderate/High}
+
+## Current position assessment
+{honest norm/exception framing of where the user sits and why}
+
+## Realistic near-term trajectory (0–18 months)
+1. {Role} — Achievability: {high|med|low}
+   - Why it is likely: {evidence-based rationale}
+   - Conditions/timeline: {..}
+2. {Role} ...
+
+## Medium-term trajectory (18 months–4 years)
+- Branch: {IC track | management track | other}
+  - Plausible roles: {list with labels}
+- Branch: ...
+
+## Long-term horizon (4+ years)
+{ceiling risk + optionality framing}
+
+## Market-informed gap analysis (ROI-ranked)
+1. {Gap area} — ROI score: {0–100}
+   - Why it matters: {ties to trajectory}
+   - Cost/time: {..}
+   - Execution risks: {..}
+
+## Ideal role gap analysis (only if ideal_role is set)
+{achievability conditions + what would most change outcome probability}
+
+---
+### Task: offer evaluation (Phase 1F)
+Return an **OfferEvaluationReport** in this structure:
+
+## Offer Evaluation Report Header
+Offer application: {application_id} | Company: {company} | Role: {role}
+Scenario: {A|B|C} | Confidence: {Preliminary/Directional/Moderate/High}
+
+## Role fit assessment
+{step forward/lateral/backward vs trajectory targets}
+
+## Utilization analysis
+- Strongly utilized: {credentials/EL units}
+- Underutilized: {credentials/EL units}
+- Missing: {what the offer does not leverage}
+
+## Compensation fairness determination
+Verdict: {below_market|at_market|above_market|borderline}
+Benchmark: {percentile_or_range + market notes}
+
+## Scenario-specific risk assessment
+Scenario A (employed): {transition risk, unvested comp risk, relationship capital}
+Scenario B (unemployed): {runway pressure, step-forward vs filler risk}
+Scenario C: {single-sentence on what info was missing}
+
+## Recommendation (direct, honest)
+{accept|decline|negotiate|continue_searching} — {why, tied to evidence}
+
+## What would make this more reliable
+If market numbers/benchmarks are missing, include either:
+- the best-available benchmark values (with an explicit confidence caveat), OR
+- an explicit offer to fetch them via the appropriate Career Navigator commands
+  (e.g., `/career-navigator:salary-research` for compensation benchmarks, and
+  `/career-navigator:market-brief` for demand/AI outlook), including what inputs
+  are needed (role + level + geography).
+
+---
+### Task: negotiation brief (Phase 1F)
+Return a **NegotiationBrief** in this structure:
+
+## Negotiation Brief Header
+Application: {application_id} | Company: {company} | Role: {role}
+Suggested ask posture: {assertive|collaborative}
+Channel: {email|verbal|unspecified}
+
+## Market position vs benchmark
+{where the current offer sits}
+
+## Leverage inventory (ranked)
+1. {citable leverage item} — persuasive weight: {high|med|low}
+   - Evidence: {ExperienceLibrary/profile reference}
+2. ...
+
+## Ask strategy
+- Target ask: {base/equity/sign-on range}
+- Timing/sequence: {..}
+- If they push back: {one best-response line per objection}
+
+## Risk calibration / walk-away floor (honest)
+{downside if negotiating goes poorly; where to stop}
+
+---
+### Task: offer comparison (Phase 1F)
+Return an **OfferComparisonReport** in this structure:
+
+## Offer Comparison Header
+Offers compared: {n} | Confidence: {Preliminary/Directional/Moderate/High}
+
+## Side-by-side compensation table
+{table with base/bonus/equity/sign-on/total + benchmark gap}
+
+## Role fit matrix
+- Trajectory alignment: {high/med/low} per offer
+- Skills utilization: {high/med/low}
+- Seniority match: {high/med/low}
+- Profile targeting: {high/med/low}
+
+## Risk comparison
+{scenario-specific risks per offer; deadline pressure affects evaluation order}
+
+## Trajectory alignment synthesis
+{which offer serves near-term vs medium-term path}
+
+## Honest recommendation (direct)
+Rank:
+1. {offer} — {why}
+2. {offer} — {why}
+If close: {tiebreakers}
+
+## Next best action
+{prompt to run negotiate-offer for the preferred offer}
 
 ---
 

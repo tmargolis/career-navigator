@@ -11,7 +11,7 @@ Use it as a release gate before tagging a phase complete.
 - One **natural-language** variant that triggers the same skill intent.
 - **Expected result** notes where behavior is non-obvious (boundaries, Phase 2A limits, etc.).
 
-Keep prompts aligned with **`skills/*/`** triggers and **`references/career-navigator-spec.md`**. Phase **1E** is where networking + **`content-advisor`** prompts live; refresh them when those agents or orchestration change.
+Keep prompts aligned with **`skills/*/`** triggers and **`references/career-navigator-spec.md`**. Phase **1E** is where networking + **`writer`** prompts live; refresh them when those agents or orchestration change.
 
 ## Test Data Prerequisites
 
@@ -25,12 +25,12 @@ Keep prompts aligned with **`skills/*/`** triggers and **`references/career-navi
 ## Phase 1A — Core Platform
 
 ### Scope
-- Launch wizard (`/career-navigator:launch`), profile creation, ExperienceLibrary initialization, session-start behavior, live job search.
+- Launch wizard (`/career-navigator:launch`), profile creation, ExperienceLibrary initialization, focus-career behavior, live job search.
 
 ### Tests
 - Run `/career-navigator:launch`; verify all core files are created in `CareerNavigator/`.
 - Confirm the launch wizard handles existing docs and builds ExperienceLibrary units.
-- Start a fresh session; verify `session-start` behavior (first-run onboarding vs critical-only alerts).
+- Start a fresh session; verify `focus-career` behavior (first-run onboarding vs critical-only alerts).
 - Run `/career-navigator:search-jobs`; confirm results return from Indeed and include apply links.
 
 ### Pass Criteria
@@ -57,7 +57,7 @@ Search for jobs matching my profile—top 5 with apply links.
 ```
 
 ```text
-Session just started—run session-start for critical-only alerts using my CareerNavigator data.
+Session just started—run focus-career for critical-only alerts using my CareerNavigator data.
 ```
 
 ---
@@ -199,11 +199,11 @@ What non-obvious roles should I apply to based on transferable skills? Update jo
 ## Phase 1D — Proactive Discovery
 
 ### Scope
-- Tuned `job-scout` scoring, confidence-aware weighting, proactive alert tiers, schedule-ready operations.
+- Tuned `job-scout` scoring, confidence-aware weighting, proactive recommendation tiers, schedule-ready operations.
 
 ### Tests
 - Run `search-jobs` with low and higher outcome-history datasets; confirm confidence tiers and adaptive behavior.
-- Validate alert tiers (`critical`, `high`, `watch`, `none`) and priority summary output.
+- Validate recommendation tiers (`critical`, `high`, `watch`, `none`) and priority summary output.
 - Run `daily-schedule`; confirm artifact reconciliation and digest output.
 - Add a new PDF/DOCX source file, run `daily-schedule`; verify auto-ingest path (`add-source`) and index consistency.
 - Run `suggest-roles` and `market-brief`; verify agent invocations succeed using exact agent names.
@@ -249,7 +249,7 @@ I added a new resume PDF to my job search folder—run daily-schedule and confir
 
 ### Scope
 - **`networking-strategist`** agent, invoked by skills **`networking-strategy`**, **`network-map`**, **`event-intelligence`**, and **`event-radar`**.
-- **`content-advisor`** agent, invoked by **`draft-outreach`**, **`content-suggest`**, **`evaluate-post`**, and orchestrated from **`cover-letter`**, **`follow-up`**, and optional **`tailor-resume`** Summary polish; consumes handoffs from **`networking-strategist`** and **`voice-profile.md`** (user-supplied posts).
+- **`writer`** agent, invoked by **`draft-outreach`**, **`content-suggest`**, **`evaluate-post`**, and orchestrated from **`cover-letter`**, **`follow-up`**, and optional **`tailor-resume`** Summary polish; consumes handoffs from **`networking-strategist`** and **`voice-profile.md`** (user-supplied posts).
 
 ### Test data (recommended)
 - `CareerNavigator/profile.md` with **Target Roles**, **Target Companies** (or infer from `tracker.json`), and **Location** (local-only vs remote/travel-open affects event-radar scope).
@@ -276,7 +276,7 @@ I need a networking strategy for my job search. Use my CareerNavigator profile a
 Run my networking strategy using profile + tracker, and in the same answer write the exact LinkedIn DM I should send to a hiring manager at my top target company—ready to paste.
 ```
 
-**Expect:** Handoff brief + direction to **`content-advisor`** or **`/career-navigator:draft-outreach`**, not a finished DM from **`networking-strategist`**.
+**Expect:** Handoff brief + direction to **`writer`** or **`/career-navigator:draft-outreach`**, not a finished DM from **`networking-strategist`**.
 
 #### **`network-map`** — paths, gaps, and JSON
 
@@ -327,7 +327,7 @@ Before we draft any outreach, summarize what I last emailed anyone at [Company X
 
 **Expect:** Clear statement that email/calendar access is not available (or requires Phase 2A + user approval)—**no** fabricated thread summaries.
 
-#### **`cover-letter`** (orchestrates **`content-advisor`**)
+#### **`cover-letter`** (orchestrates **`writer`**)
 
 ```text
 /career-navigator:cover-letter
@@ -336,7 +336,7 @@ Before we draft any outreach, summarize what I last emailed anyone at [Company X
 Write a cover letter for this role. [paste job description]. Use my tailored resume from artifacts if available.
 ```
 
-#### **`follow-up`** (orchestrates **`content-advisor`**)
+#### **`follow-up`** (orchestrates **`writer`**)
 
 ```text
 What needs a follow-up? Show the queue and draft messages for anything overdue or critical.
@@ -345,7 +345,7 @@ What needs a follow-up? Show the queue and draft messages for anything overdue o
 /career-navigator:follow-up
 ```
 
-#### **`content-advisor`** — direct skills
+#### **`writer`** — direct skills
 
 **Draft outreach**
 
@@ -382,7 +382,7 @@ Review this draft for political or reputational risk against my target employers
 /career-navigator:evaluate-post
 ```
 
-#### **`content-advisor`** — voice profile (seed + refresh)
+#### **`writer`** — voice profile (seed + refresh)
 
 ```text
 I'm going to use you for outreach and posts. Here are 3 LinkedIn posts I've written—capture my voice in CareerNavigator/voice-profile.md and give me a voice_profile_v1 JSON block.
@@ -394,10 +394,10 @@ I'm going to use you for outreach and posts. Here are 3 LinkedIn posts I've writ
 Before drafting anything else, read my voice-profile.md and tell me your confidence in matching my tone (high/medium/low).
 ```
 
-#### **`tailor-resume`** — optional voice-aligned Summary (orchestrates **`content-advisor`**)
+#### **`tailor-resume`** — optional voice-aligned Summary (orchestrates **`writer`**)
 
 ```text
-Tailor my resume for this JD, and for the Summary section only, match the voice in my voice-profile.md / pasted LinkedIn samples—use resume-coach ResumeSummaryBrief then content-advisor resume-summary.
+Tailor my resume for this JD, and for the Summary section only, match the voice in my voice-profile.md / pasted LinkedIn samples—use resume-coach ResumeSummaryBrief then writer resume-summary.
 
 [paste JD]
 ```
@@ -412,7 +412,7 @@ Run networking-strategy from my profile and tracker, then I'll paste your handof
 /career-navigator:draft-outreach — use this StrategistHandoff: [paste bullets from prior turn]
 ```
 
-#### **Thank-you follow-up** (validates **`follow-up`** + **`content-advisor`**)
+#### **Thank-you follow-up** (validates **`follow-up`** + **`writer`**)
 
 ```text
 I had a phone screen for [Role] at [Company] three days ago—what's my follow-up status and draft a thank-you if I'm due.
@@ -430,7 +430,7 @@ Retry behavior is validated by observing logs or the host’s agent tool—not a
 
 #### Role boundary (outreach vs strategy)
 - Run **`networking-strategy`** with an explicit ask to “write my LinkedIn message” in the same turn.
-  - **Expect:** no ready-to-send DM/email body from **`networking-strategist`**; instead a **handoff brief** (objective, audience archetype, evidence-backed hooks, tone, avoid list) and explicit pointer to **`content-advisor`** or **`/career-navigator:draft-outreach`** for final copy.
+  - **Expect:** no ready-to-send DM/email body from **`networking-strategist`**; instead a **handoff brief** (objective, audience archetype, evidence-backed hooks, tone, avoid list) and explicit pointer to **`writer`** or **`/career-navigator:draft-outreach`** for final copy.
 - Run **`network-map`**; confirm output does not include full outreach drafts—only strategy, path labels, gaps, JSON, and optional handoff bullets.
 
 #### Phase 2A honesty
@@ -455,7 +455,7 @@ Retry behavior is validated by observing logs or the host’s agent tool—not a
 - Results grouped or labeled by **local → regional → national → international** as appropriate to profile (skip international when profile is strictly local and user confirms no travel).
 - Each candidate has **ROI tier** (e.g. A/B/C), **presentation flag**, and **link or explicit verification step**; no invented conferences.
 
-### **`content-advisor`**
+### **`writer`**
 
 #### Voice and persistence
 - First run: confirm the agent **asks for 2–5 sample posts** (or similar professional writing) and offers to append to **`CareerNavigator/voice-profile.md`** with optional **`voice_profile_v1`** JSON.
@@ -465,14 +465,153 @@ Retry behavior is validated by observing logs or the host’s agent tool—not a
 - **`draft-outreach`:** send-ready copy; **no** invented shared history; accepts **StrategistHandoff** when user pastes it; **Phase 2A** note when inbox context is missing.
 - **`content-suggest`:** topics tied to profile/ExperienceLibrary; optional full draft path + **`evaluate-post`** nudge.
 - **`evaluate-post`:** **risk tier** + rationale vs **target companies** in profile; optional safer paraphrases; no prescriptive “what you should believe.”
-- **`cover-letter`:** verify **CoverLetterBrief** is built first, then **`content-advisor`** (`cover-letter` mode) produces final letter; artifact save unchanged.
-- **`follow-up`:** verify **FollowUpBrief** objects only in the skill; message body comes from **`content-advisor`** (`follow-up` mode).
-- **`tailor-resume`** (optional): request “match my LinkedIn voice for the Summary only”; confirm **`ResumeSummaryBrief`** → **`content-advisor`** (`resume-summary`) → merged Summary before save.
+- **`cover-letter`:** verify **CoverLetterBrief** is built first, then **`writer`** (`cover-letter` mode) produces final letter; artifact save unchanged.
+- **`follow-up`:** verify **FollowUpBrief** objects only in the skill; message body comes from **`writer`** (`follow-up` mode).
+- **`tailor-resume`** (optional): request “match my LinkedIn voice for the Summary only”; confirm **`ResumeSummaryBrief`** → **`writer`** (`resume-summary`) → merged Summary before save.
 
 ### Pass Criteria
-- **`networking-strategist`** outputs are evidence-grounded, confidence-labeled, and **do not** substitute for **`content-advisor`** on outreach copy.
+- **`networking-strategist`** outputs are evidence-grounded, confidence-labeled, and **do not** substitute for **`writer`** on outreach copy.
 - Event outputs avoid hallucinated logistics; uncertainty is stated explicitly.
-- **`content-advisor`** owns user-facing prose (outreach, cover letter, follow-up, optional Summary polish); briefs stay in orchestrating skills; **`voice-profile.md`** updates are explicit and opt-in.
+- **`writer`** owns user-facing prose (outreach, cover letter, follow-up, optional Summary polish); briefs stay in orchestrating skills; **`voice-profile.md`** updates are explicit and opt-in.
+
+---
+
+## Phase 1F — Career planning, offer evaluation & compensation negotiation
+
+### Scope
+- New skills: `career-plan`, `evaluate-offer`, `negotiate-offer`, `compare-offers`
+- Artifact outputs:
+  - `{user_dir}/CareerNavigator/career-trajectory.md` + `career_trajectory_v1`
+  - `{user_dir}/CareerNavigator/offer-context-{application_id}.json`
+- Integration:
+  - `job-scout` reads `career_trajectory_v1` and applies trajectory alignment bonus
+  - `daily-schedule` monthly career-plan refresh nudge
+  - `daily-schedule` offer-evaluation due nudge
+  - `focus-career` critical-only offer evaluation due when deadline is imminent
+
+### Test data prerequisites
+- `CareerNavigator/profile.md` populated with target roles + target location.
+- `CareerNavigator/ExperienceLibrary.json` with at least a few non-empty `units`.
+- `CareerNavigator/tracker.json` containing:
+  - At least one application with `status: "offer"` (and `offer.deadline` if possible).
+  - A mix of outcomes so `honest-advisor` can label confidence tier.
+
+### Tests
+- Run `/career-navigator:career-plan`
+  - Confirm `career-trajectory.md` is created and includes `career_trajectory_v1`.
+- Run `/career-navigator:evaluate-offer`
+  - Confirm `offer-context-{application_id}.json` is created for the correct offer app.
+  - Confirm the offer evaluation includes scenario classification and a direct recommendation.
+- Run `/career-navigator:negotiate`
+  - Confirm it loads OfferContext (no redundant re-collection) and produces a draft via `writer`.
+- Run `/career-navigator:compare-offers` when multiple offers exist
+  - Confirm it compares side-by-side and prompts negotiation handoff.
+- Run `/career-navigator:search-jobs`
+  - Confirm `job-scout` output includes trajectory alignment and that scores reflect it.
+  - Confirm trajectory evidence is explicit: `trajectory_context_status` and `trajectory_as_of` are returned, and the user-facing output includes a trajectory context line.
+- Run `/career-navigator:daily-schedule`
+  - Confirm it prompts for monthly career-plan refresh when `career-trajectory.md` is missing/stale.
+  - Confirm it prompts offer evaluation due when an active offer exists with missing OfferContext.
+- Run `focus-career` for a deadline edge case
+  - Create/prepare a tracker offer with deadline within 24h and missing OfferContext.
+  - Confirm `focus-career` includes "Offer evaluation due" critical alert.
+
+### Pass Criteria
+- All new slash commands exist with correct triggers.
+- Required artifacts are written to the specified `{user_dir}` paths (or manual-save fallback is shown).
+- `job-scout` trajectory bonus is present when `career-trajectory.md` exists and explicitly absent when it does not.
+- Nudges appear in `daily-schedule` and (for imminent deadlines) in `focus-career`.
+
+### Example prompts (copy/paste)
+
+#### `career-plan` (baseline)
+```text
+/career-navigator:career-plan
+```
+
+#### `career-plan` (targeted ideal role)
+```text
+/career-navigator:career-plan
+Ideal role: Senior Product Manager
+```
+
+#### `evaluate-offer` (single offer)
+```text
+/career-navigator:evaluate-offer
+I received an offer from Acme for a Senior PM role. Deadline is 2026-04-02.
+Base: $150k, bonus: $20k, equity: $60k. Location: Chicago.
+```
+
+#### `negotiate-offer`
+```text
+/career-navigator:negotiate
+Use my last OfferEvaluation to draft a counter. Keep it assertive but respectful.
+```
+
+#### `compare-offers` (multi-offer)
+```text
+/career-navigator:compare-offers
+Compare these two offers and tell me which one best matches my near-term trajectory.
+```
+
+#### Daily nudges
+```text
+/career-navigator:daily-schedule
+```
+
+### Round 1 fixes — repackage regression pass
+
+Use this focused pass after repackaging to confirm the recent naming, orchestration,
+and startup-behavior fixes.
+
+#### Scope checks
+- `focus-career` naming + backward alias (`/career-navigator:session-start`) still works.
+- Session-start hook fallback guidance is clear when auto-hook does not fire.
+- `search-jobs` uses **Recommendation** label (not Alert).
+- `search-jobs`/`job-scout` trajectory consumption is explicit in output.
+
+#### Tests
+- Run startup manually with new command:
+  - Confirm skill invoked is `focus-career`.
+  - Confirm critical-only output format is unchanged.
+- Run startup with backward alias:
+  - Confirm `/career-navigator:session-start` still maps to the same behavior.
+- Run `search-jobs` with a valid `career-trajectory.md` present:
+  - Confirm output includes a trajectory context line:
+    - `Trajectory context: used (as_of YYYY-MM-DD)` (or unavailable reason)
+  - Confirm listing line uses `Recommendation: {critical|high|watch|none}`.
+- Temporarily force trajectory parse failure (or remove JSON block):
+  - Confirm search still works and reports trajectory as unavailable/unparseable.
+
+#### Pass criteria
+- `focus-career` is the primary startup skill name in context/output.
+- Manual fallback works in sessions where auto SessionStart hook does not fire.
+- No user-facing `Alert:` label remains in search results.
+- Trajectory usage is auditable in response text and scoring rationale.
+
+#### Example prompts (copy/paste)
+
+```text
+/career-navigator:focus-career
+```
+
+```text
+/career-navigator:session-start
+```
+
+```text
+/career-navigator:search-jobs
+Use my current profile targets and show top 5.
+```
+
+```text
+For each result, include the scoring header plus trajectory context status and recommendation tier.
+```
+
+```text
+I got an offer from Stripe for Senior Product Manager, and the decision deadline is tomorrow at 10am. Please update my tracker.
+Then run /career-navigator:focus-career.
+```
 
 ---
 
