@@ -612,6 +612,7 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 * **Status:** *Placeholder — not implemented.* Phase 1E **`event-radar`** / **`event-intelligence`** may use **web-assisted** discovery until this ships.
 * **Goal:** First-class **event feeds** (structured listings, stable IDs where possible) so **`event-radar`** and **`networking-strategist`** spend less time on brittle scraping and **`event_radar_v1`** / `event-radar.md` can refresh from connector output.
 * **Candidate integrations:** Meetup, Eventbrite, Luma, and similar (see §9 **External Service Integrations**). Exact vendor order, OAuth vs API keys, host packaging (e.g. Claude Connectors), and **MCP tool names** are **TBD**.
+* **Event discovery connectors design note (resolved checklist):** Vendor order, OAuth vs API keys, host packaging, and MCP tool names for Meetup/Eventbrite/Luma integrations; deduplication logic vs user-edited `event-radar.md`.
 * **Open design (TBD):** deduplication vs user-edited **`{user_dir}/CareerNavigator/event-radar.md`**; geographic / paid-event coverage; rate limits and cost; fallback when a connector is off (keep web-assisted path).
 
 ### **Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements**
@@ -648,8 +649,6 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 
 | Name | Type | Description |
 | --- | --- | --- |
-| **Antagonistic Interview Mode** | UX | Exact calibration of antagonistic vibe — specifically what constitutes appropriately challenging vs. demoralizing. Confirmed via user testing before Phase 2B ships. System must back off when interview is imminent. |
-| **Event Discovery Connectors** | Technical | Vendor order, OAuth vs API keys, host packaging, and MCP tool names for Meetup/Eventbrite/Luma integrations. Deduplication logic vs user-edited `event-radar.md`. See Phase 2C. |
 
 # **Appendix: Command Quick Reference**
 
