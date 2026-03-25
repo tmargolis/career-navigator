@@ -25,10 +25,12 @@ Pull live salary data for a role and location via the Apify MCP server and retur
 
 ## Preflight check
 
-Before doing anything else, confirm the Apify MCP tool is available in the current session.
+Before doing anything else, confirm Apify MCP tools are available in this session (e.g. **Call Actor**, **Get Actor run**, **Get dataset items**). They appear when the user adds the **Apify** **Desktop** connector in Claude **Customize → Connectors**, pastes their token in the connector UI (not in chat), and sets **Enabled tools** to:
 
-If the `apify` MCP server tools are **not** available:
-> "Salary benchmarking requires Apify to be configured. Run `/career-navigator:setup` and complete Step 4 to connect your Apify account, then start a new Cowork session."
+`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`
+
+If those tools are **not** available:
+> "Salary benchmarking needs the Apify Desktop connector. In Claude Desktop: **Customize → Connectors → Desktop → Apify → Configure** — add your Apify token, set **Enabled tools** to `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`, save, enable the connector, then open a **new chat** and try again. Or run `/career-navigator:launch` Step 4 for the full walkthrough."
 
 Stop here — do not proceed without the MCP connection.
 
@@ -147,4 +149,4 @@ Only include this if there is a specific figure to compare against. Do not fabri
 > "Found {n} listings for '{keyword}' in '{location}', but none included salary information. This is common for roles where compensation is listed as 'competitive' or 'DOE'. Try adding a `minSalary` filter to surface listings that disclose pay."
 
 **MCP call fails or times out:**
-> "The Apify request didn't complete. Check that your token is valid in `{user_dir}/.env` and try again. If the problem persists, run `/career-navigator:setup` to re-enter your token."
+> "The Apify request didn't complete. In Claude Desktop, open **Customize → Connectors → Apify**, confirm your token and **Enabled tools** (`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`), save, enable the connector, and try again in a **new chat**. See `/career-navigator:launch` Step 4 if you need the full walkthrough."

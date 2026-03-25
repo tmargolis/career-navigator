@@ -29,7 +29,7 @@ Read:
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
 
 If profile has no target roles:
-> "I need your current target role(s) first. Run `/career-navigator:setup` or update `CareerNavigator/profile.md` before running role suggestions."
+> "I need your current target role(s) first. Run `/career-navigator:launch` or update `CareerNavigator/profile.md` before running role suggestions."
 
 If ExperienceLibrary `units` is empty:
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume before role suggestions."

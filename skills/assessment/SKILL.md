@@ -23,7 +23,7 @@ Invoke the `honest-advisor` agent to run a norm/exception/strategy assessment, t
 
 Read `{user_dir}/CareerNavigator/profile.md`. If it has no `target_roles` (or equivalent target-role fields):
 
-> "I need your target role(s) to run an assessment. Run `/career-navigator:setup` (or update your `CareerNavigator/profile.md`)."
+> "I need your target role(s) to run an assessment. Run `/career-navigator:launch` (or update your `CareerNavigator/profile.md`)."
 
 Read `{user_dir}/CareerNavigator/ExperienceLibrary.json`. If the ExperienceLibrary `units` array is empty:
 

@@ -51,6 +51,8 @@ Hand off to the `resume-coach` agent with:
 - Ensure all required JD keywords are present (ATS pass)
 - Return the completed resume text and an ATS score
 
+**Voice-aligned Summary (optional):** If the user explicitly asks to match their **LinkedIn voice** / **`voice-profile.md`** for the **Summary only**, ask `resume-coach` for a **ResumeSummaryBrief** per `agents/resume-coach/AGENT.md`. **Before** invoking **`content-advisor`**, run the same **voice preflight** as **`draft-outreach`** (ask for **`## User writing samples`** / **`## User writing samples (launch)`** or **skip**). Then invoke **`content-advisor`** in **`resume-summary`** mode, substitute the returned **## Summary** into the draft, then continue to ATS presentation below.
+
 ### 3. Score and review
 
 Present the full assessment returned by `resume-coach` before saving:
@@ -76,7 +78,10 @@ If the score is below 70, ask before saving:
 
 Once the user confirms (or if the score is ≥ 70 with no gaps flagged), save the resume:
 
-- **Filename format**: `{Company} — {Role Title} Resume ({YYYY-MM-DD}).md`
+**Filenames (avoid host / MCP validation errors):** use **ASCII-safe** names only—hyphens `-`, no em dashes or smart quotes. **Sanitize** company and role: remove `\ / : * ? " < > |` and newlines; collapse whitespace; limit basename (~100 chars).
+**Example:** `Anthropic-PM-Claude-Code-Resume-2026-03-24.md`
+
+- **Filename format:** `{SanitizedCompany}-{SanitizedRole}-Resume-{YYYY-MM-DD}.md`
 - **Path**: `{user_dir}/`
 - **Write to `{user_dir}/CareerNavigator/artifacts-index.json`**:
 

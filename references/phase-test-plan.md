@@ -3,6 +3,16 @@
 This document defines practical validation checks for each delivery phase.
 Use it as a release gate before tagging a phase complete.
 
+## Convention: example prompts (copy/paste)
+
+**Whenever functionality ships or changes**, extend this file with a **`### Example prompts (copy/paste)`** subsection under that phase (or the closest phase that owns the feature). Each subsection should include at least:
+
+- One **slash-command** style prompt (`/career-navigator:…`) where applicable.
+- One **natural-language** variant that triggers the same skill intent.
+- **Expected result** notes where behavior is non-obvious (boundaries, Phase 2A limits, etc.).
+
+Keep prompts aligned with **`skills/*/`** triggers and **`references/career-navigator-spec.md`**. Phase **1E** is where networking + **`content-advisor`** prompts live; refresh them when those agents or orchestration change.
+
 ## Test Data Prerequisites
 
 - A valid `{user_dir}` with `CareerNavigator/profile.md`.
@@ -15,11 +25,11 @@ Use it as a release gate before tagging a phase complete.
 ## Phase 1A — Core Platform
 
 ### Scope
-- Setup, profile creation, ExperienceLibrary initialization, session-start behavior, live job search.
+- Launch wizard (`/career-navigator:launch`), profile creation, ExperienceLibrary initialization, session-start behavior, live job search.
 
 ### Tests
-- Run `/career-navigator:setup`; verify all core files are created in `CareerNavigator/`.
-- Confirm setup handles existing docs and builds ExperienceLibrary units.
+- Run `/career-navigator:launch`; verify all core files are created in `CareerNavigator/`.
+- Confirm the launch wizard handles existing docs and builds ExperienceLibrary units.
 - Start a fresh session; verify `session-start` behavior (first-run onboarding vs critical-only alerts).
 - Run `/career-navigator:search-jobs`; confirm results return from Indeed and include apply links.
 
@@ -27,6 +37,28 @@ Use it as a release gate before tagging a phase complete.
 - Core files are valid and readable.
 - Job search works with profile-driven defaults.
 - Session behavior is correct for both first-run and returning-user states.
+
+### Example prompts (copy/paste)
+
+```text
+/career-navigator:launch
+```
+
+```text
+Set up Career Navigator using my job search folder. Build profile and ExperienceLibrary from the resumes already in this directory.
+```
+
+```text
+Search for jobs matching my profile—top 5 with apply links.
+```
+
+```text
+/career-navigator:search-jobs
+```
+
+```text
+Session just started—run session-start for critical-only alerts using my CareerNavigator data.
+```
 
 ---
 
@@ -46,6 +78,74 @@ Use it as a release gate before tagging a phase complete.
 - Artifacts and tracker updates remain schema-consistent.
 - Analyst outputs feed downstream ranking inputs.
 
+### Example prompts (copy/paste)
+
+```text
+/career-navigator:add-source
+```
+```text
+Ingest my latest resume PDF in this folder into the ExperienceLibrary.
+```
+
+```text
+Here's the job description [paste JD]. Tailor my resume for this role.
+```
+
+```text
+/career-navigator:tailor-resume
+```
+
+```text
+/career-navigator:cover-letter
+```
+```text
+Write the cover letter for the role whose JD I just used—use my tailored resume artifact if it exists.
+```
+
+```text
+Score my resume against this JD and tell me ATS gaps: [paste resume + JD].
+```
+
+```text
+/career-navigator:resume-score
+```
+
+```text
+I just applied to [Company] for [Role] on [date]. Log it in the tracker.
+```
+
+```text
+/career-navigator:track-application
+```
+
+```text
+What's converting in my pipeline? Run pattern-analysis and update weights.
+```
+
+```text
+/career-navigator:pattern-analysis
+```
+
+```text
+/career-navigator:list-artifacts
+```
+
+```text
+List my generated resumes and cover letters with dates and linked applications.
+```
+
+```text
+This resume has bad ATS structure—run ats-optimization and give me prioritized fixes.
+```
+
+```text
+Run the full analyst report and point me to the dashboard for charts I shouldn't miss.
+```
+
+```text
+Run full career analysis / pipeline dashboard generation so I can open the HTML dashboard.
+```
+
 ---
 
 ## Phase 1C — Advisor Layer
@@ -63,6 +163,36 @@ Use it as a release gate before tagging a phase complete.
 ### Pass Criteria
 - Advisor outputs are evidence-grounded and connected to ranking strategy.
 - `strategy_signals` is present and consumable by `job-scout`.
+
+### Example prompts (copy/paste)
+
+```text
+/career-navigator:assessment
+```
+```text
+Give me an honest assessment vs my target role using my tracker and ExperienceLibrary—norm, exceptions, and strategy.
+```
+
+```text
+/career-navigator:training-roi
+```
+```text
+Is a part-time MBA worth it for my target role in the next 18 months? Compare to self-study and a certificate.
+```
+
+```text
+/career-navigator:market-brief
+```
+```text
+Market brief for my primary target role and location—demand, AI displacement, geography.
+```
+
+```text
+/career-navigator:suggest-roles
+```
+```text
+What non-obvious roles should I apply to based on transferable skills? Update job-scout signals if you can.
+```
 
 ---
 
@@ -83,21 +213,266 @@ Use it as a release gate before tagging a phase complete.
 - Daily workflow handles new source files automatically.
 - Agent invocation failures are retried/fallbacked as defined.
 
+### Example prompts (copy/paste)
+
+```text
+Find jobs for my target role and rank them—call out critical and high alerts if any.
+```
+
+```text
+/career-navigator:search-jobs
+```
+
+```text
+Run my daily brief: reconcile artifacts if needed, pipeline summary, follow-ups due.
+```
+
+```text
+/career-navigator:daily-schedule
+```
+
+```text
+I added a new resume PDF to my job search folder—run daily-schedule and confirm add-source ran if a new source appeared.
+```
+
+```text
+/career-navigator:market-brief
+```
+```text
+/career-navigator:suggest-roles
+```
+**Expect:** Exact agent names **`market-researcher`** and **`honest-advisor`** (retry-once behavior per skills).
+
 ---
 
 ## Phase 1E — Professional Presence
 
 ### Scope
-- Networking strategy, event radar, content advisor workflows.
+- **`networking-strategist`** agent, invoked by skills **`networking-strategy`**, **`network-map`**, **`event-intelligence`**, and **`event-radar`**.
+- **`content-advisor`** agent, invoked by **`draft-outreach`**, **`content-suggest`**, **`evaluate-post`**, and orchestrated from **`cover-letter`**, **`follow-up`**, and optional **`tailor-resume`** Summary polish; consumes handoffs from **`networking-strategist`** and **`voice-profile.md`** (user-supplied posts).
 
-### Tests
-- Run network-mapping workflow and confirm gap identification output quality.
-- Run outreach drafting with and without prior context; verify context-aware output handling.
-- Run content suggestion and post evaluation; verify risk flags and audience-fit rationale.
-- Run event radar and verify event prioritization logic.
+### Test data (recommended)
+- `CareerNavigator/profile.md` with **Target Roles**, **Target Companies** (or infer from `tracker.json`), and **Location** (local-only vs remote/travel-open affects event-radar scope).
+- `tracker.json` with at least one application listing **`contacts`** (can be empty) to validate gap/path logic.
+- Optional: stale or missing `CareerNavigator/network-map.md` to validate create vs update behavior.
+
+### Example prompts (copy/paste)
+
+Use natural language or the equivalent **`/career-navigator:…`** command. Swap company names, roles, and events to match your **`CareerNavigator`** data.
+
+#### **`networking-strategy`** — baseline plan
+
+```text
+I need a networking strategy for my job search. Use my CareerNavigator profile and tracker—prioritize the next 90 days and the top 5 relationship moves I should make.
+```
+
+```text
+/career-navigator:networking-strategy
+```
+
+#### **`networking-strategy`** — outreach boundary (strategist must not draft send-ready copy)
+
+```text
+Run my networking strategy using profile + tracker, and in the same answer write the exact LinkedIn DM I should send to a hiring manager at my top target company—ready to paste.
+```
+
+**Expect:** Handoff brief + direction to **`content-advisor`** or **`/career-navigator:draft-outreach`**, not a finished DM from **`networking-strategist`**.
+
+#### **`network-map`** — paths, gaps, and JSON
+
+```text
+Map my network toward my dream roles and target companies. Label confirmed vs hypothetical paths, call out gaps, and include the network_map_v1 JSON block for later visualization.
+```
+
+```text
+/career-navigator:network-map
+```
+
+#### **`network-map`** — persistence offer
+
+```text
+After you produce the network map, save the narrative and the network_map_v1 JSON to CareerNavigator/network-map.md in my job search folder.
+```
+
+#### **`event-intelligence`** — named event (ROI + presentation flag)
+
+```text
+Should I attend [name a real conference or meetup you are considering] for my job search? Assess ROI, audience quality, whether it's worth travel/time/money, and flag if there's a realistic speaking or visibility opportunity. If you don't have verified dates or prices, tell me exactly what to look up instead of guessing.
+```
+
+```text
+/career-navigator:event-intelligence
+```
+*(Then paste the event name and constraints in the same thread.)*
+
+#### **`event-radar`** — multi-scope discovery
+
+```text
+Run an event radar for my interests and target roles: local and regional events first, then national, then international if my profile supports travel. Give ROI tiers, presentation flags, and real links—or search queries if links aren't available.
+```
+
+```text
+I'm only looking locally—no travel. Scan my metro area for the next 3 months for meetups and conferences relevant to my target role. Skip national/international unless virtual.
+```
+
+```text
+/career-navigator:event-radar
+```
+
+#### **Phase 2A honesty** (no inbox unless connected)
+
+```text
+Before we draft any outreach, summarize what I last emailed anyone at [Company X] and pull thread context from my inbox.
+```
+
+**Expect:** Clear statement that email/calendar access is not available (or requires Phase 2A + user approval)—**no** fabricated thread summaries.
+
+#### **`cover-letter`** (orchestrates **`content-advisor`**)
+
+```text
+/career-navigator:cover-letter
+```
+```text
+Write a cover letter for this role. [paste job description]. Use my tailored resume from artifacts if available.
+```
+
+#### **`follow-up`** (orchestrates **`content-advisor`**)
+
+```text
+What needs a follow-up? Show the queue and draft messages for anything overdue or critical.
+```
+```text
+/career-navigator:follow-up
+```
+
+#### **`content-advisor`** — direct skills
+
+**Draft outreach**
+
+```text
+/career-navigator:draft-outreach
+```
+```text
+Draft a short LinkedIn note to a [peer IC | recruiter | hiring manager] at [Company]. Goal: informational conversation, not asking for a job in the first message. Tone: direct and respectful. Here's the handoff from my networking strategy: [paste handoff bullets].
+```
+
+**Topic ideas**
+
+```text
+/career-navigator:content-suggest
+```
+```text
+Suggest three LinkedIn post ideas for the next month that support my target roles without sounding desperate. Flag any that might clash with employers I'm targeting.
+```
+
+**Post review**
+
+```text
+/career-navigator:evaluate-post
+```
+```text
+Evaluate this draft post for audience fit and cultural risk relative to my target companies: [paste draft].
+```
+
+```text
+Review this draft for political or reputational risk against my target employers in profile.md—risk tier and safer paraphrases only, don't tell me what to believe: [paste draft].
+```
+
+```text
+/career-navigator:evaluate-post
+```
+
+#### **`content-advisor`** — voice profile (seed + refresh)
+
+```text
+I'm going to use you for outreach and posts. Here are 3 LinkedIn posts I've written—capture my voice in CareerNavigator/voice-profile.md and give me a voice_profile_v1 JSON block.
+
+[paste posts]
+```
+
+```text
+Before drafting anything else, read my voice-profile.md and tell me your confidence in matching my tone (high/medium/low).
+```
+
+#### **`tailor-resume`** — optional voice-aligned Summary (orchestrates **`content-advisor`**)
+
+```text
+Tailor my resume for this JD, and for the Summary section only, match the voice in my voice-profile.md / pasted LinkedIn samples—use resume-coach ResumeSummaryBrief then content-advisor resume-summary.
+
+[paste JD]
+```
+
+#### **End-to-end: strategist handoff → outreach**
+
+```text
+Run networking-strategy from my profile and tracker, then I'll paste your handoff bullets into draft-outreach—don't draft my DM in the strategist step.
+```
+*(Then in a follow-up turn:)*
+```text
+/career-navigator:draft-outreach — use this StrategistHandoff: [paste bullets from prior turn]
+```
+
+#### **Thank-you follow-up** (validates **`follow-up`** + **`content-advisor`**)
+
+```text
+I had a phone screen for [Role] at [Company] three days ago—what's my follow-up status and draft a thank-you if I'm due.
+```
+
+#### **Agent invocation / retry** (host-dependent)
+
+Retry behavior is validated by observing logs or the host’s agent tool—not a single user prompt. Optionally run the same **`network-map`** or **`event-radar`** prompt twice after a transient failure to confirm recovery after one retry per skill rules.
+
+### Agent: **`networking-strategist`**
+
+#### Invocation and orchestration
+- From each skill body, confirm the model uses the **exact** agent name **`networking-strategist`** (no aliases such as “network” or “strategy agent”).
+- Simulate or observe one failed subagent call; confirm **one retry** with the same name before surfacing an error (per skill instructions).
+
+#### Role boundary (outreach vs strategy)
+- Run **`networking-strategy`** with an explicit ask to “write my LinkedIn message” in the same turn.
+  - **Expect:** no ready-to-send DM/email body from **`networking-strategist`**; instead a **handoff brief** (objective, audience archetype, evidence-backed hooks, tone, avoid list) and explicit pointer to **`content-advisor`** or **`/career-navigator:draft-outreach`** for final copy.
+- Run **`network-map`**; confirm output does not include full outreach drafts—only strategy, path labels, gaps, JSON, and optional handoff bullets.
+
+#### Phase 2A honesty
+- Without email/calendar connectors, confirm the agent **does not** claim access to inbox or prior threads; if it mentions Phase 2A, it should describe what would be needed—not invent correspondence.
+
+### Skills
+
+#### **`networking-strategy`**
+- Confirm the plan includes a **time-bounded** arc (e.g. 90-day framing), **prioritized moves**, and **what to avoid**.
+- If the user saves output, confirm optional persistence to `CareerNavigator/networking-strategy.md` (or equivalent dated section) does not corrupt other `CareerNavigator` files.
+
+#### **`network-map`**
+- **confirmed** vs **hypothesis** paths are labeled; bridge **personas** are archetypes unless the user supplied real names.
+- A fenced **`network_map_v1`** JSON block is present with `schema`, `as_of`, `nodes`, `edges`, `gaps`, and **`viz_note`** (graph viz deferred).
+- Offer to write/update **`CareerNavigator/network-map.md`** when the user agrees; re-read file to ensure narrative + JSON coexist.
+
+#### **`event-intelligence`**
+- For a **named** event: ROI assessment, audience/readiness signal, **presentation opportunity** (`yes` / `maybe` / `no`), and **risks** (pay-to-play, low signal).
+- **No fabricated** dates, prices, or CFP deadlines—either cite a verifiable source or give **queries/URLs to verify**.
+
+#### **`event-radar`**
+- Results grouped or labeled by **local → regional → national → international** as appropriate to profile (skip international when profile is strictly local and user confirms no travel).
+- Each candidate has **ROI tier** (e.g. A/B/C), **presentation flag**, and **link or explicit verification step**; no invented conferences.
+
+### **`content-advisor`**
+
+#### Voice and persistence
+- First run: confirm the agent **asks for 2–5 sample posts** (or similar professional writing) and offers to append to **`CareerNavigator/voice-profile.md`** with optional **`voice_profile_v1`** JSON.
+- Re-run **`evaluate-post`** after adding samples; confirm **voice match** confidence label updates or rationale references samples.
+
+#### Skills
+- **`draft-outreach`:** send-ready copy; **no** invented shared history; accepts **StrategistHandoff** when user pastes it; **Phase 2A** note when inbox context is missing.
+- **`content-suggest`:** topics tied to profile/ExperienceLibrary; optional full draft path + **`evaluate-post`** nudge.
+- **`evaluate-post`:** **risk tier** + rationale vs **target companies** in profile; optional safer paraphrases; no prescriptive “what you should believe.”
+- **`cover-letter`:** verify **CoverLetterBrief** is built first, then **`content-advisor`** (`cover-letter` mode) produces final letter; artifact save unchanged.
+- **`follow-up`:** verify **FollowUpBrief** objects only in the skill; message body comes from **`content-advisor`** (`follow-up` mode).
+- **`tailor-resume`** (optional): request “match my LinkedIn voice for the Summary only”; confirm **`ResumeSummaryBrief`** → **`content-advisor`** (`resume-summary`) → merged Summary before save.
 
 ### Pass Criteria
-- Presence workflows produce actionable outputs with explicit rationale and risk notes.
+- **`networking-strategist`** outputs are evidence-grounded, confidence-labeled, and **do not** substitute for **`content-advisor`** on outreach copy.
+- Event outputs avoid hallucinated logistics; uncertainty is stated explicitly.
+- **`content-advisor`** owns user-facing prose (outreach, cover letter, follow-up, optional Summary polish); briefs stay in orchestrating skills; **`voice-profile.md`** updates are explicit and opt-in.
 
 ---
 
@@ -113,6 +488,17 @@ Use it as a release gate before tagging a phase complete.
 
 ### Pass Criteria
 - Read-only integrations work reliably with explicit consent boundaries.
+
+### Example prompts (copy/paste)
+
+```text
+Search my Gmail for prior threads with [Name] at [Company] and summarize only what you find—I approve access for this session.
+```
+**Expect:** Works only when Phase 2A connectors are configured and user explicitly approves; otherwise clear **no access** message.
+
+```text
+Before /career-navigator:draft-outreach to [recruiter], pull last email exchange from calendar/email context and fold into the brief.
+```
 
 ---
 
@@ -130,6 +516,36 @@ Use it as a release gate before tagging a phase complete.
 ### Pass Criteria
 - Interview workflows are coherent end-to-end and privacy constraints are respected.
 
+### Example prompts (copy/paste)
+
+```text
+/career-navigator:prep-interview
+```
+```text
+Prep me for my upcoming HM interview at [Company] for [Role]—questions, stories, company angles.
+```
+
+```text
+/career-navigator:mock-interview
+```
+```text
+Mock interview: recruiter stage, neutral vibe, adaptive difficulty. Company: [Company], role: [Role].
+```
+
+```text
+/career-navigator:morning-brief
+```
+```text
+I have interviews today—give me the morning brief with news and talking points.
+```
+
+```text
+/career-navigator:interview-debrief
+```
+```text
+Interview debrief: I just finished a panel at [Company]. [paste notes].
+```
+
 ---
 
 ## Phase 2C — Extended Integrations
@@ -144,6 +560,16 @@ Use it as a release gate before tagging a phase complete.
 
 ### Pass Criteria
 - Connectors are reliable, scoped, and do not break local-first behavior.
+
+### Example prompts (copy/paste)
+
+```text
+Switch my artifact storage to Google Drive and verify list-artifacts still matches what’s on disk vs cloud.
+```
+
+```text
+Sync application status from Greenhouse for applications I logged—read-only, no writes to employer ATS.
+```
 
 ---
 
@@ -160,11 +586,29 @@ Use it as a release gate before tagging a phase complete.
 ### Pass Criteria
 - Analytics outputs are consistent and automation features remain policy-safe.
 
+### Example prompts (copy/paste)
+
+```text
+Export my pipeline and analyst graph data in the format expected by our BI connector and show me the payload shape.
+```
+
+```text
+/career-navigator:pipeline
+```
+```text
+Open the dashboard and confirm exported metrics match the local tracker counts for applied vs interview stages.
+```
+
+```text
+Run a LinkedIn-automation workflow only if it complies with policy—show guardrails before executing.
+```
+
 ---
 
 ## Regression Checklist (Run Every Phase)
 
-- Validate SKILL frontmatter (`name`, `description`, `triggers`) parses for all changed skills.
+- Validate SKILL frontmatter (`name`, `description`, `triggers`) parses for all changed skills (including **`draft-outreach`**, **`content-suggest`**, **`evaluate-post`**).
 - Validate core JSON files remain valid (`tracker.json`, `ExperienceLibrary.json`, `artifacts-index.json`).
 - Re-run `search-jobs`, `track-application`, `tailor-resume`, and `daily-schedule` as smoke tests.
 - Confirm docs match actual behavior (README + spec).
+- **If you shipped or changed user-facing behavior**, add or update **`### Example prompts (copy/paste)`** under the owning phase (see convention at top of this file).

@@ -22,7 +22,7 @@ Important behavior:
 Check `{user_dir}/CareerNavigator/artifacts-index.json`.
 
 If missing, output:
-> Artifact sync skipped: run `/career-navigator:setup` to initialize artifacts-index.
+> Artifact sync skipped: run `/career-navigator:launch` to initialize artifacts-index.
 
 ### 2. Reconcile artifact inventory
 
