@@ -9,15 +9,15 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 # **Table of Contents**
 
-[**1. Overview**](#1-overview)
+[1. Overview](#1-overview)
 
 [1.1 Design Principles](#11-design-principles)
 
 [1.2 Plugin Architecture](#12-plugin-architecture)
 
-[**2. Plugin File Structure**](#2-plugin-file-structure)
+[2. Plugin File Structure](#2-plugin-file-structure)
 
-[**3. Slash Commands**](#3-slash-commands)
+[3. Slash Commands](#3-slash-commands)
 
 [3.1 Resume & Cover Letter Commands](#31-resume--cover-letter-commands)
 
@@ -27,25 +27,25 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [3.4 Networking Commands](#34-networking-commands)
 
-[**4. Agents**](#4-agents)
+[4. Agents](#4-agents)
 
-[**5. Skills**](#5-skills)
+[5. Skills](#5-skills)
 
-[**6. Scheduling & recurring runs**](#6-scheduling--recurring-runs)
+[6. Scheduling & recurring runs](#6-scheduling--recurring-runs)
 
 [6.1 Host hooks (`hooks/hooks.json`)](#61-host-hooks-hookshooksjson)
 
-[**7. Storage Connectors**](#7-storage-connectors)
+[7. Storage Connectors](#7-storage-connectors)
 
 [7.1 Interface](#71-interface)
 
 [7.2 Available Connectors](#72-available-connectors)
 
-[**8. Analytics Connectors**](#8-analytics-connectors)
+[8. Analytics Connectors](#8-analytics-connectors)
 
-[**9. External Service Integrations (.mcp.json)**](#9-external-service-integrations-mcpjson)
+[9. External Service Integrations (.mcp.json)](#9-external-service-integrations-mcpjson)
 
-[**10. Core Data Model**](#10-core-data-model)
+[10. Core Data Model](#10-core-data-model)
 
 [10.1 ExperienceLibrary](#101-experiencelibrary)
 
@@ -53,23 +53,23 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [10.3 Artifact Record](#103-artifact-record)
 
-[**11. The Intelligence Feedback Loop**](#11-the-intelligence-feedback-loop)
+[11. The Intelligence Feedback Loop](#11-the-intelligence-feedback-loop)
 
-[**12. Daily Rhythm & Scheduling**](#12-daily-rhythm--scheduling)
+[12. Daily Rhythm & Scheduling](#12-daily-rhythm--scheduling)
 
 [12.1 Recommended cadences (Cowork `/schedule`)](#121-recommended-cadences-cowork-schedule)
 
 [12.2 Time-sensitive vs routine surfacing](#122-time-sensitive-vs-routine-surfacing)
 
-[**13. Interview Capture (Phase 2B)**](#phase-2b--interview-audio-capture)
+[13. Interview Capture (Phase 2B)](#phase-2b--interview-audio-capture)
 
 [13.1 MVP Audio Scope](#131-mvp-audio-scope)
 
 [13.2 Fallback: Post-Interview Q&A Flow](#132-fallback-post-interview-qa-flow)
 
-[**14. The Honest Advisor Design Philosophy**](#14-the-honest-advisor-design-philosophy)
+[14. The Honest Advisor Design Philosophy](#14-the-honest-advisor-design-philosophy)
 
-[**15. Phased Delivery Plan**](#15-phased-delivery-plan)
+[15. Phased Delivery Plan](#15-phased-delivery-plan)
 
 [Phase 1 — Core Platform](#phase-1--core-platform)
 
@@ -99,9 +99,9 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [Phase 4 — Enterprise & Ecosystem](#phase-4--enterprise--ecosystem)
 
-[**16. Open Questions & Deferred Decisions**](#16-open-questions--deferred-decisions)
+[16. Open Questions & Deferred Decisions](#16-open-questions--deferred-decisions)
 
-[**Appendix: Command Quick Reference**](#appendix-command-quick-reference)
+[Appendix: Command Quick Reference](#appendix-command-quick-reference)
 
 # **1. Overview**
 
