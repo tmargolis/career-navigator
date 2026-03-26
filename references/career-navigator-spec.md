@@ -9,97 +9,70 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 # **Table of Contents**
 
-[1. Overview](#1-overview)
+[Chapter 1. Overview](#1-overview)
+>[1.1 Design Principles](#11-design-principles)
+>[1.2 Plugin Architecture](#12-plugin-architecture)
 
-[1.1 Design Principles](#11-design-principles)
+[Chapter 2. Plugin File Structure](#2-plugin-file-structure)
 
-[1.2 Plugin Architecture](#12-plugin-architecture)
+[Chapter 3. Slash Commands](#3-slash-commands)
+>[3.1 Resume & Cover Letter Commands](#31-resume--cover-letter-commands)
+>[3.2 Job Search & Tracking Commands](#32-job-search--tracking-commands)
+>[3.3 Interview Prep Commands](#33-interview-prep-commands)
+>[3.4 Networking Commands](#34-networking-commands)
 
-[2. Plugin File Structure](#2-plugin-file-structure)
+[Chapter 4. Agents](#4-agents)
 
-[3. Slash Commands](#3-slash-commands)
+[Chapter 5. Skills](#5-skills)
 
-[3.1 Resume & Cover Letter Commands](#31-resume--cover-letter-commands)
+[Chapter 6. Scheduling & recurring runs](#6-scheduling--recurring-runs)
+>[6.1 Host hooks (`hooks/hooks.json`)](#61-host-hooks-hookshooksjson)
 
-[3.2 Job Search & Tracking Commands](#32-job-search--tracking-commands)
+[Chapter 7. Storage Connectors](#7-storage-connectors)
+>[7.1 Interface](#71-interface)
+>[7.2 Available Connectors](#72-available-connectors)
 
-[3.3 Interview Prep Commands](#33-interview-prep-commands)
+[Chapter 8. Analytics Connectors](#8-analytics-connectors)
 
-[3.4 Networking Commands](#34-networking-commands)
+[Chapter 9. External Service Integrations (.mcp.json)](#9-external-service-integrations-mcpjson)
 
-[4. Agents](#4-agents)
+[Chapter 10. Core Data Model](#10-core-data-model)
+>[10.1 ExperienceLibrary](#101-experiencelibrary)
+>[10.2 Application Record](#102-application-record)
+>[10.3 Artifact Record](#103-artifact-record)
 
-[5. Skills](#5-skills)
+[Chapter 11. The Intelligence Feedback Loop](#11-the-intelligence-feedback-loop)
 
-[6. Scheduling & recurring runs](#6-scheduling--recurring-runs)
+[Chapter 12. Daily Rhythm & Scheduling](#12-daily-rhythm--scheduling)
+>[12.1 Recommended cadences (Cowork `/schedule`)](#121-recommended-cadences-cowork-schedule)
+>[12.2 Time-sensitive vs routine surfacing](#122-time-sensitive-vs-routine-surfacing)
 
-[6.1 Host hooks (`hooks/hooks.json`)](#61-host-hooks-hookshooksjson)
+[Chapter 13. Interview Capture (Phase 2B)](#phase-2b--interview-audio-capture)
+>[13.1 MVP Audio Scope](#131-mvp-audio-scope)
+>[13.2 Fallback: Post-Interview Q&A Flow](#132-fallback-post-interview-qa-flow)
 
-[7. Storage Connectors](#7-storage-connectors)
+[Chapter 14. The Honest Advisor Design Philosophy](#14-the-honest-advisor-design-philosophy)
 
-[7.1 Interface](#71-interface)
+[Chapter 15. Phased Delivery Plan](#15-phased-delivery-plan)
+>[Phase 1 — Core Platform](#phase-1--core-platform)
+>>[Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search](#phase-1a--core-platform-plugin-scaffold-setup-session-start-and-live-job-search)
+>>[Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-analyst-agent)
+>>[Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
+>>[Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring](#phase-1d--proactive-discovery-outcome-weighted-job-scoring-and-market-trend-monitoring)
+>>[Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn writer](#phase-1e--professional-presence-networking-strategy-event-radar-and-linkedin-writer)
+>>[Phase 1F — Career planning, offer evaluation & compensation negotiation](#phase-1f--career-planning-offer-evaluation--compensation-negotiation)
 
-[7.2 Available Connectors](#72-available-connectors)
+>[Phase 2 — Integrations](#phase-2--integrations)
+>>[Phase 2A — Email & Calendar Integration](#phase-2a--email--calendar-integration)
+>>[Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
+>>[Phase 2C — Extended Integrations](#phase-2c--extended-integrations)
+>>[Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements](#phase-2d--advanced-analytics-linkedin-automation--dashboard-enhancements)
 
-[8. Analytics Connectors](#8-analytics-connectors)
+>[Phase 3 — Platform Expansion](#phase-3--platform-expansion)
 
-[9. External Service Integrations (.mcp.json)](#9-external-service-integrations-mcpjson)
+>[Phase 4 — Enterprise & Ecosystem](#phase-4--enterprise--ecosystem)
 
-[10. Core Data Model](#10-core-data-model)
-
-[10.1 ExperienceLibrary](#101-experiencelibrary)
-
-[10.2 Application Record](#102-application-record)
-
-[10.3 Artifact Record](#103-artifact-record)
-
-[11. The Intelligence Feedback Loop](#11-the-intelligence-feedback-loop)
-
-[12. Daily Rhythm & Scheduling](#12-daily-rhythm--scheduling)
-
-[12.1 Recommended cadences (Cowork `/schedule`)](#121-recommended-cadences-cowork-schedule)
-
-[12.2 Time-sensitive vs routine surfacing](#122-time-sensitive-vs-routine-surfacing)
-
-[13. Interview Capture (Phase 2B)](#phase-2b--interview-audio-capture)
-
-[13.1 MVP Audio Scope](#131-mvp-audio-scope)
-
-[13.2 Fallback: Post-Interview Q&A Flow](#132-fallback-post-interview-qa-flow)
-
-[14. The Honest Advisor Design Philosophy](#14-the-honest-advisor-design-philosophy)
-
-[15. Phased Delivery Plan](#15-phased-delivery-plan)
-
-[Phase 1 — Core Platform](#phase-1--core-platform)
-
-[Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search](#phase-1a--core-platform-plugin-scaffold-setup-session-start-and-live-job-search)
-
-[Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-analyst-agent)
-
-[Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
-
-[Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring](#phase-1d--proactive-discovery-outcome-weighted-job-scoring-and-market-trend-monitoring)
-
-[Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn writer](#phase-1e--professional-presence-networking-strategy-event-radar-and-linkedin-writer)
-
-[Phase 1F — Career planning, offer evaluation & compensation negotiation](#phase-1f--career-planning-offer-evaluation--compensation-negotiation)
-
-[Phase 2 — Integrations](#phase-2--integrations)
-
-[Phase 2A — Email & Calendar Integration](#phase-2a--email--calendar-integration)
-
-[Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
-
-[Phase 2C — Extended Integrations](#phase-2c--extended-integrations)
-
-[Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements](#phase-2d--advanced-analytics-linkedin-automation--dashboard-enhancements)
-
-[Phase 3 — Platform Expansion](#phase-3--platform-expansion)
-
-[Phase 4 — Enterprise & Ecosystem](#phase-4--enterprise--ecosystem)
-
-[16. Open Questions & Deferred Decisions](#16-open-questions--deferred-decisions)
+[Chapter 16. Open Questions & Deferred Decisions](#16-open-questions--deferred-decisions)
 
 [Appendix: Command Quick Reference](#appendix-command-quick-reference)
 
