@@ -6,6 +6,7 @@ description: >
   alongside a job description without explicitly requesting tailoring, or
   explicitly asks for a score. Also invocable via /career-navigator:resume-score.
 triggers:
+  - "/resume-score"
   - "score my resume"
   - "score this resume"
   - "how does my resume score"

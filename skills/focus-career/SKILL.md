@@ -8,6 +8,7 @@ triggers:
   - "session start job search"
   - "focus career"
   - "/career-navigator:focus-career"
+  - "/focus-career"
   - "start a new session with career navigator"
 ---
 

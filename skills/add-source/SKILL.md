@@ -12,6 +12,7 @@ triggers:
   - "ingest this document"
   - "add to my ExperienceLibrary"
   - "add a source"
+  - "/add-source"
   - "here's my resume"
   - "upload my resume"
   - "I have a new resume"
