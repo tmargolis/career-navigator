@@ -574,6 +574,14 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 
 ### **Phase 2A — Email & Calendar Integration**
 
+**Deliverable: Inbox + Calendar Context**
+
+*You’re about to reach out to a hiring manager, but you can’t remember if you already spoke with them—or what you promised on the last call. Career Navigator pulls the relevant email thread(s) and recent meeting context (with explicit permission), summarizes only what it finds, and feeds that context into outreach and follow-ups so you never accidentally repeat yourself or miss a prior commitment.*
+
+**Impact:** turns “warm outreach” from guesswork into evidence-backed communication grounded in actual history.
+
+**Scope includes:**
+
 * Gmail and Outlook OAuth connectors (read-only scoped)
 * Google Calendar and Outlook Calendar read-only access
 * Contact correspondence history search for networking context
@@ -582,6 +590,14 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 * Meeting history awareness for warm networking identification
 
 ### **Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief**
+
+**Deliverable: Full Interview Loop (Prep → Practice → Capture → Debrief)**
+
+*You have a hiring manager interview tomorrow. Career Navigator generates a morning brief (company news, interviewer context, talking points), runs an adaptive mock interview tailored to the stage and vibe, and after the interview captures what happened (audio capture if you opted in, otherwise a structured Q&A debrief). The tracker is updated automatically so your follow-ups and next-round prep are always based on what actually occurred—not what you vaguely remember a week later.*
+
+**Impact:** upgrades interviews from “one-off events” into a repeatable, measurable loop that improves with each round.
+
+**Scope includes:**
 
 * **Agents introduced:** `interview-coach` (mock interviews across all stages and vibes, adaptive difficulty, current events integration), `interview-capture` (audio transcription via Whisper, structured tracker population — opt-in only; MVP scope: user audio only)
 * Mock interview system: guided, random, and adaptive modes
@@ -599,6 +615,14 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 
 ### **Phase 2C — Extended Integrations**
 
+**Deliverable: Portability + Employer-System Awareness**
+
+*You switch laptops or you want your job search data backed up outside a single folder. Career Navigator can store artifacts in a cloud drive connector, pull read-only status updates from common ATS platforms, and incorporate additional job board sources—so your workflow stays consistent even as postings and employer systems vary.*
+
+**Impact:** makes the system durable across devices and better aligned with the reality that applications live in third-party systems.
+
+**Scope includes:**
+
 * Google Drive storage connector (OAuth)
 * OneDrive storage connector (OAuth)
 * Dropbox storage connector (OAuth)
@@ -614,6 +638,14 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 * **Open design (TBD):** deduplication vs user-edited **`{user_dir}/CareerNavigator/event-radar.md`**; geographic / paid-event coverage; rate limits and cost; fallback when a connector is off (keep web-assisted path).
 
 ### **Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements**
+
+**Deliverable: Analytics Exports + Automation Surfaces**
+
+*You want your job search to behave like an operating system: dashboards, forecasts, and repeatable automation. Phase 2D adds export paths to BI tools, evaluates LinkedIn automation options (within policy constraints), and upgrades the pipeline/network visual layer so you can see both what happened and what’s likely to happen next.*
+
+**Impact:** turns Career Navigator into an analytics-ready system that supports power-user workflows and external reporting.
+
+**Scope includes:**
 
 * Power BI streaming dataset connector
 * Qlik Engine API connector

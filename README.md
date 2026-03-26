@@ -284,15 +284,19 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 ### Phase 2 — Integrations
 
-Phase 2 connects Career Navigator to the external services that complete the full job search experience. Email and calendar history power warm networking intelligence. The complete interview layer — mock interviews, morning brief, audio capture, and debrief — ships together in Phase 2B so prep and capture are developed as a unified experience. Cloud storage connectors and ATS read-access make the platform portable and employer-system-aware. **Phase 2D** adds BI connectors, LinkedIn automation, and **dashboard/visualization** work deferred from 1E. Sub-phases are independently deployable.
+Phase 2 connects Career Navigator to the external services that complete the full job search experience. Sub-phases are independently deployable.
 
-**Phase 2A:** Gmail and Outlook connectors (read-only, OAuth). Google Calendar and Outlook Calendar integration. Contact correspondence history for warm outreach context.
+- **Phase 2A — Inbox + Calendar Context**: *before you draft outreach, Career Navigator can (with explicit permission) pull and summarize the relevant email threads and meeting history so your messages are grounded in real context—not guesswork.* **Impact:** warm outreach becomes evidence-based and consistent.
+  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), contact-context enrichment for outreach drafting.
 
-**Phase 2B:** `interview-coach` and `interview-capture` agents. Full mock interview system across all stages and vibes. Morning brief with company news and interviewer research. Post-interview debrief flow. Audio capture via Whisper with full privacy framework, consent model, and cross-jurisdiction recording guidance.
+- **Phase 2B — Full Interview Loop (Prep → Practice → Capture → Debrief)**: *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
+  - **Scope includes**: `interview-coach`, `interview-capture`, guided/random/adaptive mocks across stages/vibes, morning brief, debrief flow; Whisper transcription with opt-in + retention/consent framework (see spec §13).
 
-**Phase 2C:** Google Drive, OneDrive, and Dropbox storage connectors. IllinoisJobLink job board connector. ATS read-only connectors for Greenhouse, Workday, and Lever. **Event discovery (placeholder):** connector-backed feeds for **`event-radar`** (Meetup, Eventbrite, Luma, etc.) — spec §15 Phase 2C; not implemented yet.
+- **Phase 2C — Portability + Employer-System Awareness**: *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
+  - **Scope includes**: Google Drive/OneDrive/Dropbox storage connectors, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors; **Event discovery (placeholder)** for connector-backed `event-radar` feeds (Meetup/Eventbrite/Luma, etc.).
 
-**Phase 2D:** Power BI streaming dataset connector. Qlik Engine API connector. D3 data export. LinkedIn automation for job search and connection graph access. **Dashboard enhancements:** D3 pipeline **forecast** overlay from **`networking-strategist`** outputs; **voice cadence** metadata on the timeline; **interactive network graph** (or export) from **`network_map_v1`**.
+- **Phase 2D — Analytics Exports + Automation Surfaces**: *BI exports plus dashboard upgrades and LinkedIn automation exploration (within policy constraints).* **Impact:** analytics-ready workflows and power-user reporting.
+  - **Scope includes**: Power BI/Qlik/D3 export; LinkedIn automation assessment; pipeline forecast overlay + voice cadence + network graph UI (deferred from 1E).
 
 ### Phase 3 — Always-On Career Agent
 
