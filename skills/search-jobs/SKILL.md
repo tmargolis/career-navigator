@@ -5,6 +5,7 @@ description: >
   Returns the top 5 results with company, title, location, salary (if
   listed), and a direct apply link for each.
 triggers:
+  - "/search-jobs"
   - "search for jobs"
   - "find jobs"
   - "search jobs"

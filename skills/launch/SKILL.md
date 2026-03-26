@@ -7,6 +7,7 @@ description: >
   No Customize button required — run this command to do everything.
 triggers:
   - "/career-navigator:launch"
+  - "/launch"
   - "launch career"
   - "launch career navigator"
   - "begin my job search with career navigator"

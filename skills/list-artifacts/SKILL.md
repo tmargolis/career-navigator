@@ -16,6 +16,7 @@ triggers:
   - "show my generated documents"
   - "what's in my artifact inventory"
   - "what have I created"
+  - "/list-artifacts"
 ---
 
 Display the user's artifact inventory in a readable format.

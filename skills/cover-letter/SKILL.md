@@ -10,6 +10,7 @@ triggers:
   - "draft a cover letter"
   - "generate a cover letter"
   - "I need a cover letter"
+  - "/cover-letter"
   - "cover letter for this role"
   - "cover letter for this job"
 ---

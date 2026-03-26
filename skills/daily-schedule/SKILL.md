@@ -7,6 +7,7 @@ triggers:
   - "pipeline summary for my applications"
   - "morning job search summary"
   - "run my daily career brief"
+  - "/daily-schedule"
   - "/career-navigator:daily-schedule"
 ---
 

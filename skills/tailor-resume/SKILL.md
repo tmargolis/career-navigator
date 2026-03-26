@@ -11,6 +11,7 @@ triggers:
   - "tailor resume for"
   - "customize my resume"
   - "optimize my resume for"
+  - "/tailor-resume"
   - "I want to apply to"
   - "I'm applying to"
   - "help me apply for"

@@ -7,6 +7,7 @@ description: >
   any application event conversationally. Also invocable via
   /career-navigator:track-application.
 triggers:
+  - "/track-application"
   - "I just applied to"
   - "I applied to"
   - "I submitted an application"
