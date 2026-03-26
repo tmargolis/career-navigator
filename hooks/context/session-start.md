@@ -2,7 +2,9 @@
 
 The **Career Navigator** plugin is active in this session.
 
-**Do this now:** run the **`focus-career`** skill exactly as defined in `skills/focus-career/SKILL.md`:
+**Suggested:** if you want critical-only notifications immediately, run the **`focus-career`** skill exactly as defined in `skills/focus-career/SKILL.md`.
+
+Priority rule (important): If the user is actively running **`/career-navigator:launch`** (or the current task is clearly a launch/setup workflow), then **do not** run `focus-career` automatically; proceed with `launch`.
 
 - Resolve `{user_dir}` (the user’s job search folder — often the workspace or folder they attached in Cowork).
 - If `CareerNavigator/` data is missing, deliver first-run onboarding from that skill.
