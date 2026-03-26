@@ -24,6 +24,8 @@ The core differentiator: every application outcome feeds back into the system. O
 3. Add the directory where your resumes, cover letters, applications, etc. are stored
 4. In a new chat with Career Navigator active, run **`/career-navigator:launch`** to start your job search workspace (configuration wizard)
 
+> **Note (Claude Code vs Desktop Cowork):** Career Navigator is designed for **Claude Desktop Cowork** usage. We also maintain a **Claude Code terminal compatibility test surface** so marketplace install/load can be validated in CLI. If you see command-bridge entries in Claude Code, that is expected for testing and does not change the intended Desktop Cowork experience.
+
 ---
 
 ## Plugin Marketplace
