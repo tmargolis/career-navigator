@@ -9,99 +9,73 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 # **Table of Contents**
 
-[**1. Overview**](#1-overview)
+[Chapter 1. Overview](#1-overview)
+>[1.1 Design Principles](#11-design-principles)
+>[1.2 Plugin Architecture](#12-plugin-architecture)
 
-[1.1 Design Principles](#11-design-principles)
+[Chapter 2. Plugin File Structure](#2-plugin-file-structure)
 
-[1.2 Plugin Architecture](#12-plugin-architecture)
+[Chapter 3. Slash Commands](#3-slash-commands)
+>[3.1 Resume & Cover Letter Commands](#31-resume--cover-letter-commands)
+>[3.2 Job Search & Tracking Commands](#32-job-search--tracking-commands)
+>[3.3 Interview Prep Commands](#33-interview-prep-commands)
+>[3.4 Networking Commands](#34-networking-commands)
 
-[**2. Plugin File Structure**](#2-plugin-file-structure)
+[Chapter 4. Agents](#4-agents)
 
-[**3. Slash Commands**](#3-slash-commands)
+[Chapter 5. Skills](#5-skills)
 
-[3.1 Resume & Cover Letter Commands](#31-resume--cover-letter-commands)
+[Chapter 6. Scheduling & recurring runs](#6-scheduling--recurring-runs)
+>[6.1 Host hooks (`hooks/hooks.json`)](#61-host-hooks-hookshooksjson)
 
-[3.2 Job Search & Tracking Commands](#32-job-search--tracking-commands)
+[Chapter 7. Storage Connectors](#7-storage-connectors)
+>[7.1 Interface](#71-interface)
+>[7.2 Available Connectors](#72-available-connectors)
 
-[3.3 Interview Prep Commands](#33-interview-prep-commands)
+[Chapter 8. Analytics Connectors](#8-analytics-connectors)
 
-[3.4 Networking Commands](#34-networking-commands)
+[Chapter 9. External Service Integrations (.mcp.json)](#9-external-service-integrations-mcpjson)
 
-[**4. Agents**](#4-agents)
+[Chapter 10. Core Data Model](#10-core-data-model)
+>[10.1 ExperienceLibrary](#101-experiencelibrary)
+>[10.2 Application Record](#102-application-record)
+>[10.3 Artifact Record](#103-artifact-record)
 
-[**5. Skills**](#5-skills)
+[Chapter 11. The Intelligence Feedback Loop](#11-the-intelligence-feedback-loop)
 
-[**6. Scheduling & recurring runs**](#6-scheduling--recurring-runs)
+[Chapter 12. Daily Rhythm & Scheduling](#12-daily-rhythm--scheduling)
+>[12.1 Recommended cadences (Cowork `/schedule`)](#121-recommended-cadences-cowork-schedule)
+>[12.2 Time-sensitive vs routine surfacing](#122-time-sensitive-vs-routine-surfacing)
 
-[6.1 Host hooks (`hooks/hooks.json`)](#61-host-hooks-hookshooksjson)
+[Chapter 13. Interview Capture (Phase 2B)](#phase-2b--interview-audio-capture)
+>[13.1 MVP Audio Scope](#131-mvp-audio-scope)
+>[13.2 Fallback: Post-Interview Q&A Flow](#132-fallback-post-interview-qa-flow)
 
-[**7. Storage Connectors**](#7-storage-connectors)
+[Chapter 14. The Honest Advisor Design Philosophy](#14-the-honest-advisor-design-philosophy)
 
-[7.1 Interface](#71-interface)
+[Chapter 15. Phased Delivery Plan](#15-phased-delivery-plan)
+- [Phase 1 — Core Platform](#phase-1--core-platform)
+  - [Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search](#phase-1a--core-platform-plugin-scaffold-setup-session-start-and-live-job-search)
+  - [Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-analyst-agent)
+  - [Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
+  - [Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring](#phase-1d--proactive-discovery-outcome-weighted-job-scoring-and-market-trend-monitoring)
+  - [Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn writer](#phase-1e--professional-presence-networking-strategy-event-radar-and-linkedin-writer)
+  - [Phase 1F — Career planning, offer evaluation & compensation negotiation](#phase-1f--career-planning-offer-evaluation--compensation-negotiation)
+  - [Phase 1G — Marketplace publication](#phase-1g--marketplace-publication)
 
-[7.2 Available Connectors](#72-available-connectors)
+- [Phase 2 — Integrations](#phase-2--integrations)
+  - [Phase 2A — Email & Calendar Integration](#phase-2a--email--calendar-integration)
+  - [Phase 2B — Interview intelligence](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
+  - [Phase 2C — Extended Integrations](#phase-2c--extended-integrations)
+  - [Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements](#phase-2d--advanced-analytics-linkedin-automation--dashboard-enhancements)
 
-[**8. Analytics Connectors**](#8-analytics-connectors)
+- [Phase 3 — Always-On Career Agent](#phase-3--always-on-career-agent)
 
-[**9. External Service Integrations (.mcp.json)**](#9-external-service-integrations-mcpjson)
+- [Phase 4 — Enterprise & Ecosystem](#phase-4--enterprise--ecosystem)
 
-[**10. Core Data Model**](#10-core-data-model)
+[Chapter 16. Open Questions & Deferred Decisions](#16-open-questions--deferred-decisions)
 
-[10.1 ExperienceLibrary](#101-experiencelibrary)
-
-[10.2 Application Record](#102-application-record)
-
-[10.3 Artifact Record](#103-artifact-record)
-
-[**11. The Intelligence Feedback Loop**](#11-the-intelligence-feedback-loop)
-
-[**12. Daily Rhythm & Scheduling**](#12-daily-rhythm--scheduling)
-
-[12.1 Recommended cadences (Cowork `/schedule`)](#121-recommended-cadences-cowork-schedule)
-
-[12.2 Time-sensitive vs routine surfacing](#122-time-sensitive-vs-routine-surfacing)
-
-[**13. Interview Capture (Phase 2B)**](#phase-2b--interview-audio-capture)
-
-[13.1 MVP Audio Scope](#131-mvp-audio-scope)
-
-[13.2 Fallback: Post-Interview Q&A Flow](#132-fallback-post-interview-qa-flow)
-
-[**14. The Honest Advisor Design Philosophy**](#14-the-honest-advisor-design-philosophy)
-
-[**15. Phased Delivery Plan**](#15-phased-delivery-plan)
-
-[Phase 1 — Core Platform](#phase-1--core-platform)
-
-[Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search](#phase-1a--core-platform-plugin-scaffold-setup-session-start-and-live-job-search)
-
-[Phase 1B — Skill layer and intelligence: workflow skills, application tracker, ATS scoring, and analyst agent](#phase-1b--skill-layer-and-intelligence-workflow-skills-application-tracker-ats-scoring-and-analyst-agent)
-
-[Phase 1C — Advisor layer: honest role assessment, skills gap analysis, and training ROI](#phase-1c--advisor-layer-honest-role-assessment-skills-gap-analysis-and-training-roi)
-
-[Phase 1D — Proactive discovery: outcome-weighted job scoring and market trend monitoring](#phase-1d--proactive-discovery-outcome-weighted-job-scoring-and-market-trend-monitoring)
-
-[Phase 1E — Professional presence: networking strategy, event radar, and LinkedIn writer](#phase-1e--professional-presence-networking-strategy-event-radar-and-linkedin-writer)
-
-[Phase 1F — Career planning, offer evaluation & compensation negotiation](#phase-1f--career-planning-offer-evaluation--compensation-negotiation)
-
-[Phase 2 — Integrations](#phase-2--integrations)
-
-[Phase 2A — Email & Calendar Integration](#phase-2a--email--calendar-integration)
-
-[Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
-
-[Phase 2C — Extended Integrations](#phase-2c--extended-integrations)
-
-[Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements](#phase-2d--advanced-analytics-linkedin-automation--dashboard-enhancements)
-
-[Phase 3 — Platform Expansion](#phase-3--platform-expansion)
-
-[Phase 4 — Enterprise & Ecosystem](#phase-4--enterprise--ecosystem)
-
-[**16. Open Questions & Deferred Decisions**](#16-open-questions--deferred-decisions)
-
-[**Appendix: Command Quick Reference**](#appendix-command-quick-reference)
+[Appendix: Command Quick Reference](#appendix-command-quick-reference)
 
 # **1. Overview**
 
@@ -214,6 +188,8 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 # **4. Agents**
 
 Agents are specialized Claude instances with focused roles. They can be invoked directly or orchestrated by commands. Multiple agents may collaborate on complex tasks.
+
+**Model selection (cost vs reasoning):** By default, the system assumes a fast, cost-efficient reasoning model (e.g., Sonnet-class) for routine workflows and scheduled runs. For complex tasks (multi-step strategy, ambiguous trade-offs, heavy synthesis, or high-stakes messaging), a stronger reasoning model (e.g., Opus-class) can be enabled. Users should have a clear way to control this (global default + per-run override) so they can manage costs intentionally while still “spending” higher reasoning when it matters.
 
 | Name | Phase | Description |
 | --- | --- | --- |
@@ -500,7 +476,8 @@ Phase status:
 * Phase 1C: Completed
 * Phase 1D: Completed
 * Phase 1E: Completed
-* Phase 1F: In progress
+* Phase 1F: Completed
+* Phase 1G: In progress
 
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
@@ -575,17 +552,35 @@ Status: Completed
 
 ### **Phase 1F — Career planning, offer evaluation & compensation negotiation**
 
-Status: In progress
+Status: Completed
 
 Phase 1F adds “decision-grade” career planning and offer evaluation / negotiation capabilities into Phase 1 by extending `honest-advisor` + `market-researcher`. It introduces skills and slash commands for realistic trajectory planning, scenario-aware offer evaluation, and negotiation handoffs, and wires `job-scout` / `daily-schedule` to consume the new artifacts on a monthly cadence.
 
 More detail: [Phase 1F detailed spec](phase-1f-spec.md).
 
+### **Phase 1G — Marketplace publication**
+
+Status: In progress
+
+**Deliverable: Claude Plugin Marketplace Publication**
+
+A laid-off tech worker in Austin finds Career Navigator in a plugin marketplace, installs it in ten minutes, and has a functioning job search agent running by the end of the day — without needing to understand MCP, local tool configuration, or how agent runtimes work.
+
+**Impact:** transforms Career Navigator from a personal tool into a publicly available product with real user validation (downloads and activation become measurable proof of demand).
+
 ## **Phase 2 — Integrations**
 
-Phase 2 extends Career Navigator beyond the local filesystem by connecting it to the external services that complete the full job search experience. Phase 2A unlocks the email and calendar history that powers warm networking intelligence — surfacing prior contact relationships before outreach is drafted. Phase 2B brings the complete interview layer: a full mock interview system with audio capture and automated debrief logging, combined into a single release to avoid shipping the prep experience without the capture infrastructure. Phase 2C adds cloud storage connectors and ATS read-access, making the platform portable and enabling users to track applications submitted through employer systems. **Event discovery** (connector-backed feeds for **`event-radar`**) is scoped here as a **placeholder**—see **Phase 2C — Event discovery** below. Phase 2D closes the analytics loop with BI connectors, LinkedIn automation, and **dashboard/visualization upgrades** (pipeline forecast, voice cadence, network graph) deferred from Phase 1E. Each sub-phase is independently deployable — users can adopt what's relevant to their workflow without requiring all of Phase 2 to be complete.
+Phase 2 connects Career Navigator to the external services that complete the full job search experience: inbox + calendar context, interview capture, portable storage, and analytics/export surfaces. Each sub-phase is independently deployable.
 
 ### **Phase 2A — Email & Calendar Integration**
+
+**Deliverable: Inbox + Calendar Context**
+
+*You’re about to reach out to a hiring manager, but you can’t remember if you already spoke with them—or what you promised on the last call. Career Navigator pulls the relevant email thread(s) and recent meeting context (with explicit permission), summarizes only what it finds, and feeds that context into outreach and follow-ups so you never accidentally repeat yourself or miss a prior commitment.*
+
+**Impact:** turns “warm outreach” from guesswork into evidence-backed communication grounded in actual history.
+
+**Scope includes:**
 
 * Gmail and Outlook OAuth connectors (read-only scoped)
 * Google Calendar and Outlook Calendar read-only access
@@ -594,7 +589,15 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 * Outreach drafting enriched with prior communication history
 * Meeting history awareness for warm networking identification
 
-### **Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief**
+### **Phase 2B — Interview intelligence**
+
+**Deliverable: Full Interview Loop (Prep → Practice → Capture → Debrief)**
+
+*You have a hiring manager interview tomorrow. Career Navigator generates a morning brief (company news, interviewer context, talking points), runs an adaptive mock interview tailored to the stage and vibe, and after the interview captures what happened (audio capture if you opted in, otherwise a structured Q&A debrief). The tracker is updated automatically so your follow-ups and next-round prep are always based on what actually occurred—not what you vaguely remember a week later.*
+
+**Impact:** upgrades interviews from “one-off events” into a repeatable, measurable loop that improves with each round.
+
+**Scope includes:**
 
 * **Agents introduced:** `interview-coach` (mock interviews across all stages and vibes, adaptive difficulty, current events integration), `interview-capture` (audio transcription via Whisper, structured tracker population — opt-in only; MVP scope: user audio only)
 * Mock interview system: guided, random, and adaptive modes
@@ -612,6 +615,14 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 
 ### **Phase 2C — Extended Integrations**
 
+**Deliverable: Portability + Employer-System Awareness**
+
+*You switch laptops or you want your job search data backed up outside a single folder. Career Navigator can store artifacts in a cloud drive connector, pull read-only status updates from common ATS platforms, and incorporate additional job board sources—so your workflow stays consistent even as postings and employer systems vary.*
+
+**Impact:** makes the system durable across devices and better aligned with the reality that applications live in third-party systems.
+
+**Scope includes:**
+
 * Google Drive storage connector (OAuth)
 * OneDrive storage connector (OAuth)
 * Dropbox storage connector (OAuth)
@@ -628,6 +639,14 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 
 ### **Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements**
 
+**Deliverable: Analytics Exports + Automation Surfaces**
+
+*You want your job search to behave like an operating system: dashboards, forecasts, and repeatable automation. Phase 2D adds export paths to BI tools, evaluates LinkedIn automation options (within policy constraints), and upgrades the pipeline/network visual layer so you can see both what happened and what’s likely to happen next.*
+
+**Impact:** turns Career Navigator into an analytics-ready system that supports power-user workflows and external reporting.
+
+**Scope includes:**
+
 * Power BI streaming dataset connector
 * Qlik Engine API connector
 * D3 data export connector for custom visualization
@@ -639,22 +658,91 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 * **Pipeline timeline — voice cadence:** surface **`voice_profile_v1`** / **`voice-profile.md`** metadata (e.g. last harvest, sample dates, tone summaries) on or beside the timeline so users see how **public-facing cadence** tracks with applications and networking.
 * **Network map graph UI:** interactive graph (or export path) consuming persisted **`network_map_v1`**—beyond narrative + JSON in chat / `network-map.md`.
 
-## **Phase 3 — Platform Expansion**
+## **Phase 3 — Always-On Career Agent**
 
-* Hosted API proxy with per-user key management and usage tracking — enables monetization and removes the need for each user to obtain their own JobSearch key
-* Multi-user and team mode for staffing agencies and career coaches
-* Plugin marketplace publication
-* Mobile companion app for on-the-go tracker updates and notifications
-* **Salary negotiation and offer evaluation module** — full scope to be specified in Phase 3 planning
-* Skills gap training integrations with Coursera and LinkedIn Learning
+Phase 3 evolves Career Navigator from “a powerful assistant you sit down with” into an always-on, context-maintaining career operating layer that runs on a cadence and meets you in the channels you already use.
+
+This phase is explicitly shaped by industry trends kicked off by **OpenClaw** — persistent threads, asynchronous task orchestration (“dispatch”), and event-driven channels — and by the broader “clawification” race across AI products. While the current product is packaged as a plugin for Claude Cowork, the Phase 3 intent is **host-agnostic**: design for any runtime that can support scheduled runs, connector access, and mobile/remote interaction.
+
+**Deliverable: Morning Digest**
+
+*When you wake up, glance at your phone, and see that a recruiter at Stripe responded to your application overnight. The digest has already summarized their email, noted you have a Salesforce follow-up going stale at 6 days with no response, and surfaced that Anthropic posted a new role matching your profile. You walk into your day knowing exactly what to do — before you've opened a laptop.*
+
+**Impact:** eliminates the daily manual check across email, job boards, and your tracker.
+
+**Deliverable: Weekly Market Brief**
+
+*Every Monday morning a report lands telling you that "Head of AI Product" postings in Chicago jumped 23% this week, that two of your target companies announced hiring freezes, and that there's a relevant conference in two weeks with an open call for speakers. You adjust your outreach priorities accordingly instead of operating on stale assumptions.*
+
+**Impact:** replaces ad-hoc research with a consistent intelligence cadence tied directly to your target list.
+
+**Deliverable: Follow-up Alert**
+
+*Six days after your final-round interview with a company, you haven't heard back. The system detects this, flags it as overdue against standard response benchmarks, and delivers a pre-drafted follow-up to your phone — ready to review and send. You make one edit and fire it off from the train.*
+
+**Impact:** nothing falls through the cracks; the system manages the pipeline clock so you don't have to.
+
+**Deliverable: Weekly Insight Report**
+
+*Every Friday afternoon the system delivers a plain-language read of your week: 4 applications sent, 2 responses, 1 interview booked. It notes that every positive response this month came from roles where you led with AI research experience, and that roles framed around "data science leadership" are generating silence. It recommends one specific positioning adjustment for next week.*
+
+**Impact:** turns a job search from a feelings-based experience into a data-informed one.
+
+**Deliverable: Dispatch Mobile Layer**
+
+*You're at lunch and remember your Anthropic interview is tomorrow. You send a message from your phone: "Prep me for my Anthropic interview tomorrow." By the time you're back at your desk, a full brief is waiting — company news, predicted questions, talking points, a note on something the hiring manager posted on LinkedIn last week.*
+
+**Impact:** the full power of the desktop agent is available from anywhere, without opening a computer.
+
+**Deliverable: Channels (Telegram, Slack)**
+
+*You finish a difficult interview and immediately message your Telegram bot: "Just wrapped my Google interview, it went pretty well but they asked about distributed systems and I fumbled." The system walks you through a structured debrief, captures the details, updates your tracker, and flags a prep gap to address before the next round — all from your phone, while the interview is still fresh.*
+
+**Impact:** replaces the "I'll log this later" promise that never happens with an ambient capture flow that meets you where you are.
+
+**Deliverable: Computer Use (Universal Connector Fallback)**
+
+*You want to do high-leverage actions in tools that don’t have a reliable API/connector — like updating your LinkedIn profile, messaging a recruiter, saving jobs, or checking application status in a proprietary portal. Instead of blocking on a dedicated MCP, the system can (with explicit permission) use “computer use” to operate the real UI: open the browser, navigate, extract the relevant page state, draft a message, and stage the action for your review. You get connector-level outcomes even when the ecosystem doesn’t offer connector-level access.*
+
+**Impact:** removes “no connector” as a hard limitation, enabling end-to-end workflows (especially networking and LinkedIn-adjacent actions) while keeping approvals and guardrails explicit.
+
+**Deliverable: Projects (Artifact & Workspace Organization)**
+
+*You have dozens of roles in motion and hundreds of generated assets: tailored resumes, cover letters, follow-ups, interview briefs, dashboards, and market reports. Projects becomes the organizing layer that groups human-created and machine-generated artifacts by company/role (and links them back to tracker stages), so you can instantly answer “what’s the current resume for this role?” or “what did I send last time?” without hunting across folders or chat history.*
+
+**Impact:** reduces artifact sprawl and makes multi-agent work legible—users can review, approve, and reuse outputs across sessions with clear provenance.
 
 ## **Phase 4 — Enterprise & Ecosystem**
 
-* White-label version for career coaching practices and staffing agencies
-* API for third-party integrations
-* Anonymized aggregate outcome data for benchmarking improvements
-* Government employment program integrations and American Job Center partnerships
-* Veteran and disability-specific pathway modules
+**Deliverable: White-Label for Career Coaches**
+
+*A career coach who charges $500/month for one-on-one job search support licenses Career Navigator under their own brand and serves 40 clients simultaneously instead of 8. Their clients get daily briefings, pipeline tracking, and market intelligence. The coach focuses their time on the high-touch conversations that require human judgment.*
+
+**Impact:** multiplies the coach's capacity by 5x while raising the baseline quality of service every client receives.
+
+**Deliverable: Anonymized Benchmark Data**
+
+*After thousands of users run searches through Career Navigator, the system knows that AI research roles in Chicago have an average response window of 11 days at the phone screen stage, and that applications submitted Tuesday through Thursday outperform Monday and Friday sends by a statistically significant margin. Every user's follow-up timing and strategy improves because the system is calibrated against real aggregate outcomes rather than generic advice.*
+
+**Impact:** the advice gets smarter with scale — individual users benefit from patterns they could never see on their own.
+
+**Deliverable: Government / American Job Center Integration**
+
+*A workforce development counselor at a Chicago AJC uses Career Navigator to support 60 displaced workers at once. Each client receives a personalized daily brief and automated follow-up reminders. The counselor reviews exception cases — the ones needing human intervention — rather than manually tracking every application across every client.*
+
+**Impact:** scales high-quality job search support to populations who currently receive generic, under-resourced assistance.
+
+**Deliverable: Veteran & Disability Pathway Modules**
+
+*A veteran leaving the Army after 12 years has a strong record but no civilian job title vocabulary. Career Navigator's veteran module translates their service roles into civilian equivalents, maps their clearance to eligible roles, and generates resume language that hiring managers recognize — without requiring them to figure out the translation themselves.*
+
+**Impact:** removes a structural disadvantage that causes qualified candidates to be overlooked for entirely preventable reasons.
+
+**Deliverable: Early-Career / College Pathway**
+
+*A college junior starts internship recruiting with no real system: a half-finished resume, scattered job links, and missed deadlines. Career Navigator turns their semester into an operating cadence — it builds a clean baseline resume from coursework, projects, and part-time work; generates role-specific variants for internships; tracks applications and recruiting stages; surfaces career fair and on-campus recruiting dates; drafts outreach to alumni and recruiters; and flags when follow-ups are overdue. By finals week, the student knows exactly what to do next without guessing.*
+
+**Impact:** compresses the learning curve of early-career recruiting into repeatable workflows so students don’t miss deadlines, waste cycles on low-fit applications, or lose opportunities due to inconsistent follow-up.
 
 # **16. Open Questions & Deferred Decisions**
 
