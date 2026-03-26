@@ -28,7 +28,7 @@ The core differentiator: every application outcome feeds back into the system. O
 
 ## Plugin Marketplace
 
-Career Navigator will be submitted to the official Claude plugin marketplace at [claude.com/plugins](https://claude.com/plugins) at the end of Phase 1. Once listed, installation will be a single click from the Browse plugins directory — no download required.
+Career Navigator will be submitted to a plugin marketplace in **Phase 1G — Marketplace publication**. Once listed, installation will be a single click from the Browse plugins directory — no download required.
 
 ---
 
@@ -265,7 +265,8 @@ Never paste your token into this repository or into chat logs you do not trust. 
 - Phase 1C: Completed
 - Phase 1D: Completed
 - Phase 1E: Completed
-- Phase 1F: In progress
+- Phase 1F: Completed
+- Phase 1G: In progress
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
@@ -277,7 +278,9 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 **Phase 1E ([Release v1.5](https://github.com/tmargolis/career-navigator/releases/tag/v1.5)):** **`networking-strategist`** (strategy, maps, events; messaging handoffs only) and **`writer`** (outreach, cover letters, follow-ups, optional resume Summary polish, LinkedIn topics + **saved post drafts** on disk, **`evaluate-post`**; **`voice-profile.md`** via launch + samples).
 
-**Phase 1F (in progress):** `honest-advisor` + `market-researcher` add career planning and decision-grade offer evaluation + negotiation workflows (trajectory planning, scenario-aware evaluation, negotiation handoffs), with `job-scout` + `daily-schedule` consuming the new artifacts on a monthly cadence.
+**Phase 1F ([Release v1.5 alpha 2](https://github.com/tmargolis/career-navigator/releases/tag/v1.5.0-alpha.2)):** `honest-advisor` + `market-researcher` add career planning and decision-grade offer evaluation + negotiation workflows (trajectory planning, scenario-aware evaluation, negotiation handoffs), with `job-scout` + `daily-schedule` consuming the new artifacts on a monthly cadence.
+
+**Phase 1G (in progress):** **Plugin marketplace publication.** Career Navigator becomes installable for non-technical users without requiring them to understand MCP, local tool configuration, or agent runtimes. **Impact:** transforms Career Navigator from a personal tool into a publicly available product with real user validation.
 
 ### Phase 2 — Integrations
 
@@ -291,13 +294,26 @@ Phase 2 connects Career Navigator to the external services that complete the ful
 
 **Phase 2D:** Power BI streaming dataset connector. Qlik Engine API connector. D3 data export. LinkedIn automation for job search and connection graph access. **Dashboard enhancements:** D3 pipeline **forecast** overlay from **`networking-strategist`** outputs; **voice cadence** metadata on the timeline; **interactive network graph** (or export) from **`network_map_v1`**.
 
-### Phase 3 — Platform Expansion
+### Phase 3 — Always-On Career Agent
 
-Hosted API proxy with per-user key management and usage tracking (removes the need for each user to obtain their own JobSearch key; enables monetization). Multi-user and team mode for staffing agencies and career coaches. Plugin marketplace publication. Mobile companion app for on-the-go tracker updates. Salary negotiation and offer evaluation module. Skills gap training integrations with Coursera and LinkedIn Learning.
+Phase 3 evolves Career Navigator from “a powerful assistant you sit down with” into an always-on, context-maintaining career operating layer that runs on a cadence and meets you in the channels you already use. This direction reflects industry trends kicked off by **OpenClaw** (persistent threads, async dispatch, event-driven channels) while remaining host-agnostic (Anthropic/Claude and NemoClaw are examples, not dependencies).
+
+- **Morning Digest**: *overnight recruiter replies summarized, stale follow-ups flagged, new matching roles surfaced before you open a laptop.* **Impact:** eliminates daily manual checks across email, job boards, and your tracker.
+- **Weekly Market Brief**: *Monday report on role demand shifts, target-company hiring signals, and events/CFPs tied to your targets.* **Impact:** replaces ad-hoc research with a consistent intelligence cadence.
+- **Follow-up Alert**: *overdue response detected against benchmarks with a pre-drafted follow-up ready to review and send from mobile.* **Impact:** nothing falls through the cracks; the system manages the pipeline clock.
+- **Weekly Insight Report**: *Friday plain-language funnel summary plus one specific positioning adjustment based on what’s converting.* **Impact:** turns a job search from feelings-based to data-informed.
+- **Dispatch Mobile Layer**: *one message from your phone (“Prep me for my interview tomorrow”) yields a full brief waiting on desktop.* **Impact:** desktop-grade capability from anywhere.
+- **Channels (Telegram, Slack)**: *immediate interview debrief and tracker updates from chat, plus flagged prep gaps for next round.* **Impact:** ambient capture replaces “I’ll log this later.”
+- **Computer Use (Universal Connector Fallback)**: *when a first-class connector doesn’t exist (or is too restricted) — e.g. LinkedIn workflows — the agent can use UI automation (with explicit approval) to navigate, extract state, draft messages, and stage actions for review.* **Impact:** removes “no connector” as a hard blocker for end-to-end workflows.
+- **Projects (Artifact & Workspace Organization)**: *human-created and machine-generated artifacts are grouped by company/role and linked to tracker stages, so it’s always obvious what you sent, what changed, and what to reuse—without hunting across folders or chat history.* **Impact:** reduces artifact sprawl and makes multi-agent work legible across sessions.
 
 ### Phase 4 — Enterprise & Ecosystem
 
-White-label version for career coaching practices and staffing agencies. API for third-party integrations. Anonymized aggregate benchmarking data. Government employment program integrations and American Job Center partnerships. Veteran and disability-specific pathway modules.
+- **White-Label for Career Coaches**: *coaches serve 40 clients instead of 8 with daily briefings, pipeline tracking, and market intelligence under their brand.* **Impact:** 5x capacity with higher baseline service quality.
+- **Anonymized Benchmark Data**: *aggregate patterns (response windows by stage/role/geo, best days to apply) improve every user’s timing and strategy.* **Impact:** advice gets smarter with scale.
+- **Government / American Job Center Integration**: *counselors support large caseloads with automated briefs and follow-up reminders, focusing human time on exceptions.* **Impact:** scales high-quality support to under-resourced populations.
+- **Veteran & Disability Pathway Modules**: *translate service roles and constraints into civilian equivalents, map clearance/eligibility, generate hiring-manager-recognizable language.* **Impact:** removes structural translation disadvantages.
+- **Early-Career / College Pathway**: *students get a semester-long operating cadence: baseline resume from coursework/projects, internship-specific variants, application tracking, career fair/on-campus recruiting date surfacing, alumni/recruiter outreach drafts, and overdue follow-up alerts.* **Impact:** compresses the early-career recruiting learning curve into repeatable workflows so students don’t miss deadlines or lose opportunities due to inconsistent follow-up.
 
 ---
 
