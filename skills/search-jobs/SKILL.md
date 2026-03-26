@@ -33,7 +33,14 @@ Search Indeed for job listings that match the user's profile using the Indeed co
 
 Read `{user_dir}/CareerNavigator/profile.md` and extract:
 - **Role/query** — use the first 1–2 entries from `## Target Roles` as the search query
-- **Location** — use the value from `## Location`; if the user is open to remote, run a second search with `location: "remote"`
+- **Location preferences** — parse `## Location` into:
+  - primary mode preference (for example: remote-first)
+  - acceptable work modes (remote, hybrid, on-site)
+  - geography constraints (cities/states user is open to, plus avoid/deprioritize geographies if stated)
+  - relocation/travel willingness
+
+If the profile only implies "remote-first" and does not clearly define secondary flexibility, ask one brief clarification before searching:
+> "I can keep remote as priority and include selective hybrid/relocation options. Which locations should I include as secondary targets (for example NYC, SF), and are any locations off-limits?"
 
 If the user provided explicit search terms in their request (e.g., "find AI PM jobs in New York"), use those instead of — or in addition to — the profile values. Always prefer the user's explicit intent.
 
@@ -54,13 +61,20 @@ When presenting results, include a one-line trajectory note after the scoring he
 
 ### 2. Search Indeed
 
-Call `search_jobs` with the extracted parameters:
+Build a small search plan from the location preferences, then call `search_jobs`.
+
+Create up to 3 lanes (max), in this order:
+1. **Primary lane** — top preference (often `remote`)
+2. **Secondary lane** — best-fit hybrid/relocation geography (for example NYC)
+3. **Tertiary lane** — optional additional geography (for example SF) only if user is open
+
+Call `search_jobs` for each lane with the extracted parameters:
 - `search` — the role or keyword string (e.g., `"Director of AI Product"`)
-- `location` — city and state (e.g., `"Chicago, IL"`) or `"remote"`
+- `location` — city/state (e.g., `"New York, NY"`) or `"remote"`
 - `country_code` — `"US"` unless the user's location indicates otherwise
 - `job_type` — omit unless the user specifies (fulltime, parttime, contract, etc.)
 
-If the user's profile shows openness to multiple locations (e.g., Chicago + SF + NYC + remote), run up to two searches in parallel — one for the primary location and one for `"remote"` — and merge the results.
+Run lanes in parallel, then merge and deduplicate by job ID/link.
 
 ### 3. Get job details
 
@@ -85,6 +99,11 @@ When invoking `job-scout`, explicitly pass:
 If `career-trajectory.md` exists but cannot be parsed, continue scoring and label trajectory alignment as unavailable rather than dropping `job-scout`.
 
 Use job-scout's ranked order for the final presentation. If job-scout returns a tie (within 5 points), preserve the original Indeed relevance order within the tied group.
+
+Before finalizing top results, apply a light location-balance check:
+- Keep the highest-ranked jobs overall, but avoid returning a remote-only set when secondary lanes produced strong matches.
+- Target mix for top 5 when available: at least 1 result from non-primary lanes if score is within 8 points of the 5th-ranked job.
+- Never include locations the user marked off-limits.
 
 ### 5. Present results
 
@@ -113,6 +132,9 @@ Score: {composite}/100 · {ExperienceLibrary fit %}% ExperienceLibrary fit · Re
 
 After all listings, add:
 > Listings sourced from Indeed on {today's date}. Run `/career-navigator:track-application` to log any you apply to.
+
+Then add:
+> Search mix: {remote_count} remote, {hybrid_count} hybrid, {onsite_count} on-site. Prioritized for: {primary preference}; secondary geographies included: {list or "none"}.
 
 If any listing is `critical` or `high`, append:
 > Priority recommendations: {critical_count} critical, {high_count} high. Start with the top recommendation first.
