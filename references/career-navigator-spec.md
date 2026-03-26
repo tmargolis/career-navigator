@@ -65,7 +65,7 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 - [Phase 2 — Integrations](#phase-2--integrations)
   - [Phase 2A — Email & Calendar Integration](#phase-2a--email--calendar-integration)
-  - [Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
+  - [Phase 2B — Interview intelligence](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
   - [Phase 2C — Extended Integrations](#phase-2c--extended-integrations)
   - [Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements](#phase-2d--advanced-analytics-linkedin-automation--dashboard-enhancements)
 
@@ -570,7 +570,7 @@ A laid-off tech worker in Austin finds Career Navigator in a plugin marketplace,
 
 ## **Phase 2 — Integrations**
 
-Phase 2 extends Career Navigator beyond the local filesystem by connecting it to the external services that complete the full job search experience. Phase 2A unlocks the email and calendar history that powers warm networking intelligence — surfacing prior contact relationships before outreach is drafted. Phase 2B brings the complete interview layer: a full mock interview system with audio capture and automated debrief logging, combined into a single release to avoid shipping the prep experience without the capture infrastructure. Phase 2C adds cloud storage connectors and ATS read-access, making the platform portable and enabling users to track applications submitted through employer systems. **Event discovery** (connector-backed feeds for **`event-radar`**) is scoped here as a **placeholder**—see **Phase 2C — Event discovery** below. Phase 2D closes the analytics loop with BI connectors, LinkedIn automation, and **dashboard/visualization upgrades** (pipeline forecast, voice cadence, network graph) deferred from Phase 1E. Each sub-phase is independently deployable — users can adopt what's relevant to their workflow without requiring all of Phase 2 to be complete.
+Phase 2 connects Career Navigator to the external services that complete the full job search experience: inbox + calendar context, interview capture, portable storage, and analytics/export surfaces. Each sub-phase is independently deployable.
 
 ### **Phase 2A — Email & Calendar Integration**
 
@@ -589,7 +589,7 @@ Phase 2 extends Career Navigator beyond the local filesystem by connecting it to
 * Outreach drafting enriched with prior communication history
 * Meeting history awareness for warm networking identification
 
-### **Phase 2B — Interview intelligence: mock interview system, morning brief, audio capture, and post-interview debrief**
+### **Phase 2B — Interview intelligence**
 
 **Deliverable: Full Interview Loop (Prep → Practice → Capture → Debrief)**
 
