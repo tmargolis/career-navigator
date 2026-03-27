@@ -241,7 +241,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 **Cowork host hooks:** `hooks/hooks.json` uses Claude Cowork’s native hook events (per cowork-plugin-management). This repo wires **`SessionStart`** to inject `hooks/context/session-start.md` so the **`focus-career`** skill runs at session open.
 
-**Important (current behavior):** In some new Cowork tasks/sessions, SessionStart hook auto-execution may not trigger consistently. If you do not see critical-only output at session start, run **`/career-navigator:focus-career`** manually as the first command in that task.
+**Important (current behavior):** The `SessionStart` hook is currently **disabled** while reliability issues are investigated. Run **`/career-navigator:focus-career`** manually at the start of each session to get your critical-only briefing.
 
 **recurring** digests are **user-configured in Cowork** (e.g. **`/schedule`** for `daily-schedule`). After the first successful scheduled run, Cowork refines the prompt from what it learned (paths, connectors, context).
 
