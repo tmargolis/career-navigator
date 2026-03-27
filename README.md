@@ -278,7 +278,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 **Phase 1D ([Release v1.4](https://github.com/tmargolis/career-navigator/releases/tag/v1.4)):** Expanded `job-scout` outcome weighting and alert quality calibration using growing outcome data. Non-obvious role suggestions based on transferable skills. Market trend monitoring with proactive notifications.
 
-**Phase 1E ([Release v1.5.0-alpha.2](https://github.com/tmargolis/career-navigator/releases/tag/v1.5.0-alpha.2)):** **`networking-strategist`** (strategy, maps, events; messaging handoffs only) and **`writer`** (outreach, cover letters, follow-ups, optional resume Summary polish, LinkedIn topics + **saved post drafts** on disk, **`evaluate-post`**; **`voice-profile.md`** via launch + samples).
+**Phase 1E ([Release v1.5.0-alpha.1](https://github.com/tmargolis/career-navigator/releases/tag/v1.5.0-alpha.1)):** **`networking-strategist`** (strategy, maps, events; messaging handoffs only) and **`writer`** (outreach, cover letters, follow-ups, optional resume Summary polish, LinkedIn topics + **saved post drafts** on disk, **`evaluate-post`**; **`voice-profile.md`** via launch + samples).
 
 **Phase 1F ([Release v1.5 alpha 2](https://github.com/tmargolis/career-navigator/releases/tag/v1.5.0-alpha.2)):** `honest-advisor` + `market-researcher` add career planning and decision-grade offer evaluation + negotiation workflows (trajectory planning, scenario-aware evaluation, negotiation handoffs), with `job-scout` + `daily-schedule` consuming the new artifacts on a monthly cadence.
 
