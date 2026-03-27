@@ -282,7 +282,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 **Phase 1F ([Release v1.5 alpha 2](https://github.com/tmargolis/career-navigator/releases/tag/v1.5.0)):** `honest-advisor` + `market-researcher` add career planning and decision-grade offer evaluation + negotiation workflows (trajectory planning, scenario-aware evaluation, negotiation handoffs), with `job-scout` + `daily-schedule` consuming the new artifacts on a monthly cadence.
 
-**Phase 1G ([Release v1.5](https://github.com/tmargolis/career-navigator/releases/tag/v1.5)):** **Plugin marketplace publication.** Career Navigator becomes installable for non-technical users without requiring them to understand MCP, local tool configuration, or agent runtimes. **Impact:** transforms Career Navigator from a personal tool into a publicly available product with real user validation.
+**Phase 1G ([Release v1.5](https://github.com/tmargolis/career-navigator/releases/tag/v1.5.0)):** **Plugin marketplace publication.** Career Navigator becomes installable for non-technical users without requiring them to understand MCP, local tool configuration, or agent runtimes. **Impact:** transforms Career Navigator from a personal tool into a publicly available product with real user validation.
 
 ### Phase 2 — Integrations
 
