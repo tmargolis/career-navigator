@@ -815,7 +815,7 @@ This phase is explicitly shaped by industry trends kicked off by **OpenClaw** â€
 | **/career-navigator:follow-up** | **FollowUpBrief** + **`writer`** messages |
 | **/career-navigator:market-brief** | Current market intelligence report |
 | **/career-navigator:suggest-roles** | Discover non-obvious role opportunities |
-| **/career-navigator:networking-strategy** | Networking plan (strategy; outreach via **writer**) |
+| **/career-navigator:networking-strategy** | Networking plan (strategy; outreach via **content-advisor**) |
 | **/career-navigator:network-map** | Network paths/gaps + **`network_map_v1`** (Phase 2D: graph UI) |
 | **/career-navigator:event-intelligence** | Event ROI and presentation opportunity assessment |
 | **/career-navigator:event-radar** | Multi-scope event discovery |
