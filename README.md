@@ -154,6 +154,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`draft-outreach`** | DMs, email, InMail drafts | **`writer`** |
 | **`content-suggest`** | Post ideas, full drafts | Topics + saved **`linkedin_post`** drafts under **`LinkedIn Posts/`** |
 | **`evaluate-post`** | Before publish | Audience + cultural/political/reputational risk vs **`profile.md`** targets |
+| **`linkedin-post-analytics`** | Weekly/biweekly or **`/schedule`** | **Phase 2A** — read-only snapshots of **your** LinkedIn post metrics → **`tracker.json`** `networking[]` (needs **Claude in Chrome** or **computer/browser use** + explicit approval) |
 
 ---
 
@@ -187,7 +188,7 @@ Everything lives in one folder — the job search directory you provide. Career 
 ├── CareerNavigator/
 │   ├── profile.md               — your targets, comp floor, differentiators
 │   ├── ExperienceLibrary.json   — experience units extracted from source resumes/CVs
-│   ├── tracker.json             — application records with full stage history
+│   ├── tracker.json             — applications + stage history; optional **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`**, Phase **2A** **`linkedin-post-analytics`**)
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
 │   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`
@@ -290,7 +291,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 Phase 2 connects Career Navigator to the external services that complete the full job search experience. Sub-phases are independently deployable.
 
 - **Phase 2A — Inbox + Calendar Context**: *before you draft outreach, Career Navigator can (with explicit permission) pull and summarize the relevant email threads and meeting history so your messages are grounded in real context—not guesswork.* **Impact:** warm outreach becomes evidence-based and consistent.
-  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), contact-context enrichment for outreach drafting.
+  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), contact-context enrichment for outreach drafting; **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`tracker.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
 
 - **Phase 2B — Full Interview Loop (Prep → Practice → Capture → Debrief)**: *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
   - **Scope includes**: `interview-coach`, `interview-capture`, guided/random/adaptive mocks across stages/vibes, morning brief, debrief flow; Whisper transcription with opt-in + retention/consent framework (see spec §13).
