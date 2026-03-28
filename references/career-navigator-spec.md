@@ -113,8 +113,6 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 # **2. Plugin File Structure**
 
-*On disk:* `.claude-plugin/plugin.json`, `.mcp.json`, `hooks/hooks.json`, `hooks/context/session-start.md`; directories `agents/`, `skills/`, `references/` (tree below).
-
 **career-navigator/**
 
 **├── .claude-plugin/**
@@ -155,8 +153,6 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 ## **3.1 Resume & Cover Letter Commands**
 
-*Skill files:* `skills/tailor-resume/SKILL.md`, `skills/cover-letter/SKILL.md`, `skills/resume-score/SKILL.md`, `skills/add-source/SKILL.md`, `skills/list-artifacts/SKILL.md`.
-
 | Name | Type | Description |
 | --- | --- | --- |
 | **/career-navigator:tailor-resume** | Command | Takes one or more source documents from the ExperienceLibrary and a job description, assembles and rewrites the best possible resume for that specific role, scores it for ATS compatibility, and saves it to the artifact inventory. |
@@ -166,8 +162,6 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | **/career-navigator:list-artifacts** | Command | Lists all generated artifacts in the inventory with metadata: date created, job applied for, outcome if known. |
 
 ## **3.2 Job Search & Tracking Commands**
-
-*Skill files:* `skills/search-jobs/SKILL.md`, `skills/track-application/SKILL.md`, `skills/pipeline-dashboard/SKILL.md`, `skills/follow-up/SKILL.md`, `skills/market-brief/SKILL.md`, `skills/suggest-roles/SKILL.md`.
 
 | Name | Type | Description |
 | --- | --- | --- |
@@ -180,8 +174,6 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 ## **3.3 Interview Prep Commands**
 
-*Implementation:* Phase **2B** — dedicated `skills/*/SKILL.md` files for these commands are not shipped yet; behavior is specified here and will align with future `agents/interview-coach` and related skills.
-
 | Name | Type | Description |
 | --- | --- | --- |
 | **/career-navigator:prep-interview** | Command | Launches a full interview preparation session for a specific role. Pulls in company research, generates predicted questions, and optionally launches a mock interview. |
@@ -190,8 +182,6 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | **/career-navigator:morning-brief** | Command | Generates a pre-interview briefing for any interview scheduled today: company news, interviewer research, talking points, and current events likely to come up. |
 
 ## **3.4 Networking Commands**
-
-*Skill files:* `skills/networking-strategy/SKILL.md`, `skills/network-map/SKILL.md`, `skills/draft-outreach/SKILL.md`, `skills/contact-context/SKILL.md`, `skills/event-intelligence/SKILL.md`, `skills/content-suggest/SKILL.md`, `skills/evaluate-post/SKILL.md`, `skills/linkedin-post-analytics/SKILL.md`, `skills/event-radar/SKILL.md`.
 
 | Name | Type | Description |
 | --- | --- | --- |
@@ -206,8 +196,6 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | **/career-navigator:event-radar** | Command | Discovers events across **local, regional, national, and international** scopes (as appropriate); ranked with ROI tiers and presentation flags. Invokes **`networking-strategist`**. |
 
 # **4. Agents**
-
-*Implementation:* `agents/<agent-name>/AGENT.md` (e.g. `agents/writer/AGENT.md`, `agents/resume-coach/AGENT.md`).
 
 Agents are specialized Claude instances with focused roles. They can be invoked directly or orchestrated by commands. Multiple agents may collaborate on complex tasks.
 
@@ -226,8 +214,6 @@ Agents are specialized Claude instances with focused roles. They can be invoked 
 | **interview-capture** | 2B | Processes audio transcription from interviews (via Whisper). MVP scope: records user audio only; relies on interview notes for other parties. Extracts structured data and auto-populates the tracker. Only active with explicit user opt-in. Employer policy warning surfaced once (first recording session). See §13.1. |
 
 # **5. Skills**
-
-*Implementation:* `skills/<skill-name>/SKILL.md` for every shipped skill; tables below are the canonical inventory.
 
 Skills are auto-triggered capabilities that Claude activates when relevant context is detected, without requiring an explicit command invocation. This is the primary interaction model for Career Navigator — commands serve as explicit aliases for users who prefer them, but skills carry the behavioral intelligence.
 
@@ -267,8 +253,6 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 
 # **6. Scheduling & recurring runs**
 
-*Skill files:* `skills/focus-career/SKILL.md`, `skills/daily-schedule/SKILL.md`, `skills/application-update/SKILL.md`, `skills/artifact-saved/SKILL.md`.
-
 Career Navigator does **not** ship its own cron daemon or hook runtime inside the plugin repo. In **Claude Cowork**, the practical pattern is:
 
 1. **Skills are the payload** — each skill (`daily-schedule`, `focus-career`, etc.) defines what to do and where to read data (`{user_dir}/CareerNavigator/...`).
@@ -283,8 +267,6 @@ Career Navigator does **not** ship its own cron daemon or hook runtime inside th
 | **artifact-saved** | Skill | Run **after** new resumes/cover letters are saved, and/or from `daily-schedule` when PDF/DOCX artifacts exist. Reconciles `artifacts-index.json` with files on disk; prepares analytics handoff metadata when connectors exist. |
 
 ## **6.1 Host hooks (`hooks/hooks.json`)**
-
-*Files:* `hooks/hooks.json`, `hooks/context/session-start.md` (injected on `SessionStart`; invokes `focus-career` per skill instructions).
 
 Claude Cowork supports a plugin-level **`hooks/hooks.json`** (see **cowork-plugin-management**). Available host events include `SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop`, `PreToolUse`, `PostToolUse`, `SubagentStop`, `PreCompact`, `Notification`, and others as documented by the host.
 
@@ -335,8 +317,6 @@ The analytics layer consumes structured event data from the storage connector an
 
 # **9. External Service Integrations (.mcp.json)**
 
-*Files / docs:* `.mcp.json`, `CONNECTORS.md`, `skills/launch/SKILL.md` (connector walkthrough during launch).
-
 The plugin ships **`.mcp.json`** with **`mcpServers: {}`**. Host-specific MCP setup belongs in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. This avoids brittle `npx mcp-remote` configs where **`${APIFY_TOKEN}`** in JSON args is passed literally and never expanded. For **inbox context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors (**OAuth** in the browser—no mail passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**.
 
 Run `/career-navigator:launch` for a conversational walkthrough. Each integration is optional; skills degrade when a connector is absent.
@@ -360,8 +340,6 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **Host browser automation** | Host capability (not plugin MCP) | **Claude in Chrome**, **computer use**, or equivalent: enables **`linkedin-post-analytics`** to navigate a logged-in browser **read-only** and record own-post metrics into **`tracker.json`**. User must opt in per session or schedule; distinct from the **LinkedIn** MCP row (which describes optional connector features such as search and messaging). |
 
 # **10. Core Data Model**
-
-*User data (under `{user_dir}/CareerNavigator/`):* `profile.md`, `voice-profile.md`, `ExperienceLibrary.json`, `tracker.json`, `artifacts-index.json`, `company-windows.json`, and generated artifacts on disk (see §10.3–10.4).
 
 ## **10.0 User Profile**
 
@@ -413,7 +391,7 @@ The ExperienceLibrary is not a collection of discrete resumes — it is a struct
 
 ## **10.3 Artifact Record**
 
-*Index:* `{user_dir}/CareerNavigator/artifacts-index.json`; artifact files live under `{user_dir}` per `storage_path` / naming conventions in tailoring skills.
+*Index:* `{user_dir}/CareerNavigator/artifacts-index.json`.
 
 | Name | Type | Description |
 | --- | --- | --- |
@@ -528,7 +506,8 @@ The advisor is calibrated to be less confrontational when the user has an interv
 
 # **15. Phased Delivery Plan**
 
-*Supplement:* `references/phase-1f-spec.md` (Phase **1F** detail). *Test / verification notes:* `references/phase-test-plan.md`.
+*Details:* `references/career-navigator-spec.md` (this doc).
+*Test / verification notes:* `references/phase-test-plan.md`.
 
 ## **Phase 1 — Core Platform**
 
@@ -820,7 +799,7 @@ This phase is explicitly shaped by industry trends kicked off by **OpenClaw** �
 
 # **Appendix: Command Quick Reference**
 
-*Same mapping as §3:* `skills/<name>/SKILL.md` per command; full tables in §3 and §5.
+*full tables in §3 and §5.
 
 | Command | Purpose |
 | --- | --- |
