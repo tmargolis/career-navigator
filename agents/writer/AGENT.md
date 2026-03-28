@@ -104,7 +104,7 @@ Whenever you output a **full LinkedIn or professional post (or thread) draft** t
 
 ## Phase 2A — Outreach enrichment
 
-**Email and calendar history** for warm outreach threading: consume a **`ContactContextBrief`** from the **`contact-context`** skill when present—**do not** claim thread details that are not in that brief or in user chat. If **`contact-context`** was not run and the brief mentions prior contact you cannot verify, write copy that works **without** pretending you saw the thread. If the user **said they sent** mail, treat that as stated; **`email_address_notes`** may list **candidate addresses** (evidence-backed vs tentative)—use **only** what the brief supports; nudge the user to pick or verify the **To:** line. Do **not** insist a bounce “wasn’t found” via MCP as proof of anything. If **`search_method_notes`** mentions MCP limits, keep claims modest.
+**Email and calendar history** for warm outreach threading: consume a **`ContactContextBrief`** from the **`contact-context`** skill when present—**do not** claim thread details that are not in that brief or in user chat. Use **`calendar_notes`** when present for prior meetings, promised follow-ups, or interview context—**do not** invent meetings. If **`contact-context`** was not run and the brief mentions prior contact you cannot verify, write copy that works **without** pretending you saw the thread. If the user **said they sent** mail, treat that as stated; **`email_address_notes`** may list **candidate addresses** (evidence-backed vs tentative)—use **only** what the brief supports; nudge the user to pick or verify the **To:** line. Do **not** insist a bounce “wasn’t found” via MCP as proof of anything. If **`search_method_notes`** mentions MCP limits, keep claims modest.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: launch
 description: >
-  Launch your job search with Career Navigator: the single entry point for configuration. Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents, walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, optional Gmail / Microsoft 365 inbox connectors (OAuth) for outreach context, optional LinkedIn post analytics, and Google Drive when applicable. No Customize button required — run this command to do everything.
+  Launch your job search with Career Navigator: the single entry point for configuration. Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents, walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, optional Gmail / Microsoft 365 inbox and optional Google Calendar connectors (OAuth) for outreach and meeting context, optional LinkedIn post analytics, and Google Drive when applicable. No Customize button required — run this command to do everything.
 triggers:
   - "/career-navigator:launch"
   - "/launch"
@@ -18,7 +18,7 @@ Use this after installing the plugin — it is how you **launch** Career Navigat
 
 The working directory (or relevant sub-directory) should be configured as the user's job search directory to be referred to as `{user_dir}`. All data this plugin produces— profile, ExperienceLibrary, tracker, generated artifacts — lives in subdirectories of the `{user_dir}` folder alongside the user's raw documents.
 
-**Integrations (Indeed, Apify, LinkedIn, Gmail, Microsoft 365, future):** Follow [CONNECTORS.md](CONNECTORS.md): **only prompt for services that are not already connected** in this session (host tools missing or user reports a problem). If **Indeed** / **Apify** / **Gmail** / **M365** tools are already present, a **brief acknowledgment** is enough—**do not** ask setup, OAuth, or browser-access questions for those.
+**Integrations (Indeed, Apify, LinkedIn, Gmail, Microsoft 365, Google Calendar, future):** Follow [CONNECTORS.md](CONNECTORS.md): **only prompt for services that are not already connected** in this session (host tools missing or user reports a problem). If **Indeed** / **Apify** / **Gmail** / **M365** / **Google Calendar** tools are already present, a **brief acknowledgment** is enough—**do not** ask setup, OAuth, or browser-access questions for those.
 
 ## Workflow
 
@@ -28,7 +28,7 @@ The working directory (or relevant sub-directory) should be configured as the us
 | --- | --- |
 | **1 — Discover** | Check tools in **this chat** for that integration. If **connected** (tools present), acknowledge briefly and **skip** further steps for it. |
 | **2 — Configure** | **Only if not connected:** **ask** if they want to set up; guide [CONNECTORS.md](CONNECTORS.md); **they** complete **Connectors** + OAuth/token. **Never** automate OAuth with Chrome/computer use. |
-| **3 — Browser access** | **Only if not connected via MCP** or the flow is **browser-only** (e.g. **LinkedIn** analytics). **Do not** ask for **Indeed** / **Apify** / inbox when MCP tools already work. |
+| **3 — Browser access** | **Only if not connected via MCP** or the flow is **browser-only** (e.g. **LinkedIn** analytics). **Do not** ask for **Indeed** / **Apify** / inbox / **calendar** when MCP tools already work. |
 
 Apply **1 → 2 → (3 only when needed)** per integration—**omit** steps 2–3 when step 1 already succeeded.
 
@@ -363,20 +363,20 @@ After **Indeed** and **Apify** (or if the user skipped Apify), offer a **read-on
 
 > "Understood — run **`linkedin-post-analytics`** or **`/career-navigator:linkedin-post-analytics`** anytime, or add a **`/schedule`** task when you're ready. **`networking-strategist`** can remind you when you're working on visibility."
 
-### 6. Connect Gmail / Microsoft 365 for inbox context (optional)
+### 6. Connect Gmail / Microsoft 365 / Google Calendar for email & meeting context (optional)
 
-Apply **Connector pattern**; **do not** prompt for **Gmail** or **Microsoft 365** if tools for that service are **already** in **this chat** (brief acknowledgment only).
+Apply **Connector pattern**; **do not** prompt for **Gmail**, **Microsoft 365**, or **Google Calendar** if tools for that service are **already** in **this chat** (brief acknowledgment only).
 
-After **Indeed**, **Apify**, and the **LinkedIn post analytics** offer (or skips), offer **Gmail** and/or **Microsoft 365** so **`draft-outreach`**, **`follow-up`**, and **`contact-context`** can search **read-only** mail **when the user explicitly approves** each lookup.
+After **Indeed**, **Apify**, and the **LinkedIn post analytics** offer (or skips), offer **Gmail** and/or **Microsoft 365** (inbox) and/or **Google Calendar** so **`draft-outreach`**, **`follow-up`**, and **`contact-context`** can search **read-only** mail and summarize **recent meetings** with a contact **when the user explicitly approves** each lookup.
 
-**Step 2 only:** never automate **Connectors** with Chrome/computer-use tools. **Ask** if they want to set up or re-enable Gmail/M365; if **yes**, they complete **Connectors** + OAuth **themselves** while you give instructions.
+**Step 2 only:** never automate **Connectors** with Chrome/computer-use tools. **Ask** if they want to set up or re-enable Gmail/M365/Calendar; if **yes**, they complete **Connectors** + OAuth **themselves** while you give instructions.
 
 #### 6a. Gmail — check connection first
 
 1. **Check this session:** Look at tools available in **this chat**. If any clearly belong to **Gmail** / Google mail (names often include `gmail`, `google`, or similar—exact strings vary by host), treat **Gmail as connected and enabled** for this session. Say so briefly (e.g. “Gmail looks connected here—great for inbox context when you approve a search”) and **do not** ask them to install Gmail again. Still offer **Microsoft 365** below if useful.
 
 2. **If no Gmail tools appear:** You **cannot** see their **Connectors** screen from chat. Ask them to open **Customize** / **Settings** → **Connectors** and look at **Gmail**:
-   - **Gmail not listed:** Use the normal “add + connect” path in step **6c** (first-time install).
+   - **Gmail not listed:** Use the normal “add + connect” path in step **6d** (first-time install).
    - **Gmail is listed but turned off** (toggle disabled, connector inactive, or equivalent): ask politely, e.g.  
      > “You already have the **Gmail** connector in Claude, but it’s not enabled right now. Would you like to **turn it on** for **read-only** access? Career Navigator only searches when **you approve** each lookup, and Anthropic’s Gmail integration doesn’t send mail on your behalf.”  
      If they **yes** → ask them to **enable** the toggle (or equivalent) **themselves** in **Connectors**, then **Connect** / re-auth if the UI asks, then start a **new chat** if tools still don’t load. **Do not** use **Claude in Chrome** or **computer use** to flip the toggle or complete OAuth.
@@ -388,26 +388,38 @@ After **Indeed**, **Apify**, and the **LinkedIn post analytics** offer (or skips
 
 #### 6b. Microsoft 365 (unchanged pattern)
 
-Offer **Microsoft 365** when relevant (see **6c**). Optional: if **Microsoft 365** tools are already in this session, acknowledge and skip redundant install instructions.
+Offer **Microsoft 365** when relevant (see **6d**). Optional: if **Microsoft 365** tools are already in this session, acknowledge and skip redundant install instructions.
 
-#### 6c. Generic inbox pitch (when Gmail state is unknown or user wants both)
+#### 6c. Google Calendar — check connection first
 
-If **6a** already confirmed **Gmail** tools in-session, **omit Gmail** from this pitch—only ask about **Microsoft 365** or close the step.
+1. **Check this session:** Look at tools available in **this chat**. If any clearly belong to **Google Calendar** (names often include `calendar`, `google_calendar`, `gcal`, or similar—exact strings vary by host), treat **Google Calendar as connected and enabled** for this session. Say so briefly (e.g. “Google Calendar looks connected—great for meeting context when you approve a lookup”) and **do not** ask them to install Google Calendar again.
+
+2. **If no Google Calendar tools appear:** You **cannot** see their **Connectors** screen from chat. Ask them to open **Customize** / **Settings** → **Connectors** and look at **Google Calendar**:
+   - **Google Calendar not listed:** Use the normal “add + connect” path in step **6d** (first-time install).
+   - **Google Calendar is listed but turned off** or shows **Connect** / **Reconnect**: ask politely, e.g.  
+     > “You already have the **Google Calendar** connector in Claude, but it’s not enabled right now. Would you like to **turn it on**? Career Navigator only reads events **when you approve** each lookup—for example, prior calls with a hiring manager before you draft outreach.”  
+     If they **yes** → they **enable** / **Connect** **themselves** in **Connectors**, finish **OAuth** if prompted, then start a **new chat** if tools still don’t load. **Do not** use **Claude in Chrome** or **computer use** to flip the toggle or complete OAuth.
+   - **If they decline** enable/connect: respect that; note they can turn it on later in **Connectors**.
+
+#### 6d. Generic email & calendar pitch (when connector state is unknown or user wants several)
+
+If **6a** already confirmed **Gmail** tools in-session, **omit Gmail** from this pitch where redundant. If **6c** already confirmed **Google Calendar** tools in-session, **omit Google Calendar** from redundant install language—still offer **Microsoft 365** if missing.
 
 **Say something like:**
 
-> **Inbox context (optional):** If you want help remembering what you already said to recruiters or hiring managers, you can connect **Gmail** and/or **Microsoft 365 (Outlook)** through Claude’s **Connectors**. Auth is **OAuth** in the browser—no passwords in chat. Career Navigator only searches mail **when you say yes** to a specific lookup.  
-> Want to **set up** **Gmail**, **Microsoft 365**, **both**, or **skip** for now?
+> **Email & calendar context (optional):** If you want help remembering what you already said to recruiters or hiring managers—and **recent meetings** (calls, interviews) with them—you can connect **Gmail** and/or **Microsoft 365 (Outlook)** and/or **Google Calendar** through Claude’s **Connectors**. Auth is **OAuth** in the browser—no passwords in chat. Career Navigator only searches mail or reads calendar **when you say yes** to a specific lookup.  
+> Want to **set up** **Gmail**, **Microsoft 365**, **Google Calendar**, **a combination**, or **skip** for now?
 
 **If they want to set up (they do the clicks—do not use Chrome/computer-use tools to connect):**
 
 1. **Customize** / **Settings** → **Connectors**.
 2. **Gmail:** They open **Gmail** → **Connect** → finish **Google** sign-in and consent. Official docs: [Gmail integration](https://claude.com/docs/connectors/google/gmail) · [Google Workspace connectors](https://support.claude.com/en/articles/10166901-use-google-workspace-connectors).
-3. **Microsoft 365 (includes Outlook):** They open **Microsoft 365** → **Connect** → finish **Microsoft** sign-in. **Team/Enterprise** and sometimes **admin setup** may be required—see [Microsoft 365 connector](https://claude.com/docs/connectors/microsoft/365) and [Enabling and using the Microsoft 365 connector](https://support.claude.com/en/articles/12542951-enabling-and-using-the-microsoft-365-connector). Security overview: [Microsoft 365 connector: Security Guide](https://support.claude.com/en/articles/12684923-microsoft-365-connector-security-guide).
-4. After each connection, suggest a **new chat** if inbox-related tools do not appear.
+3. **Google Calendar:** They open **Google Calendar** → **Connect** → finish **Google** sign-in and consent (separate connector from Gmail). Official docs: [Google Calendar integration](https://claude.com/docs/connectors/google/calendar) · [Google Workspace connectors](https://support.claude.com/en/articles/10166901-use-google-workspace-connectors).
+4. **Microsoft 365 (includes Outlook; calendar/Teams surfaces per host):** They open **Microsoft 365** → **Connect** → finish **Microsoft** sign-in. **Team/Enterprise** and sometimes **admin setup** may be required—see [Microsoft 365 connector](https://claude.com/docs/connectors/microsoft/365) and [Enabling and using the Microsoft 365 connector](https://support.claude.com/en/articles/12542951-enabling-and-using-the-microsoft-365-connector). Security overview: [Microsoft 365 connector: Security Guide](https://support.claude.com/en/articles/12684923-microsoft-365-connector-security-guide).
+5. After each connection, suggest a **new chat** if mail- or calendar-related tools do not appear.
 
-**Validation:** If the host exposes Gmail or Microsoft 365 tools, confirm they are listed/enabled. If the user’s **plan or org** does not include a connector, say so plainly and point to in-app **Connectors** catalog and [CONNECTORS.md](CONNECTORS.md). If inbox tools are **already** working, **do not** ask about browser access for mail—MCP in chat is enough.
+**Validation:** If the host exposes Gmail, Microsoft 365, or Google Calendar tools, confirm they are listed/enabled. If the user’s **plan or org** does not include a connector, say so plainly and point to in-app **Connectors** catalog and [CONNECTORS.md](CONNECTORS.md). If those tools are **already** working, **do not** ask about browser access for mail or calendar—MCP in chat is enough.
 
 **If skipped:**
 
-> "No problem — outreach and follow-ups will work without inbox search. You can connect later under **Settings → Connectors** or run **`/career-navigator:launch`** again. Details: **CONNECTORS.md**."
+> "No problem — outreach and follow-ups will work without inbox or calendar search. You can connect later under **Settings → Connectors** or run **`/career-navigator:launch`** again. Details: **CONNECTORS.md**."

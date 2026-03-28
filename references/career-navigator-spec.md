@@ -109,7 +109,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Analytics Layer (Phase 1)** | SQLite + D3 visualization (additional connectors in Phase 2D) |
 | **AI Services** | Claude API (via MCP), Whisper (audio transcription — Phase 2B) |
 | **Job Search (Phase 1)** | **Indeed** MCP via Claude Desktop **Customize → Connectors** — **Connect** → browser OAuth on **secure.indeed.com**; tools **`search_jobs`**, **`get_job_details`** (connector `https://mcp.indeed.com/claude/mcp`). User must complete OAuth; assisted-manual fallback when connector unavailable |
-| **Salary benchmarks (Phase 1, optional)** | Apify MCP added in Claude Desktop **Customize → Connectors → Desktop → Apify** (token + **Enabled tools** list in connector UI); plugin **`.mcp.json`** ships **`mcpServers: {}`** |
+| **Salary benchmarks (Phase 1, optional)** | Apify MCP added in Claude Desktop **Customize → Connectors → Desktop → Apify** (token + **Enabled tools** list in connector UI); not stored in project **`.mcp.json`** |
 
 # **2. Plugin File Structure**
 
@@ -119,7 +119,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 **│ └── plugin.json**
 
-**├── .mcp.json** — ships **`mcpServers: {}`**; optional MCPs (e.g. Apify for salary) are configured in the host app
+**├── .mcp.json** — may include Anthropic **HTTP MCP** entries for **Gmail** / **Google Calendar** (no secrets); other MCPs (e.g. Apify for salary) are configured in the host app
 
 **├── agents/**
 
@@ -317,7 +317,7 @@ The analytics layer consumes structured event data from the storage connector an
 
 # **9. External Service Integrations (.mcp.json)**
 
-The plugin ships **`.mcp.json`** with **`mcpServers: {}`**. Host-specific MCP setup belongs in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. This avoids brittle `npx mcp-remote` configs where **`${APIFY_TOKEN}`** in JSON args is passed literally and never expanded. For **inbox context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors (**OAuth** in the browser—no mail passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**.
+The plugin ships **`.mcp.json`** with optional Anthropic **HTTP MCP** servers for **Gmail** and **Google Calendar** (see file); other connectors are configured in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. This avoids brittle `npx mcp-remote` configs where **`${APIFY_TOKEN}`** in JSON args is passed literally and never expanded. For **inbox and calendar context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors and/or **Google Calendar** (**OAuth** in the browser—no passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**. **Google Calendar** is a separate connector from **Gmail** in the Connectors catalog.
 
 Run `/career-navigator:launch` for a conversational walkthrough. Each integration is optional; skills degrade when a connector is absent.
 
@@ -332,7 +332,7 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **IllinoisJobLink** | MCP | Illinois-specific job board. State employment resources and local posting discovery. |
 | **Gmail** | Claude first-party connector | **Settings / Customize → Connectors → Gmail → Connect** — Google **OAuth** in the browser; do not commit tokens in `.mcp.json`. Anthropic documents **search and analyze** mail; **no create/send/modify** via this integration. **Pro / Max / Team / Enterprise** per Claude docs (confirm in-product). Career Navigator: **`draft-outreach`**, **`follow-up`**, **`contact-context`** use mail only after **explicit user approval** per lookup. See `CONNECTORS.md`, [Gmail integration](https://claude.com/docs/connectors/google/gmail). |
 | **Microsoft 365** (Outlook mail, SharePoint, OneDrive, Teams per product scope) | Claude first-party connector | **Connectors → Microsoft 365 → Connect** — Microsoft **OAuth**; **Team/Enterprise** and often **tenant admin** setup per Anthropic. Documented as **read-only** (no modify/delete/create through the connector). Outlook thread search supports the same Career Navigator skills as Gmail. See `CONNECTORS.md`, [Microsoft 365 connector](https://claude.com/docs/connectors/microsoft/365). |
-| **Google Calendar** | Claude first-party connector (Google) | OAuth via Google Workspace / Connectors catalog where offered. Read/calendar awareness for scheduling and briefings per host capabilities. |
+| **Google Calendar** | Claude first-party connector (Google) | **Settings / Customize → Connectors → Google Calendar → Connect** — Google **OAuth** in the browser (separate card from **Gmail**). Anthropic documents schedule and event access per [Google Calendar integration](https://claude.com/docs/connectors/google/calendar). Career Navigator: **`contact-context`** (and downstream drafting) uses **read-only** meeting context **after explicit user approval** per lookup—summarize prior calls/interviews with a contact; do not create or move events unless the user asks. See `CONNECTORS.md`. |
 | **Outlook Calendar / Teams Calendar** | Microsoft 365 connector | Covered under **Microsoft 365** row where enabled. |
 | **Greenhouse / Workday / Lever** | MCP | ATS status tracking for applications submitted through these platforms. Read-only access to application status. |
 | **Whisper (OpenAI)** | MCP | Audio transcription for interview capture feature. Phase 2B. MVP scope: user audio only. Local processing option available for privacy-sensitive users. |
@@ -529,7 +529,7 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 Status: Completed
 
 * Plugin scaffold: manifest, directory structure
-* **`launch` skill** and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index); walks Indeed (and optional Apify); **offers** optional **Gmail** / **Microsoft 365** inbox connectors and optional **`linkedin-post-analytics`** when the user opts in. Slash command: **`/career-navigator:launch`**.
+* **`launch` skill** and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index); walks Indeed (and optional Apify); **offers** optional **Gmail** / **Microsoft 365** inbox connectors, optional **Google Calendar**, and optional **`linkedin-post-analytics`** when the user opts in. Slash command: **`/career-navigator:launch`**.
 * `search-jobs` skill — live job search via Indeed connector; assisted-manual fallback
 * `focus-career` skill — critical-only alerts when the user begins a session (or on a user-scheduled cadence via Cowork `/schedule`); onboarding on first run
 * Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
