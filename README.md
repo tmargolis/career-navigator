@@ -96,7 +96,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
-| **`/career-navigator:launch`** | Run once (or again to reconfigure) | Configure `{user_dir}`, core `CareerNavigator/` files, connectors walkthrough, voice harvest |
+| **`/career-navigator:launch`** | Run once (or again to reconfigure) | Configure `{user_dir}`, core `CareerNavigator/` files, connectors walkthrough, voice harvest; **offers** optional **`linkedin-post-analytics`** if you want a first snapshot |
 | **`focus-career`** | New session (hook) or `/schedule` | Critical-only: deadlines, same-day follow-ups, urgent interview actions |
 | **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling |
 | **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
@@ -154,7 +154,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`draft-outreach`** | DMs, email, InMail drafts | **`writer`** |
 | **`content-suggest`** | Post ideas, full drafts | Topics + saved **`linkedin_post`** drafts under **`LinkedIn Posts/`** |
 | **`evaluate-post`** | Before publish | Audience + cultural/political/reputational risk vs **`profile.md`** targets |
-| **`linkedin-post-analytics`** | Weekly/biweekly or **`/schedule`** | **Phase 2A** — read-only snapshots of **your** LinkedIn post metrics → **`tracker.json`** `networking[]` (needs **Claude in Chrome** or **computer/browser use** + explicit approval) |
+| **`linkedin-post-analytics`** | Weekly/biweekly or **`/schedule`** | Read-only snapshots of **your** LinkedIn post metrics → **`tracker.json`** `networking[]` (needs **Claude in Chrome** or **computer/browser use** + explicit approval) |
 
 ---
 
@@ -188,7 +188,7 @@ Everything lives in one folder — the job search directory you provide. Career 
 ├── CareerNavigator/
 │   ├── profile.md               — your targets, comp floor, differentiators
 │   ├── ExperienceLibrary.json   — experience units extracted from source resumes/CVs
-│   ├── tracker.json             — applications + stage history; optional **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`**, Phase **2A** **`linkedin-post-analytics`**)
+│   ├── tracker.json             — applications + stage history; optional **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`** from **`linkedin-post-analytics`**)
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
 │   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`

@@ -3,7 +3,8 @@ name: launch
 description: >
   Launch your job search with Career Navigator: the single entry point for configuration.
   Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents,
-  walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, and Google Drive when applicable.
+  walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data,
+  offers optional LinkedIn post analytics (browser automation + consent), and Google Drive when applicable.
   No Customize button required — run this command to do everything.
 triggers:
   - "/career-navigator:launch"
@@ -321,3 +322,21 @@ First check if the Apify MCP is already connected. It may be in a deferred state
 **If no or skipped:**
 
 > "No problem — salary benchmarking is off for now. You can set it up any time by running `/career-navigator:launch` again."
+
+### 5. Offer LinkedIn post analytics (optional)
+
+After **Indeed** and **Apify** (or if the user skipped Apify), offer a **read-only** snapshot of **their own** LinkedIn post metrics into **`{user_dir}/CareerNavigator/tracker.json`** (`networking[]`, per **`linkedin-post-analytics`**). This is optional; do not run it without a clear **yes**.
+
+**Say something like:**
+
+> **LinkedIn visibility (optional):** If you post on LinkedIn, you can snapshot **your** post analytics into your career tracker (impressions, reactions, etc.) on a schedule. That uses **Claude in Chrome** or **computer / browser use** with your approval—you stay logged into LinkedIn in that browser, and the run is **read-only** (no posting or engaging).  
+> Want to **run that now**, **skip**, or **only schedule it later** (e.g. weekly via **`/schedule`**)?
+
+**If they choose run now:**
+
+1. Confirm **Claude in Chrome** MCP tools and/or **computer / browser use** are available. If **neither** is available, do **not** attempt scraping—explain they must enable one in the host, approve a read-only session, log into LinkedIn, then run **`linkedin-post-analytics`** or **`/career-navigator:linkedin-post-analytics`** (or say **continue** on a new chat after enabling tools).
+2. If tooling **is** available: follow **`skills/linkedin-post-analytics/SKILL.md`** end-to-end (ask for LinkedIn vanity slug if unknown, append snapshots to `tracker.json`, summarize).
+
+**If they skip or defer:**
+
+> "Understood — run **`linkedin-post-analytics`** or **`/career-navigator:linkedin-post-analytics`** anytime, or add a **`/schedule`** task when you're ready. **`networking-strategist`** can remind you when you're working on visibility."

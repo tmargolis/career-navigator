@@ -2,7 +2,7 @@
 
 Claude Cowork Plugin — Full Product Specification
 
-Version 0.26 — March 2026
+Version 0.27 — March 2026
 
 An AI-powered job search companion that combines the capabilities of
 recruiters, career coaches, reverse recruiters, and market analysts into a single intelligent platform.
@@ -142,7 +142,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 | Name | Type | Description |
 | --- | --- | --- |
-| **/career-navigator:launch** | Command | **Launch** the user's job search workspace: conversational wizard that configures `{user_dir}`, reads existing documents, builds the user profile and ExperienceLibrary, and walks through connectors for live job search (Indeed, optional Apify, etc.). Same setup responsibilities as before; framed as the entry point to start searching. Validates inputs before saving; re-runnable to update keys or reconfigure. |
+| **/career-navigator:launch** | Command | **Launch** the user's job search workspace: conversational wizard that configures `{user_dir}`, reads existing documents, builds the user profile and ExperienceLibrary, and walks through connectors for live job search (Indeed, optional Apify, etc.). **Offers** optional **`linkedin-post-analytics`** when the user wants a first run—read-only own-post snapshots into **`tracker.json`**, subject to host browser automation and explicit consent. Same setup responsibilities as before; framed as the entry point to start searching. Validates inputs before saving; re-runnable to update keys or reconfigure. |
 
 ## **3.1 Resume & Cover Letter Commands**
 
@@ -184,7 +184,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | **/career-navigator:event-intelligence** | Command | Deep evaluation of specific events: ROI, audience fit, cost/time, and **presentation / speaking** opportunity flagging. Invokes **`networking-strategist`**. |
 | **/career-navigator:content-suggest** | Command | Suggests LinkedIn post topics based on current industry trends, the user's target roles, and recent activity in their field. Invokes **`writer`**. |
 | **/career-navigator:evaluate-post** | Command | Evaluates a draft post for audience fit, algorithmic performance, and **cultural / political / reputational** risk vs target companies. Invokes **`writer`** and **`market-researcher`** for target-profile-specific risk evaluation. |
-| **/career-navigator:linkedin-post-analytics** | Command | **Phase 2A.** **Read-only** snapshot of the user’s **own** LinkedIn post analytics into **`tracker.json`** `networking[]` (per-post **`analytics_history`**). Requires host **browser control** (e.g. **Claude in Chrome** MCP or **computer / browser use**) and **explicit user approval** before navigation; see **`linkedin-post-analytics`** skill. |
+| **/career-navigator:linkedin-post-analytics** | Command | **Read-only** snapshot of the user’s **own** LinkedIn post analytics into **`tracker.json`** `networking[]` (per-post **`analytics_history`**). Requires host **browser control** (e.g. **Claude in Chrome** MCP or **computer / browser use**) and **explicit user approval** before navigation; see **`linkedin-post-analytics`** skill. |
 | **/career-navigator:event-radar** | Command | Discovers events across **local, regional, national, and international** scopes (as appropriate); ranked with ROI tiers and presentation flags. Invokes **`networking-strategist`**. |
 
 # **4. Agents**
@@ -200,7 +200,7 @@ Agents are specialized Claude instances with focused roles. They can be invoked 
 | **honest-advisor** | 1C | Provides candid assessments of the user's competitiveness for specific roles, potential recruiter concerns, and strategies for overcoming barriers. Researches company/industry-specific deviations from general norms. Empathetic but unsparing. |
 | **market-researcher** | 1C | Monitors macro hiring trends, role-specific demand signals, AI/automation displacement risks, geographic demand patterns, and sector-specific cycles. Feeds the `market-brief` command and the `job-scout` agent. Also invoked by `writer` during post evaluation to provide target-company- and industry-specific cultural/political risk context — making risk assessment dynamic rather than based on a static rubric. |
 | **job-scout** | 1D | Searches and ranks job opportunities across all configured job boards. Incorporates outcome history and market intelligence into scoring. Ranking improves over time as the user logs outcomes. Proactively surfaces high-match opportunities. |
-| **networking-strategist** | 1E | Network analysis, gap identification, and warm-path planning. Event discovery and evaluation with ROI assessment, **presentation-opportunity** flagging, and multi-scope **event radar** (via **`event-intelligence`** and **`event-radar`** skills). Recommends the **`linkedin-post-analytics`** skill (**Phase 2A**; weekly/biweekly or **`/schedule`**) when the user is building LinkedIn visibility—subject to host browser automation and explicit consent. May emit a structured **handoff brief** for **`writer`** when messaging is needed; does **not** draft outreach copy. |
+| **networking-strategist** | 1E | Network analysis, gap identification, and warm-path planning. Event discovery and evaluation with ROI assessment, **presentation-opportunity** flagging, and multi-scope **event radar** (via **`event-intelligence`** and **`event-radar`** skills). Recommends the **`linkedin-post-analytics`** skill (weekly/biweekly or **`/schedule`**) when the user is building LinkedIn visibility—subject to host browser automation and explicit consent. May emit a structured **handoff brief** for **`writer`** when messaging is needed; does **not** draft outreach copy. |
 | **writer** | 1E | Owns **Career Navigator user-facing copy**: outreach (LinkedIn, email, InMail), **cover letters** (from **CoverLetterBrief**), **follow-ups** (from **FollowUpBrief**), optional **resume Summary** polish (**ResumeSummaryBrief**), post drafts (saved under **`{user_dir}/LinkedIn Posts/`** + **`artifacts-index.json`** as **`linkedin_post`**), **`/career-navigator:draft-outreach`**, **`content-suggest`**, **`evaluate-post`**. Maintains **`voice-profile.md`** (and optional **`voice_profile_v1`**) for tone matching; **timeline surfacing** of voice metadata is **Phase 2D**. Consumes handoffs from **`networking-strategist`**, **`resume-coach`** (summary path), **`cover-letter`**, **`follow-up`**. For post risk evaluation, consumes a **`market-researcher`** brief on target-company/industry norms before assessing cultural or political risk. Outreach email/calendar enrichment **Phase 2A**. |
 | **interview-coach** | 2B | Conducts mock interviews across all stages and vibes (supportive, neutral, challenging, antagonistic, bored). Adapts difficulty based on user performance in adaptive mode. Incorporates current events and company-specific research into questions. |
 | **interview-capture** | 2B | Processes audio transcription from interviews (via Whisper). MVP scope: records user audio only; relies on interview notes for other parties. Extracts structured data and auto-populates the tracker. Only active with explicit user opt-in. Employer policy warning surfaced once (first recording session). See §13.1. |
@@ -231,7 +231,7 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **draft-outreach** | Skill | Invokes **`writer`** for outreach copy (LinkedIn, email, InMail). Also invocable via `/career-navigator:draft-outreach`. |
 | **content-suggest** | Skill | Invokes **`writer`** for LinkedIn/professional topic recommendations. Also invocable via `/career-navigator:content-suggest`. |
 | **evaluate-post** | Skill | Invokes **`writer`** for audience fit and **cultural / political / reputational risk** vs target company profiles. Risk evaluation is dynamic: **`market-researcher`** is queried for target-company/industry-specific norms before assessment. The system informs the user of risk context; it does not suppress or prescribe content decisions. Also invocable via `/career-navigator:evaluate-post`. |
-| **linkedin-post-analytics** | Skill | **Phase 2A.** **Read-only** capture of the user’s **own** LinkedIn post analytics from the live site UI, appended to **`tracker.json`** `networking[]` as **`type: "linkedin_post"`** entries with an **`analytics_history`** array (dated snapshots). **Does not** post, like, or comment. **Requires** host browser automation (**Claude in Chrome** or **computer / browser use**) and **explicit user approval** before running; if unavailable, the skill instructs the model to stop and ask the user to enable tooling. Also invocable via `/career-navigator:linkedin-post-analytics`. |
+| **linkedin-post-analytics** | Skill | **Read-only** capture of the user’s **own** LinkedIn post analytics from the live site UI, appended to **`tracker.json`** `networking[]` as **`type: "linkedin_post"`** entries with an **`analytics_history`** array (dated snapshots). **Does not** post, like, or comment. **Requires** host browser automation (**Claude in Chrome** or **computer / browser use**) and **explicit user approval** before running; if unavailable, the skill instructs the model to stop and ask the user to enable tooling. Also invocable via `/career-navigator:linkedin-post-analytics`. |
 
 **Context skills** fire on ambient signals throughout any session:
 
@@ -323,7 +323,7 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **Greenhouse / Workday / Lever** | MCP | ATS status tracking for applications submitted through these platforms. Read-only access to application status. |
 | **Whisper (OpenAI)** | MCP | Audio transcription for interview capture feature. Phase 2B. MVP scope: user audio only. Local processing option available for privacy-sensitive users. |
 | **Meetup / Eventbrite / Luma** | MCP | Event discovery for networking radar. Searches for relevant professional events by location, industry, and role type. |
-| **Host browser automation** | Host capability (not plugin MCP) | **Phase 2A** (with **`linkedin-post-analytics`**). **Claude in Chrome**, **computer use**, or equivalent: navigate a logged-in browser **read-only** and record own-post metrics into **`tracker.json`**. User must opt in per session or schedule; distinct from the **LinkedIn** MCP row (which describes optional connector features such as search and messaging). |
+| **Host browser automation** | Host capability (not plugin MCP) | **Claude in Chrome**, **computer use**, or equivalent: enables **`linkedin-post-analytics`** to navigate a logged-in browser **read-only** and record own-post metrics into **`tracker.json`**. User must opt in per session or schedule; distinct from the **LinkedIn** MCP row (which describes optional connector features such as search and messaging). |
 
 # **10. Core Data Model**
 
@@ -386,7 +386,7 @@ The ExperienceLibrary is not a collection of discrete resumes — it is a struct
 
 ## **10.4 Networking entries & LinkedIn post analytics**
 
-`{user_dir}/CareerNavigator/tracker.json` includes a **`networking`** array (alongside **`applications`**) for relationship and visibility artifacts. The **`linkedin-post-analytics`** skill (**Phase 2A**) may add or update entries with **`type: "linkedin_post"`**, a stable **`url`** (LinkedIn activity URN URL), optional **`description`** / **`date_posted`**, and **`analytics_history`**: an array of dated objects capturing impressions, reach, reactions, comments, reposts, saves, sends, profile viewers attributed to the post, followers gained, link visits, optional **`links`**, and optional **`top_audience`** (industry, seniority, company size) when the UI exposes them. **`networking-strategist`** recommends this cadence for users who publish on LinkedIn; schema details are defined in **`skills/linkedin-post-analytics/SKILL.md`**.
+`{user_dir}/CareerNavigator/tracker.json` includes a **`networking`** array (alongside **`applications`**) for relationship and visibility artifacts. The **`linkedin-post-analytics`** skill may add or update entries with **`type: "linkedin_post"`**, a stable **`url`** (LinkedIn activity URN URL), optional **`description`** / **`date_posted`**, and **`analytics_history`**: an array of dated objects capturing impressions, reach, reactions, comments, reposts, saves, sends, profile viewers attributed to the post, followers gained, link visits, optional **`links`**, and optional **`top_audience`** (industry, seniority, company size) when the UI exposes them. **`networking-strategist`** recommends this cadence for users who publish on LinkedIn; schema details are defined in **`skills/linkedin-post-analytics/SKILL.md`**.
 
 # **11. The Intelligence Feedback Loop**
 
@@ -421,7 +421,7 @@ The plugin documents **recommended cadences** inside skills; **execution** is ow
 | **Follow-up / pipeline hygiene** | Daily (often same task as above) | Covered by `daily-schedule` + conversational `follow-up` as needed. |
 | **Market intelligence** | Weekly | Schedule `/career-navigator:market-brief` (or invoke `market-brief` skill). |
 | **Outcome pattern refresh** | Weekly or after milestone outcomes | User runs `/career-navigator:pattern-analysis` or schedules it after major tracker updates. |
-| **LinkedIn post analytics snapshot** (**Phase 2A**) | Weekly or biweekly | Schedule a task that invokes the **`linkedin-post-analytics`** skill (or `/career-navigator:linkedin-post-analytics`) **only after** the user has approved host browser automation and is logged into LinkedIn in that browser. |
+| **LinkedIn post analytics snapshot** | Weekly or biweekly | Schedule a task that invokes the **`linkedin-post-analytics`** skill (or `/career-navigator:linkedin-post-analytics`) **only after** the user has approved host browser automation and is logged into LinkedIn in that browser. |
 
 ## **12.2 Time-sensitive vs routine surfacing**
 
@@ -489,14 +489,14 @@ Phase status:
 * Phase 1G: Completed
 * Phase 2A: In progress
 
-Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies. **Phase 2A** adds **`linkedin-post-analytics`** (read-only own-post snapshots into **`tracker.json`** via host browser automation with explicit consent) alongside inbox and calendar context.
+Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
 ### **Phase 1A — Core platform: plugin scaffold, setup, session start, and live job search**
 
 Status: Completed
 
 * Plugin scaffold: manifest, directory structure
-* **`launch` skill** and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index). Slash command: **`/career-navigator:launch`**.
+* **`launch` skill** and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index); walks Indeed (and optional Apify); **offers** optional **`linkedin-post-analytics`** when the user opts in and browser tooling is available. Slash command: **`/career-navigator:launch`**.
 * `search-jobs` skill — live job search via Indeed connector; assisted-manual fallback
 * `focus-career` skill — critical-only alerts when the user begins a session (or on a user-scheduled cadence via Cowork `/schedule`); onboarding on first run
 * Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
@@ -600,7 +600,7 @@ Status: In progress
 * Contact context skill: surfaces prior email/meeting history before outreach drafting
 * Outreach drafting enriched with prior communication history
 * Meeting history awareness for warm networking identification
-* **`linkedin-post-analytics`** skill and **`/career-navigator:linkedin-post-analytics`** command: **read-only** snapshots of the user’s **own** LinkedIn post analytics into **`tracker.json`** `networking[]` (see §10.4, §12.1). Depends on **host browser automation** (**Claude in Chrome**, **computer / browser use**, or equivalent) and **explicit user approval**; **`networking-strategist`** recommends cadence for visibility-focused users.
+* **`linkedin-post-analytics`** skill and **`/career-navigator:linkedin-post-analytics`** command: **read-only** snapshots of the user’s **own** LinkedIn post analytics into **`tracker.json`** `networking[]` (see §10.4, §12.1). Depends on **host browser automation** (**Claude in Chrome**, **computer / browser use**, or equivalent) and **explicit user approval**; **`networking-strategist`** recommends cadence for visibility-focused users. **`/career-navigator:launch`** **offers** this as an optional step after Indeed/Apify when the user wants a first run.
 
 ### **Phase 2B — Interview intelligence**
 
@@ -766,7 +766,7 @@ This phase is explicitly shaped by industry trends kicked off by **OpenClaw** �
 
 | Command | Purpose |
 | --- | --- |
-| **/career-navigator:launch** | Launch job search workspace: configure folder, build ExperienceLibrary and profile, set up job search connectors (run first) |
+| **/career-navigator:launch** | Launch job search workspace: configure folder, build ExperienceLibrary and profile, connectors; optional **`linkedin-post-analytics`** offer |
 | **/career-navigator:tailor-resume** | Assemble resume via **`resume-coach`**; optional **`writer`** Summary polish |
 | **/career-navigator:cover-letter** | **CoverLetterBrief** + **`writer`** final prose |
 | **/career-navigator:resume-score** | Score resume against a job description |
@@ -789,4 +789,4 @@ This phase is explicitly shaped by industry trends kicked off by **OpenClaw** �
 | **/career-navigator:draft-outreach** | Draft outreach (**`writer`**) |
 | **/career-navigator:content-suggest** | LinkedIn topic ideas (**`writer`**) |
 | **/career-navigator:evaluate-post** | Post risk review — audience + cultural/political via **`market-researcher`** + **`writer`** |
-| **/career-navigator:linkedin-post-analytics** | **Phase 2A** — read-only own LinkedIn post metrics → **`tracker.json`** `networking[]` (browser automation + user consent) |
+| **/career-navigator:linkedin-post-analytics** | Read-only own LinkedIn post metrics → **`tracker.json`** `networking[]` (browser automation + user consent) |
