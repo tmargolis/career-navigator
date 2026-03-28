@@ -2,7 +2,7 @@
 
 Claude Cowork Plugin — Full Product Specification
 
-Version 0.27 — March 2026
+Version 0.28 — March 2026
 
 An AI-powered job search companion that combines the capabilities of
 recruiters, career coaches, reverse recruiters, and market analysts into a single intelligent platform.
@@ -180,7 +180,8 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | --- | --- | --- |
 | **/career-navigator:networking-strategy** | Command | Builds an evidence-based networking plan (priorities, sequencing, gaps). Optional handoff brief for **`writer`** when messaging is needed. Invokes **`networking-strategist`**. |
 | **/career-navigator:network-map** | Command | Maps plausible paths and gaps to target employers; outputs narrative plus **`network_map_v1`** JSON (and may persist to `network-map.md`). **Interactive graph UI** is **Phase 2D**—see §15. |
-| **/career-navigator:draft-outreach** | Command | Drafts outreach copy (LinkedIn, email, InMail, etc.). Invokes **`writer`**. Searches email and calendar history for prior context with user approval when Phase 2A connectors exist. |
+| **/career-navigator:draft-outreach** | Command | Drafts outreach copy (LinkedIn, email, InMail, etc.). Invokes **`writer`**. Prefer **`contact-context`** first when warm threading matters; or searches email and calendar history for prior context with user approval when Phase 2A connectors exist. |
+| **/career-navigator:contact-context** | Command | Read-only search of email (and calendar when tools allow) for a named contact or company; emits **ContactContextBrief** for **`draft-outreach`** / **`writer`**. Requires explicit user approval before lookup. |
 | **/career-navigator:event-intelligence** | Command | Deep evaluation of specific events: ROI, audience fit, cost/time, and **presentation / speaking** opportunity flagging. Invokes **`networking-strategist`**. |
 | **/career-navigator:content-suggest** | Command | Suggests LinkedIn post topics based on current industry trends, the user's target roles, and recent activity in their field. Invokes **`writer`**. |
 | **/career-navigator:evaluate-post** | Command | Evaluates a draft post for audience fit, algorithmic performance, and **cultural / political / reputational** risk vs target companies. Invokes **`writer`** and **`market-researcher`** for target-profile-specific risk evaluation. |
@@ -241,7 +242,7 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **salary-research** | Skill | Fires when compensation is mentioned in any context. Pulls current market data for the role, level, and geography under discussion. |
 | **follow-up-timing** | Skill | Fires when an application is viewed in the tracker. Evaluates elapsed time against company-specific norms and flags if a follow-up action is warranted. |
 | **cultural-risk-flag** | Skill | Fires when drafting LinkedIn content or outreach messages. Routes evaluation through **`evaluate-post`** / **`writer`** + **`market-researcher`** for a single, target-specific risk rubric; may nudge the user to run **`evaluate-post`** before publishing. |
-| **contact-context** | Skill | Fires when a contact at a target company is identified. Searches email and calendar history for prior correspondence and surfaces relevant context for **`writer`** / **`draft-outreach`** (Phase 2A). Requires user approval before use. |
+| **contact-context** | Skill | Fires when a contact at a target company is identified or the user asks for prior-thread context before outreach. Searches email and calendar history for prior correspondence and surfaces relevant context for **`writer`** / **`draft-outreach`** (Phase 2A). Requires user approval before use. Also invocable via **`/career-navigator:contact-context`**. |
 
 # **6. Scheduling & recurring runs**
 
@@ -305,7 +306,7 @@ The analytics layer consumes structured event data from the storage connector an
 
 # **9. External Service Integrations (.mcp.json)**
 
-The plugin ships **`.mcp.json`** with **`mcpServers: {}`**. Host-specific MCP setup belongs in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. This avoids brittle `npx mcp-remote` configs where **`${APIFY_TOKEN}`** in JSON args is passed literally and never expanded.
+The plugin ships **`.mcp.json`** with **`mcpServers: {}`**. Host-specific MCP setup belongs in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. This avoids brittle `npx mcp-remote` configs where **`${APIFY_TOKEN}`** in JSON args is passed literally and never expanded. For **inbox context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors (**OAuth** in the browser—no mail passwords or refresh tokens in repo JSON); see table below and **[CONNECTORS.md](../CONNECTORS.md)**.
 
 Run `/career-navigator:launch` for a conversational walkthrough. Each integration is optional; skills degrade when a connector is absent.
 
@@ -318,8 +319,10 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **Glassdoor** | MCP | Company culture research, interview experience data, salary benchmarks, and recruiter process timelines. |
 | **CareerOneStop** | MCP | U.S. Department of Labor API. Free. Provides labor market data, salary ranges, occupation outlook, and American Job Center locations. Also a candidate live data source for the `training-roi` skill — see Phase 1C note in §15. |
 | **IllinoisJobLink** | MCP | Illinois-specific job board. State employment resources and local posting discovery. |
-| **Gmail / Outlook** | MCP | Contact history search for networking context. OAuth-based. Requires explicit user opt-in. Scoped to search only — no send access without separate permission. |
-| **Google Calendar / Outlook Calendar** | MCP | Interview scheduling awareness, contact meeting history, and daily briefing triggers. OAuth-based. Read-only by default. |
+| **Gmail** | Claude first-party connector | **Settings / Customize → Connectors → Gmail → Connect** — Google **OAuth** in the browser; do not commit tokens in `.mcp.json`. Anthropic documents **search and analyze** mail; **no create/send/modify** via this integration. **Pro / Max / Team / Enterprise** per Claude docs (confirm in-product). Career Navigator: **`draft-outreach`**, **`follow-up`**, **`contact-context`** use mail only after **explicit user approval** per lookup. See [CONNECTORS.md](../CONNECTORS.md), [Gmail integration](https://claude.com/docs/connectors/google/gmail). |
+| **Microsoft 365** (Outlook mail, SharePoint, OneDrive, Teams per product scope) | Claude first-party connector | **Connectors → Microsoft 365 → Connect** — Microsoft **OAuth**; **Team/Enterprise** and often **tenant admin** setup per Anthropic. Documented as **read-only** (no modify/delete/create through the connector). Outlook thread search supports the same Career Navigator skills as Gmail. See [CONNECTORS.md](../CONNECTORS.md), [Microsoft 365 connector](https://claude.com/docs/connectors/microsoft/365). |
+| **Google Calendar** | Claude first-party connector (Google) | OAuth via Google Workspace / Connectors catalog where offered. Read/calendar awareness for scheduling and briefings per host capabilities. |
+| **Outlook Calendar / Teams Calendar** | Microsoft 365 connector | Covered under **Microsoft 365** row where enabled. |
 | **Greenhouse / Workday / Lever** | MCP | ATS status tracking for applications submitted through these platforms. Read-only access to application status. |
 | **Whisper (OpenAI)** | MCP | Audio transcription for interview capture feature. Phase 2B. MVP scope: user audio only. Local processing option available for privacy-sensitive users. |
 | **Meetup / Eventbrite / Luma** | MCP | Event discovery for networking radar. Searches for relevant professional events by location, industry, and role type. |
@@ -496,7 +499,7 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 Status: Completed
 
 * Plugin scaffold: manifest, directory structure
-* **`launch` skill** and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index); walks Indeed (and optional Apify); **offers** optional **`linkedin-post-analytics`** when the user opts in and browser tooling is available. Slash command: **`/career-navigator:launch`**.
+* **`launch` skill** and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index); walks Indeed (and optional Apify); **offers** optional **Gmail** / **Microsoft 365** inbox connectors and optional **`linkedin-post-analytics`** when the user opts in. Slash command: **`/career-navigator:launch`**.
 * `search-jobs` skill — live job search via Indeed connector; assisted-manual fallback
 * `focus-career` skill — critical-only alerts when the user begins a session (or on a user-scheduled cadence via Cowork `/schedule`); onboarding on first run
 * Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
@@ -558,7 +561,7 @@ Status: Completed
 * Presentation opportunity flagging; CFP / visibility assessment in **`event-intelligence`**.
 * LinkedIn topic recommendations; full **post drafts** persisted to disk; **`evaluate-post`** (cultural/political/reputational risk via `market-researcher` + target profiles).
 * **`voice-profile.md`** / **`voice_profile_v1`** for tone matching (launch harvest + user samples).
-* Commands: `/career-navigator:networking-strategy`, `/career-navigator:network-map`, `/career-navigator:event-intelligence`, `/career-navigator:event-radar`, `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`.
+* Commands: `/career-navigator:networking-strategy`, `/career-navigator:network-map`, `/career-navigator:event-intelligence`, `/career-navigator:event-radar`, `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`. (**`/career-navigator:contact-context`** is Phase **2A**; see §3.4.)
 
 ### **Phase 1F — Career planning, offer evaluation & compensation negotiation**
 
@@ -787,6 +790,7 @@ This phase is explicitly shaped by industry trends kicked off by **OpenClaw** �
 | **/career-navigator:interview-debrief** | Post-interview Q&A capture |
 | **/career-navigator:morning-brief** | Day-of interview briefing |
 | **/career-navigator:draft-outreach** | Draft outreach (**`writer`**) |
+| **/career-navigator:contact-context** | Prior email/calendar thread summary → **ContactContextBrief** (read-only; user approval) |
 | **/career-navigator:content-suggest** | LinkedIn topic ideas (**`writer`**) |
 | **/career-navigator:evaluate-post** | Post risk review — audience + cultural/political via **`market-researcher`** + **`writer`** |
 | **/career-navigator:linkedin-post-analytics** | Read-only own LinkedIn post metrics → **`tracker.json`** `networking[]` (browser automation + user consent) |

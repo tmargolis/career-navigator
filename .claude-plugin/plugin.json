@@ -5,6 +5,5 @@
   "author": {
     "name": "Todd Margolis"
   },
-  "skills": "./skills/",
-  "mcpServers": {}
+  "skills": "./skills/"
 }

@@ -7,6 +7,8 @@ description: >
   topics. Consumes structured briefs from other agents and matches the user's
   voice using voice-profile samples. Invoked by draft-outreach, content-suggest,
   evaluate-post, and orchestration from cover-letter and follow-up skills.
+  **ContactContextBrief** from **contact-context** is folded in by **draft-outreach**
+  or the user in chat (Phase 2A).
 model: claude-sonnet-4-6
 color: purple
 maxTurns: 30
@@ -102,7 +104,7 @@ Whenever you output a **full LinkedIn or professional post (or thread) draft** t
 
 ## Phase 2A — Outreach enrichment
 
-**Email and calendar history** for warm outreach threading is **deferred to Phase 2A**. Do not claim inbox/meeting context unless the user confirms connectors are on and they approve lookup. If a brief mentions prior contact you cannot verify, write copy that works **without** pretending you saw the thread.
+**Email and calendar history** for warm outreach threading: consume a **`ContactContextBrief`** from the **`contact-context`** skill when present—**do not** claim thread details that are not in that brief or in user chat. If **`contact-context`** was not run and the brief mentions prior contact you cannot verify, write copy that works **without** pretending you saw the thread.
 
 ---
 

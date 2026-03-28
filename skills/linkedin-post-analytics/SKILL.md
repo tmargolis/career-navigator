@@ -13,7 +13,7 @@ triggers:
 
 ## Gate (run first)
 
-1. **Browser access:** This skill needs **live LinkedIn UI** (analytics panels). If **Claude in Chrome** (or equivalent MCP) **and** **computer / browser use** are **not** available, **stop** and ask the user to enable one of them and **explicitly approve** a **read-only** session. Do **not** scrape without that consent.
+1. **Pattern:** [CONNECTORS.md](CONNECTORS.md) **three-step** for this integration: **Discover** — no standard LinkedIn MCP here; **Configure** — user **logged into LinkedIn** in the host browser (**they** sign in); **Browser access** — **ask** **Claude in Chrome** and/or **computer use** (**neither** / one / both). If **neither** or no tooling, **stop**—do **not** scrape without **read-only** approval for the chosen mode(s).
 2. **`{user_dir}`:** Resolve the job-search folder; tracker is `{user_dir}/CareerNavigator/tracker.json`.
 
 ## Objective

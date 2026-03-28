@@ -1,11 +1,7 @@
 ---
 name: launch
 description: >
-  Launch your job search with Career Navigator: the single entry point for configuration.
-  Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents,
-  walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data,
-  offers optional LinkedIn post analytics (browser automation + consent), and Google Drive when applicable.
-  No Customize button required — run this command to do everything.
+  Launch your job search with Career Navigator: the single entry point for configuration. Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents, walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, optional Gmail / Microsoft 365 inbox connectors (OAuth) for outreach context, optional LinkedIn post analytics, and Google Drive when applicable. No Customize button required — run this command to do everything.
 triggers:
   - "/career-navigator:launch"
   - "/launch"
@@ -22,7 +18,19 @@ Use this after installing the plugin — it is how you **launch** Career Navigat
 
 The working directory (or relevant sub-directory) should be configured as the user's job search directory to be referred to as `{user_dir}`. All data this plugin produces— profile, ExperienceLibrary, tracker, generated artifacts — lives in subdirectories of the `{user_dir}` folder alongside the user's raw documents.
 
+**Integrations (Indeed, Apify, LinkedIn, Gmail, Microsoft 365, future):** Follow [CONNECTORS.md](CONNECTORS.md): **only prompt for services that are not already connected** in this session (host tools missing or user reports a problem). If **Indeed** / **Apify** / **Gmail** / **M365** tools are already present, a **brief acknowledgment** is enough—**do not** ask setup, OAuth, or browser-access questions for those.
+
 ## Workflow
+
+### Connector pattern (apply to steps 3–6)
+
+| Step | What to do |
+| --- | --- |
+| **1 — Discover** | Check tools in **this chat** for that integration. If **connected** (tools present), acknowledge briefly and **skip** further steps for it. |
+| **2 — Configure** | **Only if not connected:** **ask** if they want to set up; guide [CONNECTORS.md](CONNECTORS.md); **they** complete **Connectors** + OAuth/token. **Never** automate OAuth with Chrome/computer use. |
+| **3 — Browser access** | **Only if not connected via MCP** or the flow is **browser-only** (e.g. **LinkedIn** analytics). **Do not** ask for **Indeed** / **Apify** / inbox when MCP tools already work. |
+
+Apply **1 → 2 → (3 only when needed)** per integration—**omit** steps 2–3 when step 1 already succeeded.
 
 ### 1. Confirm job search directory
 
@@ -266,7 +274,9 @@ Create or update with dated sections (you may keep older dated blocks below for 
 
 ### 3. Connect the Indeed MCP connector (live job search)
 
-Career Navigator’s **`search-jobs`** skill expects the **Indeed** MCP tools **`search_jobs`** and **`get_job_details`**. On **Claude Desktop**, those tools appear only after the user connects **Indeed** under **Customize → Connectors** and finishes **browser-based OAuth** with Indeed (this is **not** a static API key you paste into `.mcp.json`).
+Apply **Connector pattern**; **do not** ask about **Indeed** if **`search_jobs`** / **`get_job_details`** are already available in **this chat**.
+
+Career Navigator’s **`search-jobs`** skill expects the **Indeed** MCP tools **`search_jobs`** and **`get_job_details`**. On **Claude Desktop**, those tools appear only after the user connects **Indeed** under **Customize → Connectors** and finishes **browser-based OAuth** with Indeed (this is **not** a static API key you paste into `.mcp.json`). **Only if tools are missing**, run **Configure**; **they** complete **Connect** and OAuth—do not drive it via **Claude in Chrome** or **computer use**.
 
 **What to expect in Claude Desktop:**
 
@@ -285,17 +295,21 @@ Career Navigator’s **`search-jobs`** skill expects the **Indeed** MCP tools **
 
 > "Indeed is connected. Run `/career-navigator:search-jobs` any time, or ask me to find jobs for your target role and location."
 
+**Do not** ask about **Indeed** further (including browser access)—it is already configured.
+
 If tools are missing after OAuth, have them verify: Indeed account authorized, connector still enabled, **new chat** after connecting.
 
 **Claude Cowork / other hosts:** Use the host’s documented way to enable **Indeed** job search MCP (same tool names when available). Do not invent credentials or scrape Indeed without the official connector.
 
 ### 4. Configure Apify for salary benchmarking (optional)
 
+Apply **Connector pattern**; **do not** ask about **Apify** if its tools are already available—suggest **`/career-navigator:salary-research`** and move on.
+
 The `salary-research` skill uses the **Apify** MCP tools to pull live compensation data. This step is optional — skip it if the user doesn't need salary benchmarking.
 
-**Do not** ask the user to paste their Apify token into chat, edit `claude_desktop_config.json`, or rely on `.env` / `APIFY_TOKEN` for MCP startup — Claude Desktop does not expand `${APIFY_TOKEN}` inside MCP `args` the way a shell would.
+**Do not** ask the user to paste their Apify token into chat, edit `claude_desktop_config.json`, or rely on `.env` / `APIFY_TOKEN` for MCP startup — Claude Desktop does not expand `${APIFY_TOKEN}` inside MCP `args` the way a shell would. **They** paste the token into the **Apify** connector form in the app—do not use browser automation to configure it.
 
-First check if the Apify MCP is already connected. It may be in a deferred state, so double check and make sure to activate them if you need to. If they are active, suggest they run `/career-navigator:salary-research` for a role and location from their profile. If not, Ask the user:
+First check if the Apify MCP is already connected. It may be in a deferred state, so double check and make sure to activate them if you need to. If they are active, suggest they run `/career-navigator:salary-research` for a role and location from their profile. If not, ask the user:
 > "Would you like to set up salary benchmarking? It uses Apify's free tier ($5/month in credits — enough for personal job search use) to pull live salary data by role and location."
 
 **If yes — Claude Desktop connector flow:**
@@ -315,7 +329,7 @@ First check if the Apify MCP is already connected. It may be in a deferred state
 
    - **Save**, turn the connector **on**, start a **new chat** so MCP tools load
 
-4. Validation: Confirm Apify tools are available (e.g. **Call Actor**, **Get Actor run**, **Get dataset items**). If tools need to be activated from a deferred state, then do that. If the tools are missing, summarize what they should double-check (token, enabled tools string, connector enabled, new session).
+4. Validation: Confirm Apify tools are available (e.g. **Call Actor**, **Get Actor run**, **Get dataset items**). If tools need to be activated from a deferred state, then do that. If the tools are missing, summarize what they should double-check (token, enabled tools string, connector enabled, new session). If Apify is **already connected**, **do not** ask further questions about it.
 
 **Cowork / other hosts:** If the user is not on Claude Desktop, tell them to add Apify MCP the way their host documents (same **Enabled tools** string and a secure token field if the UI offers one). Do not invent a JSON config that embeds the token.
 
@@ -325,18 +339,75 @@ First check if the Apify MCP is already connected. It may be in a deferred state
 
 ### 5. Offer LinkedIn post analytics (optional)
 
+Apply **Connector pattern** (LinkedIn is usually **no** host MCP for this flow—**browser access** is the main lever).
+
 After **Indeed** and **Apify** (or if the user skipped Apify), offer a **read-only** snapshot of **their own** LinkedIn post metrics into **`{user_dir}/CareerNavigator/tracker.json`** (`networking[]`, per **`linkedin-post-analytics`**). This is optional; do not run it without a clear **yes**.
+
+**1 — Discover:** There is typically **no** LinkedIn MCP tool for this plugin path; note that analytics use **browser** access (step 3).
+
+**2 — Configure:** **Ask** whether they are **logged into LinkedIn** in a browser profile the host can use; **they** sign in—do not automate LinkedIn login.
+
+**3 — Browser access:** **Ask** whether they want **Claude in Chrome** and/or **computer use** for **read-only** LinkedIn analytics (**neither** / Chrome / computer use / both). If **neither**, do **not** run analytics in-browser; offer **schedule later** or skip.
 
 **Say something like:**
 
-> **LinkedIn visibility (optional):** If you post on LinkedIn, you can snapshot **your** post analytics into your career tracker (impressions, reactions, etc.) on a schedule. That uses **Claude in Chrome** or **computer / browser use** with your approval—you stay logged into LinkedIn in that browser, and the run is **read-only** (no posting or engaging).  
-> Want to **run that now**, **skip**, or **only schedule it later** (e.g. weekly via **`/schedule`**)?
+> **LinkedIn visibility (optional):** You can snapshot **your** post analytics into your career tracker (read-only). Which browser access should we use—**Claude in Chrome**, **computer use**, **both**, or **neither** (skip browser run for now)?  
+> If you want a run **now** or **later** via **`/schedule`**, say so.
 
-**If they choose run now:**
+**If they choose run now** and approved **Chrome** and/or **computer use**:
 
-1. Confirm **Claude in Chrome** MCP tools and/or **computer / browser use** are available. If **neither** is available, do **not** attempt scraping—explain they must enable one in the host, approve a read-only session, log into LinkedIn, then run **`linkedin-post-analytics`** or **`/career-navigator:linkedin-post-analytics`** (or say **continue** on a new chat after enabling tools).
-2. If tooling **is** available: follow **`skills/linkedin-post-analytics/SKILL.md`** end-to-end (ask for LinkedIn vanity slug if unknown, append snapshots to `tracker.json`, summarize).
+1. Confirm the chosen tooling is available in the host. If **neither** was approved or tools are missing, do **not** scrape—explain they can enable tooling, log into LinkedIn, then run **`linkedin-post-analytics`** or **`/career-navigator:linkedin-post-analytics`** (or **continue** in a new chat).
+2. If approved: follow **`skills/linkedin-post-analytics/SKILL.md`** end-to-end (ask for LinkedIn vanity slug if unknown, append snapshots to `tracker.json`, summarize).
 
 **If they skip or defer:**
 
 > "Understood — run **`linkedin-post-analytics`** or **`/career-navigator:linkedin-post-analytics`** anytime, or add a **`/schedule`** task when you're ready. **`networking-strategist`** can remind you when you're working on visibility."
+
+### 6. Connect Gmail / Microsoft 365 for inbox context (optional)
+
+Apply **Connector pattern**; **do not** prompt for **Gmail** or **Microsoft 365** if tools for that service are **already** in **this chat** (brief acknowledgment only).
+
+After **Indeed**, **Apify**, and the **LinkedIn post analytics** offer (or skips), offer **Gmail** and/or **Microsoft 365** so **`draft-outreach`**, **`follow-up`**, and **`contact-context`** can search **read-only** mail **when the user explicitly approves** each lookup.
+
+**Step 2 only:** never automate **Connectors** with Chrome/computer-use tools. **Ask** if they want to set up or re-enable Gmail/M365; if **yes**, they complete **Connectors** + OAuth **themselves** while you give instructions.
+
+#### 6a. Gmail — check connection first
+
+1. **Check this session:** Look at tools available in **this chat**. If any clearly belong to **Gmail** / Google mail (names often include `gmail`, `google`, or similar—exact strings vary by host), treat **Gmail as connected and enabled** for this session. Say so briefly (e.g. “Gmail looks connected here—great for inbox context when you approve a search”) and **do not** ask them to install Gmail again. Still offer **Microsoft 365** below if useful.
+
+2. **If no Gmail tools appear:** You **cannot** see their **Connectors** screen from chat. Ask them to open **Customize** / **Settings** → **Connectors** and look at **Gmail**:
+   - **Gmail not listed:** Use the normal “add + connect” path in step **6c** (first-time install).
+   - **Gmail is listed but turned off** (toggle disabled, connector inactive, or equivalent): ask politely, e.g.  
+     > “You already have the **Gmail** connector in Claude, but it’s not enabled right now. Would you like to **turn it on** for **read-only** access? Career Navigator only searches when **you approve** each lookup, and Anthropic’s Gmail integration doesn’t send mail on your behalf.”  
+     If they **yes** → ask them to **enable** the toggle (or equivalent) **themselves** in **Connectors**, then **Connect** / re-auth if the UI asks, then start a **new chat** if tools still don’t load. **Do not** use **Claude in Chrome** or **computer use** to flip the toggle or complete OAuth.
+   - **Gmail is listed but not signed in** (shows **Connect**, **Reconnect**, or disconnected state): ask politely, e.g.  
+     > “Gmail is added but not connected to your Google account. Would you like to **set that up**—you’ll click **Connect** and finish Google sign-in in the browser tab Claude opens? Same **read-only** pattern—we only search when you say yes each time.”  
+     If they **yes** → give the steps below; **they** click **Connect** and complete **OAuth** in the app (no passwords in chat).
+
+3. **If they decline** enable/connect: respect that; note they can turn it on later in **Connectors**.
+
+#### 6b. Microsoft 365 (unchanged pattern)
+
+Offer **Microsoft 365** when relevant (see **6c**). Optional: if **Microsoft 365** tools are already in this session, acknowledge and skip redundant install instructions.
+
+#### 6c. Generic inbox pitch (when Gmail state is unknown or user wants both)
+
+If **6a** already confirmed **Gmail** tools in-session, **omit Gmail** from this pitch—only ask about **Microsoft 365** or close the step.
+
+**Say something like:**
+
+> **Inbox context (optional):** If you want help remembering what you already said to recruiters or hiring managers, you can connect **Gmail** and/or **Microsoft 365 (Outlook)** through Claude’s **Connectors**. Auth is **OAuth** in the browser—no passwords in chat. Career Navigator only searches mail **when you say yes** to a specific lookup.  
+> Want to **set up** **Gmail**, **Microsoft 365**, **both**, or **skip** for now?
+
+**If they want to set up (they do the clicks—do not use Chrome/computer-use tools to connect):**
+
+1. **Customize** / **Settings** → **Connectors**.
+2. **Gmail:** They open **Gmail** → **Connect** → finish **Google** sign-in and consent. Official docs: [Gmail integration](https://claude.com/docs/connectors/google/gmail) · [Google Workspace connectors](https://support.claude.com/en/articles/10166901-use-google-workspace-connectors).
+3. **Microsoft 365 (includes Outlook):** They open **Microsoft 365** → **Connect** → finish **Microsoft** sign-in. **Team/Enterprise** and sometimes **admin setup** may be required—see [Microsoft 365 connector](https://claude.com/docs/connectors/microsoft/365) and [Enabling and using the Microsoft 365 connector](https://support.claude.com/en/articles/12542951-enabling-and-using-the-microsoft-365-connector). Security overview: [Microsoft 365 connector: Security Guide](https://support.claude.com/en/articles/12684923-microsoft-365-connector-security-guide).
+4. After each connection, suggest a **new chat** if inbox-related tools do not appear.
+
+**Validation:** If the host exposes Gmail or Microsoft 365 tools, confirm they are listed/enabled. If the user’s **plan or org** does not include a connector, say so plainly and point to in-app **Connectors** catalog and [CONNECTORS.md](CONNECTORS.md). If inbox tools are **already** working, **do not** ask about browser access for mail—MCP in chat is enough.
+
+**If skipped:**
+
+> "No problem — outreach and follow-ups will work without inbox search. You can connect later under **Settings → Connectors** or run **`/career-navigator:launch`** again. Details: **CONNECTORS.md**."

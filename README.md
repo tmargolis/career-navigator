@@ -152,6 +152,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`event-intelligence`** | Specific event ROI, speaking/CFP | Deep evaluation |
 | **`event-radar`** | Ongoing discovery | Local → international, ROI tiers |
 | **`draft-outreach`** | DMs, email, InMail drafts | **`writer`** |
+| **`contact-context`** | Before warm outreach | Read-only Gmail/M365 (+ calendar when available) → **ContactContextBrief** for **`draft-outreach`** / **`writer`** (Phase **2A**; explicit approval) |
 | **`content-suggest`** | Post ideas, full drafts | Topics + saved **`linkedin_post`** drafts under **`LinkedIn Posts/`** |
 | **`evaluate-post`** | Before publish | Audience + cultural/political/reputational risk vs **`profile.md`** targets |
 | **`linkedin-post-analytics`** | Weekly/biweekly or **`/schedule`** | Read-only snapshots of **your** LinkedIn post metrics → **`tracker.json`** `networking[]` (needs **Claude in Chrome** or **computer/browser use** + explicit approval) |
@@ -207,6 +208,8 @@ No data leaves your machine unless you configure a cloud connector (see [CONNECT
 Run `/career-navigator:launch` to configure integrations. The wizard handles everything conversationally — no file editing required.
 
 **Job search:** Career Navigator uses the **Indeed** MCP connector for live listings (`search_jobs`, `get_job_details`). In **Claude Desktop**, add it under **Customize → Connectors**, open **Indeed**, click **Connect**, then complete **Grant access to Indeed** in the browser (Indeed OAuth on **secure.indeed.com** — sign in and **Continue**). Start a **new chat** if tools don’t load. See `/career-navigator:launch` Step 3 for the full walkthrough.
+
+**Inbox context (optional — warm outreach):** Connect **Gmail** and/or **Microsoft 365** under **Connectors** so **`draft-outreach`**, **`follow-up`**, and related skills can search **your** mail **only when you approve** each lookup. Anthropic provides **OAuth** in the browser (no mail passwords in chat). **Microsoft 365** may require **Team/Enterprise** and admin setup. Full steps, plan notes, and official doc links: [CONNECTORS.md](CONNECTORS.md) and `/career-navigator:launch` Step 6.
 
 **Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. Cloud storage connectors (Google Drive, OneDrive, Dropbox) are available in Phase 2. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
 
