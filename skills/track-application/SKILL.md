@@ -39,6 +39,14 @@ triggers:
   - "update the status"
   - "add a contact"
   - "log a contact"
+  - "I sent the message"
+  - "I sent the outreach"
+  - "I sent my follow-up"
+  - "I reached out to"
+  - "I messaged"
+  - "I emailed them"
+  - "sent it"
+  - "outreach sent"
 ---
 
 Log or update an application record in `tracker.json`. Extract as much as possible from what the user said before asking for anything.
@@ -120,6 +128,7 @@ Read `tracker.json`. Determine which operation applies based on what the user sa
 | Interview scheduled or debriefed | Section 5 — Interview Logging |
 | Offer received or negotiation underway | Section 6 — Offer Capture |
 | Final result (hired, rejected, withdrew, ghosted) | Section 7 — Outcome Logging |
+| Outreach or follow-up message sent | Section 4 — Contact Management (log as interaction) + update `follow_up_date` and `next_step` |
 
 A single user message may trigger multiple sections — e.g., "I had an interview with Sarah Chen (recruiter) at Acme" triggers both Interview Logging and Contact Management. Handle all that apply.
 

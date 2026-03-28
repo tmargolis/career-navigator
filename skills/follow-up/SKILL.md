@@ -213,6 +213,22 @@ Under each application entry, show **`writer`** output (subject line if email, b
 
 **Phase 2A:** When email/calendar connectors exist, enrich briefs with approved prior-thread context before invoking **`writer`**.
 
+#### 8d. Sent confirmation + auto-track
+
+After presenting all messages, say:
+> "Reply 'sent [Company]' for each message you send and I'll log it to your tracker."
+
+When the user confirms a send for a specific company:
+- Find the matching application record in `tracker.json`
+- Append to `contacts[].interactions[]` for the relevant contact (or the first listed contact if ambiguous):
+  ```json
+  { "date": "YYYY-MM-DD", "type": "email | linkedin", "notes": "Follow-up sent — {stage_kind}" }
+  ```
+- Append to `notes[]`: `{ "date": "YYYY-MM-DD", "text": "Follow-up sent via {channel}: {stage_kind}" }`
+- Update `follow_up_date` to today + the company's `follow_up_after_days` window (use size-tier fallback if not found)
+- Update `next_step` to "Await response to follow-up"
+- Confirm: `Logged: follow-up sent to {Company} — next follow-up window: {new follow_up_date}`
+
 ---
 
 ## What You Never Do

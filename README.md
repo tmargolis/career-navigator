@@ -30,7 +30,7 @@ The core differentiator: every application outcome feeds back into the system. O
 
 ## Plugin Marketplace
 
-Career Navigator will be submitted to a plugin marketplace in **Phase 1G — Marketplace publication**. Once listed, installation will be a single click from the Browse plugins directory — no download required.
+Career Navigator is now published through a GitHub-backed marketplace feed as part of **Phase 1G — Marketplace publication**. For non-technical users, installation remains one click from **Browse plugins** in Claude Desktop.
 
 ---
 
@@ -268,7 +268,8 @@ Never paste your token into this repository or into chat logs you do not trust. 
 - Phase 1D: Completed
 - Phase 1E: Completed
 - Phase 1F: Completed
-- Phase 1G: In progress
+- Phase 1G: Completed
+- Phase 2A: In progress
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
@@ -282,7 +283,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 **Phase 1F ([Release v1.5 alpha 2](https://github.com/tmargolis/career-navigator/releases/tag/v1.5.0-alpha.2)):** `honest-advisor` + `market-researcher` add career planning and decision-grade offer evaluation + negotiation workflows (trajectory planning, scenario-aware evaluation, negotiation handoffs), with `job-scout` + `daily-schedule` consuming the new artifacts on a monthly cadence.
 
-**Phase 1G (in progress):** **Plugin marketplace publication.** Career Navigator becomes installable for non-technical users without requiring them to understand MCP, local tool configuration, or agent runtimes. **Impact:** transforms Career Navigator from a personal tool into a publicly available product with real user validation.
+**Phase 1G (Completed):** **Plugin marketplace publication.** Career Navigator is installable from a marketplace source for non-technical users without requiring MCP/runtime setup knowledge. **Impact:** transformed Career Navigator from a personal tool into a publicly available product with real user validation.
 
 ### Phase 2 — Integrations
 

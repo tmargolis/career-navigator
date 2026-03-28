@@ -23,6 +23,19 @@ Invoke **`writer`** in **`draft-outreach`** mode.
 3. From conversation, capture: **channel**, **recipient archetype** (title/company if known), **objective** (info chat, referral check-in, post-event ping), and any **StrategistHandoff** or facts the user pasted.
 4. Pass a structured brief to **`writer`** (see the writer agent instructions). **Do not** draft final copy in this skill—delegate.
 5. Present **`writer`** output (variants if offered). Remind: **Phase 2A** adds email/calendar enrichment for warm threading when connectors exist.
+6. **Sent confirmation + auto-track:** After presenting the copy, say:
+   > "Let me know when you've sent this and I'll log it to your tracker."
+
+   When the user confirms (e.g. "sent", "I sent it", "done", "sent it just now"):
+   - Read `{user_dir}/CareerNavigator/tracker.json`
+   - If a matching application exists (same company): append to `contacts[].interactions[]`:
+     ```json
+     { "date": "YYYY-MM-DD", "type": "linkedin | email", "notes": "Sent outreach: {one-line summary of message objective}" }
+     ```
+     Also append to `notes[]`: `{ "date": "YYYY-MM-DD", "text": "Outreach sent via {channel} to {recipient} — {objective}" }`
+     Update `next_step` to "Await response"
+   - If no matching application exists but the recipient is at a target company: offer to log a new networking entry in `tracker.json` under `networking[]`
+   - Confirm: `Logged: outreach to {recipient} at {company} ({channel}) — {date}`
 
 ## Notes
 

@@ -2,7 +2,7 @@
 
 Claude Cowork Plugin — Full Product Specification
 
-Version 0.23 — March 2026
+Version 0.24 — March 2026
 
 An AI-powered job search companion that combines the capabilities of
 recruiters, career coaches, reverse recruiters, and market analysts into a single intelligent platform.
@@ -96,7 +96,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 | Plugin Name | career-navigator |
 | --- | --- |
-| **Version** | 1.5.0 |
+| **Version** | 2.0.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | User-configured in Claude Cowork — skills are the payload; recommended cadences are documented in skill files (e.g. run `daily-schedule` daily via `/schedule`) |
@@ -477,7 +477,8 @@ Phase status:
 * Phase 1D: Completed
 * Phase 1E: Completed
 * Phase 1F: Completed
-* Phase 1G: In progress
+* Phase 1G: Completed
+* Phase 2A: In progress
 
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
@@ -560,7 +561,7 @@ More detail: [Phase 1F detailed spec](phase-1f-spec.md).
 
 ### **Phase 1G — Marketplace publication**
 
-Status: In progress
+Status: Completed
 
 **Deliverable: Claude Plugin Marketplace Publication**
 
@@ -573,6 +574,8 @@ A laid-off tech worker in Austin finds Career Navigator in a plugin marketplace,
 Phase 2 connects Career Navigator to the external services that complete the full job search experience: inbox + calendar context, interview capture, portable storage, and analytics/export surfaces. Each sub-phase is independently deployable.
 
 ### **Phase 2A — Email & Calendar Integration**
+
+Status: In progress
 
 **Deliverable: Inbox + Calendar Context**
 
