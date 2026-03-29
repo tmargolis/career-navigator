@@ -119,7 +119,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 **│ └── plugin.json**
 
-**├── .mcp.json** — may include Anthropic **HTTP MCP** entries for **Gmail** / **Google Calendar** (no secrets); other MCPs (e.g. Apify for salary) are configured in the host app
+**├── .mcp.json** — may include Anthropic **HTTP MCP** entries for **Gmail** / **Google Calendar** and/or **`ms365`** (Outlook / Microsoft 365) as an alternate channel (no secrets); other MCPs (e.g. Apify for salary) are configured in the host app
 
 **├── agents/**
 
@@ -188,7 +188,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | **/career-navigator:networking-strategy** | Command | Builds an evidence-based networking plan (priorities, sequencing, gaps). Optional handoff brief for **`writer`** when messaging is needed. Invokes **`networking-strategist`**. |
 | **/career-navigator:network-map** | Command | Maps plausible paths and gaps to target employers; outputs narrative plus **`network_map_v1`** JSON (and may persist to `network-map.md`). **Interactive graph UI** is **Phase 2D**—see §15. |
 | **/career-navigator:draft-outreach** | Command | Drafts outreach copy (LinkedIn, email, InMail, etc.). Invokes **`writer`**. Prefer **`contact-context`** first when warm threading matters; or searches email and calendar history for prior context with user approval when Phase 2A connectors exist. |
-| **/career-navigator:contact-context** | Command | Read-only search of email (and calendar when tools allow) for a named contact or company; emits **ContactContextBrief** for **`draft-outreach`** / **`writer`**. Requires explicit user approval before lookup. |
+| **/career-navigator:contact-context** | Command | Read-only search of email (and calendar when tools allow) for a named contact or company—**past** and **upcoming** calendar events; emits **ContactContextBrief** (**upcoming_meetings**, **warm_networking**) for **`draft-outreach`** / **`writer`**. Requires explicit user approval before lookup. |
 | **/career-navigator:event-intelligence** | Command | Deep evaluation of specific events: ROI, audience fit, cost/time, and **presentation / speaking** opportunity flagging. Invokes **`networking-strategist`**. |
 | **/career-navigator:content-suggest** | Command | Suggests LinkedIn post topics based on current industry trends, the user's target roles, and recent activity in their field. Invokes **`writer`**. |
 | **/career-navigator:evaluate-post** | Command | Evaluates a draft post for audience fit, algorithmic performance, and **cultural / political / reputational** risk vs target companies. Invokes **`writer`** and **`market-researcher`** for target-profile-specific risk evaluation. |
@@ -249,7 +249,7 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **salary-research** | Skill | Fires when compensation is mentioned in any context. Pulls current market data for the role, level, and geography under discussion. |
 | **follow-up-timing** | Skill | Fires when an application is viewed in the tracker. Evaluates elapsed time against company-specific norms and flags if a follow-up action is warranted. |
 | **cultural-risk-flag** | Skill | Fires when drafting LinkedIn content or outreach messages. Routes evaluation through **`evaluate-post`** / **`writer`** + **`market-researcher`** for a single, target-specific risk rubric; may nudge the user to run **`evaluate-post`** before publishing. |
-| **contact-context** | Skill | Fires when a contact at a target company is identified or the user asks for prior-thread context before outreach. Searches email and calendar history for prior correspondence and surfaces relevant context for **`writer`** / **`draft-outreach`** (Phase 2A). Requires user approval before use. Also invocable via **`/career-navigator:contact-context`**. |
+| **contact-context** | Skill | Fires when a contact at a target company is identified or the user asks for prior-thread context before outreach. Searches email and calendar (**past** + **scheduled** meetings) for correspondence and warm-networking signals; surfaces **ContactContextBrief** for **`writer`** / **`draft-outreach`** (Phase 2A). Requires user approval before use. Also invocable via **`/career-navigator:contact-context`**. |
 
 # **6. Scheduling & recurring runs**
 
@@ -317,7 +317,7 @@ The analytics layer consumes structured event data from the storage connector an
 
 # **9. External Service Integrations (.mcp.json)**
 
-The plugin ships **`.mcp.json`** with optional Anthropic **HTTP MCP** servers for **Gmail** and **Google Calendar** (see file); other connectors are configured in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. This avoids brittle `npx mcp-remote` configs where **`${APIFY_TOKEN}`** in JSON args is passed literally and never expanded. For **inbox and calendar context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors and/or **Google Calendar** (**OAuth** in the browser—no passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**. **Google Calendar** is a separate connector from **Gmail** in the Connectors catalog.
+The plugin ships **`.mcp.json`** with optional Anthropic **HTTP MCP** servers for **Gmail**, **Google Calendar**, and/or **`ms365`** (Microsoft 365 / Outlook—alternate to Google for inbox and calendar context; see file); other connectors are configured in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. This avoids brittle `npx mcp-remote` configs where **`${APIFY_TOKEN}`** in JSON args is passed literally and never expanded. For **inbox and calendar context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors and/or **Google Calendar** (**OAuth** in the browser—no passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**. **Google Calendar** is a separate connector from **Gmail** in the Connectors catalog.
 
 Run `/career-navigator:launch` for a conversational walkthrough. Each integration is optional; skills degrade when a connector is absent.
 
@@ -332,7 +332,7 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **IllinoisJobLink** | MCP | Illinois-specific job board. State employment resources and local posting discovery. |
 | **Gmail** | Claude first-party connector | **Settings / Customize → Connectors → Gmail → Connect** — Google **OAuth** in the browser; do not commit tokens in `.mcp.json`. Anthropic documents **search and analyze** mail; **no create/send/modify** via this integration. **Pro / Max / Team / Enterprise** per Claude docs (confirm in-product). Career Navigator: **`draft-outreach`**, **`follow-up`**, **`contact-context`** use mail only after **explicit user approval** per lookup. See `CONNECTORS.md`, [Gmail integration](https://claude.com/docs/connectors/google/gmail). |
 | **Microsoft 365** (Outlook mail, SharePoint, OneDrive, Teams per product scope) | Claude first-party connector | **Connectors → Microsoft 365 → Connect** — Microsoft **OAuth**; **Team/Enterprise** and often **tenant admin** setup per Anthropic. Documented as **read-only** (no modify/delete/create through the connector). Outlook thread search supports the same Career Navigator skills as Gmail. See `CONNECTORS.md`, [Microsoft 365 connector](https://claude.com/docs/connectors/microsoft/365). |
-| **Google Calendar** | Claude first-party connector (Google) | **Settings / Customize → Connectors → Google Calendar → Connect** — Google **OAuth** in the browser (separate card from **Gmail**). Anthropic documents schedule and event access per [Google Calendar integration](https://claude.com/docs/connectors/google/calendar). Career Navigator: **`contact-context`** (and downstream drafting) uses **read-only** meeting context **after explicit user approval** per lookup—summarize prior calls/interviews with a contact; do not create or move events unless the user asks. See `CONNECTORS.md`. |
+| **Google Calendar** | Claude first-party connector (Google) | **Settings / Customize → Connectors → Google Calendar → Connect** — Google **OAuth** in the browser (separate card from **Gmail**). Anthropic documents schedule and event access per [Google Calendar integration](https://claude.com/docs/connectors/google/calendar). Career Navigator: **`contact-context`** (and downstream drafting) uses **read-only** **past** and **upcoming** meeting context **after explicit user approval** per lookup—**warm** identification when a meeting is scheduled; do not create or move events unless the user asks. See `CONNECTORS.md`. |
 | **Outlook Calendar / Teams Calendar** | Microsoft 365 connector | Covered under **Microsoft 365** row where enabled. |
 | **Greenhouse / Workday / Lever** | MCP | ATS status tracking for applications submitted through these platforms. Read-only access to application status. |
 | **Whisper (OpenAI)** | MCP | Audio transcription for interview capture feature. Phase 2B. MVP scope: user audio only. Local processing option available for privacy-sensitive users. |
@@ -632,7 +632,7 @@ Status: In progress
 * Contact correspondence history search for networking context
 * Contact context skill: surfaces prior email/meeting history before outreach drafting
 * Outreach drafting enriched with prior communication history
-* Meeting history awareness for warm networking identification
+* Meeting history awareness for warm networking identification — **past** and **scheduled (upcoming)** calendar events with a contact; **`contact-context`** emits **`upcoming_meetings`** and **`warm_networking`** so outreach does not cold-open when a meeting is already on the calendar
 * **`linkedin-post-analytics`** skill and **`/career-navigator:linkedin-post-analytics`** command: **read-only** snapshots of the user’s **own** LinkedIn post analytics into **`tracker.json`** `networking[]` (see §10.4, §12.1). Depends on **host browser automation** (**Claude in Chrome**, **computer / browser use**, or equivalent) and **explicit user approval**; **`networking-strategist`** recommends cadence for visibility-focused users. **`/career-navigator:launch`** **offers** this as an optional step after Indeed/Apify when the user wants a first run.
 
 ### **Phase 2B — Interview intelligence**
@@ -824,7 +824,7 @@ This phase is explicitly shaped by industry trends kicked off by **OpenClaw** �
 | **/career-navigator:interview-debrief** | Post-interview Q&A capture |
 | **/career-navigator:morning-brief** | Day-of interview briefing |
 | **/career-navigator:draft-outreach** | Draft outreach (**`writer`**) |
-| **/career-navigator:contact-context** | Prior email/calendar thread summary → **ContactContextBrief** (read-only; user approval) |
+| **/career-navigator:contact-context** | Prior email/calendar thread summary (**past** + **upcoming** meetings, **warm_networking**) → **ContactContextBrief** (read-only; user approval) |
 | **/career-navigator:content-suggest** | LinkedIn topic ideas (**`writer`**) |
 | **/career-navigator:evaluate-post** | Post risk review — audience + cultural/political via **`market-researcher`** + **`writer`** |
 | **/career-navigator:linkedin-post-analytics** | Read-only own LinkedIn post metrics → **`tracker.json`** `networking[]` (browser automation + user consent) |

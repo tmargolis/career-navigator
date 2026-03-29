@@ -7,6 +7,10 @@
     "google-calendar": {
       "type": "http",
       "url": "https://gcal.mcp.claude.com/mcp"
+    },
+    "ms365": {
+      "type": "http",
+      "url": "https://microsoft365.mcp.claude.com/mcp"
     }
   }
 }

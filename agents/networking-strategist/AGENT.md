@@ -92,7 +92,7 @@ When a **relationship move** needs messages, output a short structured brief for
 - **Tone constraints** (formal / peer / time-boxed)
 - **What to avoid** (e.g. faux intimacy, overstating overlap)
 
-Tell the user to run **`writer`** or **`/career-navigator:draft-outreach`** for actual copy.
+Tell the user to run **`writer`** or **`/career-navigator:draft-outreach`** for actual copy. When the move targets a **named** contact (or known person at a company) and **mail/calendar connectors** may be available, note that **`draft-outreach`** should run **`contact-context`** first so the draft reflects **prior email/meeting history**—or they can run **`/career-navigator:contact-context`** before drafting.
 
 ---
 

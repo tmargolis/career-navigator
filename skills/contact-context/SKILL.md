@@ -1,7 +1,7 @@
 ---
 name: contact-context
 description: >
-  Surfaces prior email and Google Calendar / M365 calendar context when tools allow—read-only, user-approved. If the user says they sent mail but the address was wrong, trust them and help find a better address (Gmail MCP is unreliable for bounces). Feeds draft-outreach and writer with a ContactContextBrief.
+  Surfaces prior email and Google Calendar / M365 calendar context when tools allow—read-only, user-approved. Includes past and upcoming meetings with a contact for meeting-history awareness and warm-networking identification (e.g. scheduled sync = warm relationship signal). If the user says they sent mail but the address was wrong, trust them and help find a better address (Gmail MCP is unreliable for bounces). Feeds draft-outreach and writer with a ContactContextBrief.
 triggers:
   - "contact context"
   - "prior emails with"
@@ -14,22 +14,27 @@ triggers:
   - "550 Invalid Recipient"
   - "email bounced"
   - "/career-navigator:contact-context"
+  - "meeting scheduled with"
+  - "upcoming call with"
+  - "coffee chat with"
 ---
 
 Gather **evidence-backed** context from **Gmail** / **Microsoft 365** (and **calendar** when the host exposes it) so **`draft-outreach`** and **`writer`** do not guess about prior conversations.
+
+**Meeting history awareness (warm networking identification):** When **calendar** tools are used, retrieve **past** and **scheduled (upcoming)** events involving this contact. An **upcoming** meeting on the calendar is a strong signal the relationship is **warm** (not cold)—outreach can reference the scheduled time or avoid redundant “first touch” framing. A **past** meeting without a future one still supports warm follow-up. Label uncertainty in **`caveats`** if attendee matching is fuzzy.
 
 ## Gate (run first)
 
 1. **Connectors:** If **no** Gmail/M365 (inbox) tools **and** **no** host **calendar** tools (e.g. **Google Calendar**, Outlook/Teams calendar via **Microsoft 365**) appear in **this session**, **stop** and point to [CONNECTORS.md](CONNECTORS.md) and **`/career-navigator:launch`** Step 6—do **not** invent inbox or calendar access.
 2. **Explicit approval:** **Ask once** before calling tools—cover what is available, e.g.  
-   > “I can **search your mail** for threads involving **{name or company}** [and **check your calendar** for recent meetings with them / their email]—**read-only**. Approve for this request?”  
+   > “I can **search your mail** for threads involving **{name or company}** [and **check your calendar** for **past and upcoming** meetings with them / their email]—**read-only**. Approve for this request?”  
    (Include the bracketed calendar sentence only when calendar tools exist and the user wants meeting context.)  
    If the host exposes **only mail** or **only calendar**, ask only for that scope. If **no**, exit with a short note—**no** fabricated summaries.
 
 ## Inputs (ask if missing)
 
 - **Contact:** name, email, or LinkedIn-style identifier; **company** (optional but helps disambiguate).
-- **Scope:** default = relevant threads in the **last ~12 months**; user may narrow or widen.
+- **Scope:** default = relevant threads in the **last ~12 months**; user may narrow or widen. For **calendar:** default = **past ~12 months** plus **upcoming ~6 months** (or tool default) so **scheduled** meetings with the contact are included.
 
 ## User said they sent — trust them (default)
 
@@ -51,12 +56,15 @@ If step **2** (below) doesn’t surface a clear thread, search mail for the cont
 
 ## Workflow
 
-1. Read `{user_dir}/CareerNavigator/profile.md` and **`tracker.json`** (`applications[].contacts[]`, `networking[]`) for any **known** facts about this person—do not contradict tracker evidence. **If inbox tools are missing** in this session, skip mail search below and note in **caveats**. **If calendar tools are missing**, skip the calendar step and set **calendar_notes** to "—".
+1. Read `{user_dir}/CareerNavigator/profile.md` and **`tracker.json`** (`applications[].contacts[]`, `networking[]`) for any **known** facts about this person—do not contradict tracker evidence. **If inbox tools are missing** in this session, skip mail search below and note in **caveats**. **If calendar tools are missing**, skip the calendar step and set **calendar_notes**, **upcoming_meetings**, and **warm_networking** to "—" or **`not searched — no calendar tools`** as appropriate.
 2. With **approval**, use host **Gmail** / **Microsoft 365** tools to **search** and **read** relevant threads (by address, domain, company, plain name). **Read-only:** do not send, draft, or delete mail. Skip if step **1** determined there are no inbox tools.
-3. **Calendar (when tools exist and approval includes calendar):** Use **Google Calendar** and/or **Microsoft 365** calendar tools to find **events** in the agreed window (default ~12 months) where the contact appears as **attendee** (email match) or where **title/description/location** plausibly reference the person or company. Summarize **when**, **meeting title**, and any **notes or descriptions** the host returns—especially **commitments** or **next steps** written in the event. **Read-only:** do not create, move, or delete events unless the user explicitly asks outside this skill’s scope.
+3. **Calendar (when tools exist and approval includes calendar):** Use **Google Calendar** and/or **Microsoft 365** calendar tools to find **events** where the contact appears as **attendee** (email match) or **title/description/location** plausibly reference the person or company. Cover:
+   - **Past:** events that already occurred in the lookback window (default ~12 months)—**commitments** or **next steps** in notes/description.
+   - **Scheduled / upcoming:** events **from today forward** through the forward window (default ~6 months or host limit)—**date, time (if available), title**. These support **warm networking identification**: if a meeting is **scheduled** with this contact, treat the thread as **warm** and pass that signal to **`hooks_for_writer`** (e.g. “Upcoming 1:1 Thu—short ping to confirm or share prep,” not a cold intro).
+   **Read-only:** do not create, move, or delete events unless the user explicitly asks outside this skill’s scope.
 4. **If the user says they sent mail** (failed delivery, wrong address, or “I already emailed them”): follow **“User said they sent — trust them (default)”** above — **address resolution first**; **no** mandatory bounce/NDR hunt via MCP.
 5. **Name fallback:** If mail search did not surface a **clear** thread and the user did **not** frame this as “I sent / bad address,” run **“Name search (when the thread isn’t found)”** above.
-6. **Summarize** neutrally: who wrote last, dates, **commitments**, **open loops**, tone; **plus** any **calendar** findings (prior calls, interviews, promised follow-ups). **Quote** sparingly; prefer bullets.
+6. **Summarize** neutrally: who wrote last, dates, **commitments**, **open loops**, tone; **plus** any **calendar** findings (**past** calls/interviews; **upcoming** scheduled meetings—highlight these for warm identification). **Quote** sparingly; prefer bullets.
 7. Emit a **ContactContextBrief** (markdown block below) for **`writer`** / **`draft-outreach`**.
 8. **Offer:** “Want **`draft-outreach`** next with this context folded in?” If **yes**, pass the brief into the next step (user can run **`/career-navigator:draft-outreach`** or continue in chat).
 
@@ -68,9 +76,11 @@ If step **2** (below) doesn’t surface a clear thread, search mail for the cont
 - **company:** {company or "—"}
 - **sources_used:** gmail | microsoft_365 | calendar | none (list all that were actually queried)
 - **as_of:** {YYYY-MM-DD}
-- **summary:** {2–6 bullets: substance of prior exchanges and, if used, recent meetings}
-- **calendar_notes:** {dated meetings with this contact—title, commitments from descriptions—or "—" if not searched or nothing found}
-- **open_loops:** {promises, unanswered threads, deadlines mentioned—in mail or calendar}
+- **summary:** {2–6 bullets: substance of prior exchanges and, if used, calendar context}
+- **calendar_notes:** {**Past** meetings with this contact—dates, titles, commitments from descriptions—or "—" if none}
+- **upcoming_meetings:** {**Scheduled** future events with this contact—date, time if known, title—or "—" if none / not searched}
+- **warm_networking:** {one line: e.g. `warm — upcoming meeting scheduled` | `warm — past 1:1 only` | `uncertain — calendar partial` | `cold — no calendar match`}
+- **open_loops:** {promises, unanswered threads, deadlines mentioned—in mail or calendar; include prep/follow-up for **upcoming** meetings when relevant}
 - **hooks_for_writer:** {3 bullets—factual, safe to reference in outreach}
 - **email_address_notes:** {candidate addresses for this contact—evidence-backed vs tentative—or "—"}
 - **search_method_notes:** {e.g. user confirmed they sent mail; bounce hunt skipped; MCP limits—or "—"}

@@ -388,7 +388,7 @@ After **Indeed**, **Apify**, and the **LinkedIn post analytics** offer (or skips
 
 #### 6b. Microsoft 365 (unchanged pattern)
 
-Offer **Microsoft 365** when relevant (see **6d**). Optional: if **Microsoft 365** tools are already in this session, acknowledge and skip redundant install instructions.
+Offer **Microsoft 365** when relevant (see **6d**). Optional: if **Microsoft 365** tools are already in this session (including via project **`.mcp.json`** **`ms365`** → `https://microsoft365.mcp.claude.com/mcp` — Outlook/M365 as an **alternate** to Gmail/Google Calendar), acknowledge and skip redundant install instructions.
 
 #### 6c. Google Calendar — check connection first
 

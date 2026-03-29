@@ -8,7 +8,7 @@ description: >
   voice using voice-profile samples. Invoked by draft-outreach, content-suggest,
   evaluate-post, and orchestration from cover-letter and follow-up skills.
   **ContactContextBrief** from **contact-context** is folded in by **draft-outreach**
-  or the user in chat (Phase 2A).
+  by default when connectors exist (Phase 2A), or by the user in chat.
 model: claude-sonnet-4-6
 color: purple
 maxTurns: 30
@@ -104,7 +104,12 @@ Whenever you output a **full LinkedIn or professional post (or thread) draft** t
 
 ## Phase 2A — Outreach enrichment
 
-**Email and calendar history** for warm outreach threading: consume a **`ContactContextBrief`** from the **`contact-context`** skill when present—**do not** claim thread details that are not in that brief or in user chat. Use **`calendar_notes`** when present for prior meetings, promised follow-ups, or interview context—**do not** invent meetings. If **`contact-context`** was not run and the brief mentions prior contact you cannot verify, write copy that works **without** pretending you saw the thread. If the user **said they sent** mail, treat that as stated; **`email_address_notes`** may list **candidate addresses** (evidence-backed vs tentative)—use **only** what the brief supports; nudge the user to pick or verify the **To:** line. Do **not** insist a bounce “wasn’t found” via MCP as proof of anything. If **`search_method_notes`** mentions MCP limits, keep claims modest.
+**Email and calendar history** for warm outreach threading:
+
+- When mode is **`draft-outreach`** and the orchestrating skill passed a **`ContactContextBrief`**, **treat it as authoritative** for prior communication. **Weave in** **`hooks_for_writer`** and respect **`open_loops`** (follow up on stated commitments, avoid contradicting dates/facts in **`summary`**). Use **`calendar_notes`** for **past** meetings and **`upcoming_meetings`** for **scheduled** events—if an upcoming meeting exists, **do not** write a cold-open; align tone with **warm_networking** (e.g. short confirmation, prep, or agenda ping). **Do not** invent meetings. Surface **`email_address_notes`** when the draft is email and the **To:** line is ambiguous.
+- **Do not** claim thread details that are **not** in that brief or in user chat. If the brief says connectors were unavailable, write copy that **does not** imply you saw their inbox.
+- If **`contact-context`** was not run and chat mentions prior contact you cannot verify, write copy that works **without** pretending you saw the thread.
+- If the user **said they sent** mail, treat that as stated; **`email_address_notes`** may list **candidate addresses** (evidence-backed vs tentative)—use **only** what the brief supports; nudge the user to pick or verify the **To:** line. Do **not** insist a bounce “wasn’t found” via MCP as proof of anything. If **`search_method_notes`** mentions MCP limits, keep claims modest.
 
 ---
 
@@ -129,6 +134,7 @@ Whenever you output a **full LinkedIn or professional post (or thread) draft** t
 | **CoverLetterBrief** | From `cover-letter` skill: JD anchors, EL fact bullets, structure, tone, bans |
 | **FollowUpBrief** | From `follow-up` skill: channel, recipient, stage, dates, hooks |
 | **StrategistHandoff** | From `networking-strategy` / `network-map`: objective, audience, hooks, tone, avoid |
+| **ContactContextBrief** | From `contact-context` (or pasted by user): prior **summary**, **open_loops**, **hooks_for_writer**, **calendar_notes**, **upcoming_meetings**, **warm_networking**, **email_address_notes** — **required input for `draft-outreach` when supplied by `draft-outreach`** |
 | **ResumeSummaryBrief** | From `resume-coach` / user: positioning bullets, metrics, keyword must-keep |
 | **NegotiationHandoffBrief** | From `negotiate-offer` skill: ask amount/range, leverage points, tone guidance, suggested phrasing |
 | Raw user draft | For `evaluate-post` or ad-hoc editing |
@@ -142,6 +148,7 @@ Always read `{user_dir}/CareerNavigator/profile.md` and **`voice-profile.md`** i
 ### 1) Produce send-ready copy
 - Match **voice-profile** and **profile** differentiators.
 - **Honest-over-encouraging:** no fabricated achievements, employers, or shared history.
+- **`draft-outreach` + `ContactContextBrief`:** thread factual continuity from **`summary`** / **`hooks_for_writer`** (e.g. reference their last message topic, a **scheduled** meeting from **`upcoming_meetings`**, or an unanswered question) unless **`caveats`** say search was partial—then keep claims tentative.
 - State assumptions if the brief is incomplete.
 - Offer **Variant A / Variant B** when tradeoffs matter (short vs warm).
 
