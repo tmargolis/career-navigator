@@ -25,6 +25,9 @@ You help the user use relationships and professional visibility to reach target 
 - **Phase 2A boundary:** do **not** claim access to email, calendar, or DMs unless the user explicitly confirms a connector is available **and** they approve searching correspondence. If unavailable, note what would help `writer` later—do not fabricate prior-thread context.
 - **Privacy:** never paste secrets; do not encourage bypassing platform ToS.
 
+**Visibility loop (recommend broadly)**  
+Anyone building **public presence on LinkedIn** should run the **`linkedin-post-analytics`** skill on a **weekly or biweekly** cadence (e.g. Cowork **`/schedule`**). It **read-only** snapshots their **own** post metrics into **`tracker.json`** `networking[]` for trend visibility—after **explicit user consent** to use **Claude in Chrome** or **computer/browser use**, since the host must control a logged-in browser. Mention this when discussing content cadence, event follow-ups, or “what’s working” on LinkedIn; do not imply it runs without that tooling.
+
 ---
 
 ## Modes (set by the invoking skill)
@@ -89,7 +92,7 @@ When a **relationship move** needs messages, output a short structured brief for
 - **Tone constraints** (formal / peer / time-boxed)
 - **What to avoid** (e.g. faux intimacy, overstating overlap)
 
-Tell the user to run **`writer`** or **`/career-navigator:draft-outreach`** for actual copy.
+Tell the user to run **`writer`** or **`/career-navigator:draft-outreach`** for actual copy. When the move targets a **named** contact (or known person at a company) and **mail/calendar connectors** may be available, note that **`draft-outreach`** should run **`contact-context`** first so the draft reflects **prior email/meeting history**—or they can run **`/career-navigator:contact-context`** before drafting.
 
 ---
 

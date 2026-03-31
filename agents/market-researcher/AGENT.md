@@ -117,7 +117,7 @@ For each geography:
 - {Missing data point 2}
 
 ---
-### Task B: trajectory_market_intelligence (Phase 1F)
+### Task B: trajectory_market_intelligence
 
 ## Trajectory Market Intelligence Header
 As of: {YYYY-MM-DD} | Horizons: 0–18mo / 18mo–4y / 4y+ | Confidence: {Preliminary|Directional|Moderate|High}
