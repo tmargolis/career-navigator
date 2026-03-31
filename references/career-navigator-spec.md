@@ -2,7 +2,7 @@
 
 Claude Cowork Plugin — Full Product Specification
 
-Version 0.28 — March 2026
+Version 0.29 — March 2026
 
 An AI-powered job search companion that combines the capabilities of
 recruiters, career coaches, reverse recruiters, and market analysts into a single intelligent platform.
@@ -100,7 +100,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 | Plugin Name | career-navigator |
 | --- | --- |
-| **Version** | 2.0.0 |
+| **Version** | 2.1.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | User-configured in Claude Cowork — skills are the payload; recommended cadences are documented in skill files (e.g. run `daily-schedule` daily via `/schedule`) |
@@ -520,7 +520,7 @@ Phase status:
 * Phase 1E: Completed
 * Phase 1F: Completed
 * Phase 1G: Completed
-* Phase 2A: In progress
+* Phase 2A: Completed
 
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
@@ -591,7 +591,7 @@ Status: Completed
 * Presentation opportunity flagging; CFP / visibility assessment in **`event-intelligence`**.
 * LinkedIn topic recommendations; full **post drafts** persisted to disk; **`evaluate-post`** (cultural/political/reputational risk via `market-researcher` + target profiles).
 * **`voice-profile.md`** / **`voice_profile_v1`** for tone matching (launch harvest + user samples).
-* Commands: `/career-navigator:networking-strategy`, `/career-navigator:network-map`, `/career-navigator:event-intelligence`, `/career-navigator:event-radar`, `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`. (**`/career-navigator:contact-context`** is Phase **2A**; see §3.4.)
+* Commands: `/career-navigator:networking-strategy`, `/career-navigator:network-map`, `/career-navigator:event-intelligence`, `/career-navigator:event-radar`, `/career-navigator:draft-outreach`, `/career-navigator:content-suggest`, `/career-navigator:evaluate-post`. (**`/career-navigator:contact-context`** ships in Phase **2A** (completed); see §3.4.)
 
 ### **Phase 1F — Career planning, offer evaluation & compensation negotiation**
 
@@ -617,7 +617,9 @@ Phase 2 connects Career Navigator to the external services that complete the ful
 
 ### **Phase 2A — Email & Calendar Integration**
 
-Status: In progress
+Status: Completed
+
+**Plugin release:** [v2.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.1.0)
 
 **Deliverable: Inbox + Calendar Context**
 

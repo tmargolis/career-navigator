@@ -273,7 +273,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 - Phase 1E: Completed
 - Phase 1F: Completed
 - Phase 1G: Completed
-- Phase 2A: In progress
+- Phase 2A: Completed
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
@@ -293,8 +293,8 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 Phase 2 connects Career Navigator to the external services that complete the full job search experience. Sub-phases are independently deployable.
 
-- **Phase 2A — Inbox + Calendar Context**: *before you draft outreach, Career Navigator can (with explicit permission) pull and summarize the relevant email threads and meeting history so your messages are grounded in real context—not guesswork.* **Impact:** warm outreach becomes evidence-based and consistent.
-  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), contact-context enrichment for outreach drafting; **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`tracker.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
+- **Phase 2A ([Release v2.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.1.0)) — Inbox + Calendar Context (Completed):** *before you draft outreach, Career Navigator can (with explicit permission) pull and summarize the relevant email threads and meeting history so your messages are grounded in real context—not guesswork.* **Impact:** warm outreach becomes evidence-based and consistent.
+  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), optional HTTP MCP entries in **`.mcp.json`** (`gmail`, `google-calendar`, `ms365`), **`contact-context`** + **`draft-outreach`** / **`writer`** enrichment; past and **upcoming** meetings (**`warm_networking`**); **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`tracker.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
 
 - **Phase 2B — Full Interview Loop (Prep → Practice → Capture → Debrief)**: *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
   - **Scope includes**: `interview-coach`, `interview-capture`, guided/random/adaptive mocks across stages/vibes, morning brief, debrief flow; Whisper transcription with opt-in + retention/consent framework (see spec §13).

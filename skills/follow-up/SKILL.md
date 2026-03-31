@@ -197,7 +197,7 @@ For each row that needs a message, add an object to a list:
 - `applied_or_event_date`, `days_elapsed` (or interview date for thank-yous)
 - `facts_hooks`: 1–3 bullets from `notes` / `stage_history.post_notes`—**no invention**
 - `tone`: direct, not sycophantic; 3–5 sentences target for email body
-- `phase_2a_context`: `null` — **Phase 2A** will allow inbox/calendar snippets here
+- `phase_2a_context`: optional short inbox/calendar context when **Phase 2A** connectors are available **and** the user approved lookup; else `null`
 
 Read `{user_dir}/CareerNavigator/profile.md` and **`voice-profile.md`** for sign-off name and voice.
 
