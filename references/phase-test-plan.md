@@ -644,16 +644,32 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 ## Phase 2B — Interview Intelligence
 
 ### Scope
-- Interview prep, mock interview modes, capture/debrief pipeline.
+- Interview prep (`prep-interview`, **`interview-coach`**), mock interview modes, optional host TTS/STT for prep and mocks, **Pre-interview brief** as part of **`daily-schedule`** ( **`/career-navigator:morning-brief`** = focused alias). **`interview-debrief`** and **`interview-capture`** (§13) remain future work unless explicitly added.
 
 ### Tests
 - Run prep + mock interview across multiple stages/vibes.
-- Validate morning brief generation for interview-day scenarios.
-- Validate debrief logging into tracker.
-- If audio capture enabled, verify consent flow and transcript handling.
+- Validate **daily-schedule** includes **Pre-interview brief** when `stage_history` has a meeting **today**; validate **omitted** when none.
+- Validate **`/career-navigator:morning-brief`** focused output (pre-interview slice only when applicable).
+- **`[prep]`** tracker note + file under `CareerNavigator/interview-prep/` after prep.
+- **Deferred until shipped:** debrief logging into tracker; full audio capture consent flow (§13).
 
 ### Pass Criteria
-- Interview workflows are coherent end-to-end and privacy constraints are respected.
+- Interview prep and mock workflows are coherent; **user-audio-only** assumptions for voice/STT; no standalone **`morning-brief`** skill.
+
+### Structured test cases (IDs)
+
+| ID | Scenario | Pass hint |
+| --- | --- | --- |
+| 2B-P1 | `/career-navigator:prep-interview` for HM + company in tracker | Brief file + `[prep]` note; cites ExperienceLibrary |
+| 2B-P2 | Prep for **recruiter screen** | Emphasizes process, comp, timeline, fit-to-role |
+| 2B-D1 | `/career-navigator:daily-schedule` with **no** meeting today per §3.1 allowlist | Output **lacks** **Pre-interview brief** subsection |
+| 2B-D2 | `daily-schedule` with interview/recruiter stage **today** in `stage_history` | **Pre-interview brief (today)** present; ≥1 company covered |
+| 2B-D3 | `/career-navigator:morning-brief` | Same pre-interview behavior as 2B-D2 when applicable; no full pipeline table unless user asked |
+| 2B-M1 | `mock-interview` adaptive, neutral, **recruiter** | Session runs **without** requiring audio |
+| 2B-M2 | `mock-interview` challenging vibe, **hiring_manager** | Observable tougher tone / pressure |
+| 2B-A1 | Prep with **audio unavailable** | Completes text-only; states limitation once |
+| 2B-A2 | Prep/mock with **STT** (if host supports) | User speech reflected in transcript or saved prep |
+| 2B-A3 | **TTS** path (if host supports) | Question or brief section delivered via speech without errors |
 
 ### Example prompts (copy/paste)
 
@@ -662,6 +678,9 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 ```
 ```text
 Prep me for my upcoming HM interview at [Company] for [Role]—questions, stories, company angles.
+```
+```text
+Prep me for a recruiter phone screen at [Company] for [Role].
 ```
 
 ```text
@@ -679,11 +698,19 @@ I have interviews today—give me the morning brief with news and talking points
 ```
 
 ```text
+/career-navigator:daily-schedule
+```
+```text
+Run my full daily brief (expect Pre-interview section only if something is scheduled today in the tracker).
+```
+
+```text
 /career-navigator:interview-debrief
 ```
 ```text
 Interview debrief: I just finished a panel at [Company]. [paste notes].
 ```
+**Expect:** Not implemented until **`interview-debrief`** skill ships; may no-op or instruct user to use **`track-application`** notes for now.
 
 ---
 

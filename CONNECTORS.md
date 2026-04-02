@@ -74,3 +74,11 @@ Outlook mail for Career Navigator is provided through Anthropic’s **Microsoft 
 5. **New chat after connect:** If tools do not appear after OAuth, start a **new chat** (same pattern as **Indeed** / **Apify**).
 
 See also **`skills/launch/SKILL.md`** Step 6 for a conversational setup offer during **`/career-navigator:launch`**.
+
+---
+
+## Voice, TTS, and speech-to-text (Phase 2B — optional)
+
+**`prep-interview`** and **`mock-interview`** use **`interview-coach`**, which can use **host-native** text-to-speech, microphone capture, and transcription when the Claude / Cowork client exposes those capabilities. **No** audio connector is required: workflows **degrade to text-only** when voice tools are absent.
+
+For **speech-to-text** without built-in host transcription, the user may connect an **OpenAI Whisper** (or compatible) MCP server if their host supports it—same **discover → configure** pattern as other MCPs. Transcription is **user-voice / user-dictation only** for prep and mock practice; it does **not** replace the opt-in **`interview-capture`** flow in spec §13 for logging real interviews.
