@@ -67,7 +67,7 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 - [Phase 2 — Integrations](#phase-2--integrations)
   - [Phase 2A — Email & Calendar Integration](#phase-2a--email--calendar-integration)
-  - [Phase 2B — Interview intelligence](#phase-2b--interview-intelligence-mock-interview-system-morning-brief-audio-capture-and-post-interview-debrief)
+  - [Phase 2B — Interview intelligence](#phase-2b--interview-intelligence)
   - [Phase 2C — Extended Integrations](#phase-2c--extended-integrations)
   - [Phase 2D — Advanced Analytics, LinkedIn Automation & Dashboard Enhancements](#phase-2d--advanced-analytics-linkedin-automation--dashboard-enhancements)
 
