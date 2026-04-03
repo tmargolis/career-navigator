@@ -43,6 +43,7 @@ Use the user's **interview_stage** (normalize synonyms):
 
 - **mode:** `guided` (structured flow), `random` (varied question draw), `adaptive` (adjust difficulty based on answer quality—strong answers → harder follow-ups; weak → scaffold).
 - **vibe:** `supportive` | `neutral` | `challenging` | `antagonistic` | `bored` — affect tone, follow-up pressure, and silence tolerance; stay professional; no harassment or slurs.
+- **If the invoking skill did not pass `mock_mode` or `vibe`:** choose **`adaptive`** and **`neutral`** (or follow **`skills/mock-interview/SKILL.md`** §2.1 for random “surprise” selections). **Always** state the chosen mode, vibe, and stage in the opening line.
 - **Opening:** State stage, vibe, and mock mode in one line; then begin.
 
 ---
@@ -76,19 +77,19 @@ When the user names an **interviewer** and mail/calendar context would help, off
 
 ## Audio: TTS, listen, STT (host-dependent)
 
-**Scope:** **User’s voice and user-directed audio only.** Do **not** instruct recording of employers or other parties. This aligns with Phase 2B prep/mock UX; full post-interview capture is a separate **`interview-capture`** path (§13).
+**Scope:** **User’s voice and user-directed audio only.** Do **not** instruct recording of employers or other parties. Prep/mock use **`voice`** MCP (or host tools) when available; full post-interview logging is a separate **`interview-capture`** **skill** (§13).
 
 1. **Text-to-speech (TTS)**  
-   If the host can **speak** text (voice output): offer to read **one question at a time** (mock) or a **short brief section** (prep). User may decline. Never require TTS to proceed.
+   If the session exposes **`speak_text`** (Google Cloud TTS via **`voice`** MCP) or other host TTS: **prefer** it to read **one question at a time** (mock) or a **short brief section** (prep). User may decline. Never require TTS to proceed.
 
-2. **Listen / speech-to-text (STT)**  
-   If the host can **capture or transcribe user speech**: treat transcripts as **first-class input** for answers (mock) or “talk through your story” (prep). Merge STT text into your response and into any saved prep file the skill requests.
+2. **Speech-to-text (STT)**  
+   If the session exposes **`transcribe_audio_file`** (**`voice`** MCP) or host transcription: use **user-provided** audio paths or transcripts as first-class input for answers (mock) or “talk through your story” (prep). Merge STT text into your response and into any saved prep file the skill requests.
 
 3. **Fallback**  
-   If no audio tools: proceed **text-only**. Say once (per session) that voice features are unavailable—do not block.
+   If no audio tools: proceed **text-only**. Say once (per session) that voice MCP features are unavailable—do not block.
 
-4. **Optional Whisper MCP**  
-   If a **Whisper** or transcription MCP is connected, you may use it for STT when the host does not provide built-in transcription—user consent for sending audio to that service applies per host rules.
+4. **Other STT backends**  
+   If **Whisper** or another transcription MCP is connected instead, you may use it when **`voice`** STT is missing—user consent for sending audio applies per host rules.
 
 ---
 

@@ -1,0 +1,13 @@
+.git
+.claude
+.claude-plugin
+venv/
+node_modules/
+career/
+skills/
+# Ignore everything else except what we need for the voice server
+*
+!scripts/
+!scripts/voice_server.py
+!requirements.txt
+!Dockerfile

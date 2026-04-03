@@ -644,14 +644,17 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 ## Phase 2B — Interview Intelligence
 
 ### Scope
-- Interview prep (`prep-interview`, **`interview-coach`**), mock interview modes, optional host TTS/STT for prep and mocks, **Pre-interview brief** as part of **`daily-schedule`** ( **`/career-navigator:morning-brief`** = focused alias). **`interview-debrief`** and **`interview-capture`** (§13) remain future work unless explicitly added.
+- Interview prep (`prep-interview`, **`interview-coach`**), mock interview modes (**defaults** when mode/vibe omitted), **`interview-capture`** **skill** (not agent), optional **Google `voice`** MCP (`speak_text`, `transcribe_audio_file`) per **`CONNECTORS.md`**, **Pre-interview brief** as part of **`daily-schedule`** ( **`/career-navigator:morning-brief`** = focused alias). **`interview-debrief`** may remain deferred.
 
 ### Tests
 - Run prep + mock interview across multiple stages/vibes.
+- **`mock-interview` with no mode/vibe:** model **announces** selected `mock_mode` + `vibe` (defaults per §2.1) before first question.
 - Validate **daily-schedule** includes **Pre-interview brief** when `stage_history` has a meeting **today**; validate **omitted** when none.
 - Validate **`/career-navigator:morning-brief`** focused output (pre-interview slice only when applicable).
 - **`[prep]`** tracker note + file under `CareerNavigator/interview-prep/` after prep.
-- **Deferred until shipped:** debrief logging into tracker; full audio capture consent flow (§13).
+- **`voice` MCP (`voice` server in `.mcp.json`):** with **`GOOGLE_APPLICATION_CREDENTIALS`** set, **TTS** — call **`speak_text`** with a short string; expect success message and MP3 path / playback on macOS. **STT** — provide a WAV file (LINEAR16 mono, 16 kHz) with test speech; **`transcribe_audio_file`** returns recognized text.
+- **`interview-capture`:** opt-in flow; employer warning once; **`[capture]`** or structured note in tracker when transcript processed.
+- **Deferred until shipped:** full **`interview-debrief`** automation if not yet present.
 
 ### Pass Criteria
 - Interview prep and mock workflows are coherent; **user-audio-only** assumptions for voice/STT; no standalone **`morning-brief`** skill.
@@ -667,9 +670,12 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 | 2B-D3 | `/career-navigator:morning-brief` | Same pre-interview behavior as 2B-D2 when applicable; no full pipeline table unless user asked |
 | 2B-M1 | `mock-interview` adaptive, neutral, **recruiter** | Session runs **without** requiring audio |
 | 2B-M2 | `mock-interview` challenging vibe, **hiring_manager** | Observable tougher tone / pressure |
+| 2B-M3 | `mock-interview` with **no** mode/vibe specified | **Announces** selected mode + vibe (e.g. adaptive + neutral) before first question |
 | 2B-A1 | Prep with **audio unavailable** | Completes text-only; states limitation once |
-| 2B-A2 | Prep/mock with **STT** (if host supports) | User speech reflected in transcript or saved prep |
-| 2B-A3 | **TTS** path (if host supports) | Question or brief section delivered via speech without errors |
+| 2B-A2 | Prep/mock with **STT** (`transcribe_audio_file`) | WAV input → transcript text matches spoken content |
+| 2B-A3 | **TTS** (`speak_text`) | Returns success; MP3 written; optional `afplay` on macOS |
+| 2B-V1 | **End-to-end voice** (optional) | `speak_text` then user records answer; `transcribe_audio_file` on saved WAV → text used in mock turn |
+| 2B-C1 | `/career-navigator:interview-capture` with opt-in | Warning once; `interview-capture-settings.json`; tracker update after STT |
 
 ### Example prompts (copy/paste)
 
@@ -688,6 +694,20 @@ Prep me for a recruiter phone screen at [Company] for [Role].
 ```
 ```text
 Mock interview: recruiter stage, neutral vibe, adaptive difficulty. Company: [Company], role: [Role].
+```
+```text
+/career-navigator:mock-interview
+```
+```text
+Mock interview for my Acme PM application — no other preferences.
+```
+**Expect:** Announces selected **mode** + **vibe** (defaults) before the first question.
+
+```text
+/career-navigator:interview-capture
+```
+```text
+I want to log my interview from this WAV file: [path under job search folder]. I opt in for this session.
 ```
 
 ```text

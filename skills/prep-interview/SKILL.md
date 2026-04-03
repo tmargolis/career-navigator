@@ -44,7 +44,7 @@ Collect if missing:
 
 ### 3. Optional STT / voice
 
-If the user is **speaking** or pastes a **transcript** from host STT, pass it as `user_audio_transcript` in the handoff to **`interview-coach`**. Follow `agents/interview-coach/AGENT.md` for TTS/STT behavior.
+If the **`voice`** MCP exposes **`speak_text`** / **`transcribe_audio_file`**, use them per **`agents/interview-coach/AGENT.md`**. If the user is **speaking** or pastes a **transcript** from host STT, pass it as `user_audio_transcript` in the handoff to **`interview-coach`**.
 
 ### 4. Invoke **interview-coach**
 
