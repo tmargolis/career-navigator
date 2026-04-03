@@ -15,6 +15,27 @@ triggers:
 
 1. **Pattern:** [CONNECTORS.md](CONNECTORS.md) **three-step** for this integration: **Discover** — no standard LinkedIn MCP here; **Configure** — user **logged into LinkedIn** in the host browser (**they** sign in); **Browser access** — **ask** **Claude in Chrome** and/or **computer use** (**neither** / one / both). If **neither** or no tooling, **stop**—do **not** scrape without **read-only** approval for the chosen mode(s).
 2. **`{user_dir}`:** Resolve the job-search folder; tracker is `{user_dir}/CareerNavigator/tracker.json`.
+3. **Scheduled unattended runs:** If this invocation came from `/schedule` (or user asked for unattended), do **not** ask interactive browser/tooling questions. Continue only when prior consent is already saved in `{user_dir}/CareerNavigator/profile.md` under `## LinkedIn`:
+   - `LinkedIn slug: <value>`
+   - `LinkedIn analytics permission: granted`
+   - `LinkedIn analytics mode: chrome | computer | either`
+   If any of these are missing, stop with a concise setup message telling the user to run one interactive setup once.
+
+## Tool-call guidance
+
+**Preferred order:** for **interactive** runs, use the user-approved mode (`chrome`, `computer`, or `either`). If mode is `either`, try **Claude in Chrome** first, then computer.
+
+**Claude in Chrome path (strict, typed params):**
+- First try `tabs_context_mcp` with correctly typed values (for example, `createIfEmpty` must be the boolean `true`, not the string `"true"`).
+- If context initialization still fails, call `tabs_create_mcp`, then retry `tabs_context_mcp` once.
+- Then call `navigate` to the LinkedIn URL.
+- If `navigate` fails because `tabId` is typed incorrectly, retry once with a numeric `tabId` (integer, not quoted).
+- If still failing, stop with: "Claude in Chrome couldn't initialize a valid tab context. Open Chrome, confirm you're signed into LinkedIn, and rerun `linkedin-post-analytics`."
+
+**No circular fallback loops:**
+- At most one retry per failing step.
+- Do not bounce between tools repeatedly.
+- If chosen mode fails, only try the alternate mode when the saved/approved mode is `either`.
 
 ## Objective
 
@@ -22,7 +43,11 @@ For **your own** posts only: open recent activity, collect per-post analytics, a
 
 ## Inputs (ask once if missing)
 
-- **Profile path:** LinkedIn vanity slug for `https://www.linkedin.com/in/{slug}/recent-activity/shares/`
+- **Profile path:** Read `{user_dir}/CareerNavigator/profile.md` → `## LinkedIn` → `LinkedIn slug:`. If present, use it. If missing or blank, ask once and save it back to `profile.md` under that heading before proceeding.
+- **Consent state (persist):** For interactive runs, if missing, ask once and save:
+  - `LinkedIn analytics permission: granted | denied`
+  - `LinkedIn analytics mode: chrome | computer | either`
+  Scheduled runs require `permission: granted` plus a mode.
 - **Window:** default posts from the **last ~60 days** (or user’s “several months” if they state it)
 
 ## Steps
@@ -45,4 +70,4 @@ One line per post: `[date] — [topic] — impressions: X, reactions: X, comment
 
 ## Cadence hint for the user
 
-Weekly or biweekly **`/schedule`** is enough for most job-search visibility loops.
+For users who granted permission and saved mode, morning **`/schedule`** runs are supported. Weekly or biweekly cadence is enough for most job-search visibility loops, but daily is acceptable during active networking pushes.
