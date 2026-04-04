@@ -11,10 +11,6 @@
     "ms365": {
       "type": "http",
       "url": "https://microsoft365.mcp.claude.com/mcp"
-    },
-    "career-voice-cloud": {
-      "type": "http",
-      "url": "https://career-voice-1054554770828.us-central1.run.app/sse/"
     }
   }
 }

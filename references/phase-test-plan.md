@@ -652,7 +652,7 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 - Validate **daily-schedule** includes **Pre-interview brief** when `stage_history` has a meeting **today**; validate **omitted** when none.
 - Validate **`/career-navigator:morning-brief`** focused output (pre-interview slice only when applicable).
 - **`[prep]`** tracker note + file under `CareerNavigator/interview-prep/` after prep.
-- **`voice` MCP (`voice` server in `.mcp.json`):** with **`GOOGLE_APPLICATION_CREDENTIALS`** set, **TTS** — call **`speak_text`** with a short string; expect success message and MP3 path / playback on macOS. **STT** — provide a WAV file (LINEAR16 mono, 16 kHz) with test speech; **`transcribe_audio_file`** returns recognized text.
+- **`career-voice` MCP (local stdio server in `.mcp.json`):** **TTS** — call **`speak`** with a short string; expect audio playback through local speaker and `"Speech complete."` response. **STT** — call **`listen`** and speak a short phrase; expect returned transcript matching spoken content.
 - **`interview-capture`:** opt-in flow; employer warning once; **`[capture]`** or structured note in tracker when transcript processed.
 - **Deferred until shipped:** full **`interview-debrief`** automation if not yet present.
 
@@ -672,9 +672,9 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 | 2B-M2 | `mock-interview` challenging vibe, **hiring_manager** | Observable tougher tone / pressure |
 | 2B-M3 | `mock-interview` with **no** mode/vibe specified | **Announces** selected mode + vibe (e.g. adaptive + neutral) before first question |
 | 2B-A1 | Prep with **audio unavailable** | Completes text-only; states limitation once |
-| 2B-A2 | Prep/mock with **STT** (`transcribe_audio_file`) | WAV input → transcript text matches spoken content |
-| 2B-A3 | **TTS** (`speak_text`) | Returns success; MP3 written; optional `afplay` on macOS |
-| 2B-V1 | **End-to-end voice** (optional) | `speak_text` then user records answer; `transcribe_audio_file` on saved WAV → text used in mock turn |
+| 2B-A2 | Prep/mock with **STT** (`listen`) | Mic recording → transcript text matches spoken content |
+| 2B-A3 | **TTS** (`speak`) | Audio plays through local speaker; `"Speech complete."` returned |
+| 2B-V1 | **End-to-end voice** (optional) | `speak` delivers question aloud; `listen` captures spoken answer; transcript used in next mock turn |
 | 2B-C1 | `/career-navigator:interview-capture` with opt-in | Warning once; `interview-capture-settings.json`; tracker update after STT |
 
 ### Example prompts (copy/paste)
@@ -723,6 +723,27 @@ I have interviews today—give me the morning brief with news and talking points
 ```text
 Run my full daily brief (expect Pre-interview section only if something is scheduled today in the tracker).
 ```
+
+#### `career-voice` MCP — TTS smoke test (2B-A3)
+
+```text
+Say this aloud: "Your mock interview for Acme will begin in 10 seconds. Take a breath and get ready."
+```
+**Expect:** Audio plays through local speaker immediately; response is `"Speech complete."` No link, no file — sound only.
+
+#### `career-voice` MCP — STT smoke test (2B-A2)
+
+```text
+Listen for 10 seconds. I'll say my name and target role — then confirm you heard me correctly.
+```
+**Expect:** `listen` tool is called with `duration_seconds=10`; returned transcript matches what was spoken; model echoes it back for confirmation.
+
+#### `career-voice` MCP — end-to-end voice turn (2B-V1)
+
+```text
+Ask me the first behavioral question for my [Company] HM interview using voice, then listen for my answer and give feedback.
+```
+**Expect:** Model calls `speak` to deliver the question aloud, then calls `listen` to capture the response, then provides coaching feedback in text.
 
 ```text
 /career-navigator:interview-debrief

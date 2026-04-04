@@ -440,3 +440,44 @@ If **6a** already confirmed **Gmail** tools in-session, **omit Gmail** from this
 **If skipped:**
 
 > "No problem — outreach and follow-ups will work without inbox or calendar search. You can connect later under **Settings → Connectors** or run **`/career-navigator:launch`** again. Details: **CONNECTORS.md**."
+
+### 7. Set up local voice MCP (optional)
+
+**Discover:** Check whether tools named **`speak`** and **`listen`** are available in this session. If both are present, the **`career-voice`** MCP is already running — acknowledge briefly and skip this step entirely.
+
+**If voice tools are missing**, offer once:
+
+> "Career Navigator supports optional **voice features** — text-to-speech for mock interview questions and speech-to-text to capture your answers. It runs entirely on your machine with no cloud account. Want to set it up? You'll need to restart Claude Desktop once after."
+
+**If yes**, use shell tools to perform the following:
+
+**1 — Locate `uv`:**
+Run `which uv`. If the command returns no path, stop and instruct the user:
+> "Voice features require `uv` (a Python runner). Install it with `brew install uv` on macOS, or see https://docs.astral.sh/uv/getting-started/installation/ — then run `/career-navigator:launch` again."
+
+**2 — Find the plugin root:**
+Use the path of any plugin file already read in this session (e.g. this `SKILL.md` at `skills/launch/SKILL.md`) to derive the absolute path to the Career Navigator plugin root directory. The voice server is at `{plugin_root}/scripts/voice_server.py`.
+
+**3 — Read the current Claude Desktop config:**
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- Linux: `~/.config/Claude/claude_desktop_config.json`
+
+Read the file. If it does not exist, treat it as `{"mcpServers": {}}`.
+
+**4 — Write the `career-voice` entry:**
+Add or replace the `career-voice` key under `mcpServers`, using the absolute paths discovered above. Do not modify any other key.
+
+```json
+"career-voice": {
+  "type": "stdio",
+  "command": "<absolute path returned by which uv>",
+  "args": ["run", "<absolute path to scripts/voice_server.py>"]
+}
+```
+
+**5 — Confirm and prompt restart:**
+> "Voice MCP configured. Please **restart Claude Desktop** — after restarting, `speak` and `listen` tools will be available. Try `/career-navigator:mock-interview` to test voice-guided practice."
+
+**If skipped:**
+> "No problem — run `/career-navigator:launch` again any time to enable voice features."

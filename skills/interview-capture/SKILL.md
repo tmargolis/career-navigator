@@ -4,9 +4,9 @@ description: >
   Opt-in post-interview capture: transcribe the user's own audio (user audio
   only), extract structured takeaways, and update tracker.json. Surfaces
   employer policy warning once; jurisdiction/retention per spec §13.1. Uses
-  Google Cloud STT via the voice MCP when available. Not an agent—a skill
-  orchestrating tools and track-application patterns. Also invocable via
-  /career-navigator:interview-capture.
+  the local career-voice MCP (faster-whisper STT) when available. Not an
+  agent—a skill orchestrating tools and track-application patterns. Also
+  invocable via /career-navigator:interview-capture.
 triggers:
   - "/interview-capture"
   - "/career-navigator:interview-capture"
@@ -51,7 +51,7 @@ Identify **`application_id`** (or company + role) for the interview being logged
 
 ### 4. Transcription (STT)
 
-- **Discover** tools: if the **`voice`** MCP (or equivalent) exposes **`transcribe_audio_file`**, use it for audio the user provides (**path** to a file under `{user_dir}` or absolute path they supply).
+- **Discover** tools: if the **`career-voice`** MCP exposes **`listen`**, invoke it to record the user speaking their recap aloud (prompt them to speak naturally). If the user has a pre-recorded audio file, ask for its path and note that `listen` records live — for file-based transcription, the user should paste the transcript manually.
 - If **no** STT tools: fall back to **user-pasted transcript** or **`/career-navigator:interview-debrief`** when shipped; do **not** invent transcripts.
 
 ### 5. Structure and write tracker
