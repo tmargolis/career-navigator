@@ -28,7 +28,7 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Salary benchmarks | — | **Apify** MCP via Claude **Desktop** connector; **Enabled tools:** `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search` | Future MCPs; skills should degrade gracefully if Apify is off |
 | Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
-| Voice (TTS/STT) | — | **`voice`** stdio MCP in **`.mcp.json`** → **`scripts/voice_server.py`** + **`GOOGLE_APPLICATION_CREDENTIALS`** (GCP service account; **Cloud Text-to-Speech** + **Speech-to-Text** APIs). Tools: **`speak_text`**, **`transcribe_audio_file`**. | Host-native voice; optional **Whisper** MCP |
+| Voice (TTS/STT) | — | STDIO MCP in **`claude_desktop_config.json`** → **`scripts/voice_server.py`** (run via `uv run`); Tools: **`speak`**, **`listen`**. No credentials required — fully local (Kokoro TTS + faster-whisper STT). | Text only |
 
 ---
 
@@ -78,20 +78,32 @@ See also **`skills/launch/SKILL.md`** Step 6 for a conversational setup offer du
 
 ---
 
-## Voice — Google Cloud TTS & STT (Phase 2B, optional MCP)
+## Voice — Local TTS & STT (Phase 2B, optional MCP)
 
-Project **`.mcp.json`** may declare a **`voice`** stdio server that runs the bundled script **`scripts/voice_server.py`** (Python venv) with **`GOOGLE_APPLICATION_CREDENTIALS`** pointing at a **Google Cloud service account JSON** key that has **Cloud Text-to-Speech** and **Speech-to-Text** APIs enabled.
+The **`career-voice`** MCP is a local stdio server (`scripts/voice_server.py`) that uses **Kokoro** for TTS and **faster-whisper** for STT. It is installed in your **`claude_desktop_config.json`** and runs via `uv run` with inline script dependencies.
+
+**Reference config (~/Library/Application Support/Claude/`claude_desktop_config.json`):**
+```json
+"mcpServers": {
+  "career-voice": {
+    "type": "stdio",
+    "command": "/opt/homebrew/bin/uv",
+    "args": [
+      "run",
+      "<PATH TO PLUGIN>/scripts/voice_server.py"
+    ]
+  }
+}
+```
 
 | Step | Action |
 | --- | --- |
-| **1 — Discover** | If **`speak_text`** and/or **`transcribe_audio_file`** appear in **this session**, **voice** is connected—**do not** prompt for OAuth setup. |
-| **2 — Configure** | **Only if** tools are missing: ensure the user has a GCP project, enabled APIs, a service account key, and env **`GOOGLE_APPLICATION_CREDENTIALS`** set in the MCP server config (see `.mcp.json` `env`). **Never** embed secrets in chat. |
-| **3 — Tools** | **`speak_text(text)`** — Google Cloud TTS; on macOS the script may play audio via **`afplay`**. **`transcribe_audio_file(audio_file_path)`** — Google Cloud STT; **WAV LINEAR16** (mono preferred); returns transcript text. |
+| **1 — Discover** | If **`speak`** and **`listen`** appear in **this session**, **career-voice** is connected—**do not** prompt for setup. |
+| **2 — Configure** | **Only if** tools are missing: confirm `uv` is installed (`brew install uv`) and an entry like the above exists in `claude_desktop_config.json`. Restart Claude Desktop after adding it. |
+| **3 — Tools** | **`speak(text, voice?, speed?)`** — Kokoro TTS → sounddevice playback. Default voice: `af_heart`. **`listen(duration_seconds?)`** — sounddevice mic record → faster-whisper STT. Default: 15 s. Returns transcript string or `"(no speech detected)"`. |
 
-**Prep / mock:** **`interview-coach`** prefers **`voice`** tools when present for reading questions and transcribing user answers (**user audio only**).
+**Prep / mock:** **`interview-coach`** prefers **`speak`** / **`listen`** when present for reading questions aloud and transcribing user answers.
 
-**Fallback:** **`prep-interview`** / **`mock-interview`** work **text-only** when **`voice`** is not loaded.
+**Fallback:** **`prep-interview`** / **`mock-interview`** work **text-only** when **`career-voice`** is not loaded.
 
-**Optional:** An **OpenAI Whisper** (or compatible) MCP may be used for STT when Google STT is unavailable—same **discover → configure** pattern.
-
-**Post-interview capture:** The **`interview-capture`** skill (opt-in, §13) uses STT to log **user** audio into structured notes; it does **not** replace **`interview-debrief`** for users who skip audio.
+**Post-interview capture:** The **`interview-capture`** skill uses **`listen`** to log **user** audio into structured notes; it does **not** replace **`interview-debrief`** for users who skip audio.
