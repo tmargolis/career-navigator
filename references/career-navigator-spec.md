@@ -2,7 +2,7 @@
 
 Claude Cowork Plugin — Full Product Specification
 
-Version 0.30 — March 2026
+Version 0.31 — April 2026
 
 An AI-powered job search companion that combines the capabilities of
 recruiters, career coaches, reverse recruiters, and market analysts into a single intelligent platform.
@@ -100,7 +100,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 | Plugin Name | career-navigator |
 | --- | --- |
-| **Version** | 2.2.0 |
+| **Version** | 2.3.0 |
 | **Platform** | Claude Cowork (macOS / Windows / Linux) (also compatible with Claude Code) |
 | **Architecture** | Skill-first — behavioral intelligence lives in skills with conversational triggers; commands are explicit invocation aliases for key workflows |
 | **Scheduling** | User-configured in Claude Cowork — skills are the payload; recommended cadences are documented in skill files (e.g. run `daily-schedule` daily via `/schedule`) |
@@ -674,6 +674,10 @@ Status: Completed
 * Auto-population of tracker from interview transcription
 
 ### **Phase 2C — Extended Integrations**
+
+Status: In progress
+
+**Plugin release:** [v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)
 
 **Deliverable: Portability + Employer-System Awareness**
 
