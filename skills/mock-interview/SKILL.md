@@ -45,7 +45,7 @@ The model **must** choose a concrete `mock_mode` and `vibe` before starting—**
 
 ### 3. Audio (Google voice MCP)
 
-**Discover** session tools: if **`speak_text`** (TTS) or **`transcribe_audio_file`** (STT) from the **`voice`** MCP are present, **prefer** them for mock practice per **`agents/interview-coach/AGENT.md`**. Otherwise **text-only**. Never require audio.
+**Discover** session tools: if **`speak`** (TTS) or **`listen`** (STT) from the **`career-voice`** MCP are present, **prefer** them for mock practice per **`agents/interview-coach/AGENT.md`**. Otherwise **text-only**. Never require audio.
 
 ### 4. Invoke **interview-coach**
 
