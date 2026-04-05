@@ -98,7 +98,11 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 |-----------------|--------------|---------|
 | **`/career-navigator:launch`** | Run once (or again to reconfigure) | Configure `{user_dir}`, core `CareerNavigator/` files, connectors walkthrough (Indeed, Apify, Gmail/M365/Google Calendar, LinkedIn analytics), voice harvest; **offers** optional **`linkedin-post-analytics`** if you want a first snapshot |
 | **`focus-career`** | New session (hook) or `/schedule` | Critical-only: deadlines, same-day follow-ups, urgent interview actions |
-| **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling |
+| **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling; **Pre-interview brief (today)** when tracker shows interview/recruiter/screen **today** |
+| **`/career-navigator:morning-brief`** | Day-of only | Same **`daily-schedule`** skill — **focused** output: pre-interview slice only (see `skills/daily-schedule/SKILL.md` §3.3) |
+| **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in **`tracker.json`** |
+| **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1); optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`** |
+| **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): user-audio STT → structured notes + **`tracker.json`**; §13.1 warning; uses **`mcp-voice`** **`listen`** when the extension is installed |
 | **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
 
 ---
@@ -194,6 +198,7 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
 │   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`
 │   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering
+│   ├── interview-prep/          — markdown briefs from **`prep-interview`**
 │   └── pipeline-dashboard.html  — generated interactive dashboard artifact
 ```
 
@@ -231,6 +236,19 @@ Run `/career-navigator:launch` to configure integrations. The wizard handles eve
 8. Run `/career-navigator:salary-research` or ask for a salary range for a role and location.
 
 Never paste your token into this repository or into chat logs you do not trust. Tool permission prompts (e.g. “needs approval”) are normal — approve when you intend to run salary research.
+
+### Optional: Local voice — TTS & STT (`mcp-voice` MCP bundle)
+
+Mock interviews and **`interview-capture`** can use **local** text-to-speech and speech-to-text via the **`mcp-voice`** Claude Desktop Extension (no Google Cloud account). The server runs on your machine (**Kokoro** + **faster-whisper**).
+
+1. Download **`mcp-voice.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** (the release workflow publishes this asset when anything under **`mcp-voice/`** changes).
+2. In **Claude Desktop**, open **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Open **Extensions**.
+4. Drag **`mcp-voice.mcpb`** into the Extensions window.
+5. Click **Install**.
+6. Confirm the extension is **enabled**, then start a **new chat** if **`speak`** and **`listen`** tools do not show up.
+
+Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Voice section). The repo’s **`.mcp.json`** is only for optional HTTP connectors (e.g. Gmail, Calendar, Microsoft 365); it does **not** include the voice server.
 
 ---
 
@@ -274,6 +292,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 - Phase 1F: Completed
 - Phase 1G: Completed
 - Phase 2A: Completed
+- Phase 2B: Completed
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
@@ -296,8 +315,8 @@ Phase 2 connects Career Navigator to the external services that complete the ful
 - **Phase 2A ([Release v2.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.1.0)) — Inbox + Calendar Context (Completed):** *before you draft outreach, Career Navigator can (with explicit permission) pull and summarize the relevant email threads and meeting history so your messages are grounded in real context—not guesswork.* **Impact:** warm outreach becomes evidence-based and consistent.
   - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), optional HTTP MCP entries in **`.mcp.json`** (`gmail`, `google-calendar`, `ms365`), **`contact-context`** + **`draft-outreach`** / **`writer`** enrichment; past and **upcoming** meetings (**`warm_networking`**); **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`tracker.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
 
-- **Phase 2B — Full Interview Loop (Prep → Practice → Capture → Debrief)**: *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
-  - **Scope includes**: `interview-coach`, `interview-capture`, guided/random/adaptive mocks across stages/vibes, morning brief, debrief flow; Whisper transcription with opt-in + retention/consent framework (see spec §13).
+- **Phase 2B ([Release v2.2.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.2.0)) — Full Interview Loop (Prep → Practice → Capture → Debrief)**: *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
+  - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes, morning brief (via **`daily-schedule`**), debrief flow; optional local **`mcp-voice`** MCP extension (**`speak`** / **`listen`**) + opt-in capture with retention/consent framework (see spec §13).
 
 - **Phase 2C — Portability + Employer-System Awareness**: *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
   - **Scope includes**: Google Drive/OneDrive/Dropbox storage connectors, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors; **Event discovery (placeholder)** for connector-backed `event-radar` feeds (Meetup/Eventbrite/Luma, etc.).

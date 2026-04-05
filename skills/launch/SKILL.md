@@ -121,6 +121,9 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 - Other credentials:
 - Notes (e.g., expiration/renewal if known).
 
+## LinkedIn
+- LinkedIn slug: (vanity username, e.g. `todd-margolis` from `linkedin.com/in/todd-margolis`)
+
 ## Current Search Status
 - Actively searching as of {today's date}
 ```
@@ -208,7 +211,14 @@ After core files exist (or after they are created/repaired), ensure your
 4. If `Certifications & Credentials` are missing/unclear, present what you found
    (as a short list) and ask the user to confirm and add anything missing.
 
-5. Persistence rules:
+5. Ensure `## LinkedIn` has all fields required for scheduled analytics:
+   - `LinkedIn slug:`
+   - `LinkedIn analytics permission: granted | denied`
+   - `LinkedIn analytics mode: chrome | computer | either`
+   If slug is missing/blank, ask: "What's your LinkedIn vanity username? (the part after `linkedin.com/in/`)" and save it.
+   If permission/mode are missing, ask once and save them. If the user declines analytics, save `permission: denied` and `mode: unknown`.
+
+6. Persistence rules:
    - Do not overwrite other sections (Target Roles, Key Differentiators, etc.).
    - Only update the content under the relevant headings.
    - If the user says “not sure”, record `unknown` explicitly instead of inventing.
@@ -349,6 +359,11 @@ After **Indeed** and **Apify** (or if the user skipped Apify), offer a **read-on
 
 **3 — Browser access:** **Ask** whether they want **Claude in Chrome** and/or **computer use** for **read-only** LinkedIn analytics (**neither** / Chrome / computer use / both). If **neither**, do **not** run analytics in-browser; offer **schedule later** or skip.
 
+Before running now or scheduling later, persist choices in `{user_dir}/CareerNavigator/profile.md` under `## LinkedIn`:
+- `LinkedIn analytics permission: granted | denied`
+- `LinkedIn analytics mode: chrome | computer | either`
+If they pick **both**, save `mode: either`.
+
 **Say something like:**
 
 > **LinkedIn visibility (optional):** You can snapshot **your** post analytics into your career tracker (read-only). Which browser access should we use—**Claude in Chrome**, **computer use**, **both**, or **neither** (skip browser run for now)?  
@@ -358,6 +373,8 @@ After **Indeed** and **Apify** (or if the user skipped Apify), offer a **read-on
 
 1. Confirm the chosen tooling is available in the host. If **neither** was approved or tools are missing, do **not** scrape—explain they can enable tooling, log into LinkedIn, then run **`linkedin-post-analytics`** or **`/career-navigator:linkedin-post-analytics`** (or **continue** in a new chat).
 2. If approved: follow **`skills/linkedin-post-analytics/SKILL.md`** end-to-end (ask for LinkedIn vanity slug if unknown, append snapshots to `tracker.json`, summarize).
+
+**If they choose schedule later:** still save slug/permission/mode to `profile.md` now so unattended `/schedule` runs can execute without re-asking.
 
 **If they skip or defer:**
 
@@ -423,3 +440,26 @@ If **6a** already confirmed **Gmail** tools in-session, **omit Gmail** from this
 **If skipped:**
 
 > "No problem — outreach and follow-ups will work without inbox or calendar search. You can connect later under **Settings → Connectors** or run **`/career-navigator:launch`** again. Details: **CONNECTORS.md**."
+
+### 7. Set up local voice MCP (optional)
+
+**Discover:** Check whether tools named **`speak`** and **`listen`** are available in this session. If both are present, the **`mcp-voice`** MCP is already available — acknowledge briefly and skip this step entirely.
+
+**If voice tools are missing**, offer once:
+
+> "Career Navigator supports optional **voice features** — text-to-speech for mock interview questions and speech-to-text to capture your answers. It runs entirely on your machine with no cloud account. You install a small **Claude Desktop Extension** (`.mcpb`) from GitHub — want the steps?"
+
+**If yes**, give these steps (do **not** edit `claude_desktop_config.json` or project **`.mcp.json`** for voice):
+
+1. Open **[Career Navigator releases](https://github.com/tmargolis/career-navigator/releases)** and download **`mcp-voice.mcpb`** from the latest release.
+2. In **Claude Desktop**, open **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Go to **Extensions**.
+4. Drag **`mcp-voice.mcpb`** into the Extensions window.
+5. Click **Install**.
+6. Ensure the **mcp-voice** extension is **enabled**.
+7. Start a **new chat** if tools do not appear.
+
+Point to **README.md** (Optional: Local voice) and **CONNECTORS.md** (Voice section) for copy-paste detail.
+
+**If skipped:**
+> "No problem — run `/career-navigator:launch` again any time to enable voice features."

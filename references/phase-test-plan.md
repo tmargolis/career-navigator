@@ -644,16 +644,38 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 ## Phase 2B — Interview Intelligence
 
 ### Scope
-- Interview prep, mock interview modes, capture/debrief pipeline.
+- Interview prep (`prep-interview`, **`interview-coach`**), mock interview modes (**defaults** when mode/vibe omitted), **`interview-capture`** **skill** (not agent), optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`**, **Pre-interview brief** as part of **`daily-schedule`** ( **`/career-navigator:morning-brief`** = focused alias). **`interview-debrief`** may remain deferred.
 
 ### Tests
 - Run prep + mock interview across multiple stages/vibes.
-- Validate morning brief generation for interview-day scenarios.
-- Validate debrief logging into tracker.
-- If audio capture enabled, verify consent flow and transcript handling.
+- **`mock-interview` with no mode/vibe:** model **announces** selected `mock_mode` + `vibe` (defaults per §2.1) before first question.
+- Validate **daily-schedule** includes **Pre-interview brief** when `stage_history` has a meeting **today**; validate **omitted** when none.
+- Validate **`/career-navigator:morning-brief`** focused output (pre-interview slice only when applicable).
+- **`[prep]`** tracker note + file under `CareerNavigator/interview-prep/` after prep.
+- **`mcp-voice` MCP (Claude Desktop Extension `mcp-voice.mcpb`):** **TTS** — call **`speak`** with a short string; expect audio playback through local speaker and `"Speech complete."` response. **STT** — call **`listen`** and speak a short phrase; expect returned transcript matching spoken content.
+- **`interview-capture`:** opt-in flow; employer warning once; **`[capture]`** or structured note in tracker when transcript processed.
+- **Deferred until shipped:** full **`interview-debrief`** automation if not yet present.
 
 ### Pass Criteria
-- Interview workflows are coherent end-to-end and privacy constraints are respected.
+- Interview prep and mock workflows are coherent; **user-audio-only** assumptions for voice/STT; no standalone **`morning-brief`** skill.
+
+### Structured test cases (IDs)
+
+| ID | Scenario | Pass hint |
+| --- | --- | --- |
+| 2B-P1 | `/career-navigator:prep-interview` for HM + company in tracker | Brief file + `[prep]` note; cites ExperienceLibrary |
+| 2B-P2 | Prep for **recruiter screen** | Emphasizes process, comp, timeline, fit-to-role |
+| 2B-D1 | `/career-navigator:daily-schedule` with **no** meeting today per §3.1 allowlist | Output **lacks** **Pre-interview brief** subsection |
+| 2B-D2 | `daily-schedule` with interview/recruiter stage **today** in `stage_history` | **Pre-interview brief (today)** present; ≥1 company covered |
+| 2B-D3 | `/career-navigator:morning-brief` | Same pre-interview behavior as 2B-D2 when applicable; no full pipeline table unless user asked |
+| 2B-M1 | `mock-interview` adaptive, neutral, **recruiter** | Session runs **without** requiring audio |
+| 2B-M2 | `mock-interview` challenging vibe, **hiring_manager** | Observable tougher tone / pressure |
+| 2B-M3 | `mock-interview` with **no** mode/vibe specified | **Announces** selected mode + vibe (e.g. adaptive + neutral) before first question |
+| 2B-A1 | Prep with **audio unavailable** | Completes text-only; states limitation once |
+| 2B-A2 | Prep/mock with **STT** (`listen`) | Mic recording → transcript text matches spoken content |
+| 2B-A3 | **TTS** (`speak`) | Audio plays through local speaker; `"Speech complete."` returned |
+| 2B-V1 | **End-to-end voice** (optional) | `speak` delivers question aloud; `listen` captures spoken answer; transcript used in next mock turn |
+| 2B-C1 | `/career-navigator:interview-capture` with opt-in | Warning once; `interview-capture-settings.json`; tracker update after STT |
 
 ### Example prompts (copy/paste)
 
@@ -663,12 +685,29 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 ```text
 Prep me for my upcoming HM interview at [Company] for [Role]—questions, stories, company angles.
 ```
+```text
+Prep me for a recruiter phone screen at [Company] for [Role].
+```
 
 ```text
 /career-navigator:mock-interview
 ```
 ```text
 Mock interview: recruiter stage, neutral vibe, adaptive difficulty. Company: [Company], role: [Role].
+```
+```text
+/career-navigator:mock-interview
+```
+```text
+Mock interview for my Acme PM application — no other preferences.
+```
+**Expect:** Announces selected **mode** + **vibe** (defaults) before the first question.
+
+```text
+/career-navigator:interview-capture
+```
+```text
+I want to log my interview from this WAV file: [path under job search folder]. I opt in for this session.
 ```
 
 ```text
@@ -679,11 +718,40 @@ I have interviews today—give me the morning brief with news and talking points
 ```
 
 ```text
+/career-navigator:daily-schedule
+```
+```text
+Run my full daily brief (expect Pre-interview section only if something is scheduled today in the tracker).
+```
+
+#### `mcp-voice` MCP — TTS smoke test (2B-A3)
+
+```text
+Say this aloud: "Your mock interview for Acme will begin in 10 seconds. Take a breath and get ready."
+```
+**Expect:** Audio plays through local speaker immediately; response is `"Speech complete."` No link, no file — sound only.
+
+#### `mcp-voice` MCP — STT smoke test (2B-A2)
+
+```text
+Listen for 10 seconds. I'll say my name and target role — then confirm you heard me correctly.
+```
+**Expect:** `listen` tool is called with `duration_seconds=10`; returned transcript matches what was spoken; model echoes it back for confirmation.
+
+#### `mcp-voice` MCP — end-to-end voice turn (2B-V1)
+
+```text
+Ask me the first behavioral question for my [Company] HM interview using voice, then listen for my answer and give feedback.
+```
+**Expect:** Model calls `speak` to deliver the question aloud, then calls `listen` to capture the response, then provides coaching feedback in text.
+
+```text
 /career-navigator:interview-debrief
 ```
 ```text
 Interview debrief: I just finished a panel at [Company]. [paste notes].
 ```
+**Expect:** Not implemented until **`interview-debrief`** skill ships; may no-op or instruct user to use **`track-application`** notes for now.
 
 ---
 

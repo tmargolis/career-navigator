@@ -1,0 +1,89 @@
+{
+  "manifest_version": "0.2",
+  "name": "mcp-voice",
+  "version": "1.0.0",
+  "description": "local cross-platform MCP server that uses python sounddevice to record and play sound. Uses kokoro for text-to-speech and faster_whisper for speech-to-text. uses webrtcvad for detectinting when a user has stopped speaking.",
+  "author": {
+    "name": "Todd Margolis",
+    "email": "tmargo@gmail.com",
+    "url": "https://toddmargolis.net"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "server/main.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "${__dirname}/server/main.py"
+      ],
+      "env": {
+        "PYTHONPATH": "${__dirname}/server/lib"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "speak",
+      "description": "Convert text to speech and play it through the local speaker"
+    },
+    {
+      "name": "listen",
+      "description": "Record audio from the microphone and return a transcript"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "Listen (STT)",
+      "text": "Listen to my microphone and transcribe what I say"
+    },
+    {
+      "name": "Speak (TTS)",
+      "text": "Say out loud: ‘Hello world.’"
+    }
+  ],
+  "user_config": {
+    "duration_seconds": {
+      "type": "number",
+      "title": "default time to listen for",
+      "description": "default time to listen for",
+      "required": false,
+      "sensitive": false,
+      "default": 60,
+      "min": 0
+    },
+    "pause_seconds": {
+      "type": "number",
+      "title": "amount of silence to listen for before ending recording",
+      "description": "amount of silence to listen for before ending recording",
+      "required": false,
+      "sensitive": false,
+      "default": 1.2,
+      "min": 0
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmargolis/career-navigator"
+  },
+  "keywords": [
+    "voice",
+    "tts",
+    "stt",
+    "speech",
+    "text",
+    "speech-to-text",
+    "text-to-speech"
+  ],
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "python": ">=3.14"
+    }
+  }
+}
