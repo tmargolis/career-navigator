@@ -527,6 +527,7 @@ Phase status:
 * Phase 1F: Completed
 * Phase 1G: Completed
 * Phase 2A: Completed
+* Phase 2B: Completed
 
 Phase 1 builds the complete local-first job search intelligence platform. The foundation in Phase 1A establishes the plugin scaffold, setup flow, and live job search. Phase 1B constructs the full skill layer — workflow skills that activate from conversational context, a closed feedback loop connecting application outcomes to future recommendations, and a pipeline dashboard. Phase 1C adds candid role assessment and skills gap analysis. Phase 1D extends the job-scout agent with outcome-weighted scoring and proactive opportunity discovery. Phase 1E completes the platform with professional presence tools: networking strategy, event radar, and LinkedIn content advising. At the end of Phase 1, all core job search workflows are intelligent, locally self-contained, and require no external service dependencies.
 
@@ -644,6 +645,10 @@ Status: Completed
 * **`linkedin-post-analytics`** skill and **`/career-navigator:linkedin-post-analytics`** command: **read-only** snapshots of the user’s **own** LinkedIn post analytics into **`tracker.json`** `networking[]` (see §10.4, §12.1). Depends on **host browser automation** (**Claude in Chrome**, **computer / browser use**, or equivalent) and **explicit user approval**; **`networking-strategist`** recommends cadence for visibility-focused users. **`/career-navigator:launch`** **offers** this as an optional step after Indeed/Apify when the user wants a first run.
 
 ### **Phase 2B — Interview intelligence**
+
+Status: Completed
+
+**Plugin release:** [v2.2.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.2.0)
 
 **Deliverable: Full Interview Loop (Prep → Practice → Capture → Debrief)**
 
