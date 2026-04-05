@@ -1,0 +1,36 @@
+name: Build and release mcp-voice MCPB
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "mcp-voice/**"
+      - ".github/workflows/mcp-voice-mcpb.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Pack MCPB
+        working-directory: mcp-voice
+        run: npx --yes @anthropic-ai/mcpb pack .
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mcp-voice-${{ github.run_number }}-${{ github.sha }}
+          name: mcp-voice build ${{ github.run_number }}
+          files: mcp-voice/*.mcpb
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
