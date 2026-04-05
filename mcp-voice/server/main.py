@@ -1,7 +1,7 @@
 # /// script
 # dependencies = [
 #   "mcp[cli]",
-#   "kokoro[en]",
+#   "kokoro",
 #   "faster-whisper",
 #   "sounddevice",
 #   "numpy",
@@ -9,7 +9,7 @@
 # ]
 # ///
 """
-career-voice — local MCP server for TTS and STT.
+mcp-voice — local MCP server for TTS and STT.
 
 Tools:
   speak(text)                     — Kokoro TTS → sounddevice playback
@@ -26,7 +26,7 @@ import sounddevice as sd
 import webrtcvad
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP("career-voice")
+mcp = FastMCP("mcp-voice")
 
 _tts_pipeline = None
 _stt_model = None

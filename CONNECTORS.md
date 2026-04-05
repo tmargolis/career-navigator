@@ -28,7 +28,7 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Salary benchmarks | — | **Apify** MCP via Claude **Desktop** connector; **Enabled tools:** `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search` | Future MCPs; skills should degrade gracefully if Apify is off |
 | Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
-| Voice (TTS/STT) | — | STDIO MCP in **`claude_desktop_config.json`** → **`scripts/voice_server.py`** (run via `uv run`); Tools: **`speak`**, **`listen`**. No credentials required — fully local (Kokoro TTS + faster-whisper STT). | Text only |
+| Voice (TTS/STT) | — | Optional **Claude Desktop Extension** — install the **`mcp-voice.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes **`mcp-voice`** MCP tools **`speak`**, **`listen`**. Fully local (Kokoro TTS + faster-whisper STT + webrtcvad). | Text only |
 
 ---
 
@@ -78,32 +78,31 @@ See also **`skills/launch/SKILL.md`** Step 6 for a conversational setup offer du
 
 ---
 
-## Voice — Local TTS & STT (Phase 2B, optional MCP)
+## Voice — Local TTS & STT (Phase 2B, optional MCP bundle)
 
-The **`career-voice`** MCP is a local stdio server (`scripts/voice_server.py`) that uses **Kokoro** for TTS and **faster-whisper** for STT. It is installed in your **`claude_desktop_config.json`** and runs via `uv run` with inline script dependencies.
+The **`mcp-voice`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-voice/`** directory in this repository. It uses **Kokoro** for TTS, **faster-whisper** for STT, and **webrtcvad** for end-of-utterance detection on **`listen`**. No cloud credentials — audio stays on the machine.
 
-**Reference config (~/Library/Application Support/Claude/`claude_desktop_config.json`):**
-```json
-"mcpServers": {
-  "career-voice": {
-    "type": "stdio",
-    "command": "/opt/homebrew/bin/uv",
-    "args": [
-      "run",
-      "<PATH TO PLUGIN>/scripts/voice_server.py"
-    ]
-  }
-}
-```
+**Install (end users):**
+
+1. Download **`mcp-voice.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** for this repository (release workflow publishes the bundle when `mcp-voice/` changes).
+2. Open **Claude Desktop** → **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Open **Extensions**.
+4. Drag **`mcp-voice.mcpb`** into that window.
+5. Click **Install**.
+6. Ensure the **mcp-voice** extension is **enabled**.
+
+Start a **new chat** if **`speak`** / **`listen`** do not appear immediately.
 
 | Step | Action |
 | --- | --- |
-| **1 — Discover** | If **`speak`** and **`listen`** appear in **this session**, **career-voice** is connected—**do not** prompt for setup. |
-| **2 — Configure** | **Only if** tools are missing: confirm `uv` is installed (`brew install uv`) and an entry like the above exists in `claude_desktop_config.json`. Restart Claude Desktop after adding it. |
-| **3 — Tools** | **`speak(text, voice?, speed?)`** — Kokoro TTS → sounddevice playback. Default voice: `af_heart`. **`listen(duration_seconds?)`** — sounddevice mic record → faster-whisper STT. Default: 15 s. Returns transcript string or `"(no speech detected)"`. |
+| **1 — Discover** | If **`speak`** and **`listen`** appear in **this session**, **mcp-voice** is available—**do not** prompt for setup. |
+| **2 — Configure** | **Only if** tools are missing: walk through the install steps above (Releases → `.mcpb` → Settings → Extensions → drag → Install → enabled). |
+| **3 — Tools** | **`speak(text, voice?, speed?)`** — Kokoro TTS → sounddevice playback. Default voice: `af_heart`. **`listen(duration_seconds?, pause_seconds?, vad_mode?)`** — microphone stream → faster-whisper STT; trailing silence ends recording early. Returns transcript or `"(no speech detected)"`. |
 
 **Prep / mock:** **`interview-coach`** prefers **`speak`** / **`listen`** when present for reading questions aloud and transcribing user answers.
 
-**Fallback:** **`prep-interview`** / **`mock-interview`** work **text-only** when **`career-voice`** is not loaded.
+**Fallback:** **`prep-interview`** / **`mock-interview`** work **text-only** when **`mcp-voice`** is not loaded.
 
 **Post-interview capture:** The **`interview-capture`** skill uses **`listen`** to log **user** audio into structured notes; it does **not** replace **`interview-debrief`** for users who skip audio.
+
+**Developers:** The extension entrypoint is **`mcp-voice/server/main.py`** (run via **`uv`** per the bundle manifest). Voice is optional and installed through **Extensions**.

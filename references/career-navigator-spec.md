@@ -107,7 +107,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Notifications / surfacing** | In-session UX (e.g. `focus-career` for critical items) plus whatever Cowork provides when a scheduled task runs — the plugin does not ship a separate notification daemon |
 | **Storage Layer (Phase 1)** | Local filesystem — `{user_dir}` (cloud connectors in Phase 2C) |
 | **Analytics Layer (Phase 1)** | SQLite + D3 visualization (additional connectors in Phase 2D) |
-| **AI Services** | Claude API (via MCP); optional **Google Cloud** TTS/STT via **`voice`** MCP (`speak_text`, `transcribe_audio_file`); optional Whisper or other STT MCP |
+| **AI Services** | Claude API (via MCP); optional **local** TTS/STT via **`mcp-voice`** MCP (Claude Desktop Extension **`mcp-voice.mcpb`** — tools **`speak`**, **`listen`**); optional Whisper or other STT MCP |
 | **Job Search (Phase 1)** | **Indeed** MCP via Claude Desktop **Customize → Connectors** — **Connect** → browser OAuth on **secure.indeed.com**; tools **`search_jobs`**, **`get_job_details`** (connector `https://mcp.indeed.com/claude/mcp`). User must complete OAuth; assisted-manual fallback when connector unavailable |
 | **Salary benchmarks (Phase 1, optional)** | Apify MCP added in Claude Desktop **Customize → Connectors → Desktop → Apify** (token + **Enabled tools** list in connector UI); not stored in project **`.mcp.json`** |
 
@@ -119,7 +119,9 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 **│ └── plugin.json**
 
-**├── .mcp.json** — may include Anthropic **HTTP MCP** entries for **Gmail** / **Google Calendar** and/or **`ms365`** (Outlook / Microsoft 365) as an alternate channel (no secrets); other MCPs (e.g. Apify for salary) are configured in the host app
+**├── .mcp.json** — may include Anthropic **HTTP MCP** entries for **Gmail** / **Google Calendar** and/or **`ms365`** (Outlook / Microsoft 365) as an alternate channel (no secrets); other MCPs (e.g. Apify for salary) are configured in the host app. **Does not** include local voice — see **`mcp-voice/`**.
+
+**├── mcp-voice/** — Claude Desktop **Extension** bundle (`.mcpb`) for optional **`mcp-voice`** MCP (`speak`, `listen`); published via GitHub Releases
 
 **├── agents/**
 
@@ -178,7 +180,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | --- | --- | --- |
 | **/career-navigator:prep-interview** | Command | Launches a full interview preparation session for a specific role. Pulls in company research, generates predicted questions, and optionally launches a mock interview. |
 | **/career-navigator:mock-interview** | Command | Starts a mock interview session. Accepts mode (guided/random/adaptive), stage (recruiter/HM/technical/panel/executive), and vibe (supportive/neutral/challenging/antagonistic/bored). **If mode or vibe omitted, the system selects defaults** (see `skills/mock-interview/SKILL.md` §2.1). |
-| **/career-navigator:interview-capture** | Command | Opt-in **skill** (not an agent): transcribe **user** audio, extract takeaways, update **`tracker.json`**; employer warning once; §13.1 retention. Uses **`voice`** MCP STT when available. |
+| **/career-navigator:interview-capture** | Command | Opt-in **skill** (not an agent): transcribe **user** audio, extract takeaways, update **`tracker.json`**; employer warning once; §13.1 retention. Uses **`mcp-voice`** **`listen`** when the extension is installed. |
 | **/career-navigator:interview-debrief** | Command | Post-interview Q&A flow that captures the candidate's experience conversationally and structures it into the tracker. Fallback for users who do not use audio capture. |
 | **/career-navigator:morning-brief** | Command | **Alias** for the **`daily-schedule`** skill: focused output = **Pre-interview brief (today)** only (see `skills/daily-schedule/SKILL.md` §3.3). No separate `morning-brief` skill. |
 
@@ -211,7 +213,7 @@ Agents are specialized Claude instances with focused roles. They can be invoked 
 | **job-scout** | 1D | Searches and ranks job opportunities across all configured job boards. Incorporates outcome history and market intelligence into scoring. Ranking improves over time as the user logs outcomes. Proactively surfaces high-match opportunities. |
 | **networking-strategist** | 1E | Network analysis, gap identification, and warm-path planning. Event discovery and evaluation with ROI assessment, **presentation-opportunity** flagging, and multi-scope **event radar** (via **`event-intelligence`** and **`event-radar`** skills). Recommends the **`linkedin-post-analytics`** skill (weekly/biweekly or **`/schedule`**) when the user is building LinkedIn visibility—subject to host browser automation and explicit consent. May emit a structured **handoff brief** for **`writer`** when messaging is needed; does **not** draft outreach copy. |
 | **writer** | 1E | Owns **Career Navigator user-facing copy**: outreach (LinkedIn, email, InMail), **cover letters** (from **CoverLetterBrief**), **follow-ups** (from **FollowUpBrief**), optional **resume Summary** polish (**ResumeSummaryBrief**), post drafts (saved under **`{user_dir}/LinkedIn Posts/`** + **`artifacts-index.json`** as **`linkedin_post`**), **`/career-navigator:draft-outreach`**, **`content-suggest`**, **`evaluate-post`**. Maintains **`voice-profile.md`** (and optional **`voice_profile_v1`**) for tone matching; **timeline surfacing** of voice metadata is **Phase 2D**. Consumes handoffs from **`networking-strategist`**, **`resume-coach`** (summary path), **`cover-letter`**, **`follow-up`**. For post risk evaluation, consumes a **`market-researcher`** brief on target-company/industry norms before assessing cultural or political risk. Outreach email/calendar enrichment **Phase 2A**. |
-| **interview-coach** | 2B | Interview **prep**, **mock interviews**, and **`morning_section`** day-of bullets for `daily-schedule`. Stages include **recruiter** (first-class), hiring manager, technical, panel, executive, final. Modes: guided / random / adaptive; vibes: supportive through bored. Optional **Google `voice` MCP** or host **TTS/STT** for questions and user answers (**user audio only**—see §13.1 spirit). Spec file: `agents/interview-coach/AGENT.md`. |
+| **interview-coach** | 2B | Interview **prep**, **mock interviews**, and **`morning_section`** day-of bullets for `daily-schedule`. Stages include **recruiter** (first-class), hiring manager, technical, panel, executive, final. Modes: guided / random / adaptive; vibes: supportive through bored. Optional **`mcp-voice`** MCP (**`speak`** / **`listen`**) or host **TTS/STT** for questions and user answers (**user audio only**—see §13.1 spirit). Spec file: `agents/interview-coach/AGENT.md`. |
 
 # **5. Skills**
 
@@ -241,8 +243,8 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **evaluate-post** | Skill | Invokes **`writer`** for audience fit and **cultural / political / reputational risk** vs target company profiles. Risk evaluation is dynamic: **`market-researcher`** is queried for target-company/industry-specific norms before assessment. The system informs the user of risk context; it does not suppress or prescribe content decisions. Also invocable via `/career-navigator:evaluate-post`. |
 | **linkedin-post-analytics** | Skill | **Read-only** capture of the user’s **own** LinkedIn post analytics from the live site UI, appended to **`tracker.json`** `networking[]` as **`type: "linkedin_post"`** entries with an **`analytics_history`** array (dated snapshots). **Does not** post, like, or comment. **Requires** host browser automation (**Claude in Chrome** or **computer / browser use**) and **explicit user approval** before running; if unavailable, the skill instructs the model to stop and ask the user to enable tooling. Also invocable via `/career-navigator:linkedin-post-analytics`. |
 | **prep-interview** | Skill | Full interview preparation for a tracked (or specified) role: company/news context, **stage-specific** questions (**recruiter** through **final**), talking points from ExperienceLibrary, saved brief under **`CareerNavigator/interview-prep/`**, **`[prep]`** note in **`tracker.json`**. Invokes **`interview-coach`** (`prep` mode). Also invocable via `/career-navigator:prep-interview`. |
-| **mock-interview** | Skill | Mock session: **guided** / **random** / **adaptive**; **stage** + **vibe**; **selects defaults** when mode/vibe omitted (see skill §2.1). Invokes **`interview-coach`** (`mock` mode). Optional **`voice`** MCP TTS/STT. Also invocable via `/career-navigator:mock-interview`. |
-| **interview-capture** | Skill | **Not an agent.** Opt-in post-interview **user-audio** transcription (e.g. Google STT via **`voice`** MCP **`transcribe_audio_file`**), structured takeaways, **`tracker.json`** updates; employer warning once; §13.1 retention. Also invocable via `/career-navigator:interview-capture`. |
+| **mock-interview** | Skill | Mock session: **guided** / **random** / **adaptive**; **stage** + **vibe**; **selects defaults** when mode/vibe omitted (see skill §2.1). Invokes **`interview-coach`** (`mock` mode). Optional **`mcp-voice`** MCP (**`speak`**, **`listen`**). Also invocable via `/career-navigator:mock-interview`. |
+| **interview-capture** | Skill | **Not an agent.** Opt-in post-interview **user-audio** transcription (e.g. **`mcp-voice`** **`listen`** or compatible STT), structured takeaways, **`tracker.json`** updates; employer warning once; §13.1 retention. Also invocable via `/career-navigator:interview-capture`. |
 
 **Context skills** fire on ambient signals throughout any session:
 
@@ -338,9 +340,8 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **Google Calendar** | Claude first-party connector (Google) | **Settings / Customize → Connectors → Google Calendar → Connect** — Google **OAuth** in the browser (separate card from **Gmail**). Anthropic documents schedule and event access per [Google Calendar integration](https://claude.com/docs/connectors/google/calendar). Career Navigator: **`contact-context`** (and downstream drafting) uses **read-only** **past** and **upcoming** meeting context **after explicit user approval** per lookup—**warm** identification when a meeting is scheduled; do not create or move events unless the user asks. See `CONNECTORS.md`. |
 | **Outlook Calendar / Teams Calendar** | Microsoft 365 connector | Covered under **Microsoft 365** row where enabled. |
 | **Greenhouse / Workday / Lever** | MCP | ATS status tracking for applications submitted through these platforms. Read-only access to application status. |
-| **Google TTS (`voice` MCP)** | MCP | **Text-to-Speech** for **`prep-interview`** / **`mock-interview`**. Project **`scripts/voice_server.py`** exposes **`speak_text`**. |
-| **Google STT (`voice` MCP)** | MCP | **Speech-to-Text** for prep, mock, and **`interview-capture`** (user audio only). Project **`scripts/voice_server.py`** exposes **`transcribe_audio_file`**. |
-| **Whisper (OpenAI)** | MCP | Alternate STT for privacy-sensitive users or when Google STT is unavailable. Phase 2B. MVP scope: user audio only. |
+| **mcp-voice** (local MCP bundle) | Claude Desktop **Extension** (`.mcpb`) | **Local** TTS and STT for **`prep-interview`**, **`mock-interview`**, **`interview-capture`**. Install **`mcp-voice.mcpb`** from [GitHub Releases](https://github.com/tmargolis/career-navigator/releases): **Settings** (⌘/Ctrl + comma) → **Extensions** → drag bundle → **Install** → enable. Source: **`mcp-voice/`**; tools **`speak`**, **`listen`**. Not declared in project **`.mcp.json`**. |
+| **Whisper (OpenAI)** | MCP | Alternate STT when **`mcp-voice`** is unavailable or user prefers another host. Phase 2B. MVP scope: user audio only. |
 | **Meetup / Eventbrite / Luma** | MCP | Event discovery for networking radar. Searches for relevant professional events by location, industry, and role type. |
 | **Host browser automation** | Host capability (not plugin MCP) | **Claude in Chrome**, **computer use**, or equivalent: enables **`linkedin-post-analytics`** to navigate a logged-in browser **read-only** and record own-post metrics into **`tracker.json`**. User must opt in per session or schedule; distinct from the **LinkedIn** MCP row (which describes optional connector features such as search and messaging). |
 
@@ -468,7 +469,7 @@ Future phases may add richer "event radar" and offer/interview prompts; those re
 
 *Implementation:* Phase **2B** — `agents/interview-coach/AGENT.md` is present (`prep-interview`, `mock-interview`, `daily-schedule` pre-interview subsection). **`interview-capture`** is implemented as **`skills/interview-capture/SKILL.md`** (not an agent). **`interview-debrief`** remains to be shipped for structured post-interview capture when shipped.
 
-Interview capture is an opt-in feature that uses **user** audio and transcription (e.g. **Google Cloud Speech-to-Text** via the **`voice`** MCP, or other STT) to log interview content. It is bundled with the full interview preparation system in Phase 2B, shipping together so the prep and capture experiences are developed and tested as a unified layer. The post-interview Q&A debrief (`/career-navigator:interview-debrief`) is the primary debrief path for users who do not use audio capture.
+Interview capture is an opt-in feature that uses **user** audio and transcription (e.g. **`mcp-voice`** **`listen`**, or other STT MCP) to log interview content. It is bundled with the full interview preparation system in Phase 2B, shipping together so the prep and capture experiences are developed and tested as a unified layer. The post-interview Q&A debrief (`/career-navigator:interview-debrief`) is the primary debrief path for users who do not use audio capture.
 
 ## **13.1 MVP Audio Scope**
 
@@ -653,7 +654,7 @@ Status: Completed
 **Scope includes:**
 
 * **Agents introduced:** `interview-coach` (mock interviews across all stages and vibes, adaptive difficulty, current events integration)
-* **Skills introduced / extended:** `interview-capture` (**skill**, not an agent — audio transcription via Google STT / **`voice`** MCP or compatible STT, structured tracker population — opt-in only; MVP scope: user audio only)
+* **Skills introduced / extended:** `interview-capture` (**skill**, not an agent — audio transcription via **`mcp-voice`** **`listen`** or compatible STT, structured tracker population — opt-in only; MVP scope: user audio only)
 * Mock interview system: guided, random, and adaptive modes
 * All stages: recruiter screen, hiring manager, technical, panel, executive, final
 * Full vibe spectrum: supportive, neutral, challenging, antagonistic, bored (calibrated — not demoralizing; exact calibration of antagonistic mode confirmed via user testing before ship)

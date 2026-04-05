@@ -644,7 +644,7 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 ## Phase 2B — Interview Intelligence
 
 ### Scope
-- Interview prep (`prep-interview`, **`interview-coach`**), mock interview modes (**defaults** when mode/vibe omitted), **`interview-capture`** **skill** (not agent), optional **Google `voice`** MCP (`speak_text`, `transcribe_audio_file`) per **`CONNECTORS.md`**, **Pre-interview brief** as part of **`daily-schedule`** ( **`/career-navigator:morning-brief`** = focused alias). **`interview-debrief`** may remain deferred.
+- Interview prep (`prep-interview`, **`interview-coach`**), mock interview modes (**defaults** when mode/vibe omitted), **`interview-capture`** **skill** (not agent), optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`**, **Pre-interview brief** as part of **`daily-schedule`** ( **`/career-navigator:morning-brief`** = focused alias). **`interview-debrief`** may remain deferred.
 
 ### Tests
 - Run prep + mock interview across multiple stages/vibes.
@@ -652,7 +652,7 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 - Validate **daily-schedule** includes **Pre-interview brief** when `stage_history` has a meeting **today**; validate **omitted** when none.
 - Validate **`/career-navigator:morning-brief`** focused output (pre-interview slice only when applicable).
 - **`[prep]`** tracker note + file under `CareerNavigator/interview-prep/` after prep.
-- **`career-voice` MCP (local stdio server in `.mcp.json`):** **TTS** — call **`speak`** with a short string; expect audio playback through local speaker and `"Speech complete."` response. **STT** — call **`listen`** and speak a short phrase; expect returned transcript matching spoken content.
+- **`mcp-voice` MCP (Claude Desktop Extension `mcp-voice.mcpb`):** **TTS** — call **`speak`** with a short string; expect audio playback through local speaker and `"Speech complete."` response. **STT** — call **`listen`** and speak a short phrase; expect returned transcript matching spoken content.
 - **`interview-capture`:** opt-in flow; employer warning once; **`[capture]`** or structured note in tracker when transcript processed.
 - **Deferred until shipped:** full **`interview-debrief`** automation if not yet present.
 
@@ -724,21 +724,21 @@ I have interviews today—give me the morning brief with news and talking points
 Run my full daily brief (expect Pre-interview section only if something is scheduled today in the tracker).
 ```
 
-#### `career-voice` MCP — TTS smoke test (2B-A3)
+#### `mcp-voice` MCP — TTS smoke test (2B-A3)
 
 ```text
 Say this aloud: "Your mock interview for Acme will begin in 10 seconds. Take a breath and get ready."
 ```
 **Expect:** Audio plays through local speaker immediately; response is `"Speech complete."` No link, no file — sound only.
 
-#### `career-voice` MCP — STT smoke test (2B-A2)
+#### `mcp-voice` MCP — STT smoke test (2B-A2)
 
 ```text
 Listen for 10 seconds. I'll say my name and target role — then confirm you heard me correctly.
 ```
 **Expect:** `listen` tool is called with `duration_seconds=10`; returned transcript matches what was spoken; model echoes it back for confirmation.
 
-#### `career-voice` MCP — end-to-end voice turn (2B-V1)
+#### `mcp-voice` MCP — end-to-end voice turn (2B-V1)
 
 ```text
 Ask me the first behavioral question for my [Company] HM interview using voice, then listen for my answer and give feedback.

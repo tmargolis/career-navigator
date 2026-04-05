@@ -77,19 +77,19 @@ When the user names an **interviewer** and mail/calendar context would help, off
 
 ## Audio: TTS, listen, STT (host-dependent)
 
-**Scope:** **User’s voice and user-directed audio only.** Do **not** instruct recording of employers or other parties. Prep/mock use **`career-voice`** MCP when available; full post-interview logging is a separate **`interview-capture`** **skill** (§13).
+**Scope:** **User’s voice and user-directed audio only.** Do **not** instruct recording of employers or other parties. Prep/mock use **`mcp-voice`** MCP when available; full post-interview logging is a separate **`interview-capture`** **skill** (§13).
 
 1. **Text-to-speech (TTS)**  
-   If the session exposes **`speak`** TTS via **`career-voice`** MCP: **prefer** it to read **one question at a time** (mock) or a **short brief section** (prep). User may decline. Never require TTS to proceed.
+   If the session exposes **`speak`** TTS via **`mcp-voice`** MCP: **prefer** it to read **one question at a time** (mock) or a **short brief section** (prep). User may decline. Never require TTS to proceed.
 
 2. **Speech-to-text (STT)**  
-   If the session exposes **`listen`** (**`career-voice`** MCP): use **user-provided** audio paths or transcripts as first-class input for answers (mock) or “talk through your story” (prep). Merge STT text into your response and into any saved prep file the skill requests.
+   If the session exposes **`listen`** (**`mcp-voice`** MCP): use **user-provided** audio paths or transcripts as first-class input for answers (mock) or “talk through your story” (prep). Merge STT text into your response and into any saved prep file the skill requests.
 
 3. **Fallback**  
    If no audio tools: proceed **text-only**. Say once (per session) that voice MCP features are unavailable—do not block.
 
 4. **Other STT backends**  
-   If **Whisper** or another transcription MCP is connected instead, you may use it when **`career-voice`** STT is missing—user consent for sending audio applies per host rules.
+   If **Whisper** or another transcription MCP is connected instead, you may use it when **`mcp-voice`** STT is missing—user consent for sending audio applies per host rules.
 
 ---
 

@@ -5,7 +5,7 @@ description: >
   adaptive), stage (recruiter, hiring manager, technical, panel, executive,
   final), and vibe (supportive through bored). If mode or vibe are omitted,
   the system selects defaults and announces them. Delegates to interview-coach;
-  optional Google voice MCP TTS/STT when tools are present. Also invocable via
+  optional mcp-voice MCP TTS/STT when tools are present. Also invocable via
   /career-navigator:mock-interview.
 triggers:
   - "/mock-interview"
@@ -43,9 +43,9 @@ The model **must** choose a concrete `mock_mode` and `vibe` before starting—**
 
 **Recruiter practice:** When the user asks to practice for a **recruiter** or **phone screen**, set `interview_stage` to **`recruiter`**.
 
-### 3. Audio (Google voice MCP)
+### 3. Audio (**mcp-voice** Extension)
 
-**Discover** session tools: if **`speak`** (TTS) or **`listen`** (STT) from the **`career-voice`** MCP are present, **prefer** them for mock practice per **`agents/interview-coach/AGENT.md`**. Otherwise **text-only**. Never require audio.
+**Discover** session tools: if **`speak`** (TTS) or **`listen`** (STT) from the **`mcp-voice`** extension are present, **prefer** them for mock practice per **`agents/interview-coach/AGENT.md`**. Otherwise **text-only**. Never require audio.
 
 ### 4. Invoke **interview-coach**
 
