@@ -1,4 +1,7 @@
-name: Build and release mcp-voice MCPB
+name: Build and release mcp-voice MCPB and career-navigator plugin zip
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
   push:
@@ -6,6 +9,7 @@ on:
       - main
     paths:
       - "mcp-voice/**"
+      - ".claude-plugin/plugin.json"
       - ".github/workflows/mcp-voice-mcpb.yml"
 
 permissions:
@@ -15,22 +19,31 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - name: Read plugin version
+        id: ver
+        run: echo "version=$(jq -r .version .claude-plugin/plugin.json)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v5
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Pack MCPB
         working-directory: mcp-voice
         run: npx --yes @anthropic-ai/mcpb pack .
 
-      - name: Upload release asset
+      - name: Create plugin zip
+        run: git archive --format=zip -o "career-navigator-v${{ steps.ver.outputs.version }}.zip" HEAD
+
+      - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: mcp-voice-${{ github.run_number }}-${{ github.sha }}
-          name: mcp-voice build ${{ github.run_number }}
-          files: mcp-voice/*.mcpb
+          tag_name: v${{ steps.ver.outputs.version }}
+          name: Career Navigator v${{ steps.ver.outputs.version }}
+          files: |
+            mcp-voice/*.mcpb
+            career-navigator-v${{ steps.ver.outputs.version }}.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
