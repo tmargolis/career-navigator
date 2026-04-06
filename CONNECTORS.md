@@ -33,6 +33,57 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 
 ---
 
+## Multi-channel job sourcing policy
+
+Career Navigator supports a connector-first sourcing strategy across:
+- state/federal boards (for example IllinoisJobLink),
+- niche boards (for example Wellfound, Welcome to the Jungle),
+- company-direct and ATS portals (for example Greenhouse/Lever/Workday careers pages).
+
+Use this sequence:
+
+1. **Connector first:** if source tools are present in-session, use them.
+2. **Browser-assisted capture:** only when MCP is unavailable or browser-only.
+3. **Assisted-manual ingestion:** always available fallback.
+
+### Normalized listing schema (all channels)
+
+Require the following fields before ranking:
+- `title`
+- `company`
+- `location`
+- `apply_url`
+- `source`
+- `retrieval_mode` (`mcp` | `browser` | `manual`)
+
+Capture when available:
+- `salary`, `posted_date`, `close_date`, `employment_type`, `job_id_or_requisition`, `raw_description`
+
+### Provenance, confidence, and dedupe
+
+- Every listing must carry `source` and `retrieval_mode`.
+- Confidence tiers:
+  - **high**: required fields + description + posted date
+  - **moderate**: required fields + partial optional metadata
+  - **directional**: required fields only or sparse metadata
+- Dedupe precedence:
+  1. company-direct canonical URL
+  2. ATS posting with requisition ID
+  3. connector-sourced aggregator posting
+  4. manual copy/paste entry
+
+When duplicates are found, keep the highest-precedence record and merge missing metadata from lower-precedence records.
+
+### Assisted-manual playbooks by channel
+
+- **State/federal:** ask for close date and pay grade/band where present.
+- **Niche boards:** ask for compensation text/equity where present.
+- **Company/ATS:** ask for canonical apply URL + requisition ID where present.
+
+These rules complement `skills/search-jobs/SKILL.md` and should be used when live tools are unavailable.
+
+---
+
 ## Email & calendar context — Gmail, Microsoft 365, Google Calendar (Phase 2A)
 
 **Goal:** Before **`draft-outreach`**, **`follow-up`**, or **`contact-context`**, the model can search **your** mail for threads with a hiring manager or recruiter and, when **Google Calendar** (or M365 calendar surfaces) is connected, **read past and upcoming meetings** involving that contact—**only after you explicitly approve** each mail or calendar lookup. That turns warm outreach into **evidence-backed** messages (you remember what you promised on a call, and you do not cold-open when a meeting is **already scheduled**).

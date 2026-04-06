@@ -326,6 +326,12 @@ The plugin ships **`.mcp.json`** with optional Anthropic **HTTP MCP** servers fo
 
 Run `/career-navigator:launch` for a conversational walkthrough. Each integration is optional; skills degrade when a connector is absent.
 
+**Multi-channel sourcing policy (implementation guidance):**
+- Use a connector-first sequence: MCP tools first, then browser-assisted capture if needed, then assisted-manual ingestion fallback.
+- Normalize listings across all channels before ranking with required fields: `title`, `company`, `location`, `apply_url`, `source`, `retrieval_mode`.
+- Apply source-aware confidence tiers (`high`, `moderate`, `directional`) and cross-channel dedupe precedence: company-direct URL > ATS requisition URL > connector-sourced aggregator > manual entry.
+- Keep provenance explicit in outputs so users can see which results are live connector data versus browser/manual captures.
+
 | Name | Type | Description |
 | --- | --- | --- |
 | **Apify** | MCP (Desktop connector) | Powers **`salary-research`** via **cheapget/best-job-search** and related tools. Configured in Claude Desktop connector UI, not committed in `.mcp.json`. |
