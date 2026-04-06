@@ -216,7 +216,9 @@ Run `/career-navigator:launch` to configure integrations. The wizard handles eve
 
 **Email & calendar context (optional — warm outreach):** Connect **Gmail** and/or **Microsoft 365** and/or **Google Calendar** under **Connectors** so **`draft-outreach`**, **`follow-up`**, **`contact-context`**, and related skills can search **your** mail and summarize **past and upcoming** meetings with a contact **only when you approve** each lookup (upcoming meetings help **warm** identification—avoid cold-open when a call is already scheduled). Anthropic provides **OAuth** in the browser (no passwords in chat). **Microsoft 365** may require **Team/Enterprise** and admin setup. Full steps, plan notes, and official doc links: [CONNECTORS.md](CONNECTORS.md) and `/career-navigator:launch` Step 6.
 
-**Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. Cloud storage connectors (Google Drive, OneDrive, Dropbox) are available in Phase 2. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
+**Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. You can use cloud-backed storage for portability:
+- **Google Drive, OneDrive, Dropbox, etc.:** recommended via **application sync** (or manual backup/restore), since Claude’s native connectors are not reliable for typical job files (JSON/DOCX/etc.).
+See [CONNECTORS.md](CONNECTORS.md) for setup and fallback behavior.
 
 ### Apify MCP for salary benchmarking (optional — Claude Desktop connector)
 
@@ -320,7 +322,7 @@ Phase 2 connects Career Navigator to the external services that complete the ful
   - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes, morning brief (via **`daily-schedule`**), debrief flow; optional local **`mcp-voice`** MCP extension (**`speak`** / **`listen`**) + opt-in capture with retention/consent framework (see spec §13).
 
 - **Phase 2C ([Release v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)) — Portability + Employer-System Awareness (In progress):** *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
-  - **Scope includes**: Google Drive/OneDrive/Dropbox storage connectors, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors; **Event discovery (placeholder)** for connector-backed `event-radar` feeds (Meetup/Eventbrite/Luma, etc.).
+  - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors; **Event discovery (placeholder)** for connector-backed `event-radar` feeds (Meetup/Eventbrite/Luma, etc.).
 
 - **Phase 2D — Analytics Exports + Automation Surfaces**: *BI exports plus dashboard upgrades and LinkedIn automation exploration (within policy constraints).* **Impact:** analytics-ready workflows and power-user reporting.
   - **Scope includes**: Power BI/Qlik/D3 export; LinkedIn automation assessment; pipeline forecast overlay + voice cadence + network graph UI (deferred from 1E).

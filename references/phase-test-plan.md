@@ -761,18 +761,70 @@ Interview debrief: I just finished a panel at [Company]. [paste notes].
 - Cloud storage and ATS/job-board connectors.
 
 ### Tests
-- Validate storage connector switching and artifact read/write consistency.
+- **2C-S1 (Google Drive, OneDrive or Dropbox portability via app sync/manual backup):** Use a desktop app to sync the local `{user_dir}` job-search folder (or manually back up/restore the folder) so the folder contents are available locally. Then run `/career-navigator:launch` and confirm the assistant does not ask to connect a connector for job files and that storage behavior remains local-first.
+- **2C-F1 (No connector/sync fallback):** With no cloud storage sync/connector configured, run launch and confirm storage behavior remains local-first with no fabricated cloud state.
+- **2C-F2 (Disconnect degradation):** Turn off application sync. Then re-run launch/list flows, and confirm graceful fallback to local behavior.
+- **2C-R1 (Artifact listing parity):** After selecting any storage option, run `/career-navigator:list-artifacts` and verify listings remain consistent with local index semantics.
 - Validate ATS read connectors return statuses without write side effects.
 - Validate additional job-board source ingestion and deduping behavior.
 
 ### Pass Criteria
-- Connectors are reliable, scoped, and do not break local-first behavior.
+- Storage onboarding is reliable and scoped per provider:
+  - Google Drive uses Drive app sync or manual backup/restore (no Drive connector reliance for typical job files).
+  - OneDrive uses OneDrive app sync or manual backup/restore (no reliance on Claude’s Microsoft 365/OneDrive file-access connector for plugin JSON artifacts).
+  - Dropbox uses Dropbox app sync or manual backup/restore.
+- Local-first behavior remains intact when cloud storage sync/connector is absent or disconnected.
+- No docs or launch prompts route Google Drive/OneDrive/Dropbox setup through `.mcp.json`.
 
 ### Example prompts (copy/paste)
 
 ```text
-Switch my artifact storage to Google Drive and verify list-artifacts still matches what’s on disk vs cloud.
+/career-navigator:launch
 ```
+
+```text
+Use Google Drive for portability for this workspace via Drive app sync (sync the local job-search folder to Google Drive). Do not rely on connecting a Drive connector for job files.
+```
+**Expect:** Assistant recommends Drive app sync or manual backup/restore steps and continues local-first behavior.
+
+```text
+/career-navigator:launch
+```
+```text
+Use OneDrive for portability for this workspace via OneDrive application sync (sync the local job-search folder to OneDrive) or manual backup/restore. Do not rely on connecting a OneDrive connector for job files.
+```
+**Expect:** Assistant recommends OneDrive app sync/manual backup/restore steps and continues local-first behavior.
+
+```text
+/career-navigator:launch
+```
+```text
+Set up cloud storage with Dropbox for this workspace. If it's already connected in this chat, acknowledge and skip setup steps.
+```
+**Expect:** Assistant recommends Dropbox app sync/manual backup/restore steps and continues local-first behavior.
+
+```text
+Run launch with local-only storage. Do not configure any cloud connector right now.
+```
+**Expect:** Assistant keeps local `{user_dir}` storage and does not claim cloud sync.
+
+```text
+I turned off Drive app sync (for Google Drive), paused OneDrive application sync (for OneDrive), or paused Dropbox application sync (for Dropbox). Re-run launch and confirm fallback behavior.
+```
+**Expect:** Clear disconnected/disabled-state message and local-first continuation.
+
+```text
+/career-navigator:list-artifacts
+```
+```text
+List artifacts after connector selection and confirm index consistency.
+```
+**Expect:** Artifact list remains consistent and usable regardless of storage choice.
+
+```text
+Show me how to set up Google Drive (Drive app sync or manual backup/restore), OneDrive (OneDrive app sync or manual backup/restore), and Dropbox (Dropbox app sync or manual backup/restore) for storage in Claude Desktop. Do not use `.mcp.json`.
+```
+**Expect:** Google Drive, OneDrive, and Dropbox instructions all point to app sync or manual backup/restore.
 
 ```text
 Sync application status from Greenhouse for applications I logged—read-only, no writes to employer ATS.

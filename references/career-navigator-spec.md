@@ -305,7 +305,7 @@ The plugin defines a standard artifact storage interface. Users configure a sing
 | --- | --- | --- |
 | **local** | Connector | Default connector. Stores all data locally in `{user_dir}`. No cloud dependency, no credentials required. All Phase 1 functionality uses this connector. |
 
-Cloud storage connectors (Google Drive, OneDrive, Dropbox) are introduced in Phase 2C. See [Phase 2C](#phase-2c--extended-integrations) for details.
+Cloud storage connectors (Google Drive, OneDrive, Dropbox) are introduced in Phase 2C. For **Google Drive, OneDrive or Dropbox**, portability is handled via **Google Drive application sync** or manual backup/restore (not the host connector for typical job files).\.
 
 # **8. Analytics Connectors**
 
@@ -687,9 +687,7 @@ Status: In progress
 
 **Scope includes:**
 
-* Google Drive storage connector (OAuth)
-* OneDrive storage connector (OAuth)
-* Dropbox storage connector (OAuth)
+* Google Drive, OneDrive or Dropbox portability via Drive app sync or manual backup/restore (recommended for job files)
 * IllinoisJobLink job board connector
 * ATS read-only connectors for Greenhouse, Workday, and Lever
 
