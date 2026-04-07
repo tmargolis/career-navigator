@@ -285,7 +285,7 @@ Create or update with dated sections (you may keep older dated blocks below for 
 
 **Do not** treat a lone plugin-generated cover letter as sufficient if Tier A résumés/CVs exist in the same folder—**ingest those files** for this section.
 
-### 2.6 Story corpus initialization (Phase 2D)
+### 2.6 Story corpus initialization
 
 After core files and voice profile:
 
@@ -455,7 +455,7 @@ If **6a** already confirmed **Gmail** tools in-session, **omit Gmail** from this
 
 > "No problem — outreach and follow-ups will work without inbox or calendar search. You can connect later under **Settings → Connectors** or run **`/career-navigator:launch`** again. Details: **CONNECTORS.md**."
 
-### 7. Configure cloud storage connector (optional — Phase 2C)
+### 7. Configure cloud storage connector (optional)
 
 Apply **Connector pattern**; **do not** prompt for storage setup if tools for the chosen provider are already present in this chat.
 

@@ -18,7 +18,7 @@ triggers:
 
 ## Scope (§13.1)
 
-- **User audio only.** Do not capture or transcribe the employer’s side without appropriate consent and product scope—that remains **out of scope** for Phase 2B MVP.
+- **User audio only.** Do not capture or transcribe the employer’s side without appropriate consent and product scope—that remains **out of scope**.
 - **Opt-in:** Run this skill **only** when the user **explicitly** asks to capture/log from audio or runs **`/career-navigator:interview-capture`**.
 - **Employer policy warning (once):** Some employers prohibit **any** recording of interviews. Before the first capture session, show the warning from spec **§13.1** and require acknowledgment. Persist to **`{user_dir}/CareerNavigator/interview-capture-settings.json`**:
 

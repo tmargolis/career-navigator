@@ -110,7 +110,7 @@ The report must include explicit leverage points (credentials, accomplishments,
 ExperienceLibrary units) that justify above-median asks.
 
 Instruct `honest-advisor` to:
-- Follow the Phase 1F **OfferEvaluationReport** output structure.
+- Follow the **OfferEvaluationReport** output structure.
 - In “What would make this more reliable”, if any benchmark/market data is
   missing, either provide best-available benchmark values with a confidence
   caveat or explicitly offer the next steps to fetch them via:

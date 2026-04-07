@@ -35,7 +35,7 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 
 ---
 
-## Interview story PKM sources (Phase 2D)
+## Interview story PKM sources
 
 `mine-stories` can pull interview evidence from PKM systems in addition to local files.
 
@@ -111,7 +111,7 @@ These rules complement `skills/search-jobs/SKILL.md` and should be used when liv
 
 ---
 
-## Event intelligence — Luma (Phase 2D, optional MCP bundle)
+## Event intelligence — Luma (optional MCP bundle)
 
 The **`mcp-luma`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-luma/`** directory in this repository. It provides local MCP tools for Luma event discovery used by **`event-radar`** and **`event-intelligence`**.
 
@@ -136,7 +136,7 @@ Start a **new chat** if Luma tools do not appear immediately.
 
 ---
 
-## Event intelligence — Meetup & Eventbrite (Phase 2D fallback paths)
+## Event intelligence — Meetup & Eventbrite (fallback paths)
 
 Meetup and Eventbrite are treated as **optional browser/manual sources** for event workflows in this plugin.
 
@@ -154,7 +154,7 @@ Usage rules:
 
 ---
 
-## Email & calendar context — Gmail, Microsoft 365, Google Calendar (Phase 2A)
+## Email & calendar context — Gmail, Microsoft 365, Google Calendar
 
 **Goal:** Before **`draft-outreach`**, **`follow-up`**, or **`contact-context`**, the model can search **your** mail for threads with a hiring manager or recruiter and, when **Google Calendar** (or M365 calendar surfaces) is connected, **read past and upcoming meetings** involving that contact—**only after you explicitly approve** each mail or calendar lookup. That turns warm outreach into **evidence-backed** messages (you remember what you promised on a call, and you do not cold-open when a meeting is **already scheduled**).
 
@@ -191,7 +191,7 @@ Outlook mail for Career Navigator is provided through Anthropic’s **Microsoft 
 ### Career Navigator usage rules
 
 1. **Three-step pattern:** **Discover** → **Configure** only if **not** connected → **Browser access** only if MCP is still missing or the flow is browser-only. **Do not** re-prompt for services already connected in-session. See **§ Three-step pattern** above.
-2. **Explicit approval:** Skills (**`draft-outreach`**, **`follow-up`**, **`contact-context`**) must **ask once** whether to search **mail** and/or **calendar** for a named person or company before calling tools—consistent with **`agents/networking-strategist/AGENT.md`** Phase 2A boundary and **`agents/writer/AGENT.md`**. If only one connector is available, only ask for that scope.
+2. **Explicit approval:** Skills (**`draft-outreach`**, **`follow-up`**, **`contact-context`**) must **ask once** whether to search **mail** and/or **calendar** for a named person or company before calling tools—consistent with **`agents/networking-strategist/AGENT.md`** and **`agents/writer/AGENT.md`**. If only one connector is available, only ask for that scope.
 3. **No fabrication:** If connectors are off or the user declines, **do not** invent thread summaries; write copy that stands alone.
 4. **Minimum disclosure:** Summarize only what is needed for the outreach or follow-up; prefer thread excerpts and dates over dumping full bodies.
 5. **New chat after connect:** If tools do not appear after OAuth, start a **new chat** (same pattern as **Indeed** / **Apify**).
@@ -230,7 +230,7 @@ See also **`skills/launch/SKILL.md`** Step 7 for conversational setup during **`
 
 ---
 
-## Voice — Local TTS & STT (Phase 2B, optional MCP bundle)
+## Voice — Local TTS & STT (optional MCP bundle)
 
 The **`mcp-voice`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-voice/`** directory in this repository. It uses **Kokoro** for TTS, **faster-whisper** for STT, and **webrtcvad** for end-of-utterance detection on **`listen`**. No cloud credentials — audio stays on the machine.
 

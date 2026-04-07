@@ -129,7 +129,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`search-jobs`** | “Find jobs…”, `/career-navigator:search-jobs` | Ranked search (Indeed MCP when connected) |
 | **`track-application`** | “I applied…”, status updates | **`tracker.json`** application records |
 | **`application-update`** | Right after **`track-application`** writes | Nudge job-scout refresh / **pattern-analysis** at milestones |
-| **`follow-up`** | Queue / overdue / “ghosted?” | Company windows → **FollowUpBrief** → **`writer`** messages (Phase **2A**: inbox context) |
+| **`follow-up`** | Queue / overdue / “ghosted?” | Company windows → **FollowUpBrief** → **`writer`** messages |
 | **`pattern-analysis`** | “What’s converting?”, outcome review | Refresh ExperienceLibrary **performance_weights** from your history |
 
 ---
@@ -145,7 +145,11 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`ai-analysis`** | AI displacement, future-proofing | Task-level risk + differentiators (**`analyst`**) |
 | **`skill-transfer`** | “What else could I do?” | Transferable strengths → adjacent roles/industries |
 | **`training-roi`** | Certs, bootcamps, degrees | Cost–time–benefit learning paths |
+| **`career-plan`** | “What should my path look like?” | Trajectory planning with near/mid/long horizon + ROI-ranked gap plan |
 | **`assessment`** | Honest competitiveness vs a role | **`honest-advisor`** gap / repositioning read |
+| **`evaluate-offer`** | Offer decision support | Scenario-aware offer evaluation (employed vs unemployed context) + market fairness check |
+| **`compare-offers`** | Multi-offer decisions | Side-by-side offer comparison across comp, fit, trajectory, and risk |
+| **`negotiate-offer`** | Compensation negotiation prep | Negotiation strategy + leverage inventory + handoff brief to **`writer`** for final message draft |
 
 ---
 
@@ -154,11 +158,11 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
 | **`networking-strategy`** | Plan who/when/how to engage | **`networking-strategist`**; messaging handoff → **`writer`** |
-| **`network-map`** | Paths to target employers | Narrative + **`network_map_v1`** (graph UI = Phase **2D**) |
+| **`network-map`** | Paths to target employers | Narrative + **`network_map_v1`** (graph UI = Phase **3**) |
 | **`event-intelligence`** | Specific event ROI, speaking/CFP | Deep evaluation |
 | **`event-radar`** | Ongoing discovery | Local → international, ROI tiers |
 | **`draft-outreach`** | DMs, email, InMail drafts | **`writer`** |
-| **`contact-context`** | Before warm outreach | Read-only Gmail/M365 + calendar (when connected): past + **scheduled** meetings → **ContactContextBrief** (**warm_networking**, **upcoming_meetings**) for **`draft-outreach`** / **`writer`** (Phase **2A**; explicit approval) |
+| **`contact-context`** | Before warm outreach | Read-only Gmail/M365 + calendar (when connected): past + **scheduled** meetings → **ContactContextBrief** (**warm_networking**, **upcoming_meetings**) for **`draft-outreach`** / **`writer`** |
 | **`content-suggest`** | Post ideas, full drafts | Topics + saved **`linkedin_post`** drafts under **`LinkedIn Posts/`** |
 | **`evaluate-post`** | Before publish | Audience + cultural/political/reputational risk vs **`profile.md`** targets |
 | **`linkedin-post-analytics`** | Weekly/biweekly or **`/schedule`** | Read-only snapshots of **your** LinkedIn post metrics → **`tracker.json`** `networking[]` (needs **Claude in Chrome** or **computer/browser use** + explicit approval) |
@@ -199,6 +203,8 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── tracker.json             — applications + stage history; optional **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`** from **`linkedin-post-analytics`**)
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
+│   ├── career-trajectory.md     — career_trajectory_v1 artifact from `career-plan`
+│   ├── offer-context-*.json     — persisted offer evaluation context for negotiation/comparison workflows
 │   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`
 │   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering
 │   ├── interview-prep/          — markdown briefs from **`prep-interview`**
@@ -280,7 +286,9 @@ Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Event intelligence se
 
 - **`focus-career`** — Use when you open a session (or schedule a tight cadence with `/schedule` if you want proactive critical checks). Surfaces only urgent items: imminent offer deadlines, follow-ups due today, same-day interview actions.
 - **`daily-schedule`** — **Recommended daily** via Claude Cowork **`/schedule`**. Delivers the routine digest (pipeline, follow-ups, interviews today, artifacts). Before counts, it runs **`artifact-saved`** when PDF/DOCX artifacts exist in `{user_dir}` so `artifacts-index.json` stays aligned with disk.
+- **`daily-schedule`** — also performs a monthly career-plan staleness check and nudges `/career-navigator:career-plan` when trajectory data is outdated.
 - **`application-update`** — After **`track-application`** updates `tracker.json`, run this workflow in the same turn for refresh guidance and pattern-analysis nudges.
+- **`follow-up-timing`** — when an application reaches offer stage and no evaluation context exists yet, nudge `/career-navigator:evaluate-offer` before deadline pressure compounds.
 - **`artifact-saved`** — After saving tailored resumes/cover letters, or when `daily-schedule` detects artifact files on disk.
 
 **Cowork host hooks:** `hooks/hooks.json` uses Claude Cowork’s native hook events (per cowork-plugin-management). This repo wires **`SessionStart`** to inject `hooks/context/session-start.md` so the **`focus-career`** skill runs at session open.

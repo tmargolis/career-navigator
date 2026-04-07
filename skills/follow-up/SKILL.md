@@ -5,8 +5,8 @@ description: >
   company-specific response window data. Classifies each application as
   within window, approaching, overdue, or critical. Researches and stores
   response window data for any company not yet on file. Builds FollowUpBrief
-  entries and invokes writer for send-ready messages. Phase 2A
-  enriches briefs with email/calendar context.
+  entries and invokes writer for send-ready messages. Connector context
+  enriches briefs with email/calendar data when available and approved.
 triggers:
   - "follow up on my applications"
   - "what needs a follow-up"
@@ -197,7 +197,7 @@ For each row that needs a message, add an object to a list:
 - `applied_or_event_date`, `days_elapsed` (or interview date for thank-yous)
 - `facts_hooks`: 1–3 bullets from `notes` / `stage_history.post_notes`—**no invention**
 - `tone`: direct, not sycophantic; 3–5 sentences target for email body
-- `phase_2a_context`: optional short inbox/calendar context when **Phase 2A** connectors are available **and** the user approved lookup; else `null`
+- `connector_context`: optional short inbox/calendar context when connectors are available **and** the user approved lookup; else `null`
 
 Read `{user_dir}/CareerNavigator/profile.md` and **`voice-profile.md`** for sign-off name and voice.
 
@@ -211,7 +211,7 @@ Read `{user_dir}/CareerNavigator/profile.md` and **`voice-profile.md`** for sign
 
 Under each application entry, show **`writer`** output (subject line if email, body, LinkedIn variant if requested).
 
-**Phase 2A:** When email/calendar connectors exist, enrich briefs with approved prior-thread context before invoking **`writer`**.
+When email/calendar connectors exist, enrich briefs with approved prior-thread context before invoking **`writer`**.
 
 #### 8d. Sent confirmation + auto-track
 

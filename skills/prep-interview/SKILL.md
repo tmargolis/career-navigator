@@ -92,4 +92,4 @@ Update `tracker.json` in place. If no application matched, skip tracker write bu
 
 ### 7. Close
 
-Offer **`/career-navigator:mock-interview`** for a voice or text practice session. Do not claim other Phase 2B features (e.g. **`interview-debrief`**) unless shipped.
+Offer **`/career-navigator:mock-interview`** for a voice or text practice session. Do not claim features that are not shipped.
