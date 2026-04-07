@@ -42,6 +42,7 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 >[10.2 Application Record](#102-application-record)
 >[10.3 Artifact Record](#103-artifact-record)
 >[10.4 Networking entries & LinkedIn post analytics](#104-networking-entries--linkedin-post-analytics)
+>[10.5 Story Corpus](#105-story-corpus)
 
 [Chapter 11. The Intelligence Feedback Loop](#11-the-intelligence-feedback-loop)
 
@@ -214,7 +215,7 @@ Agents are specialized Claude instances with focused roles. They can be invoked 
 | **job-scout** | 1D | Searches and ranks job opportunities across all configured job boards. Incorporates outcome history and market intelligence into scoring. Ranking improves over time as the user logs outcomes. Proactively surfaces high-match opportunities. |
 | **networking-strategist** | 1E | Network analysis, gap identification, and warm-path planning. Event discovery and evaluation with ROI assessment, **presentation-opportunity** flagging, and multi-scope **event radar** (via **`event-intelligence`** and **`event-radar`** skills). Recommends the **`linkedin-post-analytics`** skill (weekly/biweekly or **`/schedule`**) when the user is building LinkedIn visibility—subject to host browser automation and explicit consent. May emit a structured **handoff brief** for **`writer`** when messaging is needed; does **not** draft outreach copy. |
 | **writer** | 1E | Owns **Career Navigator user-facing copy**: outreach (LinkedIn, email, InMail), **cover letters** (from **CoverLetterBrief**), **follow-ups** (from **FollowUpBrief**), optional **resume Summary** polish (**ResumeSummaryBrief**), post drafts (saved under **`{user_dir}/LinkedIn Posts/`** + **`artifacts-index.json`** as **`linkedin_post`**), **`/career-navigator:draft-outreach`**, **`content-suggest`**, **`evaluate-post`**. Maintains **`voice-profile.md`** (and optional **`voice_profile_v1`**) for tone matching; **timeline surfacing** of voice metadata is **Phase 3**. Consumes handoffs from **`networking-strategist`**, **`resume-coach`** (summary path), **`cover-letter`**, **`follow-up`**. For post risk evaluation, consumes a **`market-researcher`** brief on target-company/industry norms before assessing cultural or political risk. Outreach email/calendar enrichment **Phase 2A**. |
-| **interview-coach** | 2B | Interview **prep**, **mock interviews**, and **`morning_section`** day-of bullets for `daily-schedule`. Stages include **recruiter** (first-class), hiring manager, technical, panel, executive, final. Modes: guided / random / adaptive; vibes: supportive through bored. Optional **`mcp-voice`** MCP (**`speak`** / **`listen`**) or host **TTS/STT** for questions and user answers (**user audio only**—see §13.1 spirit). Spec file: `agents/interview-coach/AGENT.md`. |
+| **interview-coach** | 2B | Interview **prep**, **mock interviews**, and **`morning_section`** day-of bullets for `daily-schedule`. Stages include **recruiter** (first-class), hiring manager, technical, panel, executive, final. Modes: guided / random / adaptive; vibes: supportive through bored. Optional **`mcp-voice`** MCP (**`speak`** / **`listen`**) or host **TTS/STT** for questions and user answers (**user audio only**—see §13.1 spirit). For prep and mocks, story evidence is sourced primarily from **`StoryCorpus.json`** via **`story-retrieval`** (ExperienceLibrary fallback). Spec file: `agents/interview-coach/AGENT.md`. |
 
 # **5. Skills**
 
@@ -246,6 +247,8 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **prep-interview** | Skill | Full interview preparation for a tracked (or specified) role: company/news context, **stage-specific** questions (**recruiter** through **final**), talking points from ExperienceLibrary, saved brief under **`CareerNavigator/interview-prep/`**, **`[prep]`** note in **`tracker.json`**. Invokes **`interview-coach`** (`prep` mode). Also invocable via `/career-navigator:prep-interview`. |
 | **mock-interview** | Skill | Mock session: **guided** / **random** / **adaptive**; **stage** + **vibe**; **selects defaults** when mode/vibe omitted (see skill §2.1). Invokes **`interview-coach`** (`mock` mode). Optional **`mcp-voice`** MCP (**`speak`**, **`listen`**). Also invocable via `/career-navigator:mock-interview`. |
 | **interview-capture** | Skill | **Not an agent.** Opt-in post-interview **user-audio** transcription (e.g. **`mcp-voice`** **`listen`** or compatible STT), structured takeaways, **`tracker.json`** updates; employer warning once; §13.1 retention. Also invocable via `/career-navigator:interview-capture`. |
+| **mine-stories** | Skill | Offline/cheap extraction pass over journals, PKM notes, debriefs, and related sources to build/update **`StoryCorpus.json`**. Runs at launch/setup and as incremental refresh when new source documents appear in `{user_dir}`. |
+| **story-retrieval** | Skill | Retrieves a small competency-matched subset (typically 8-12) from **`StoryCorpus.json`** for interview prep/mock STAR mapping. This is the default interview story selection layer; raw journal rereads are avoided at query time. |
 
 **Context skills** fire on ambient signals throughout any session:
 
@@ -422,6 +425,33 @@ The ExperienceLibrary is not a collection of discrete resumes — it is a struct
 *Data:* `{user_dir}/CareerNavigator/tracker.json` → `networking[]`. *Capture behavior:* `skills/linkedin-post-analytics/SKILL.md`.
 
 `{user_dir}/CareerNavigator/tracker.json` includes a **`networking`** array (alongside **`applications`**) for relationship and visibility artifacts. The **`linkedin-post-analytics`** skill may add or update entries with **`type: "linkedin_post"`**, a stable **`url`** (LinkedIn activity URN URL), optional **`description`** / **`date_posted`**, and **`analytics_history`**: an array of dated objects capturing impressions, reach, reactions, comments, reposts, saves, sends, profile viewers attributed to the post, followers gained, link visits, optional **`links`**, and optional **`top_audience`** (industry, seniority, company size) when the UI exposes them. **`networking-strategist`** recommends this cadence for users who publish on LinkedIn; schema details are defined in **`skills/linkedin-post-analytics/SKILL.md`**.
+
+## **10.5 Story Corpus**
+
+*Primary file:* `{user_dir}/CareerNavigator/StoryCorpus.json`.
+
+The story corpus is a persistent, compressed interview-evidence layer extracted from raw journals, PKM notes, debriefs, and related source documents. It exists so interview flows can retrieve focused evidence without re-reading large raw sources on every run.
+
+**Three-layer architecture:**
+
+1. **Extraction (offline/one-time or incremental):** `mine-stories` chunks source entries, runs a low-cost extraction pass, and stores structured candidates.
+2. **Persistent corpus:** flattened story records are saved in `StoryCorpus.json` with competency/theme tags and quality/result/ownership signals.
+3. **Dynamic mapping (query-time):** `story-retrieval` pulls a small fit-ranked subset for prep/mock workflows (default 8-12 stories).
+
+Suggested record shape:
+
+- `story_id`
+- `source` (`journal` | `pkm` | `debrief` | `resume` | `other`)
+- `date`
+- `raw_summary`
+- `themes[]`
+- `competencies[]`
+- `result_signal`
+- `ownership_signal`
+- `star_ready`
+- optional `embedding[]`
+
+Interview prep/mocks use this corpus as the source of truth for "how have I done things," while ExperienceLibrary remains the core accomplishment inventory for tailoring and broader career workflows.
 
 # **11. The Intelligence Feedback Loop**
 
@@ -715,7 +745,8 @@ Status: In progress
 * **Event intelligence sources** for `event-radar` / `event-intelligence`: Luma via local MCP bundle (`mcp-luma`), with Meetup/Eventbrite handled as optional **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback paths.
 * **Event discovery design details:** vendor order, OAuth vs API keys, host packaging, MCP tool names, and deduplication behavior against user-edited `{user_dir}/CareerNavigator/event-radar.md`.
 * **Interview story intelligence objective:** identify and prepare strong interview stories by mining user-owned journals, notes, and PKM sources (for example weekly logs, debrief notes, and knowledge base entries), then map stories to role competencies and common interview prompts.
-* **Interview story prep outputs:** reusable story bank, quality checks (clarity, outcome, ownership, credibility), and targeted rehearsal prompts tied to upcoming interviews.
+* **Interview story architecture:** three-layer pipeline — extraction via **`mine-stories`**, persistent **`StoryCorpus.json`**, and query-time competency mapping via **`story-retrieval`** to produce compact prep inputs.
+* **Interview story prep outputs:** reusable story bank, quality checks (clarity, outcome, ownership, credibility), STAR-readiness flags, and targeted rehearsal prompts tied to upcoming interviews.
 
 ## **Phase 3 — Always-On Career Agent**
 

@@ -103,6 +103,8 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in **`tracker.json`** |
 | **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1); optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`** |
 | **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): user-audio STT → structured notes + **`tracker.json`**; §13.1 warning; uses **`mcp-voice`** **`listen`** when the extension is installed |
+| **`mine-stories`** | Setup or when new notes/journals appear | One-time/incremental extraction pipeline that builds **`StoryCorpus.json`** from journals, PKM, debriefs, and related documents |
+| **`story-retrieval`** | During prep/mock flow | Retrieves competency-matched stories (typically 8-12) from **`StoryCorpus.json`** for STAR mapping without loading full journals |
 | **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
 
 ---
@@ -193,6 +195,7 @@ Everything lives in one folder — the job search directory you provide. Career 
 ├── CareerNavigator/
 │   ├── profile.md               — your targets, comp floor, differentiators
 │   ├── ExperienceLibrary.json   — experience units extracted from source resumes/CVs
+│   ├── StoryCorpus.json         — extracted interview story corpus from journals/PKM/debriefs
 │   ├── tracker.json             — applications + stage history; optional **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`** from **`linkedin-post-analytics`**)
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
@@ -341,7 +344,7 @@ Phase 2 connects Career Navigator to the external services that complete the ful
   - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors.
 
 - **Phase 2D — Event Intelligence + Interview Story Intelligence (In progress):** *event discovery matures into refreshable feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
-  - **Scope includes**: Luma event discovery via local MCP bundle (`mcp-luma`), plus optional Meetup/Eventbrite sourcing through **Claude in Chrome**, **computer use**, or **manual copy/paste**, and interview-story identification/prep workflows that mine journal/notes/PKM context.
+  - **Scope includes**: Luma event discovery via local MCP bundle (`mcp-luma`), plus optional Meetup/Eventbrite sourcing through **Claude in Chrome**, **computer use**, or **manual copy/paste**, and interview-story intelligence with a three-layer pipeline: one-time extraction (`mine-stories`), persistent `StoryCorpus.json`, and on-demand competency mapping (`story-retrieval`) for prep/mock workflows.
 
 ### Phase 3 — Always-On Career Agent
 

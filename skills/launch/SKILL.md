@@ -41,7 +41,7 @@ Apply **1 → 2 → (3 only when needed)** per integration—**omit** steps 2–
 
 ### 2. Check for existing data files
 
-After confirming `{user_dir}`, check whether each of the four core data files exists. Handle each independently.
+After confirming `{user_dir}`, check whether each of the five core data files exists. Handle each independently.
 
 #### Files to check
 
@@ -51,6 +51,7 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 | ExperienceLibrary | `{user_dir}/CareerNavigator/ExperienceLibrary.json` |
 | Tracker | `{user_dir}/CareerNavigator/tracker.json` |
 | Artifacts index | `{user_dir}/CareerNavigator/artifacts-index.json` |
+| Story corpus | `{user_dir}/CareerNavigator/StoryCorpus.json` |
 
 #### For each file: two paths
 
@@ -67,6 +68,8 @@ After confirming `{user_dir}`, check whether each of the four core data files ex
 - **`CareerNavigator/tracker.json`**: Must be valid JSON with `meta`, `applications` array, and `pipeline_summary`. Each application entry must have at minimum `id`, `company`, `role`, and `status`. Recalculate `pipeline_summary` counts from the actual `applications` array and update if stale.
 
 - **`artifacts-index.json`**: Must be valid JSON with a `meta` object and an `artifacts` array. Cross-check the listed artifact filenames against files actually present in `{user_dir}`. Remove entries for files that no longer exist. Add entries for PDF/DOCX files found in `{user_dir}` that are not yet indexed.
+
+- **`CareerNavigator/StoryCorpus.json`**: Must be valid JSON with `meta`, `stories` array, and `source_index` array. If empty or stale, run `mine-stories` extraction on journal/PKM/debrief/resume sources found in `{user_dir}`.
 
 After validation, report to the user:
 > - What was found and whether it passed validation
@@ -281,6 +284,17 @@ Create or update with dated sections (you may keep older dated blocks below for 
 5. **`## Usage guidance for writer`:** Which context to use for **cover letter** vs **LinkedIn** vs **DM**; if ambiguous, **ask the user once** in this launch session before moving on.
 
 **Do not** treat a lone plugin-generated cover letter as sufficient if Tier A résumés/CVs exist in the same folder—**ingest those files** for this section.
+
+### 2.6 Story corpus initialization (Phase 2D)
+
+After core files and voice profile:
+
+1. Ensure `{user_dir}/CareerNavigator/StoryCorpus.json` exists.
+2. Run `mine-stories` as a preprocessing pass:
+   - Full extraction on first launch
+   - Incremental extraction on subsequent launches (new/changed source files only)
+3. Explain that interview prep now uses this corpus as the source of truth for behavioral stories, so the model does not need to re-read full journals each time.
+4. If source files are missing or sparse, keep an empty-ready corpus and ask the user to add journals/notes/PKM exports when available.
 
 ### 3. Connect the Indeed MCP connector (live job search)
 
