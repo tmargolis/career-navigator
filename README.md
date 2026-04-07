@@ -324,10 +324,10 @@ Phase 2 connects Career Navigator to the external services that complete the ful
   - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes, morning brief (via **`daily-schedule`**), debrief flow; optional local **`mcp-voice`** MCP extension (**`speak`** / **`listen`**) + opt-in capture with retention/consent framework (see spec §13).
 
 - **Phase 2C ([Release v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)) — Portability + Employer-System Awareness (In progress):** *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
-  - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors; **Event discovery (placeholder)** for connector-backed `event-radar` feeds (Meetup/Eventbrite/Luma, etc.).
+  - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors.
 
-- **Phase 2D — Analytics Exports + Automation Surfaces**: *BI exports plus dashboard upgrades and LinkedIn automation exploration (within policy constraints).* **Impact:** analytics-ready workflows and power-user reporting.
-  - **Scope includes**: Power BI/Qlik/D3 export; LinkedIn automation assessment; pipeline forecast overlay + voice cadence + network graph UI (deferred from 1E).
+- **Phase 2D — Event Intelligence + Interview Story Intelligence**: *event discovery matures into connector-backed feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
+  - **Scope includes**: event discovery connectors for `event-radar` / `event-intelligence` (Meetup/Eventbrite/Luma and similar), and interview-story identification/prep workflows that mine journal/notes/PKM context.
 
 ### Phase 3 — Always-On Career Agent
 
@@ -337,6 +337,8 @@ Phase 3 evolves Career Navigator from “a powerful assistant you sit down with�
 - **Weekly Market Brief**: *Monday report on role demand shifts, target-company hiring signals, and events/CFPs tied to your targets.* **Impact:** replaces ad-hoc research with a consistent intelligence cadence.
 - **Follow-up Alert**: *overdue response detected against benchmarks with a pre-drafted follow-up ready to review and send from mobile.* **Impact:** nothing falls through the cracks; the system manages the pipeline clock.
 - **Weekly Insight Report**: *Friday plain-language funnel summary plus one specific positioning adjustment based on what’s converting.* **Impact:** turns a job search from feelings-based to data-informed.
+- **Advanced Analytics Exports**: *Power BI, Qlik, and D3 export surfaces for custom reporting and deeper analysis.* **Impact:** gives power users and coaches flexible external dashboards without changing core workflows.
+- **Dashboard & Visualization Enhancements**: *pipeline forecast overlay, voice cadence surfacing, and network graph UI upgrades move into Phase 3 delivery.* **Impact:** users get richer planning and relationship visibility in the same always-on operating layer.
 - **Dispatch Mobile Layer**: *one message from your phone (“Prep me for my interview tomorrow”) yields a full brief waiting on desktop.* **Impact:** desktop-grade capability from anywhere.
 - **Channels (Telegram, Slack)**: *immediate interview debrief and tracker updates from chat, plus flagged prep gaps for next round.* **Impact:** ambient capture replaces “I’ll log this later.”
 - **Computer Use (Universal Connector Fallback)**: *when a first-class connector doesn’t exist (or is too restricted) — e.g. LinkedIn workflows — the agent can use UI automation (with explicit approval) to navigate, extract state, draft messages, and stage actions for review.* **Impact:** removes “no connector” as a hard blocker for end-to-end workflows.
