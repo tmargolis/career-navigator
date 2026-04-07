@@ -30,7 +30,7 @@ Invoke **`writer`** in **`draft-outreach`** mode.
 2. **Voice preflight:** If `voice-profile.md` has **no** user-pasted block under **`## User writing samples`** or **`## User writing samples (launch)`** (substantive excerpts), **ask before** invoking **`writer`**: paste **2–5 LinkedIn posts** or short professional writing; mention optional **launch voice harvest** (résumé/CV/cover text from disk); user may reply **skip** (**low** voice match). If they paste, append a dated **`## User writing samples`** section. If samples already exist, skip this ask.
 3. From conversation, capture: **channel**, **recipient archetype** (title/company if known), **objective** (info chat, referral check-in, post-event ping), and any **StrategistHandoff**, **ContactContextBrief**, or facts the user pasted.
 4. Pass a structured brief to **`writer`** in **`draft-outreach`** mode. **Required:** include the full **`## ContactContextBrief`** markdown block when available, **or** the **`Prior communication:`** fallback from step **0**. **`writer`** must thread **summary**, **open_loops**, **hooks_for_writer**, **calendar_notes**, **upcoming_meetings**, and **warm_networking** into the draft when present—see **`agents/writer/AGENT.md`**. **Do not** draft final copy in this skill—delegate.
-5. Present **`writer`** output (variants if offered). Remind: **Phase 2A** uses connectors for warm threading when available.
+5. Present **`writer`** output (variants if offered). Remind: connectors support warm threading when available.
 6. **Sent confirmation + auto-track:** After presenting the copy, say:
    > "Let me know when you've sent this and I'll log it to your tracker."
 

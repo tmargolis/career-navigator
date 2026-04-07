@@ -103,6 +103,8 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in **`tracker.json`** |
 | **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1); optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`** |
 | **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): user-audio STT → structured notes + **`tracker.json`**; §13.1 warning; uses **`mcp-voice`** **`listen`** when the extension is installed |
+| **`mine-stories`** | Setup or when new notes/journals appear | One-time/incremental extraction pipeline that builds **`StoryCorpus.json`** from journals, PKM, debriefs, and related documents |
+| **`story-retrieval`** | During prep/mock flow | Retrieves competency-matched stories (typically 8-12) from **`StoryCorpus.json`** for STAR mapping without loading full journals |
 | **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
 
 ---
@@ -127,7 +129,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`search-jobs`** | “Find jobs…”, `/career-navigator:search-jobs` | Ranked search (Indeed MCP when connected) |
 | **`track-application`** | “I applied…”, status updates | **`tracker.json`** application records |
 | **`application-update`** | Right after **`track-application`** writes | Nudge job-scout refresh / **pattern-analysis** at milestones |
-| **`follow-up`** | Queue / overdue / “ghosted?” | Company windows → **FollowUpBrief** → **`writer`** messages (Phase **2A**: inbox context) |
+| **`follow-up`** | Queue / overdue / “ghosted?” | Company windows → **FollowUpBrief** → **`writer`** messages |
 | **`pattern-analysis`** | “What’s converting?”, outcome review | Refresh ExperienceLibrary **performance_weights** from your history |
 
 ---
@@ -143,7 +145,11 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`ai-analysis`** | AI displacement, future-proofing | Task-level risk + differentiators (**`analyst`**) |
 | **`skill-transfer`** | “What else could I do?” | Transferable strengths → adjacent roles/industries |
 | **`training-roi`** | Certs, bootcamps, degrees | Cost–time–benefit learning paths |
+| **`career-plan`** | “What should my path look like?” | Trajectory planning with near/mid/long horizon + ROI-ranked gap plan |
 | **`assessment`** | Honest competitiveness vs a role | **`honest-advisor`** gap / repositioning read |
+| **`evaluate-offer`** | Offer decision support | Scenario-aware offer evaluation (employed vs unemployed context) + market fairness check |
+| **`compare-offers`** | Multi-offer decisions | Side-by-side offer comparison across comp, fit, trajectory, and risk |
+| **`negotiate-offer`** | Compensation negotiation prep | Negotiation strategy + leverage inventory + handoff brief to **`writer`** for final message draft |
 
 ---
 
@@ -152,11 +158,11 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
 | **`networking-strategy`** | Plan who/when/how to engage | **`networking-strategist`**; messaging handoff → **`writer`** |
-| **`network-map`** | Paths to target employers | Narrative + **`network_map_v1`** (graph UI = Phase **2D**) |
+| **`network-map`** | Paths to target employers | Narrative + **`network_map_v1`** (graph UI = Phase **3**) |
 | **`event-intelligence`** | Specific event ROI, speaking/CFP | Deep evaluation |
 | **`event-radar`** | Ongoing discovery | Local → international, ROI tiers |
 | **`draft-outreach`** | DMs, email, InMail drafts | **`writer`** |
-| **`contact-context`** | Before warm outreach | Read-only Gmail/M365 + calendar (when connected): past + **scheduled** meetings → **ContactContextBrief** (**warm_networking**, **upcoming_meetings**) for **`draft-outreach`** / **`writer`** (Phase **2A**; explicit approval) |
+| **`contact-context`** | Before warm outreach | Read-only Gmail/M365 + calendar (when connected): past + **scheduled** meetings → **ContactContextBrief** (**warm_networking**, **upcoming_meetings**) for **`draft-outreach`** / **`writer`** |
 | **`content-suggest`** | Post ideas, full drafts | Topics + saved **`linkedin_post`** drafts under **`LinkedIn Posts/`** |
 | **`evaluate-post`** | Before publish | Audience + cultural/political/reputational risk vs **`profile.md`** targets |
 | **`linkedin-post-analytics`** | Weekly/biweekly or **`/schedule`** | Read-only snapshots of **your** LinkedIn post metrics → **`tracker.json`** `networking[]` (needs **Claude in Chrome** or **computer/browser use** + explicit approval) |
@@ -193,9 +199,12 @@ Everything lives in one folder — the job search directory you provide. Career 
 ├── CareerNavigator/
 │   ├── profile.md               — your targets, comp floor, differentiators
 │   ├── ExperienceLibrary.json   — experience units extracted from source resumes/CVs
+│   ├── StoryCorpus.json         — extracted interview story corpus from journals/PKM/debriefs
 │   ├── tracker.json             — applications + stage history; optional **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`** from **`linkedin-post-analytics`**)
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
+│   ├── career-trajectory.md     — career_trajectory_v1 artifact from `career-plan`
+│   ├── offer-context-*.json     — persisted offer evaluation context for negotiation/comparison workflows
 │   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`
 │   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering
 │   ├── interview-prep/          — markdown briefs from **`prep-interview`**
@@ -217,6 +226,8 @@ Run `/career-navigator:launch` to configure integrations. The wizard handles eve
 When non-Indeed connectors are unavailable in-session, `search-jobs` can still run via assisted-manual ingestion with normalized fields (`title`, `company`, `location`, `apply_url`, `source`, `retrieval_mode`) and source-aware deduplication/confidence labeling. See [CONNECTORS.md](CONNECTORS.md) and `skills/search-jobs/SKILL.md`.
 
 **Email & calendar context (optional — warm outreach):** Connect **Gmail** and/or **Microsoft 365** and/or **Google Calendar** under **Connectors** so **`draft-outreach`**, **`follow-up`**, **`contact-context`**, and related skills can search **your** mail and summarize **past and upcoming** meetings with a contact **only when you approve** each lookup (upcoming meetings help **warm** identification—avoid cold-open when a call is already scheduled). Anthropic provides **OAuth** in the browser (no passwords in chat). **Microsoft 365** may require **Team/Enterprise** and admin setup. Full steps, plan notes, and official doc links: [CONNECTORS.md](CONNECTORS.md) and `/career-navigator:launch` Step 6.
+
+**PKM story sources (optional — interview story intelligence):** For `mine-stories`, you can pull from PKM systems in addition to local files. Supported paths include the **official Notion connector** and **Capacities via MCP** when available in your host session, with local export/file mining as fallback. See [CONNECTORS.md](CONNECTORS.md) for setup pattern and provenance rules.
 
 **Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. You can use cloud-backed storage for portability:
 - **Google Drive, OneDrive, Dropbox, etc.:** recommended via **application sync** (or manual backup/restore), since Claude’s native connectors are not reliable for typical job files (JSON/DOCX/etc.).
@@ -254,6 +265,19 @@ Mock interviews and **`interview-capture`** can use **local** text-to-speech and
 
 Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Voice section). The repo’s **`.mcp.json`** is only for optional HTTP connectors (e.g. Gmail, Calendar, Microsoft 365); it does **not** include the voice server.
 
+### Optional: Local events — Luma discovery (`mcp-luma` MCP bundle)
+
+For event intelligence workflows (**`event-radar`**, **`event-intelligence`**), you can install the local **`mcp-luma`** Claude Desktop Extension. This provides connector-style Luma event discovery tools from a local MCP bundle.
+
+1. Download **`mcp-luma.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** (published when files under **`mcp-luma/`** change).
+2. In **Claude Desktop**, open **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Open **Extensions**.
+4. Drag **`mcp-luma.mcpb`** into the Extensions window.
+5. Click **Install**.
+6. Confirm the extension is **enabled**, then start a **new chat** if the Luma tools do not show up.
+
+Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Event intelligence section). Like `mcp-voice`, this is a local extension bundle and is not declared in project **`.mcp.json`**.
+
 ---
 
 ## Scheduling & session behavior
@@ -262,7 +286,9 @@ Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Voice section). The r
 
 - **`focus-career`** — Use when you open a session (or schedule a tight cadence with `/schedule` if you want proactive critical checks). Surfaces only urgent items: imminent offer deadlines, follow-ups due today, same-day interview actions.
 - **`daily-schedule`** — **Recommended daily** via Claude Cowork **`/schedule`**. Delivers the routine digest (pipeline, follow-ups, interviews today, artifacts). Before counts, it runs **`artifact-saved`** when PDF/DOCX artifacts exist in `{user_dir}` so `artifacts-index.json` stays aligned with disk.
+- **`daily-schedule`** — also performs a monthly career-plan staleness check and nudges `/career-navigator:career-plan` when trajectory data is outdated.
 - **`application-update`** — After **`track-application`** updates `tracker.json`, run this workflow in the same turn for refresh guidance and pattern-analysis nudges.
+- **`follow-up-timing`** — when an application reaches offer stage and no evaluation context exists yet, nudge `/career-navigator:evaluate-offer` before deadline pressure compounds.
 - **`artifact-saved`** — After saving tailored resumes/cover letters, or when `daily-schedule` detects artifact files on disk.
 
 **Cowork host hooks:** `hooks/hooks.json` uses Claude Cowork’s native hook events (per cowork-plugin-management). This repo wires **`SessionStart`** to inject `hooks/context/session-start.md` so the **`focus-career`** skill runs at session open.
@@ -298,7 +324,7 @@ Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Voice section). The r
 - Phase 2A: Completed
 - Phase 2B: Completed
 - Phase 2C: Completed
-- Phase 2D: In progress
+- Phase 2D: Completed
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
@@ -327,8 +353,8 @@ Phase 2 connects Career Navigator to the external services that complete the ful
 - **Phase 2C ([Release v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)) — Portability + Employer-System Awareness (Completed):** *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
   - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors.
 
-- **Phase 2D — Event Intelligence + Interview Story Intelligence (In progress):** *event discovery matures into connector-backed feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
-  - **Scope includes**: event discovery connectors for `event-radar` / `event-intelligence` (Meetup/Eventbrite/Luma and similar), and interview-story identification/prep workflows that mine journal/notes/PKM context.
+- **Phase 2D ([Release v2.4.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.4.0)) — Event Intelligence + Interview Story Intelligence (Completed):** *event discovery matures into refreshable feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
+  - **Scope includes**: Luma event discovery via local MCP bundle (`mcp-luma`), plus optional Meetup/Eventbrite sourcing through **Claude in Chrome**, **computer use**, or **manual copy/paste**, and interview-story intelligence with a three-layer pipeline: one-time extraction (`mine-stories`), persistent `StoryCorpus.json`, and on-demand competency mapping (`story-retrieval`) for prep/mock workflows.
 
 ### Phase 3 — Always-On Career Agent
 

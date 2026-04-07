@@ -10,7 +10,7 @@ Plugins are **tool-agnostic** — they describe workflows in terms of categories
 
 ## Three-step pattern (every integration)
 
-Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google Calendar**, **LinkedIn** (where applicable), and **future** connectors documented in this plugin:
+Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google Calendar**, **LinkedIn**, **PKM sources** (Capacities, Notion) (where applicable), and **future** connectors documented in this plugin:
 
 1. **Discover** — **First**, check whether **this chat session** already exposes host tools for that integration (tool names vary). If tools are present and working, the service is **connected** for this session: **stop** for that integration—**do not** ask about setup, OAuth, or browser access unless the user says something is broken.
 
@@ -29,7 +29,34 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Storage | `~~storage` | **Google Drive:** recommended **Drive app sync** (or manual backup/restore) for job files (PDF/DOCX/etc.). **OneDrive:** recommended **OneDrive app sync** (or manual backup/restore) for job files (plugin JSON artifacts aren’t reliably file-accessible via Claude’s Microsoft 365 connector). **Dropbox:** recommended **Dropbox app sync** (or manual backup/restore) for job files. | Local filesystem fallback in `{user_dir}` |
 | Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
+| PKM knowledge bases (story mining) | `~~pkm` | **Notion** first-party connector (official) and/or **Capacities** via local MCP extension/server when available in host session | Obsidian, Roam, Logseq, and manual export/import workflows |
+| Events (Luma) | — | Optional **Claude Desktop Extension** — install the **`mcp-luma.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes Luma event discovery MCP tools for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback |
 | Voice (TTS/STT) | — | Optional **Claude Desktop Extension** — install the **`mcp-voice.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes **`mcp-voice`** MCP tools **`speak`**, **`listen`**. Fully local (Kokoro TTS + faster-whisper STT + webrtcvad). | Text only |
+
+---
+
+## Interview story PKM sources
+
+`mine-stories` can pull interview evidence from PKM systems in addition to local files.
+
+Preferred connector paths:
+
+1. **Notion (official connector):** use Claude's first-party Notion connector when available in the host's Connectors catalog.
+2. **Capacities:** use a local MCP server/extension path when available in the active host session (for example a Capacities MCP integration such as `tboothie-capacitiesmcp`).
+3. **Fallback:** export/sync PKM notes into `{user_dir}` and mine from files directly.
+
+Three-step behavior for PKM:
+
+1. **Discover:** if Notion/Capacities tools are already visible in-session, treat as connected and do not re-prompt setup.
+2. **Configure:** if missing, ask user whether to connect Notion and/or Capacities; user completes connector setup/OAuth/token steps in host UI.
+3. **Browser/manual fallback:** if PKM connector tools remain unavailable, continue by mining exported files in `{user_dir}`.
+
+Guardrails:
+- Do not require PKM connectors for interview story workflows; local file mining remains supported.
+- Keep provenance on each story candidate (`source` and `source_path`) so users can audit journal vs PKM origin.
+- If a PKM connector is connected but permission-scoped narrowly, mine what is available and report limits clearly.
+
+Reference for Capacities MCP listing: [Capacities MCP Server](https://lobehub.com/nl/mcp/tboothie-capacitiesmcp).
 
 ---
 
@@ -84,7 +111,50 @@ These rules complement `skills/search-jobs/SKILL.md` and should be used when liv
 
 ---
 
-## Email & calendar context — Gmail, Microsoft 365, Google Calendar (Phase 2A)
+## Event intelligence — Luma (optional MCP bundle)
+
+The **`mcp-luma`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-luma/`** directory in this repository. It provides local MCP tools for Luma event discovery used by **`event-radar`** and **`event-intelligence`**.
+
+**Install (end users):**
+
+1. Download **`mcp-luma.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** for this repository (release workflow publishes the bundle when `mcp-luma/` changes).
+2. Open **Claude Desktop** → **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Open **Extensions**.
+4. Drag **`mcp-luma.mcpb`** into that window.
+5. Click **Install**.
+6. Ensure the **mcp-luma** extension is **enabled**.
+
+Start a **new chat** if Luma tools do not appear immediately.
+
+| Step | Action |
+| --- | --- |
+| **1 — Discover** | If Luma event tools appear in **this session**, `mcp-luma` is available—**do not** prompt for setup. |
+| **2 — Configure** | **Only if** tools are missing: walk through the install steps above (Releases → `.mcpb` → Settings → Extensions → drag → Install → enabled). |
+| **3 — Fallback** | If `mcp-luma` is unavailable, continue with connector-first policy: other MCP sources where available, then browser-assisted capture, then manual ingestion. |
+
+**Developers:** The extension source is in **`mcp-luma/`** and is distributed as **`mcp-luma.mcpb`** via GitHub Releases.
+
+---
+
+## Event intelligence — Meetup & Eventbrite (fallback paths)
+
+Meetup and Eventbrite are treated as **optional browser/manual sources** for event workflows in this plugin.
+
+Preferred order when sourcing these events:
+
+1. **Claude in Chrome** (if approved by the user)
+2. **computer use** (if approved by the user)
+3. **manual copy/paste** capture (always available)
+
+Usage rules:
+
+- Ask for explicit approval before using browser automation.
+- Keep retrieval provenance on each event (`retrieval_mode`: `browser` or `manual`).
+- If browser tooling is unavailable or declined, continue with manual ingestion and do not block event workflows.
+
+---
+
+## Email & calendar context — Gmail, Microsoft 365, Google Calendar
 
 **Goal:** Before **`draft-outreach`**, **`follow-up`**, or **`contact-context`**, the model can search **your** mail for threads with a hiring manager or recruiter and, when **Google Calendar** (or M365 calendar surfaces) is connected, **read past and upcoming meetings** involving that contact—**only after you explicitly approve** each mail or calendar lookup. That turns warm outreach into **evidence-backed** messages (you remember what you promised on a call, and you do not cold-open when a meeting is **already scheduled**).
 
@@ -121,7 +191,7 @@ Outlook mail for Career Navigator is provided through Anthropic’s **Microsoft 
 ### Career Navigator usage rules
 
 1. **Three-step pattern:** **Discover** → **Configure** only if **not** connected → **Browser access** only if MCP is still missing or the flow is browser-only. **Do not** re-prompt for services already connected in-session. See **§ Three-step pattern** above.
-2. **Explicit approval:** Skills (**`draft-outreach`**, **`follow-up`**, **`contact-context`**) must **ask once** whether to search **mail** and/or **calendar** for a named person or company before calling tools—consistent with **`agents/networking-strategist/AGENT.md`** Phase 2A boundary and **`agents/writer/AGENT.md`**. If only one connector is available, only ask for that scope.
+2. **Explicit approval:** Skills (**`draft-outreach`**, **`follow-up`**, **`contact-context`**) must **ask once** whether to search **mail** and/or **calendar** for a named person or company before calling tools—consistent with **`agents/networking-strategist/AGENT.md`** and **`agents/writer/AGENT.md`**. If only one connector is available, only ask for that scope.
 3. **No fabrication:** If connectors are off or the user declines, **do not** invent thread summaries; write copy that stands alone.
 4. **Minimum disclosure:** Summarize only what is needed for the outreach or follow-up; prefer thread excerpts and dates over dumping full bodies.
 5. **New chat after connect:** If tools do not appear after OAuth, start a **new chat** (same pattern as **Indeed** / **Apify**).
@@ -160,7 +230,7 @@ See also **`skills/launch/SKILL.md`** Step 7 for conversational setup during **`
 
 ---
 
-## Voice — Local TTS & STT (Phase 2B, optional MCP bundle)
+## Voice — Local TTS & STT (optional MCP bundle)
 
 The **`mcp-voice`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-voice/`** directory in this repository. It uses **Kokoro** for TTS, **faster-whisper** for STT, and **webrtcvad** for end-of-utterance detection on **`listen`**. No cloud credentials — audio stays on the machine.
 

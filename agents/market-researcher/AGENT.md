@@ -142,7 +142,7 @@ As of: {YYYY-MM-DD} | Horizons: 0–18mo / 18mo–4y / 4y+ | Confidence: {Prelim
 - {Missing data point 2}
 
 ---
-### Task C: compensation_benchmark (Phase 1F)
+### Task C: compensation_benchmark
 
 ## Compensation Benchmark Header
 Role: {role} | Level: {level} | Geography: {location scope} | Company type: {company type}

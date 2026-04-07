@@ -34,6 +34,7 @@ Check:
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
 - `{user_dir}/CareerNavigator/tracker.json`
 - `{user_dir}/CareerNavigator/artifacts-index.json`
+- `{user_dir}/CareerNavigator/StoryCorpus.json` (create-on-demand is allowed via `mine-stories`)
 
 If missing, output:
 > Daily brief skipped: run `/career-navigator:launch` to initialize Career Navigator.
@@ -61,7 +62,31 @@ If an ingest fails for any file:
 - List failed filenames under a short "Needs attention" line.
 - Recommend rerunning `/career-navigator:add-source` for those specific files.
 
-### 2.6 Monthly career-plan checkpoint (Phase 1F)
+### 2.6 Incremental story corpus refresh
+
+Before finalizing the brief, detect whether story-bearing source files changed since
+the last story mining run:
+
+- journals / logs
+- PKM notes/exports
+- interview debrief notes
+- resume/CV/cover-letter prose that may add interview evidence
+
+Use `CareerNavigator/StoryCorpus.json` `source_index` entries (path + mtime) as the
+baseline when available.
+
+When at least one new/changed eligible source file is detected:
+- Automatically run `mine-stories` in incremental mode (no manual prompt required).
+- Refresh `StoryCorpus.json` and its `meta.updated` + `source_index`.
+- In the final brief, add one short line:
+  - `Story corpus refreshed: {n_files} source file(s) scanned, {n_stories} stories added/updated.`
+
+If refresh fails:
+- Continue with the daily brief.
+- Add a concise "Needs attention" line:
+  - `Story corpus refresh failed; run "mine-stories" to retry.`
+
+### 2.7 Monthly career-plan checkpoint
 If `{user_dir}/CareerNavigator/career-trajectory.md` exists, determine whether it
 is stale:
 - Prefer to parse the report `as_of` date from the `career_trajectory_v1` JSON
@@ -74,7 +99,7 @@ is stale:
 
 If stale, set `career_plan_refresh_due = true`.
 
-### 2.7 Offer evaluation nudge (Phase 1F)
+### 2.8 Offer evaluation nudge
 Check tracker for any active application where:
 - `status` is `"offer"`
 - and `{user_dir}/CareerNavigator/offer-context-{application_id}.json` does
@@ -101,7 +126,7 @@ Treat a `stage_history` row as **“meeting today”** when `date` equals **toda
 
 Build the list of **applications** that have **at least one** such row today (dedupe by `application id`).
 
-#### 3.2 Pre-interview brief subsection (Phase 2B)
+#### 3.2 Pre-interview brief subsection
 
 - **If no applications** qualify for meetings today: **omit** the entire **Pre-interview brief** subsection from the output (no placeholder).
 - **If one or more qualify:** append a subsection **after** the pipeline block (see §5) titled **`Pre-interview brief (today)`**. For **each** qualifying application, produce **short** bullets only (strict brevity — this is not a full prep doc):

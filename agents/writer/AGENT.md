@@ -8,7 +8,7 @@ description: >
   voice using voice-profile samples. Invoked by draft-outreach, content-suggest,
   evaluate-post, and orchestration from cover-letter and follow-up skills.
   **ContactContextBrief** from **contact-context** is folded in by **draft-outreach**
-  by default when connectors exist (Phase 2A), or by the user in chat.
+  by default when connectors exist, or by the user in chat.
 model: claude-sonnet-4-6
 color: purple
 maxTurns: 30
@@ -102,7 +102,7 @@ Whenever you output a **full LinkedIn or professional post (or thread) draft** t
 
 ---
 
-## Phase 2A — Outreach enrichment
+## Outreach enrichment
 
 **Email and calendar history** for warm outreach threading:
 

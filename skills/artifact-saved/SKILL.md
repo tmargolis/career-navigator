@@ -13,6 +13,7 @@ Run **after** new resumes or cover letters are saved to disk (e.g. from `tailor-
 
 Important behavior:
 - This workflow must also auto-trigger `add-source` for newly discovered resume/CV source files that are not yet ingested into `ExperienceLibrary`.
+- This workflow should trigger incremental `mine-stories` when newly ingested or changed source files can affect interview story coverage.
 - Do not ask the user to manually run `add-source` when auto-ingest can be performed.
 
 ## Workflow
@@ -55,6 +56,19 @@ After auto-ingest attempts, re-read:
 
 Then finalize reconciliation counts.
 
+### 2.6 Incremental story refresh trigger
+
+After source auto-ingest, check whether any newly discovered or changed files are
+story-bearing (resume/CV prose, journal-style notes, debrief notes, PKM exports).
+
+When yes:
+- Run `mine-stories` in incremental mode automatically.
+- Update `{user_dir}/CareerNavigator/StoryCorpus.json` `meta.updated` and `source_index`.
+- Record refresh status for output.
+
+When no:
+- Skip story refresh silently.
+
 ### 3. Prepare analytics event handoff
 
 Create an event summary payload (for current local logging and future connector handoff):
@@ -76,6 +90,7 @@ Removed: {n}
 Unchanged: {n}
 Auto-ingested source docs: {n}
 Ingest failed: {n}
+Story corpus refreshed: {yes/no} ({n_files} changed source file(s))
 ```
 
 If `Added` or `Removed` > 0, append one short line:

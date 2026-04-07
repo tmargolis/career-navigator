@@ -92,7 +92,7 @@ If step **2** (below) doesn’t surface a clear thread, search mail for the cont
 - **Honest:** Do not invent threads or addresses. Label guesses clearly.
 - **User-sent:** If the user says they sent email, **do not** contradict them for lack of bounce proof via MCP.
 - **Privacy:** do not paste full bodies unless needed; respect sensitive content.
-- **Phase 2A:** Calendar enrichment only when tools exist **and** the user approved calendar scope (combined approval is fine unless the host requires a separate calendar consent step).
+- Calendar enrichment only when tools exist **and** the user approved calendar scope (combined approval is fine unless the host requires a separate calendar consent step).
 
 ## Scheduling
 
