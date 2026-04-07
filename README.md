@@ -254,6 +254,19 @@ Mock interviews and **`interview-capture`** can use **local** text-to-speech and
 
 Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Voice section). The repo’s **`.mcp.json`** is only for optional HTTP connectors (e.g. Gmail, Calendar, Microsoft 365); it does **not** include the voice server.
 
+### Optional: Local events — Luma discovery (`mcp-luma` MCP bundle)
+
+For event intelligence workflows (**`event-radar`**, **`event-intelligence`**), you can install the local **`mcp-luma`** Claude Desktop Extension. This provides connector-style Luma event discovery tools from a local MCP bundle.
+
+1. Download **`mcp-luma.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** (published when files under **`mcp-luma/`** change).
+2. In **Claude Desktop**, open **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Open **Extensions**.
+4. Drag **`mcp-luma.mcpb`** into the Extensions window.
+5. Click **Install**.
+6. Confirm the extension is **enabled**, then start a **new chat** if the Luma tools do not show up.
+
+Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Event intelligence section). Like `mcp-voice`, this is a local extension bundle and is not declared in project **`.mcp.json`**.
+
 ---
 
 ## Scheduling & session behavior

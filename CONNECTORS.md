@@ -29,6 +29,7 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Storage | `~~storage` | **Google Drive:** recommended **Drive app sync** (or manual backup/restore) for job files (PDF/DOCX/etc.). **OneDrive:** recommended **OneDrive app sync** (or manual backup/restore) for job files (plugin JSON artifacts aren’t reliably file-accessible via Claude’s Microsoft 365 connector). **Dropbox:** recommended **Dropbox app sync** (or manual backup/restore) for job files. | Local filesystem fallback in `{user_dir}` |
 | Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
+| Events (Luma) | — | Optional **Claude Desktop Extension** — install the **`mcp-luma.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes Luma event discovery MCP tools for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via other MCPs or browser/manual fallback |
 | Voice (TTS/STT) | — | Optional **Claude Desktop Extension** — install the **`mcp-voice.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes **`mcp-voice`** MCP tools **`speak`**, **`listen`**. Fully local (Kokoro TTS + faster-whisper STT + webrtcvad). | Text only |
 
 ---
@@ -81,6 +82,31 @@ When duplicates are found, keep the highest-precedence record and merge missing 
 - **Company/ATS:** ask for canonical apply URL + requisition ID where present.
 
 These rules complement `skills/search-jobs/SKILL.md` and should be used when live tools are unavailable.
+
+---
+
+## Event intelligence — Luma (Phase 2D, optional MCP bundle)
+
+The **`mcp-luma`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-luma/`** directory in this repository. It provides local MCP tools for Luma event discovery used by **`event-radar`** and **`event-intelligence`**.
+
+**Install (end users):**
+
+1. Download **`mcp-luma.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** for this repository (release workflow publishes the bundle when `mcp-luma/` changes).
+2. Open **Claude Desktop** → **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Open **Extensions**.
+4. Drag **`mcp-luma.mcpb`** into that window.
+5. Click **Install**.
+6. Ensure the **mcp-luma** extension is **enabled**.
+
+Start a **new chat** if Luma tools do not appear immediately.
+
+| Step | Action |
+| --- | --- |
+| **1 — Discover** | If Luma event tools appear in **this session**, `mcp-luma` is available—**do not** prompt for setup. |
+| **2 — Configure** | **Only if** tools are missing: walk through the install steps above (Releases → `.mcpb` → Settings → Extensions → drag → Install → enabled). |
+| **3 — Fallback** | If `mcp-luma` is unavailable, continue with connector-first policy: other MCP sources where available, then browser-assisted capture, then manual ingestion. |
+
+**Developers:** The extension source is in **`mcp-luma/`** and is distributed as **`mcp-luma.mcpb`** via GitHub Releases.
 
 ---
 

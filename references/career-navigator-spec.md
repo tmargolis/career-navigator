@@ -122,6 +122,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 **├── .mcp.json** — may include Anthropic **HTTP MCP** entries for **Gmail** / **Google Calendar** and/or **`ms365`** (Outlook / Microsoft 365) as an alternate channel (no secrets); other MCPs (e.g. Apify for salary) are configured in the host app. **Does not** include local voice — see **`mcp-voice/`**.
 
 **├── mcp-voice/** — Claude Desktop **Extension** bundle (`.mcpb`) for optional **`mcp-voice`** MCP (`speak`, `listen`); published via GitHub Releases
+**├── mcp-luma/** — Claude Desktop **Extension** bundle (`.mcpb`) for optional **`mcp-luma`** event discovery MCP; published via GitHub Releases
 
 **├── agents/**
 
@@ -348,7 +349,7 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **Greenhouse / Workday / Lever** | MCP | ATS status tracking for applications submitted through these platforms. Read-only access to application status. |
 | **mcp-voice** (local MCP bundle) | Claude Desktop **Extension** (`.mcpb`) | **Local** TTS and STT for **`prep-interview`**, **`mock-interview`**, **`interview-capture`**. Install **`mcp-voice.mcpb`** from [GitHub Releases](https://github.com/tmargolis/career-navigator/releases): **Settings** (⌘/Ctrl + comma) → **Extensions** → drag bundle → **Install** → enable. Source: **`mcp-voice/`**; tools **`speak`**, **`listen`**. Not declared in project **`.mcp.json`**. |
 | **Whisper (OpenAI)** | MCP | Alternate STT when **`mcp-voice`** is unavailable or user prefers another host. Phase 2B. MVP scope: user audio only. |
-| **Meetup / Eventbrite / Luma** | MCP | Event discovery for networking radar. Searches for relevant professional events by location, industry, and role type. |
+| **Meetup / Eventbrite / Luma** | MCP | Event discovery for networking radar. For Luma, install local **`mcp-luma.mcpb`** from [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (source: **`mcp-luma/`**). Use other MCPs where available for Meetup/Eventbrite; otherwise browser/manual fallback. |
 | **Host browser automation** | Host capability (not plugin MCP) | **Claude in Chrome**, **computer use**, or equivalent: enables **`linkedin-post-analytics`** to navigate a logged-in browser **read-only** and record own-post metrics into **`tracker.json`**. User must opt in per session or schedule; distinct from the **LinkedIn** MCP row (which describes optional connector features such as search and messaging). |
 
 # **10. Core Data Model**
