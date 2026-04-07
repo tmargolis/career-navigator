@@ -760,9 +760,9 @@ Status: Completed
 
 ### **Phase 2D — Event Intelligence & Interview Story Intelligence**
 
-Status: In progress
+Status: Completed
 
-**Plugin release:** 2.4.0
+**Plugin release:** [v2.4.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.4.0)
 
 **Deliverable: Event Intelligence + Story Evidence Loop**
 
