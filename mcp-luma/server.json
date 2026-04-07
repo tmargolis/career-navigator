@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.alx1p/luma-mcp",
+  "title": "Luma Events",
+  "description": "Discover events from Luma — search by category, city, distance, and keywords with calendar export",
+  "repository": {
+    "url": "https://github.com/alx1p/luma-cal-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "luma-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

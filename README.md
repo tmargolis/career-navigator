@@ -297,7 +297,8 @@ Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Voice section). The r
 - Phase 1G: Completed
 - Phase 2A: Completed
 - Phase 2B: Completed
-- Phase 2C: In progress
+- Phase 2C: Completed
+- Phase 2D: In progress
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
@@ -323,10 +324,10 @@ Phase 2 connects Career Navigator to the external services that complete the ful
 - **Phase 2B ([Release v2.2.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.2.0)) — Full Interview Loop (Prep → Practice → Capture → Debrief) (Completed):** *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
   - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes, morning brief (via **`daily-schedule`**), debrief flow; optional local **`mcp-voice`** MCP extension (**`speak`** / **`listen`**) + opt-in capture with retention/consent framework (see spec §13).
 
-- **Phase 2C ([Release v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)) — Portability + Employer-System Awareness (In progress):** *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
+- **Phase 2C ([Release v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)) — Portability + Employer-System Awareness (Completed):** *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
   - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors.
 
-- **Phase 2D — Event Intelligence + Interview Story Intelligence**: *event discovery matures into connector-backed feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
+- **Phase 2D — Event Intelligence + Interview Story Intelligence (In progress):** *event discovery matures into connector-backed feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
   - **Scope includes**: event discovery connectors for `event-radar` / `event-intelligence` (Meetup/Eventbrite/Luma and similar), and interview-story identification/prep workflows that mine journal/notes/PKM context.
 
 ### Phase 3 — Always-On Career Agent
