@@ -66,7 +66,7 @@ For **your own** posts only: open recent activity, collect per-post analytics, a
 
 ## Report
 
-One line per post: `[date] — [topic] — impressions: X, reactions: X, comments: X, reposts: X, link visits: X`. Flag posts with **meaningful day-over-day growth** vs the latest prior snapshot. If **no posts** in the window, say so and exit.
+One line per post: `[topic], impressions: X(+Y), reactions: X(+Y), comments: X(+Y), reposts: X(+Y), link visits: X(+Y), [date]`. Flag posts with **meaningful day-over-day growth** (Y) vs the latest prior snapshot. If **no posts** in the window, say so and exit.
 
 ## Cadence hint for the user
 

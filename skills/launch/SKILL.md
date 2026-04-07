@@ -1,7 +1,7 @@
 ---
 name: launch
 description: >
-  Launch your job search with Career Navigator: the single entry point for configuration. Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents, walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, optional Gmail / Microsoft 365 inbox and optional Google Calendar connectors (OAuth) for outreach and meeting context, optional LinkedIn post analytics, and Google Drive when applicable. No Customize button required — run this command to do everything.
+  Launch your job search with Career Navigator: the single entry point for configuration. Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents, walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, optional Gmail / Microsoft 365 inbox and optional Google Calendar connectors (OAuth) for outreach and meeting context, optional LinkedIn post analytics, and optional cloud storage connectors (Google Drive, OneDrive, Dropbox) when applicable. No Customize button required — run this command to do everything.
 triggers:
   - "/career-navigator:launch"
   - "/launch"
@@ -18,11 +18,11 @@ Use this after installing the plugin — it is how you **launch** Career Navigat
 
 The working directory (or relevant sub-directory) should be configured as the user's job search directory to be referred to as `{user_dir}`. All data this plugin produces— profile, ExperienceLibrary, tracker, generated artifacts — lives in subdirectories of the `{user_dir}` folder alongside the user's raw documents.
 
-**Integrations (Indeed, Apify, LinkedIn, Gmail, Microsoft 365, Google Calendar, future):** Follow [CONNECTORS.md](CONNECTORS.md): **only prompt for services that are not already connected** in this session (host tools missing or user reports a problem). If **Indeed** / **Apify** / **Gmail** / **M365** / **Google Calendar** tools are already present, a **brief acknowledgment** is enough—**do not** ask setup, OAuth, or browser-access questions for those.
+**Integrations (Indeed, Apify, LinkedIn, Gmail, Microsoft 365, Google Calendar):** Follow [CONNECTORS.md](CONNECTORS.md): **only prompt for services that are not already connected** in this session (host tools missing or user reports a problem). If tools are already present, a **brief acknowledgment** is enough—**do not** ask setup, OAuth, or browser-access questions for those services.
 
 ## Workflow
 
-### Connector pattern (apply to steps 3–6)
+### Connector pattern (apply to steps 3–7)
 
 | Step | What to do |
 | --- | --- |
@@ -441,7 +441,36 @@ If **6a** already confirmed **Gmail** tools in-session, **omit Gmail** from this
 
 > "No problem — outreach and follow-ups will work without inbox or calendar search. You can connect later under **Settings → Connectors** or run **`/career-navigator:launch`** again. Details: **CONNECTORS.md**."
 
-### 7. Set up local voice MCP (optional)
+### 7. Configure cloud storage connector (optional — Phase 2C)
+
+Apply **Connector pattern**; **do not** prompt for storage setup if tools for the chosen provider are already present in this chat.
+
+After email/calendar setup (or skip), offer cloud storage for artifact portability:
+
+> **Cloud storage (optional):** Want your job-search files/artifacts backed up outside a single laptop? You can also keep **local-only** storage.  
+> - **Google Drive:** recommended via **Google Drive app sync** (or manual backup/restore) because Claude’s native Drive connector is not reliable for typical job files (PDF/DOCX/etc.).  
+> - **OneDrive:** recommended via **OneDrive application sync** (or manual backup/restore) because the Claude Microsoft 365/OneDrive file access connector is optimized for native formats (Word/PowerPoint/PDF) and is not reliably usable for the plugin’s JSON artifacts.  
+> - **Dropbox:** recommended via **Dropbox application sync** (or manual backup/restore) for the same durability reasons.  
+> Which option do you want?
+
+If they choose a provider:
+
+1. Confirm which provider they want and whether they prefer **app sync** or **manual backup/restore**.
+2. **If they chose cloud storage:** do **not** ask them to connect a connector for job files. Instead ask:
+   - Do you want to use an **application to sync** or **manual backup/restore**?
+   - For **app sync**: ask them to sync the local `{user_dir}` folder using the Google, Microsoft or Dropbox desktop app (so the folder contents are available locally on every device).
+   - For **manual backup/restore**: ask them to copy the job-search folder into their cloud storage provider before switching devices, then restore it to a local folder on the new device before running launch.
+   - In either case, ask them to start a **new chat** after they’ve ensured the folder is available locally.
+
+**Discover-first behavior:**
+- If the selected provider is already syncing locally (or the restored folder is already present), acknowledge and skip setup instructions.
+- If local folder contents are not present yet, ask them to complete sync/restore first, then restart chat.
+
+**Guardrails:**
+- Do not use browser automation for storage setup; the user performs sync/backup steps.
+- If they skip, keep local filesystem storage in `{user_dir}` and continue launch normally.
+
+### 8. Set up local voice MCP (optional)
 
 **Discover:** Check whether tools named **`speak`** and **`listen`** are available in this session. If both are present, the **`mcp-voice`** MCP is already available — acknowledge briefly and skip this step entirely.
 

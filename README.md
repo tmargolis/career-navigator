@@ -212,11 +212,15 @@ No data leaves your machine unless you configure a cloud connector (see [CONNECT
 
 Run `/career-navigator:launch` to configure integrations. The wizard handles everything conversationally — no file editing required.
 
-**Job search:** Career Navigator uses the **Indeed** MCP connector for live listings (`search_jobs`, `get_job_details`). In **Claude Desktop**, add it under **Customize → Connectors**, open **Indeed**, click **Connect**, then complete **Grant access to Indeed** in the browser (Indeed OAuth on **secure.indeed.com** — sign in and **Continue**). Start a **new chat** if tools don’t load. See `/career-navigator:launch` Step 3 for the full walkthrough.
+**Job search (connector-first):** Career Navigator uses the **Indeed** MCP connector for live listings today (`search_jobs`, `get_job_details`), and supports browser/manual fallback for other channels (state/federal boards, niche boards, company-direct/ATS portals). In **Claude Desktop**, add Indeed under **Customize → Connectors**, open **Indeed**, click **Connect**, then complete **Grant access to Indeed** in the browser (Indeed OAuth on **secure.indeed.com** — sign in and **Continue**). Start a **new chat** if tools don’t load. See `/career-navigator:launch` Step 3 for the full walkthrough.
+
+When non-Indeed connectors are unavailable in-session, `search-jobs` can still run via assisted-manual ingestion with normalized fields (`title`, `company`, `location`, `apply_url`, `source`, `retrieval_mode`) and source-aware deduplication/confidence labeling. See [CONNECTORS.md](CONNECTORS.md) and `skills/search-jobs/SKILL.md`.
 
 **Email & calendar context (optional — warm outreach):** Connect **Gmail** and/or **Microsoft 365** and/or **Google Calendar** under **Connectors** so **`draft-outreach`**, **`follow-up`**, **`contact-context`**, and related skills can search **your** mail and summarize **past and upcoming** meetings with a contact **only when you approve** each lookup (upcoming meetings help **warm** identification—avoid cold-open when a call is already scheduled). Anthropic provides **OAuth** in the browser (no passwords in chat). **Microsoft 365** may require **Team/Enterprise** and admin setup. Full steps, plan notes, and official doc links: [CONNECTORS.md](CONNECTORS.md) and `/career-navigator:launch` Step 6.
 
-**Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. Cloud storage connectors (Google Drive, OneDrive, Dropbox) are available in Phase 2. See [CONNECTORS.md](CONNECTORS.md) for the connector interface.
+**Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. You can use cloud-backed storage for portability:
+- **Google Drive, OneDrive, Dropbox, etc.:** recommended via **application sync** (or manual backup/restore), since Claude’s native connectors are not reliable for typical job files (JSON/DOCX/etc.).
+See [CONNECTORS.md](CONNECTORS.md) for setup and fallback behavior.
 
 ### Apify MCP for salary benchmarking (optional — Claude Desktop connector)
 
@@ -293,6 +297,7 @@ Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Voice section). The r
 - Phase 1G: Completed
 - Phase 2A: Completed
 - Phase 2B: Completed
+- Phase 2C: In progress
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
@@ -315,14 +320,14 @@ Phase 2 connects Career Navigator to the external services that complete the ful
 - **Phase 2A ([Release v2.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.1.0)) — Inbox + Calendar Context (Completed):** *before you draft outreach, Career Navigator can (with explicit permission) pull and summarize the relevant email threads and meeting history so your messages are grounded in real context—not guesswork.* **Impact:** warm outreach becomes evidence-based and consistent.
   - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), optional HTTP MCP entries in **`.mcp.json`** (`gmail`, `google-calendar`, `ms365`), **`contact-context`** + **`draft-outreach`** / **`writer`** enrichment; past and **upcoming** meetings (**`warm_networking`**); **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`tracker.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
 
-- **Phase 2B ([Release v2.2.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.2.0)) — Full Interview Loop (Prep → Practice → Capture → Debrief)**: *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
+- **Phase 2B ([Release v2.2.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.2.0)) — Full Interview Loop (Prep → Practice → Capture → Debrief) (Completed):** *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
   - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes, morning brief (via **`daily-schedule`**), debrief flow; optional local **`mcp-voice`** MCP extension (**`speak`** / **`listen`**) + opt-in capture with retention/consent framework (see spec §13).
 
-- **Phase 2C — Portability + Employer-System Awareness**: *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
-  - **Scope includes**: Google Drive/OneDrive/Dropbox storage connectors, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors; **Event discovery (placeholder)** for connector-backed `event-radar` feeds (Meetup/Eventbrite/Luma, etc.).
+- **Phase 2C ([Release v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)) — Portability + Employer-System Awareness (In progress):** *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
+  - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors.
 
-- **Phase 2D — Analytics Exports + Automation Surfaces**: *BI exports plus dashboard upgrades and LinkedIn automation exploration (within policy constraints).* **Impact:** analytics-ready workflows and power-user reporting.
-  - **Scope includes**: Power BI/Qlik/D3 export; LinkedIn automation assessment; pipeline forecast overlay + voice cadence + network graph UI (deferred from 1E).
+- **Phase 2D — Event Intelligence + Interview Story Intelligence**: *event discovery matures into connector-backed feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
+  - **Scope includes**: event discovery connectors for `event-radar` / `event-intelligence` (Meetup/Eventbrite/Luma and similar), and interview-story identification/prep workflows that mine journal/notes/PKM context.
 
 ### Phase 3 — Always-On Career Agent
 
@@ -332,6 +337,8 @@ Phase 3 evolves Career Navigator from “a powerful assistant you sit down with�
 - **Weekly Market Brief**: *Monday report on role demand shifts, target-company hiring signals, and events/CFPs tied to your targets.* **Impact:** replaces ad-hoc research with a consistent intelligence cadence.
 - **Follow-up Alert**: *overdue response detected against benchmarks with a pre-drafted follow-up ready to review and send from mobile.* **Impact:** nothing falls through the cracks; the system manages the pipeline clock.
 - **Weekly Insight Report**: *Friday plain-language funnel summary plus one specific positioning adjustment based on what’s converting.* **Impact:** turns a job search from feelings-based to data-informed.
+- **Advanced Analytics Exports**: *Power BI, Qlik, and D3 export surfaces for custom reporting and deeper analysis.* **Impact:** gives power users and coaches flexible external dashboards without changing core workflows.
+- **Dashboard & Visualization Enhancements**: *pipeline forecast overlay, voice cadence surfacing, and network graph UI upgrades move into Phase 3 delivery.* **Impact:** users get richer planning and relationship visibility in the same always-on operating layer.
 - **Dispatch Mobile Layer**: *one message from your phone (“Prep me for my interview tomorrow”) yields a full brief waiting on desktop.* **Impact:** desktop-grade capability from anywhere.
 - **Channels (Telegram, Slack)**: *immediate interview debrief and tracker updates from chat, plus flagged prep gaps for next round.* **Impact:** ambient capture replaces “I’ll log this later.”
 - **Computer Use (Universal Connector Fallback)**: *when a first-class connector doesn’t exist (or is too restricted) — e.g. LinkedIn workflows — the agent can use UI automation (with explicit approval) to navigate, extract state, draft messages, and stage actions for review.* **Impact:** removes “no connector” as a hard blocker for end-to-end workflows.
