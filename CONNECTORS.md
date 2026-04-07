@@ -10,7 +10,7 @@ Plugins are **tool-agnostic** — they describe workflows in terms of categories
 
 ## Three-step pattern (every integration)
 
-Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google Calendar**, **LinkedIn** (where applicable), and **future** connectors documented in this plugin:
+Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google Calendar**, **LinkedIn**, **PKM sources** (Capacities, Notion) (where applicable), and **future** connectors documented in this plugin:
 
 1. **Discover** — **First**, check whether **this chat session** already exposes host tools for that integration (tool names vary). If tools are present and working, the service is **connected** for this session: **stop** for that integration—**do not** ask about setup, OAuth, or browser access unless the user says something is broken.
 
@@ -29,8 +29,34 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Storage | `~~storage` | **Google Drive:** recommended **Drive app sync** (or manual backup/restore) for job files (PDF/DOCX/etc.). **OneDrive:** recommended **OneDrive app sync** (or manual backup/restore) for job files (plugin JSON artifacts aren’t reliably file-accessible via Claude’s Microsoft 365 connector). **Dropbox:** recommended **Dropbox app sync** (or manual backup/restore) for job files. | Local filesystem fallback in `{user_dir}` |
 | Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
+| PKM knowledge bases (story mining) | `~~pkm` | **Notion** first-party connector (official) and/or **Capacities** via local MCP extension/server when available in host session | Obsidian, Roam, Logseq, and manual export/import workflows |
 | Events (Luma) | — | Optional **Claude Desktop Extension** — install the **`mcp-luma.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes Luma event discovery MCP tools for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback |
 | Voice (TTS/STT) | — | Optional **Claude Desktop Extension** — install the **`mcp-voice.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes **`mcp-voice`** MCP tools **`speak`**, **`listen`**. Fully local (Kokoro TTS + faster-whisper STT + webrtcvad). | Text only |
+
+---
+
+## Interview story PKM sources (Phase 2D)
+
+`mine-stories` can pull interview evidence from PKM systems in addition to local files.
+
+Preferred connector paths:
+
+1. **Notion (official connector):** use Claude's first-party Notion connector when available in the host's Connectors catalog.
+2. **Capacities:** use a local MCP server/extension path when available in the active host session (for example a Capacities MCP integration such as `tboothie-capacitiesmcp`).
+3. **Fallback:** export/sync PKM notes into `{user_dir}` and mine from files directly.
+
+Three-step behavior for PKM:
+
+1. **Discover:** if Notion/Capacities tools are already visible in-session, treat as connected and do not re-prompt setup.
+2. **Configure:** if missing, ask user whether to connect Notion and/or Capacities; user completes connector setup/OAuth/token steps in host UI.
+3. **Browser/manual fallback:** if PKM connector tools remain unavailable, continue by mining exported files in `{user_dir}`.
+
+Guardrails:
+- Do not require PKM connectors for interview story workflows; local file mining remains supported.
+- Keep provenance on each story candidate (`source` and `source_path`) so users can audit journal vs PKM origin.
+- If a PKM connector is connected but permission-scoped narrowly, mine what is available and report limits clearly.
+
+Reference for Capacities MCP listing: [Capacities MCP Server](https://lobehub.com/nl/mcp/tboothie-capacitiesmcp).
 
 ---
 

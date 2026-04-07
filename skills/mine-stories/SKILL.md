@@ -31,7 +31,7 @@ If `StoryCorpus.json` is missing, create it using the schema in step 5.
 Scan `{user_dir}` recursively for likely story-bearing files, prioritizing:
 - Journal and weekly logs
 - Interview debrief notes
-- PKM exports/notes
+- PKM exports/notes (including Notion and Capacities content when available via connector/MCP or local export)
 - Resume/CV/cover-letter prose
 - Plain text/markdown notes with dated entries
 

@@ -221,6 +221,8 @@ When non-Indeed connectors are unavailable in-session, `search-jobs` can still r
 
 **Email & calendar context (optional — warm outreach):** Connect **Gmail** and/or **Microsoft 365** and/or **Google Calendar** under **Connectors** so **`draft-outreach`**, **`follow-up`**, **`contact-context`**, and related skills can search **your** mail and summarize **past and upcoming** meetings with a contact **only when you approve** each lookup (upcoming meetings help **warm** identification—avoid cold-open when a call is already scheduled). Anthropic provides **OAuth** in the browser (no passwords in chat). **Microsoft 365** may require **Team/Enterprise** and admin setup. Full steps, plan notes, and official doc links: [CONNECTORS.md](CONNECTORS.md) and `/career-navigator:launch` Step 6.
 
+**PKM story sources (optional — interview story intelligence):** For `mine-stories`, you can pull from PKM systems in addition to local files. Supported paths include the **official Notion connector** and **Capacities via MCP** when available in your host session, with local export/file mining as fallback. See [CONNECTORS.md](CONNECTORS.md) for setup pattern and provenance rules.
+
 **Storage:** All data is stored locally in your job search folder (`{user_dir}`). Nothing leaves your machine by default. You can use cloud-backed storage for portability:
 - **Google Drive, OneDrive, Dropbox, etc.:** recommended via **application sync** (or manual backup/restore), since Claude’s native connectors are not reliable for typical job files (JSON/DOCX/etc.).
 See [CONNECTORS.md](CONNECTORS.md) for setup and fallback behavior.
