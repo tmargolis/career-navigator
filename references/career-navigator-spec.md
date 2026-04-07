@@ -660,6 +660,8 @@ Phase 2 connects Career Navigator to the external services that complete the ful
 
 ## **Phase 3 — Always-On Career Agent**
 
+Status: In progress
+
 Phase 3 evolves Career Navigator from “a powerful assistant you sit down with” into an always-on, context-maintaining career operating layer that runs on a cadence and meets you in the channels you already use.
 
 This phase is explicitly shaped by industry trends kicked off by **OpenClaw** — persistent threads, asynchronous task orchestration (“dispatch”), and event-driven channels — and by the broader “clawification” race across AI products. While the current product is packaged as a plugin for Claude Cowork, the Phase 3 intent is **host-agnostic**: design for any runtime that can support scheduled runs, connector access, and mobile/remote interaction.

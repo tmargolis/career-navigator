@@ -268,7 +268,12 @@ Never paste your token into this repository or into chat logs you do not trust. 
 - Phase 1D: Completed
 - Phase 1E: Completed
 - Phase 1F: Completed
-- Phase 1G: In progress
+- Phase 1G: Completed
+- Phase 2A: Completed
+- Phase 2B: Completed
+- Phase 2C: Completed
+- Phase 2D: Completed
+- Phase 3: In progress
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
 
@@ -301,6 +306,8 @@ Phase 2 connects Career Navigator to the external services that complete the ful
   - **Scope includes**: Power BI/Qlik/D3 export; LinkedIn automation assessment; pipeline forecast overlay + voice cadence + network graph UI (deferred from 1E).
 
 ### Phase 3 — Always-On Career Agent
+
+Status: In progress
 
 Phase 3 evolves Career Navigator from “a powerful assistant you sit down with” into an always-on, context-maintaining career operating layer that runs on a cadence and meets you in the channels you already use. This direction reflects industry trends kicked off by **OpenClaw** (persistent threads, async dispatch, event-driven channels) while remaining host-agnostic (Anthropic/Claude and NemoClaw are examples, not dependencies).
 
