@@ -1,0 +1,44 @@
+name: Build and release mcp-luma MCPB
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "mcp-luma/**"
+      - ".claude-plugin/plugin.json"
+      - ".github/workflows/mcp-luma-mcpb.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Read plugin version
+        id: ver
+        run: echo "version=$(jq -r .version .claude-plugin/plugin.json)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Pack MCPB
+        working-directory: mcp-luma
+        run: npx --yes @anthropic-ai/mcpb pack .
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.version }}
+          files: |
+            mcp-luma/*.mcpb
+          overwrite_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

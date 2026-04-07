@@ -1,0 +1,11 @@
+[project]
+name = "mcp-voice"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "faster-whisper>=1.2.1",
+    "kokoro>=0.9.4",
+    "mcp[cli]>=1.27.0",
+    "numpy>=2.4.4",
+    "sounddevice>=0.5.5",
+]

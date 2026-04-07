@@ -1,9 +1,9 @@
 ---
 name: search-jobs
 description: >
-  Search Indeed for relevant job listings using the Indeed connector.
-  Returns the top 5 results with company, title, location, salary (if
-  listed), and a direct apply link for each.
+  Search and rank relevant job listings using connector-first discovery.
+  Uses Indeed MCP when available, then browser/manual fallback for
+  state/federal boards, niche boards, and company/ATS career pages.
 triggers:
   - "/search-jobs"
   - "search for jobs"
@@ -12,21 +12,53 @@ triggers:
   - "look for job listings"
   - "find me jobs"
   - "search indeed"
+  - "search wellfound"
+  - "search state jobs"
+  - "search company careers"
   - "what jobs are out there"
   - "show me job listings"
 ---
 
-Search Indeed for job listings that match the user's profile using the Indeed connector (`search_jobs`).
+Search and rank job listings that match the user's profile using a connector-first strategy.
 
-## Preflight
+## Source model and normalization
 
-**Live path:** If **`search_jobs`** and **`get_job_details`** are available, follow **§1–§5** below.
+Use a hybrid source model in this order:
+
+1. **Connector-native MCP (preferred)** for any available source (Indeed first in current implementation).
+2. **Browser-assisted capture** (Claude in Chrome / computer use) only when MCP is missing or the flow is browser-only.
+3. **Assisted-manual ingestion** as guaranteed fallback.
+
+Normalize all listings into this schema before ranking:
+
+- `title` (required)
+- `company` (required)
+- `location` (required)
+- `apply_url` (required)
+- `source` (required; examples: `indeed`, `illinoisjoblink`, `wellfound`, `company_direct`, `ats_greenhouse`)
+- `retrieval_mode` (required; `mcp` | `browser` | `manual`)
+- `salary` (optional, raw text if no structured range)
+- `posted_date` (optional)
+- `close_date` (optional; common on public-sector postings)
+- `employment_type` (optional)
+- `job_id_or_requisition` (optional but preferred for dedupe)
+- `raw_description` (optional but preferred for stronger scoring)
+
+If required fields are missing, ask for only the missing fields before ranking.
+
+## Preflight (connector-first)
+
+**Live path:** If **`search_jobs`** and **`get_job_details`** are available, use them as the primary lane and follow **§1–§5** below.
 
 **No Indeed MCP in this session:** Do **not** invent tool results. Do both of the following:
 
 1. Explain how to enable live search on **Claude Desktop**: **Customize → Connectors** → **Indeed** → **Connect** → complete **Grant access to Indeed** in the browser (Indeed OAuth on **secure.indeed.com** — sign in and **Continue**), then a **new chat**. Point to **`/career-navigator:launch` Step 3** for the full walkthrough.
 
-2. **Assisted manual:** Skip **`search_jobs`** / **`get_job_details`**. After loading parameters from **§1**, output 2–3 tight search queries or direct links (Indeed + LinkedIn + Google Jobs) for that role/location. Ask the user to paste back listings (title, company, location, link, optional pay line). Pass what they provide to **`job-scout`** for ranking; present with the **§5** layout where links exist. Footer: note listings were **user-provided** (not live Indeed MCP) until the connector is connected.
+2. **Assisted manual:** Skip **`search_jobs`** / **`get_job_details`**. After loading parameters from **§1**, provide 2-3 targeted query/link packs for each channel requested:
+   - state/federal boards (e.g., IllinoisJobLink, USAJobs),
+   - niche boards (e.g., Wellfound, Welcome to the Jungle),
+   - company-direct/ATS pages (company careers, Greenhouse/Lever/Workday).
+   Ask the user to paste listings using the normalized schema from **Source model and normalization**. Pass what they provide to **`job-scout`** for ranking; present with the **§5** layout where links exist. Footer: note listings were **user-provided** (not live MCP) until connectors are connected.
 
 ## Workflow
 
@@ -47,6 +79,29 @@ If the user provided explicit search terms in their request (e.g., "find AI PM j
 
 If `profile.md` does not exist or has no target roles, ask:
 > "What role and location should I search for?"
+
+Capture optional source preferences when provided:
+- preferred channels (`state/federal`, `niche`, `company_direct`, `aggregator`)
+- target companies list (for company-direct and ATS discovery)
+- off-limit sources the user does not want
+
+### 1.25 Assisted-manual playbooks (when MCP is missing or user requests extra channels)
+
+If any requested channel cannot be searched live via MCP in-session, generate concise playbooks:
+
+1. **State/federal boards**
+   - Provide source-specific query strings using role + location + grade/seniority hints.
+   - Ask for `close_date` when present.
+   - Example boards: IllinoisJobLink, USAJobs.
+
+2. **Niche boards**
+   - Provide board-specific queries with role synonyms and remote/on-site variants.
+   - Ask for salary text and equity details when available.
+   - Example boards: Wellfound, Welcome to the Jungle.
+
+3. **Company-direct and ATS**
+   - For each target company, provide one direct careers query and one ATS query variant (`site:boards.greenhouse.io`, `site:jobs.lever.co`, `site:myworkdayjobs.com`).
+   - Ask for canonical `apply_url` and requisition ID when visible.
 
 ### 1.5 Load trajectory context (for scoring)
 
@@ -77,11 +132,15 @@ Call `search_jobs` for each lane with the extracted parameters:
 
 Run lanes in parallel, then merge and deduplicate by job ID/link.
 
+If the user requested additional channels and equivalent MCP tools are not present, append the assisted-manual playbooks from **§1.25** and continue once listings are pasted.
+
 ### 3. Get job details
 
 From the search results, identify the top 5 most relevant listings. For each one, call `get_job_details` using the job ID returned by `search_jobs` to retrieve the full description, confirmed salary, and apply link.
 
 Run all 5 `get_job_details` calls in parallel.
+
+For non-Indeed/manual listings, treat pasted metadata as the detail payload and mark missing fields explicitly.
 
 ### 4. Score and rank with job-scout
 
@@ -101,6 +160,20 @@ If `career-trajectory.md` exists but cannot be parsed, continue scoring and labe
 
 Use job-scout's ranked order for the final presentation. If job-scout returns a tie (within 5 points), preserve the original Indeed relevance order within the tied group.
 
+Before final ranking, apply provenance + confidence + dedupe policy:
+
+- **Provenance:** every listing must include `source` and `retrieval_mode`.
+- **Confidence tier:**
+  - `high` when listing has title/company/location/apply URL + description + posted date.
+  - `moderate` when required fields exist but description/date are partial.
+  - `directional` when required fields exist but multiple optional fields are missing.
+- **Deduplication order:** prefer listing with
+  1) canonical company-direct URL,
+  2) then ATS URL with requisition ID,
+  3) then connector-sourced aggregator URL,
+  4) then manual copy.
+  Use normalized title/company/location plus URL/requisition overlap to detect duplicates.
+
 Before finalizing top results, apply a light location-balance check:
 - Keep the highest-ranked jobs overall, but avoid returning a remote-only set when secondary lanes produced strong matches.
 - Target mix for top 5 when available: at least 1 result from non-primary lanes if score is within 8 points of the 5th-ranked job.
@@ -116,6 +189,9 @@ Open with a one-line header showing the confidence tier from job-scout:
 
 Then include:
 > *Trajectory context: {used (as_of YYYY-MM-DD) | unavailable (missing/unparseable)}*
+
+Then include:
+> *Source mix: {count by source} · Retrieval modes: {mcp/browser/manual counts}*
 
 Use this format for each listing:
 
@@ -134,6 +210,9 @@ Score: {composite}/100 · {ExperienceLibrary fit %}% ExperienceLibrary fit · Re
 After all listings, add:
 > Listings sourced from Indeed on {today's date}. Run `/career-navigator:track-application` to log any you apply to.
 
+If sources are mixed, replace the line with:
+> Listings sourced on {today's date} from: {source list}. Retrieval modes: {mcp/browser/manual counts}. Run `/career-navigator:track-application` to log any you apply to.
+
 Then add:
 > Search mix: {remote_count} remote, {hybrid_count} hybrid, {onsite_count} on-site. Prioritized for: {primary preference}; secondary geographies included: {list or "none"}.
 
@@ -144,3 +223,6 @@ If any listing is `critical` or `high`, append:
 > "Indeed returned no results for '{query}' in '{location}'. Try a broader title or a different location."
 
 **If fewer than 5 listings are returned**, present what was found — do not pad or fabricate results.
+
+If any listing is `directional`, add one line:
+> Data quality note: some listings have partial metadata; ranking confidence is lower until missing fields are filled.

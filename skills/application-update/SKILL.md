@@ -1,6 +1,12 @@
 ---
 name: application-update
 description: "Runs whenever tracker records change. Re-checks outcome freshness, flags when job-scout signals should be refreshed, and triggers pattern-analysis nudges at key resolved-outcome milestones."
+triggers:
+  - "application update"
+  - "after I logged an application"
+  - "tracker updated"
+  - "just updated my application tracker"
+  - "after track application"
 ---
 
 Run **immediately after** the `track-application` skill writes or updates `{user_dir}/CareerNavigator/tracker.json` (same conversation turn). There is no separate plugin hook file — orchestration is conversational or host-defined.

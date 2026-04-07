@@ -1,0 +1,64 @@
+{
+  "manifest_version": "0.2",
+  "name": "mcp-luma",
+  "version": "1.0.0",
+  "description": "A FastMCP server that discovers events from Luma — combining the Discover feed and subscribed calendars — with distance filtering and ICS export. No API key required for basic discovery.",
+  "author": {
+    "name": "Alex Petrov",
+    "url": "https://github.com/alx1p/luma-cal-mcp"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "src/luma_mcp/server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--project",
+        "${__dirname}",
+        "${__dirname}/src/luma_mcp/server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "${__dirname}/server/lib"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "set_preferences"
+    },
+    {
+      "name": "search_events"
+    },
+    {
+      "name": "get_event"
+    },
+    {
+      "name": "export_event_ics"
+    }
+  ],
+  "user_config": {
+    "categories": {
+      "type": "string",
+      "title": "Categories",
+      "description": "`categories` must be exact slugs from the list of 8:",
+      "required": false,
+      "sensitive": false
+    },
+    "address": {
+      "type": "string",
+      "title": "Address",
+      "description": "`address` sets the center point for distance filtering in home mode",
+      "required": false,
+      "sensitive": false
+    },
+    "max_distance_miles": {
+      "type": "number",
+      "title": "max distance in miles",
+      "description": "Default search radius in miles",
+      "required": false,
+      "sensitive": false
+    }
+  },
+  "license": "MIT"
+}

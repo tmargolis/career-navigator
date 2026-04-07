@@ -6,11 +6,255 @@ Plugin files use `~~category` as a placeholder for whatever tool the user connec
 
 Plugins are **tool-agnostic** — they describe workflows in terms of categories (chat, project tracker, knowledge base, etc.) rather than specific products.
 
-**`.mcp.json` in this repo** ships with an empty `mcpServers` object. Host-native connectors (**Indeed** for job search, **Apify** for salary) are added in the **Claude Desktop** **Customize → Connectors** UI. **Indeed** uses **OAuth in the browser** (Indeed on **secure.indeed.com**); **Apify** uses a token + **Enabled tools** in its connector form. This keeps secrets out of repo JSON and avoids unreliable `${VAR}` expansion in MCP `args`.
+**`.mcp.json` in this repo** may declare Anthropic **HTTP MCP** servers for **Google** mail/calendar (**Gmail**, **Google Calendar**) or **Microsoft 365** as an **alternate** channel (e.g. `https://gmail.mcp.claude.com/mcp`, `https://gcal.mcp.claude.com/mcp`, `https://microsoft365.mcp.claude.com/mcp` under the key **`ms365`**) so hosts that read the project file can load tools the same way as **Connectors**—still **no** tokens in JSON. Pick **either** the Google pair **or** **`ms365`** for Outlook mail and M365 calendar surfaces when you do not use Google workspace connectors. Other host-native connectors (**Indeed**, **Apify**) are added in the **Claude** app **Settings / Customize → Connectors** UI when not wired via project MCP. **Indeed** uses **OAuth in the browser** (Indeed on **secure.indeed.com**); **Apify** uses a token + **Enabled tools** in its connector form. **Gmail**, **Microsoft 365**, and **Google Calendar** use **OAuth** to the user’s (or org’s) account per Anthropic’s integration docs.
+
+## Three-step pattern (every integration)
+
+Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google Calendar**, **LinkedIn**, **PKM sources** (Capacities, Notion) (where applicable), and **future** connectors documented in this plugin:
+
+1. **Discover** — **First**, check whether **this chat session** already exposes host tools for that integration (tool names vary). If tools are present and working, the service is **connected** for this session: **stop** for that integration—**do not** ask about setup, OAuth, or browser access unless the user says something is broken.
+
+2. **Configure** — **Only if** step 1 shows tools **missing** or the user confirms the connector is **off / not signed in**: **ask** whether they want to **install or fix** it. **Guide** them through **Connectors** + OAuth or token setup; **they** complete clicks and sign-in **themselves**. **Do not** use **Claude in Chrome** or **computer use** to install, enable, or OAuth connectors.
+
+3. **Browser access** — **Only when** the integration is **not** adequately available via MCP in this session (no tools after configure, or the workflow is **browser-only**, e.g. **LinkedIn** post analytics with no LinkedIn MCP). **Ask** whether to allow **Claude in Chrome** and/or **computer use** for that access (**neither** / Chrome / computer use / both). **Do not** ask step 3 for services that are **already connected** via host tools (e.g. **Indeed** `search_jobs` present—no extra questions).
+
+**Skills** (`skills/launch/SKILL.md`, **`draft-outreach`**, **`linkedin-post-analytics`**, etc.) follow this pattern unless a skill states a narrower exception.
 
 ## Connectors for this plugin
 
 | Category | Placeholder | Primary in-repo / host path | Other options |
 |----------|-------------|----------------------------|---------------|
-| Career | `~~career` | **Indeed** MCP — Claude Desktop **Connectors** → **Indeed** → **Connect** → browser OAuth (`search_jobs`, `get_job_details`; connector URL `https://mcp.indeed.com/claude/mcp`) | LinkedIn, Glassdoor, Monster, ZipRecruiter, Dice, Handshake |
-| Salary benchmarks | — | **Apify** MCP via Claude Desktop **Desktop** connector; **Enabled tools:** `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search` | Future MCPs; skills should degrade gracefully if Apify is off |
+| Career | `~~career` | **Indeed** MCP — Claude **Connectors** → **Indeed** → **Connect** → browser OAuth (`search_jobs`, `get_job_details`; connector URL `https://mcp.indeed.com/claude/mcp`) | LinkedIn, Glassdoor, Monster, ZipRecruiter, Dice, Handshake |
+| Salary benchmarks | — | **Apify** MCP via Claude **Desktop** connector; **Enabled tools:** `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search` | Future MCPs; skills should degrade gracefully if Apify is off |
+| Storage | `~~storage` | **Google Drive:** recommended **Drive app sync** (or manual backup/restore) for job files (PDF/DOCX/etc.). **OneDrive:** recommended **OneDrive app sync** (or manual backup/restore) for job files (plugin JSON artifacts aren’t reliably file-accessible via Claude’s Microsoft 365 connector). **Dropbox:** recommended **Dropbox app sync** (or manual backup/restore) for job files. | Local filesystem fallback in `{user_dir}` |
+| Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
+| Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
+| PKM knowledge bases (story mining) | `~~pkm` | **Notion** first-party connector (official) and/or **Capacities** via local MCP extension/server when available in host session | Obsidian, Roam, Logseq, and manual export/import workflows |
+| Events (Luma) | — | Optional **Claude Desktop Extension** — install the **`mcp-luma.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes Luma event discovery MCP tools for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback |
+| Voice (TTS/STT) | — | Optional **Claude Desktop Extension** — install the **`mcp-voice.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes **`mcp-voice`** MCP tools **`speak`**, **`listen`**. Fully local (Kokoro TTS + faster-whisper STT + webrtcvad). | Text only |
+
+---
+
+## Interview story PKM sources
+
+`mine-stories` can pull interview evidence from PKM systems in addition to local files.
+
+Preferred connector paths:
+
+1. **Notion (official connector):** use Claude's first-party Notion connector when available in the host's Connectors catalog.
+2. **Capacities:** use a local MCP server/extension path when available in the active host session (for example a Capacities MCP integration such as `tboothie-capacitiesmcp`).
+3. **Fallback:** export/sync PKM notes into `{user_dir}` and mine from files directly.
+
+Three-step behavior for PKM:
+
+1. **Discover:** if Notion/Capacities tools are already visible in-session, treat as connected and do not re-prompt setup.
+2. **Configure:** if missing, ask user whether to connect Notion and/or Capacities; user completes connector setup/OAuth/token steps in host UI.
+3. **Browser/manual fallback:** if PKM connector tools remain unavailable, continue by mining exported files in `{user_dir}`.
+
+Guardrails:
+- Do not require PKM connectors for interview story workflows; local file mining remains supported.
+- Keep provenance on each story candidate (`source` and `source_path`) so users can audit journal vs PKM origin.
+- If a PKM connector is connected but permission-scoped narrowly, mine what is available and report limits clearly.
+
+Reference for Capacities MCP listing: [Capacities MCP Server](https://lobehub.com/nl/mcp/tboothie-capacitiesmcp).
+
+---
+
+## Multi-channel job sourcing policy
+
+Career Navigator supports a connector-first sourcing strategy across:
+- state/federal boards (for example IllinoisJobLink),
+- niche boards (for example Wellfound, Welcome to the Jungle),
+- company-direct and ATS portals (for example Greenhouse/Lever/Workday careers pages).
+
+Use this sequence:
+
+1. **Connector first:** if source tools are present in-session, use them.
+2. **Browser-assisted capture:** only when MCP is unavailable or browser-only.
+3. **Assisted-manual ingestion:** always available fallback.
+
+### Normalized listing schema (all channels)
+
+Require the following fields before ranking:
+- `title`
+- `company`
+- `location`
+- `apply_url`
+- `source`
+- `retrieval_mode` (`mcp` | `browser` | `manual`)
+
+Capture when available:
+- `salary`, `posted_date`, `close_date`, `employment_type`, `job_id_or_requisition`, `raw_description`
+
+### Provenance, confidence, and dedupe
+
+- Every listing must carry `source` and `retrieval_mode`.
+- Confidence tiers:
+  - **high**: required fields + description + posted date
+  - **moderate**: required fields + partial optional metadata
+  - **directional**: required fields only or sparse metadata
+- Dedupe precedence:
+  1. company-direct canonical URL
+  2. ATS posting with requisition ID
+  3. connector-sourced aggregator posting
+  4. manual copy/paste entry
+
+When duplicates are found, keep the highest-precedence record and merge missing metadata from lower-precedence records.
+
+### Assisted-manual playbooks by channel
+
+- **State/federal:** ask for close date and pay grade/band where present.
+- **Niche boards:** ask for compensation text/equity where present.
+- **Company/ATS:** ask for canonical apply URL + requisition ID where present.
+
+These rules complement `skills/search-jobs/SKILL.md` and should be used when live tools are unavailable.
+
+---
+
+## Event intelligence — Luma (optional MCP bundle)
+
+The **`mcp-luma`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-luma/`** directory in this repository. It provides local MCP tools for Luma event discovery used by **`event-radar`** and **`event-intelligence`**.
+
+**Install (end users):**
+
+1. Download **`mcp-luma.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** for this repository (release workflow publishes the bundle when `mcp-luma/` changes).
+2. Open **Claude Desktop** → **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Open **Extensions**.
+4. Drag **`mcp-luma.mcpb`** into that window.
+5. Click **Install**.
+6. Ensure the **mcp-luma** extension is **enabled**.
+
+Start a **new chat** if Luma tools do not appear immediately.
+
+| Step | Action |
+| --- | --- |
+| **1 — Discover** | If Luma event tools appear in **this session**, `mcp-luma` is available—**do not** prompt for setup. |
+| **2 — Configure** | **Only if** tools are missing: walk through the install steps above (Releases → `.mcpb` → Settings → Extensions → drag → Install → enabled). |
+| **3 — Fallback** | If `mcp-luma` is unavailable, continue with connector-first policy: other MCP sources where available, then browser-assisted capture, then manual ingestion. |
+
+**Developers:** The extension source is in **`mcp-luma/`** and is distributed as **`mcp-luma.mcpb`** via GitHub Releases.
+
+---
+
+## Event intelligence — Meetup & Eventbrite (fallback paths)
+
+Meetup and Eventbrite are treated as **optional browser/manual sources** for event workflows in this plugin.
+
+Preferred order when sourcing these events:
+
+1. **Claude in Chrome** (if approved by the user)
+2. **computer use** (if approved by the user)
+3. **manual copy/paste** capture (always available)
+
+Usage rules:
+
+- Ask for explicit approval before using browser automation.
+- Keep retrieval provenance on each event (`retrieval_mode`: `browser` or `manual`).
+- If browser tooling is unavailable or declined, continue with manual ingestion and do not block event workflows.
+
+---
+
+## Email & calendar context — Gmail, Microsoft 365, Google Calendar
+
+**Goal:** Before **`draft-outreach`**, **`follow-up`**, or **`contact-context`**, the model can search **your** mail for threads with a hiring manager or recruiter and, when **Google Calendar** (or M365 calendar surfaces) is connected, **read past and upcoming meetings** involving that contact—**only after you explicitly approve** each mail or calendar lookup. That turns warm outreach into **evidence-backed** messages (you remember what you promised on a call, and you do not cold-open when a meeting is **already scheduled**).
+
+**Best practice (Anthropic):** Use the **first-party connectors** in the Claude app. They authenticate with **OAuth** (you sign in in the browser; Claude does not ask you to paste Google or Microsoft passwords into chat). Permissions are **delegated**—Claude can only reach mail you can already access. Do **not** configure Gmail or Microsoft 365 by embedding long-lived tokens in `.mcp.json` for this plugin.
+
+### Gmail
+
+- **Already added but off?** In **Connectors**, if **Gmail** appears but the **toggle is off** or it shows **Connect** / **Reconnect**, **`/career-navigator:launch`** Step 6 asks whether to **enable** or **finish OAuth** for **read-only** thread search (no send on the user’s behalf). If Gmail tools already appear in the chat, no need to reinstall.
+- **Where:** Claude **Settings** / **Customize** → **Connectors** → **Gmail** → **Connect** → complete **Google** sign-in and consent in the browser.
+- **Docs:** [Gmail integration (Claude Docs)](https://claude.com/docs/connectors/google/gmail) · [Google Workspace connectors (Help Center)](https://support.claude.com/en/articles/10166901-use-google-workspace-connectors)
+- **Behavior (per Anthropic):** Search and analyze email content; citations back to sources. **Claude cannot create, send, or modify emails** through this integration—aligned with Career Navigator’s **read-only** use (summarize threads for drafting in the chat; you send from your client).
+- **Plans:** Described as available on **Pro, Max, Team, and Enterprise** in Claude’s Gmail docs (confirm current plan requirements in-product).
+- **Org / Workspace:** On **Team / Enterprise**, an **Owner** or **Primary Owner** may need to enable the integration for the workspace before individuals can connect.
+
+### Google Calendar
+
+- **Already added but off?** In **Connectors**, if **Google Calendar** appears but the **toggle is off** or it shows **Connect** / **Reconnect**, **`/career-navigator:launch`** Step 6 asks whether to **enable** or **finish OAuth**. If calendar-related tools already appear in the chat, no need to reinstall.
+- **Where:** Claude **Settings** / **Customize** → **Connectors** → **Google Calendar** → **Connect** → complete **Google** sign-in and consent in the browser (same host flow as **Gmail**—separate connector card in the catalog).
+- **Docs:** [Google Calendar integration (Claude Docs)](https://claude.com/docs/connectors/google/calendar) · [Google Workspace connectors (Help Center)](https://support.claude.com/en/articles/10166901-use-google-workspace-connectors)
+- **Behavior (per Anthropic):** Claude can read and reason about your schedule, events, attendees, and availability. **Career Navigator** uses this **only** to summarize **past** and **upcoming** events with a named contact (titles, times, attendees, notes/description fields the host exposes) for **`contact-context`** / **`draft-outreach`**—**after explicit approval** per lookup. **Scheduled** meetings support **warm networking identification** (the relationship is not cold if a future event exists with that contact). Prefer **read-only** framing in chat; do not create or reschedule events on the user’s behalf unless they explicitly ask for that in the session.
+- **Plans:** Described as available on **Pro, Max, Team, and Enterprise** in Claude’s Google Calendar docs (confirm in-product).
+- **Org / Workspace:** On **Team / Enterprise**, an **Owner** or **Primary Owner** may need to enable the integration for the workspace before individuals can connect (same pattern as Gmail).
+
+### Microsoft 365 (Outlook mail and related)
+
+Outlook mail for Career Navigator is provided through Anthropic’s **Microsoft 365** connector (Outlook, SharePoint, OneDrive, Teams, etc., per product docs).
+
+- **Optional HTTP MCP (same integration, alternate to Connectors UI):** Project **`.mcp.json`** may declare **`ms365`** → **`https://microsoft365.mcp.claude.com/mcp`** so hosts that read the file load M365 tools like **Gmail** / **Google Calendar** HTTP MCP—still **no** secrets in JSON; OAuth in the host when connecting.
+- **Where:** Admin enablement may be required for **Team / Enterprise**; then each user **Settings** → **Connectors** → **Microsoft 365** → **Connect** → **Microsoft** OAuth.
+- **Docs:** [Microsoft 365 connector (Claude Docs)](https://claude.com/docs/connectors/microsoft/365) · [Enabling and using the Microsoft 365 connector (Help Center)](https://support.claude.com/en/articles/12542951-enabling-and-using-the-microsoft-365-connector) · [Microsoft 365 connector: Security Guide](https://support.claude.com/en/articles/12684923-microsoft-365-connector-security-guide)
+- **Behavior (per Anthropic):** **Read-only** access—Claude **cannot** modify, delete, or create content in Outlook (or other M365 surfaces) through the connector; search and analyze email threads and related context you already have access to.
+- **Plans:** Claude’s Microsoft 365 documentation states availability for **Team and Enterprise** users; **Global Administrator** setup may be required for the tenant. **Consumer / Pro-only** users who rely on **Outlook.com** should verify whether their host offers a connector path or use **Gmail** if applicable.
+
+### Career Navigator usage rules
+
+1. **Three-step pattern:** **Discover** → **Configure** only if **not** connected → **Browser access** only if MCP is still missing or the flow is browser-only. **Do not** re-prompt for services already connected in-session. See **§ Three-step pattern** above.
+2. **Explicit approval:** Skills (**`draft-outreach`**, **`follow-up`**, **`contact-context`**) must **ask once** whether to search **mail** and/or **calendar** for a named person or company before calling tools—consistent with **`agents/networking-strategist/AGENT.md`** and **`agents/writer/AGENT.md`**. If only one connector is available, only ask for that scope.
+3. **No fabrication:** If connectors are off or the user declines, **do not** invent thread summaries; write copy that stands alone.
+4. **Minimum disclosure:** Summarize only what is needed for the outreach or follow-up; prefer thread excerpts and dates over dumping full bodies.
+5. **New chat after connect:** If tools do not appear after OAuth, start a **new chat** (same pattern as **Indeed** / **Apify**).
+
+See also **`skills/launch/SKILL.md`** Step 6 for a conversational setup offer during **`/career-navigator:launch`**.
+
+---
+
+## Cloud storage connectors — Google Drive, OneDrive, Dropbox
+
+**Goal:** Keep artifact storage portable across devices while preserving local-first behavior.
+
+**Reality check (important):** Claude Desktop’s **official Google Drive** connector is primarily intended for **native Google Doc files**. For typical job files you’ll store (PDFs, DOCs,  screenshots, resumes, cover letters), Career Navigator recommends portability via:
+- Google Drive **application sync** (recommended), or
+- manual **backup/restore** of your job search folder.
+
+For **OneDrive**, use **OneDrive application sync** (or manual backup/restore) instead of relying on Claude’s Microsoft 365/OneDrive file access connector, which is geared toward native Microsoft formats (Word/PowerPoint/PDF) rather than the plugin’s JSON artifacts.
+
+For **Dropbox**, use **Dropbox application sync** (or manual backup/restore) instead of relying on host connector file access.
+
+### Three-step pattern (storage)
+
+1. **Discover:** Confirm whether the user already has local cloud-sync enabled for their chosen provider and whether `{user_dir}` is currently available.
+2. **Configure:** Only when tools are missing or the user says the connector is off:
+   - **Google Drive, OneDrive or Dropbox:** use **application sync** (recommended) or manual backup/restore of the job-search folder, so the folder contents are available locally on every device.
+3. **Browser access:** Not required for storage setup in this path. Never use browser automation to click through connector installation or sign-in.
+
+### Career Navigator storage behavior rules
+
+1. **Single active storage choice:** Offer Google Drive, OneDrive, Dropbox, or local-only; avoid forcing multiple cloud connectors in one setup pass.
+2. **Local-first fallback:** If storage tools are unavailable, disconnected, or declined, continue using `{user_dir}` local files with no workflow break.
+3. **Artifact operation parity:** `save_artifact`, `list_artifacts`, and `get_artifact` behavior should remain consistent from the user perspective regardless of storage backend.
+4. **No fabricated sync state:** If a cloud connector is off, state that clearly; do not imply cloud writes or reads occurred.
+
+See also **`skills/launch/SKILL.md`** Step 7 for conversational setup during **`/career-navigator:launch`**.
+
+---
+
+## Voice — Local TTS & STT (optional MCP bundle)
+
+The **`mcp-voice`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-voice/`** directory in this repository. It uses **Kokoro** for TTS, **faster-whisper** for STT, and **webrtcvad** for end-of-utterance detection on **`listen`**. No cloud credentials — audio stays on the machine.
+
+**Install (end users):**
+
+1. Download **`mcp-voice.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** for this repository (release workflow publishes the bundle when `mcp-voice/` changes).
+2. Open **Claude Desktop** → **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
+3. Open **Extensions**.
+4. Drag **`mcp-voice.mcpb`** into that window.
+5. Click **Install**.
+6. Ensure the **mcp-voice** extension is **enabled**.
+
+Start a **new chat** if **`speak`** / **`listen`** do not appear immediately.
+
+| Step | Action |
+| --- | --- |
+| **1 — Discover** | If **`speak`** and **`listen`** appear in **this session**, **mcp-voice** is available—**do not** prompt for setup. |
+| **2 — Configure** | **Only if** tools are missing: walk through the install steps above (Releases → `.mcpb` → Settings → Extensions → drag → Install → enabled). |
+| **3 — Tools** | **`speak(text, voice?, speed?)`** — Kokoro TTS → sounddevice playback. Default voice: `af_heart`. **`listen(duration_seconds?, pause_seconds?, vad_mode?)`** — microphone stream → faster-whisper STT; trailing silence ends recording early. Returns transcript or `"(no speech detected)"`. |
+
+**Prep / mock:** **`interview-coach`** prefers **`speak`** / **`listen`** when present for reading questions aloud and transcribing user answers.
+
+**Fallback:** **`prep-interview`** / **`mock-interview`** work **text-only** when **`mcp-voice`** is not loaded.
+
+**Post-interview capture:** The **`interview-capture`** skill uses **`listen`** to log **user** audio into structured notes; it does **not** replace **`interview-debrief`** for users who skip audio.
+
+**Developers:** The extension entrypoint is **`mcp-voice/server/main.py`** (run via **`uv`** per the bundle manifest). Voice is optional and installed through **Extensions**.

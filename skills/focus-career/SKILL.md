@@ -54,8 +54,10 @@ Only surface **critical** notifications:
    - Any application with `follow_up_date` equal to today.
    - If current local time is within the last 6 hours of the day, mark as critical "due in a few hours."
 
-3. **Interview starting today with no prep logged**
-   - Interview-stage entry dated today and no recent prep/debrief notes in the last 48 hours.
+3. **Meeting today with no prep logged**
+   - Same **meeting-today** rule as `daily-schedule` **§3.1**: any `stage_history` row with **`date` = today** and **`stage`** (case-insensitive) containing any of: `interview`, `recruiter`, `phone screen`, `phone_screen`, `hiring manager`, `hm `, `hm interview`, `technical`, `panel`, `onsite`, `executive`, `final round`, `final interview`.
+   - For that application, **prep is logged** if any `notes[]` entry in the **last 48 hours** has `text` starting with **`[prep]`**.
+   - If meeting today and **no** qualifying **`[prep]`** note in 48h → **critical** (suggest day-of brief + deep prep).
 
 Do **not** output full pipeline digest, overdue rollups, or artifact counts here. Those belong to `daily-schedule`.
 
@@ -73,4 +75,4 @@ If critical items exist:
 ```
 
 After listing alerts, add one action line:
-> Run `/career-navigator:track-application` or `/career-navigator:follow-up` to update next steps (or `/career-navigator:evaluate-offer` if an offer evaluation due item appeared).
+> Run `/career-navigator:track-application` or `/career-navigator:follow-up` to update next steps; for same-day interviews use `/career-navigator:morning-brief` or `/career-navigator:daily-schedule` (pre-interview subsection) and `/career-navigator:prep-interview` for full prep (or `/career-navigator:evaluate-offer` if an offer evaluation due item appeared).

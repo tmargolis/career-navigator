@@ -26,7 +26,7 @@ Read:
 If missing:
 > Follow-up-timing skipped: run `/career-navigator:launch`.
 
-### 2. Offer evaluation check (Phase 1F requirement)
+### 2. Offer evaluation check
 For each application in tracker where:
 - `status` is `"offer"`
 - `offer.deadline` may be set (if present)

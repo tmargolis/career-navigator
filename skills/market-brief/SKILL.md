@@ -93,7 +93,37 @@ PRIORITIZED NEXT MOVES (30-60 days)
 
 Keep the brief practical: concise, evidence-based, and directly tied to search decisions.
 
-### 4. Suggest next step
+### 4. Save the brief to disk
+
+Write the rendered brief to `{user_dir}/Market-Brief-{YYYY-MM-DD}.md` in its own file-write call.
+
+**If the file tool fails:** output the full brief in a fenced markdown block and tell the user to save manually; skip the index update if the file was not saved.
+
+On success, update `{user_dir}/CareerNavigator/artifacts-index.json` in a separate call — append:
+
+```json
+{
+  "id": "{uuid}",
+  "type": "market_brief",
+  "filename": "Market-Brief-{YYYY-MM-DD}.md",
+  "path": "{user_dir}/Market-Brief-{YYYY-MM-DD}.md",
+  "target_company": null,
+  "target_role": null,
+  "date_created": "{today}",
+  "source": "generated",
+  "notes": "Market intelligence brief — {comma-separated target roles}"
+}
+```
+
+### 5. Hand off to writer for PDF
+
+Invoke the `writer` agent in `market-brief-pdf` mode, passing:
+- The saved markdown file path from Step 4
+- Today's date
+
+The writer converts the markdown to PDF, saves it alongside the markdown in `{user_dir}/`, and presents the confirmed PDF path to the user as the completion deliverable for this task.
+
+### 6. Suggest next step
 
 Based on the top recommendation:
 - If targeting shift is needed: suggest `/career-navigator:search-jobs` with refined role/location filters.

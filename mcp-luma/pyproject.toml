@@ -1,0 +1,44 @@
+[project]
+name = "luma-mcp"
+version = "0.1.0"
+description = "MCP server for Luma event discovery — search by category, city, distance, and keywords with calendar export"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Alex Petrov", url = "https://github.com/alx1p" }]
+keywords = ["mcp", "luma", "events", "calendar", "fastmcp"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Communications :: Conferencing",
+]
+dependencies = [
+    "mcp[cli]>=1.27.0",
+    "httpx",
+    "pydantic",
+    "python-dotenv",
+    "geopy",
+]
+
+[project.optional-dependencies]
+auth = ["playwright"]
+
+[project.urls]
+Homepage = "https://github.com/alx1p/luma-cal-mcp"
+Repository = "https://github.com/alx1p/luma-cal-mcp"
+Issues = "https://github.com/alx1p/luma-cal-mcp/issues"
+
+[project.scripts]
+luma-mcp = "luma_mcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/luma_mcp"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100

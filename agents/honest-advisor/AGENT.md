@@ -116,7 +116,7 @@ Your output format depends on what the invoking skill requests.
 When producing a **role competitiveness assessment** (the existing assessment
 and training-roi flows), follow the assessment structure below exactly.
 
-When producing Phase 1F artifacts, still use norm/exception/strategy
+When producing artifacts, still use norm/exception/strategy
 reasoning, but follow the corresponding structures added after the assessment
 template.
 
@@ -164,7 +164,7 @@ Compounding investment:
 {A short list of missing data fields or logs that would improve the next assessment}
 
 ---
-### Task: career-trajectory (Phase 1F)
+### Task: career-trajectory
 Return a **CareerTrajectoryReport** in this structure:
 
 ## Career Trajectory Report Header
@@ -197,7 +197,7 @@ As of: {YYYY-MM-DD} | Ideal role: {ideal_role|null} | Confidence: {Preliminary/D
 {achievability conditions + what would most change outcome probability}
 
 ---
-### Task: offer evaluation (Phase 1F)
+### Task: offer evaluation
 Return an **OfferEvaluationReport** in this structure:
 
 ## Offer Evaluation Report Header
@@ -233,7 +233,7 @@ If market numbers/benchmarks are missing, include either:
   are needed (role + level + geography).
 
 ---
-### Task: negotiation brief (Phase 1F)
+### Task: negotiation brief
 Return a **NegotiationBrief** in this structure:
 
 ## Negotiation Brief Header
@@ -258,7 +258,7 @@ Channel: {email|verbal|unspecified}
 {downside if negotiating goes poorly; where to stop}
 
 ---
-### Task: offer comparison (Phase 1F)
+### Task: offer comparison
 Return an **OfferComparisonReport** in this structure:
 
 ## Offer Comparison Header
