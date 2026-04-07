@@ -29,7 +29,7 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Storage | `~~storage` | **Google Drive:** recommended **Drive app sync** (or manual backup/restore) for job files (PDF/DOCX/etc.). **OneDrive:** recommended **OneDrive app sync** (or manual backup/restore) for job files (plugin JSON artifacts aren’t reliably file-accessible via Claude’s Microsoft 365 connector). **Dropbox:** recommended **Dropbox app sync** (or manual backup/restore) for job files. | Local filesystem fallback in `{user_dir}` |
 | Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
-| Events (Luma) | — | Optional **Claude Desktop Extension** — install the **`mcp-luma.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes Luma event discovery MCP tools for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via other MCPs or browser/manual fallback |
+| Events (Luma) | — | Optional **Claude Desktop Extension** — install the **`mcp-luma.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes Luma event discovery MCP tools for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback |
 | Voice (TTS/STT) | — | Optional **Claude Desktop Extension** — install the **`mcp-voice.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes **`mcp-voice`** MCP tools **`speak`**, **`listen`**. Fully local (Kokoro TTS + faster-whisper STT + webrtcvad). | Text only |
 
 ---
@@ -107,6 +107,24 @@ Start a **new chat** if Luma tools do not appear immediately.
 | **3 — Fallback** | If `mcp-luma` is unavailable, continue with connector-first policy: other MCP sources where available, then browser-assisted capture, then manual ingestion. |
 
 **Developers:** The extension source is in **`mcp-luma/`** and is distributed as **`mcp-luma.mcpb`** via GitHub Releases.
+
+---
+
+## Event intelligence — Meetup & Eventbrite (Phase 2D fallback paths)
+
+Meetup and Eventbrite are treated as **optional browser/manual sources** for event workflows in this plugin.
+
+Preferred order when sourcing these events:
+
+1. **Claude in Chrome** (if approved by the user)
+2. **computer use** (if approved by the user)
+3. **manual copy/paste** capture (always available)
+
+Usage rules:
+
+- Ask for explicit approval before using browser automation.
+- Keep retrieval provenance on each event (`retrieval_mode`: `browser` or `manual`).
+- If browser tooling is unavailable or declined, continue with manual ingestion and do not block event workflows.
 
 ---
 

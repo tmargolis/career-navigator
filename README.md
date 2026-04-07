@@ -340,8 +340,8 @@ Phase 2 connects Career Navigator to the external services that complete the ful
 - **Phase 2C ([Release v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)) — Portability + Employer-System Awareness (Completed):** *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
   - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors.
 
-- **Phase 2D — Event Intelligence + Interview Story Intelligence (In progress):** *event discovery matures into connector-backed feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
-  - **Scope includes**: event discovery connectors for `event-radar` / `event-intelligence` (Meetup/Eventbrite/Luma and similar), and interview-story identification/prep workflows that mine journal/notes/PKM context.
+- **Phase 2D — Event Intelligence + Interview Story Intelligence (In progress):** *event discovery matures into refreshable feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
+  - **Scope includes**: Luma event discovery via local MCP bundle (`mcp-luma`), plus optional Meetup/Eventbrite sourcing through **Claude in Chrome**, **computer use**, or **manual copy/paste**, and interview-story identification/prep workflows that mine journal/notes/PKM context.
 
 ### Phase 3 — Always-On Career Agent
 

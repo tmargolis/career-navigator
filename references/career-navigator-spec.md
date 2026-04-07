@@ -349,7 +349,7 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **Greenhouse / Workday / Lever** | MCP | ATS status tracking for applications submitted through these platforms. Read-only access to application status. |
 | **mcp-voice** (local MCP bundle) | Claude Desktop **Extension** (`.mcpb`) | **Local** TTS and STT for **`prep-interview`**, **`mock-interview`**, **`interview-capture`**. Install **`mcp-voice.mcpb`** from [GitHub Releases](https://github.com/tmargolis/career-navigator/releases): **Settings** (⌘/Ctrl + comma) → **Extensions** → drag bundle → **Install** → enable. Source: **`mcp-voice/`**; tools **`speak`**, **`listen`**. Not declared in project **`.mcp.json`**. |
 | **Whisper (OpenAI)** | MCP | Alternate STT when **`mcp-voice`** is unavailable or user prefers another host. Phase 2B. MVP scope: user audio only. |
-| **Meetup / Eventbrite / Luma** | MCP | Event discovery for networking radar. For Luma, install local **`mcp-luma.mcpb`** from [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (source: **`mcp-luma/`**). Use other MCPs where available for Meetup/Eventbrite; otherwise browser/manual fallback. |
+| **Meetup / Eventbrite / Luma** | MCP + host browser/manual fallback | Event discovery for networking radar. For Luma, install local **`mcp-luma.mcpb`** from [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (source: **`mcp-luma/`**). For Meetup/Eventbrite, use optional **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback. |
 | **Host browser automation** | Host capability (not plugin MCP) | **Claude in Chrome**, **computer use**, or equivalent: enables **`linkedin-post-analytics`** to navigate a logged-in browser **read-only** and record own-post metrics into **`tracker.json`**. User must opt in per session or schedule; distinct from the **LinkedIn** MCP row (which describes optional connector features such as search and messaging). |
 
 # **10. Core Data Model**
@@ -712,7 +712,7 @@ Status: In progress
 
 **Scope includes:**
 
-* **Event discovery connectors** for `event-radar` / `event-intelligence` (Meetup, Eventbrite, Luma, and similar) so event feeds are structured and refreshable rather than scrape-first.
+* **Event intelligence sources** for `event-radar` / `event-intelligence`: Luma via local MCP bundle (`mcp-luma`), with Meetup/Eventbrite handled as optional **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback paths.
 * **Event discovery design details:** vendor order, OAuth vs API keys, host packaging, MCP tool names, and deduplication behavior against user-edited `{user_dir}/CareerNavigator/event-radar.md`.
 * **Interview story intelligence objective:** identify and prepare strong interview stories by mining user-owned journals, notes, and PKM sources (for example weekly logs, debrief notes, and knowledge base entries), then map stories to role competencies and common interview prompts.
 * **Interview story prep outputs:** reusable story bank, quality checks (clarity, outcome, ownership, credibility), and targeted rehearsal prompts tied to upcoming interviews.
