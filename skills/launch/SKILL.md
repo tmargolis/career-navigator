@@ -65,7 +65,7 @@ After confirming `{user_dir}`, check whether each of the five core data files ex
 
 - **`CareerNavigator/ExperienceLibrary.json`**: Must be valid JSON with a `meta` object and a non-empty `units` array. Each unit must have `id`, `type`, `company` (or `institution`), `title`, and `dates`. Flag any units missing required fields and prompt the user to supply them. If the array is empty, treat the file as missing and rebuild it.
 
-- **`CareerNavigator/tracker.json`**: Must be valid JSON with `meta`, `applications` array, and `pipeline_summary`. Each application entry must have at minimum `id`, `company`, `role`, and `status`. Recalculate `pipeline_summary` counts from the actual `applications` array and update if stale.
+- **`CareerNavigator/tracker.json`**: Must be valid JSON with `meta`, `applications` array, and `pipeline_summary`. Each application entry must have at minimum `id`, `company`, `role`, and `status`. `applications[]` contains only submitted applications — pre-application roles live in `recommendations.json`. Recalculate `pipeline_summary` counts from the actual `applications` array and update if stale.
 
 - **`artifacts-index.json`**: Must be valid JSON with a `meta` object and an `artifacts` array. Cross-check the listed artifact filenames against files actually present in `{user_dir}`. Remove entries for files that no longer exist. Add entries for PDF/DOCX files found in `{user_dir}` that are not yet indexed.
 
@@ -157,14 +157,29 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 {
   "meta": { "created": "{today}", "version": "1.0", "description": "..." },
   "applications": [],
-  "networking": [],
   "pipeline_summary": {
     "as_of": "{today}",
     "applied": 0,
-    "considering": 0,
     "declined_or_inactive": 0,
     "overdue_followup": 0
   }
+}
+```
+
+**`CareerNavigator/networking.json`**
+```json
+{
+  "meta": { "created": "{today}", "version": "1.0", "description": "Networking data — recruiter relationships and LinkedIn post analytics" },
+  "recruiter_relationships": [],
+  "networking": []
+}
+```
+
+**`CareerNavigator/recommendations.json`**
+```json
+{
+  "meta": { "created": "{today}", "version": "1.0", "description": "Pre-application role pipeline — roles under consideration before applying" },
+  "recommendations": []
 }
 ```
 
@@ -365,7 +380,7 @@ First check if the Apify MCP is already connected. It may be in a deferred state
 
 Apply **Connector pattern** (LinkedIn is usually **no** host MCP for this flow—**browser access** is the main lever).
 
-After **Indeed** and **Apify** (or if the user skipped Apify), offer a **read-only** snapshot of **their own** LinkedIn post metrics into **`{user_dir}/CareerNavigator/tracker.json`** (`networking[]`, per **`linkedin-post-analytics`**). This is optional; do not run it without a clear **yes**.
+After **Indeed** and **Apify** (or if the user skipped Apify), offer a **read-only** snapshot of **their own** LinkedIn post metrics into **`{user_dir}/CareerNavigator/networking.json`** (`networking[]`, per **`linkedin-post-analytics`**). This is optional; do not run it without a clear **yes**.
 
 **1 — Discover:** There is typically **no** LinkedIn MCP tool for this plugin path; note that analytics use **browser** access (step 3).
 

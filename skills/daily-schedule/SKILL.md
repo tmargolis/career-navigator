@@ -113,7 +113,7 @@ with company, role, and deadline (if present).
 Read `{user_dir}/CareerNavigator/tracker.json` and `{user_dir}/CareerNavigator/artifacts-index.json`.
 
 Compute:
-- Pipeline counts by status (`considering`, `applied`, `phone_screen`, `interview`, `offer`, `accepted`, `rejected`, `withdrew`, `ghosted`)
+- Pipeline counts by status (`applied`, `phone_screen`, `interview`, `offer`, `accepted`, `rejected`, `withdrew`, `ghosted`) from `tracker.json`; plus count of `considering` records from `recommendations.json` (reported separately as "X roles under consideration")
 - Overdue follow-up count (using `follow_up_date` if present)
 - **Meetings today** — count `stage_history` entries where **`date` is today** (local) and **`stage`** matches the allowlist below (case-insensitive substring on `stage` string)
 - Artifact counts by type (`resume`, `cover_letter`)

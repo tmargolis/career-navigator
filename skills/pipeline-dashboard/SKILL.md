@@ -25,6 +25,7 @@ Generate a self-contained HTML dashboard visualizing the user's job search pipel
 | File | Purpose |
 |---|---|
 | `{user_dir}/CareerNavigator/tracker.json` | Applications, stage history, pipeline summary |
+| `{user_dir}/CareerNavigator/recommendations.json` | Pre-application roles being considered (count shown at top of funnel) |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with performance weights and update log |
 | `{user_dir}/CareerNavigator/artifacts-index.json` | Generated artifacts with ATS scores |
 | `{user_dir}/CareerNavigator/analyst-graph-data.json` | Optional graph data from the analyst report |
@@ -41,6 +42,7 @@ Read all three files and build the following JSON object. This will be embedded 
 {
   "generated_at": "{YYYY-MM-DD HH:MM}",
   "confidence": "{Preliminary | Directional | Moderate | High}",
+  "considering_count": "{integer — count of records in recommendations.json where status is 'considering'}",
   "applications": [
     {
       "company": "{company}",
@@ -148,6 +150,7 @@ const SC = {
   interview:'#ffa657',offer:'#f78166',accepted:'#56d364',
   rejected:'#484f58',withdrew:'#484f58',ghosted:'#484f58'
 };
+// Note: 'considering' color kept for the pre-pipeline bar rendered from D.considering_count
 
 document.getElementById('sub').textContent =
   `Generated ${D.generated_at}  ·  ${D.applications.length} application${D.applications.length!==1?'s':''}  ·  Confidence: ${D.confidence}`;
@@ -268,39 +271,45 @@ function truncate(s, n){
 
 // ── FUNNEL ───────────────────────────────────────────────────────────────────
 (function(){
-  const stages = ['considering','applied','phone_screen','interview','offer','accepted'];
-  const labels = ['Considering','Applied','Phone Screen','Interview','Offer','Accepted'];
+  const stages = ['applied','phone_screen','interview','offer','accepted'];
+  const labels = ['Applied','Phone Screen','Interview','Offer','Accepted'];
   const all = D.applications || [];
 
   function stageOrder(status){
     switch(status){
-      case 'considering': return 0;
-      case 'applied': return 1;
-      case 'phone_screen': return 2;
-      case 'interview': return 3;
-      case 'offer': return 4;
-      case 'accepted': return 5;
-      // Terminal outcomes we currently bucket as "after applied" in the funnel.
-      // This prevents phone/interview/offer bars appearing when you only have rejections.
+      case 'applied': return 0;
+      case 'phone_screen': return 1;
+      case 'interview': return 2;
+      case 'offer': return 3;
+      case 'accepted': return 4;
+      // Terminal outcomes bucket as "after applied" in the funnel.
       case 'rejected':
       case 'withdrew':
       case 'ghosted':
       case 'declined_or_inactive':
-        return 1;
+        return 0;
       default:
-        return 1;
+        return 0;
     }
   }
 
-  if(!all.length){
+  // Prepend a "Considering" bar sourced from recommendations.json count
+  const consideringCount = D.considering_count || 0;
+  const prePipeline = consideringCount > 0
+    ? [{ stage: 'considering', label: 'Considering', count: consideringCount, apps: [] }]
+    : [];
+
+  if(!all.length && !consideringCount){
     document.querySelector('#sv-funnel').insertAdjacentHTML('afterend','<p class="no-data">No applications yet.</p>');
     return;
   }
 
-  const buckets = stages.map((stage, i) => {
+  const appBuckets = stages.map((stage, i) => {
     const apps = all.filter(a => stageOrder(a.status) >= i);
     return { stage, label: labels[i], count: apps.length, apps };
   }).filter(b => b.count > 0);
+
+  const buckets = [...prePipeline, ...appBuckets];
 
   const ml=96, mr=40, mt=8, mb=8;
   const panelW = document.querySelector('#sv-funnel').closest('.panel').clientWidth - 40;

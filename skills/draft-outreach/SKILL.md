@@ -42,7 +42,7 @@ Invoke **`writer`** in **`draft-outreach`** mode.
      ```
      Also append to `notes[]`: `{ "date": "YYYY-MM-DD", "text": "Outreach sent via {channel} to {recipient} — {objective}" }`
      Update `next_step` to "Await response"
-   - If no matching application exists but the recipient is at a target company: offer to log a new networking entry in `tracker.json` under `networking[]`
+   - If no matching application exists but the recipient is at a target company: offer to log a new networking entry in `networking.json` under `networking[]`
    - Confirm: `Logged: outreach to {recipient} at {company} ({channel}) — {date}`
 
 ## Notes

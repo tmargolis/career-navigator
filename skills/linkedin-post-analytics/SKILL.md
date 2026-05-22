@@ -1,7 +1,7 @@
 ---
 name: linkedin-post-analytics
 description: >
-  Read-only snapshot of the user's own LinkedIn post analytics into tracker.json networking entries.
+  Read-only snapshot of the user's own LinkedIn post analytics into networking.json networking entries.
   Requires browser control (Claude in Chrome MCP or approved computer/browser use). Scheduled-friendly.
 triggers:
   - "linkedin post analytics"
@@ -14,7 +14,7 @@ triggers:
 ## Gate (run first)
 
 1. **Pattern:** [CONNECTORS.md](CONNECTORS.md) **three-step** for this integration: **Discover** — no standard LinkedIn MCP here; **Configure** — user **logged into LinkedIn** in the host browser (**they** sign in); **Browser access** — **ask** **Claude in Chrome** and/or **computer use** (**neither** / one / both). If **neither** or no tooling, **stop**—do **not** scrape without **read-only** approval for the chosen mode(s).
-2. **`{user_dir}`:** Resolve the job-search folder; tracker is `{user_dir}/CareerNavigator/tracker.json`.
+2. **`{user_dir}`:** Resolve the job-search folder; networking data is `{user_dir}/CareerNavigator/networking.json`.
 3. **Scheduled unattended runs:** If this invocation came from `/schedule` (or user asked for unattended), do **not** ask interactive browser/tooling questions. Continue only when prior consent is already saved in `{user_dir}/CareerNavigator/profile.md` under `## LinkedIn`:
    - `LinkedIn slug: <value>`
    - `LinkedIn analytics permission: granted`
@@ -39,7 +39,7 @@ triggers:
 
 ## Objective
 
-For **your own** posts only: open recent activity, collect per-post analytics, append **today’s** snapshot to `tracker.json` (`networking[]`), report a one-line summary per post.
+For **your own** posts only: open recent activity, collect per-post analytics, append **today’s** snapshot to `networking.json` (`networking[]`), report a one-line summary per post.
 
 ## Inputs (ask once if missing)
 
@@ -55,10 +55,10 @@ For **your own** posts only: open recent activity, collect per-post analytics, a
 1. Navigate to the **recent activity / shares** URL above. User should already be logged in; if LinkedIn demands re-auth, **stop** and notify them.
 2. **Read-only:** do not post, react, comment, or DM. If a post’s analytics control is missing or the panel errors, **note and skip** that post.
 3. For each post in the window: capture **post URL** (`…/feed/update/urn:li:activity:…`), **date posted** (best effort), **topic** (short label). Open **View analytics** (bar chart) and read: impressions, members reached, reactions, comments, reposts, saves, sends on LinkedIn, profile viewers from post, followers gained, link visits, plus top audience (industry / seniority / company size) **if shown**.
-4. Read `tracker.json`. For each post:
+4. Read `networking.json`. For each post:
    - If `networking` has `type: "linkedin_post"` and matching `url`: append to `analytics_history` one object: `{ "date": "YYYY-MM-DD", …metrics… }` (same field names as below).
    - Else create a new entry: `id` = next `net-NNN` (max existing + 1), `type: "linkedin_post"`, `description`, `url`, `date_posted`, `analytics_history: [ { … } ]`, `notes` (e.g. auto-discovered + date), `outcome: "active"`.
-5. Write `tracker.json` back. Preserve unrelated keys (`applications`, etc.).
+5. Write `networking.json` back. Preserve unrelated keys (`recruiter_relationships`, etc.).
 
 **`analytics_history` object (use 0 or `[]` / `"—"` when unknown):**
 

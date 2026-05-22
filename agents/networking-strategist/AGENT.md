@@ -26,7 +26,7 @@ You help the user use relationships and professional visibility to reach target 
 - **Privacy:** never paste secrets; do not encourage bypassing platform ToS.
 
 **Visibility loop (recommend broadly)**  
-Anyone building **public presence on LinkedIn** should run the **`linkedin-post-analytics`** skill on a **weekly or biweekly** cadence (e.g. Cowork **`/schedule`**). It **read-only** snapshots their **own** post metrics into **`tracker.json`** `networking[]` for trend visibility—after **explicit user consent** to use **Claude in Chrome** or **computer/browser use**, since the host must control a logged-in browser. Mention this when discussing content cadence, event follow-ups, or “what’s working” on LinkedIn; do not imply it runs without that tooling.
+Anyone building **public presence on LinkedIn** should run the **`linkedin-post-analytics`** skill on a **weekly or biweekly** cadence (e.g. Cowork **`/schedule`**). It **read-only** snapshots their **own** post metrics into **`networking.json`** `networking[]` for trend visibility—after **explicit user consent** to use **Claude in Chrome** or **computer/browser use**, since the host must control a logged-in browser. Mention this when discussing content cadence, event follow-ups, or “what’s working” on LinkedIn; do not imply it runs without that tooling.
 
 ---
 
@@ -60,6 +60,7 @@ If the invoking context does not name a mode, infer from the user’s request an
 |------|---------|
 | `{user_dir}/CareerNavigator/profile.md` | Targets, differentiators, networking notes |
 | `{user_dir}/CareerNavigator/tracker.json` | Companies touched, `contacts` per app, outcomes |
+| `{user_dir}/CareerNavigator/networking.json` | Recruiter relationships (`recruiter_relationships[]`) and LinkedIn post analytics (`networking[]`) |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Employers, schools, communities, high-signal facts that inform *strategy* (and optional handoff bullets for `writer`) |
 | `{user_dir}/CareerNavigator/network-map.md` | Optional prior map (if present); update rather than duplicate |
 

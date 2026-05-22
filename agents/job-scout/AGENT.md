@@ -29,6 +29,7 @@ Always read these files before scoring — do not ask for information already th
 | File | Purpose |
 |---|---|
 | `{user_dir}/CareerNavigator/tracker.json` | `search_performance` and `strategy_signals` — outcome-derived and advisor/market-derived ranking signals |
+| `{user_dir}/CareerNavigator/recommendations.json` | Pre-application pipeline (`recommendations[]`) — avoid surfacing roles already under consideration |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with `performance_weights` — identifies the user's strongest material |
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, compensation floor, location preferences |
 | `{user_dir}/CareerNavigator/career-trajectory.md` | Near/medium-term trajectory targets (optional; affects trajectory alignment bonus) |

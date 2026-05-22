@@ -65,7 +65,7 @@ Every application record uses this structure:
   "location": "...",
   "resume_version": null,
   "date_applied": "YYYY-MM-DD",
-  "status": "considering | applied | phone_screen | interview | offer | accepted | rejected | withdrew | ghosted",
+  "status": "applied | phone_screen | interview | offer | accepted | rejected | withdrew | ghosted",
   "stage_history": [
     {
       "stage": "...",
@@ -122,7 +122,8 @@ Read `tracker.json`. Determine which operation applies based on what the user sa
 
 | Event type | Route to |
 |---|---|
-| New application | Section 3 — Write the record |
+| Role the user is **considering** but hasn't applied to | Write to `recommendations.json` (`recommendations[]`), not `tracker.json` — see Section 3a |
+| New application (submitted) | Section 3 — Write the record |
 | Status change (callback, screen, interview, rejection) | Section 3 — Write the record |
 | Person at the company mentioned | Section 4 — Contact Management |
 | Interview scheduled or debriefed | Section 5 — Interview Logging |
@@ -158,6 +159,16 @@ Required for a new record: `company`, `role`, `status`. Ask only for `company` a
 
 ---
 
+### 3a. Pre-application roles (considering)
+
+If the user mentions a role they're interested in but **haven't applied to yet**, write to `{user_dir}/CareerNavigator/recommendations.json` instead of `tracker.json`:
+
+- Append a new entry to `recommendations[]` with: `id` (next `rec-NNN`), `company`, `role`, `job_link`, `comp_estimate`, `location`, `status: "considering"`, `priority`, `next_step`, `notes`, `fit_signals` (from user context if available), `gaps` (if mentioned), `decision_notes: null`, `outcome: "pending"`, `artifacts: []`.
+- Do **not** add to `applications[]` or update `pipeline_summary` — pre-application roles are tracked separately.
+- When the user later says they applied, move the record: remove from `recommendations[]`, create a new entry in `applications[]` with `status: "applied"`, and update `pipeline_summary`.
+
+---
+
 ### 3. Write the record
 
 **New application** — append to `applications[]`:
@@ -180,7 +191,7 @@ After setting the date, note it in the confirmation output.
 - Append a new entry to `notes[]` if the user provided new information — never overwrite existing note entries
 - Update `follow_up_date` and `next_step` if mentioned
 
-**After any write**, recalculate and update `pipeline_summary` counts in `tracker.json`.
+**After any write to `tracker.json`**, recalculate and update `pipeline_summary` counts. `pipeline_summary` only reflects submitted applications (`applications[]`); pre-application roles in `recommendations.json` are not counted here.
 
 **Immediately after the write**, run the **`application-update`** skill workflow (refresh guidance for job-scout / pattern-analysis nudges) before ending the turn.
 
