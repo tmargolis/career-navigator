@@ -100,6 +100,8 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`focus-career`** | New session (hook) or `/schedule` | Critical-only: deadlines, same-day follow-ups, urgent interview actions |
 | **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling; **Pre-interview brief (today)** when tracker shows interview/recruiter/screen **today** |
 | **`/career-navigator:morning-brief`** | Day-of only | Same **`daily-schedule`** skill — **focused** output: pre-interview slice only (see `skills/daily-schedule/SKILL.md` §3.3) |
+| **`/career-navigator:setup-schedule`** | Run once after launch | **Phase 3:** creates the `career-navigator-daily-brief` Cowork scheduled task — two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerts, and top new job recommendations appended to `recommendations.json` automatically each morning |
+| **`/career-navigator:pipeline-status-artifact`** | Run once after launch | **Phase 3:** creates a persistent Cowork live artifact — filterable pipeline status table (active / focus / closed) reading `tracker.json`, `recommendations.json`, and `artifacts-index.json` live on each open; resume view links and one-click tailor shortcuts |
 | **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in **`tracker.json`** |
 | **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1); optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`** |
 | **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): user-audio STT → structured notes + **`tracker.json`**; §13.1 warning; uses **`mcp-voice`** **`listen`** when the extension is installed |
@@ -316,17 +318,8 @@ Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Event intelligence se
 ### Phase 1 — Core Platform
 
 **Phase status tracker**
-- Phase 1A: Completed
-- Phase 1B: Completed
-- Phase 1C: Completed
-- Phase 1D: Completed
-- Phase 1E: Completed
-- Phase 1F: Completed
-- Phase 1G: Completed
-- Phase 2A: Completed
-- Phase 2B: Completed
-- Phase 2C: Completed
-- Phase 2D: Completed
+- Phase 1: Completed
+- Phase 2: Completed
 - Phase 3: In progress
 
 **Phase 1A ([Release v1.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v1.1.0)):** Plugin scaffold, **`/career-navigator:launch`** wizard (builds profile and ExperienceLibrary from existing documents), live job search via Indeed, and focus-career automation.
@@ -365,9 +358,10 @@ Status: In progress
 
 Phase 3 evolves Career Navigator from “a powerful assistant you sit down with” into an always-on, context-maintaining career operating layer that runs on a cadence and meets you in the channels you already use. This direction reflects industry trends kicked off by **OpenClaw** (persistent threads, async dispatch, event-driven channels) while remaining host-agnostic (Anthropic/Claude and NemoClaw are examples, not dependencies).
 
-- **Morning Digest**: *overnight recruiter replies summarized, stale follow-ups flagged, new matching roles surfaced before you open a laptop.* **Impact:** eliminates daily manual checks across email, job boards, and your tracker.
-- **Weekly Market Brief**: *Monday report on role demand shifts, target-company hiring signals, and events/CFPs tied to your targets.* **Impact:** replaces ad-hoc research with a consistent intelligence cadence.
-- **Follow-up Alert**: *overdue response detected against benchmarks with a pre-drafted follow-up ready to review and send from mobile.* **Impact:** nothing falls through the cracks; the system manages the pipeline clock.
+- **Morning Digest** ✅: *overnight recruiter replies summarized, stale follow-ups flagged, new matching roles surfaced before you open a laptop.* Automated via **`/career-navigator:setup-schedule`** — creates a Cowork scheduled task with a two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerting, and new job discovery. **Impact:** eliminates daily manual checks across email, job boards, and your tracker.
+- **Live Pipeline Status Artifact** ✅: *always-current filterable table of your full pipeline — active applications, recommended roles, closed entries — with resume links and one-click tailor shortcuts. Reads from disk on every open.* Created via **`/career-navigator:pipeline-status-artifact`**. **Impact:** a persistent status page that stays accurate without re-running a skill.
+- **Weekly Market Brief** ✅: *Monday report on role demand shifts, target-company hiring signals, and events/CFPs tied to your targets.* **Impact:** replaces ad-hoc research with a consistent intelligence cadence.
+- **Follow-up Alert** ✅: *overdue response detected against benchmarks with a pre-drafted follow-up ready to review and send from mobile.* **Impact:** nothing falls through the cracks; the system manages the pipeline clock.
 - **Weekly Insight Report**: *Friday plain-language funnel summary plus one specific positioning adjustment based on what’s converting.* **Impact:** turns a job search from feelings-based to data-informed.
 - **Advanced Analytics Exports**: *Power BI, Qlik, and D3 export surfaces for custom reporting and deeper analysis.* **Impact:** gives power users and coaches flexible external dashboards without changing core workflows.
 - **Dashboard & Visualization Enhancements**: *pipeline forecast overlay, voice cadence surfacing, and network graph UI upgrades move into Phase 3 delivery.* **Impact:** users get richer planning and relationship visibility in the same always-on operating layer.
