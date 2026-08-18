@@ -52,6 +52,7 @@ After confirming `{user_dir}`, check whether each of the five core data files ex
 | Tracker | `{user_dir}/CareerNavigator/tracker.json` |
 | Artifacts index | `{user_dir}/CareerNavigator/artifacts-index.json` |
 | Story corpus | `{user_dir}/CareerNavigator/StoryCorpus.json` |
+| Networking | `{user_dir}/CareerNavigator/networking.json` |
 
 #### For each file: two paths
 
@@ -401,7 +402,7 @@ If they pick **both**, save `mode: either`.
 **If they choose run now** and approved **Chrome** and/or **computer use**:
 
 1. Confirm the chosen tooling is available in the host. If **neither** was approved or tools are missing, do **not** scrape—explain they can enable tooling, log into LinkedIn, then run **`linkedin-post-analytics`** or **`/career-navigator:linkedin-post-analytics`** (or **continue** in a new chat).
-2. If approved: follow **`skills/linkedin-post-analytics/SKILL.md`** end-to-end (ask for LinkedIn vanity slug if unknown, append snapshots to `tracker.json`, summarize).
+2. If approved: follow **`skills/linkedin-post-analytics/SKILL.md`** end-to-end (ask for LinkedIn vanity slug if unknown, append snapshots to `networking.json`, summarize).
 
 **If they choose schedule later:** still save slug/permission/mode to `profile.md` now so unattended `/schedule` runs can execute without re-asking.
 

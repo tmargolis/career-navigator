@@ -31,7 +31,26 @@ Assemble the best possible resume for a specific role, drawn from the user's Exp
 **Job description** — required. If the user has not provided one:
 > "Paste the job description and I'll tailor your resume for it."
 
-**Target role and company** — extract from the JD if not stated explicitly.
+**Verify the JD against the canonical source — always.** Before handing anything to `resume-coach`, fetch the posting from the company's own careers page or ATS (Greenhouse, Lever, Ashby, Workday, SmartRecruiters). Aggregator listings — Indeed, LinkedIn, Ladders, ZipRecruiter, Jobgether, BuiltIn — are frequently truncated, stale, or reworded, and any `job_link` stored in `recommendations.json` may point at one.
+
+How to find the canonical post: search `{Company} {Role} careers` or `{Company} greenhouse OR lever OR ashby {Role}`, then fetch it. If the aggregator link is a shortlink (e.g. `to.indeed.com/...`), it will usually not resolve to usable text — go find the real posting instead of retrying the fetch.
+
+Then diff the canonical JD against whatever the user or `recommendations.json` supplied, and **flag every contradiction to the user before building the resume**. Report them plainly:
+
+> "The full JD on {source} differs from the listing we had on file: {contradiction}. That changes {what it changes}. Want me to proceed on the canonical version?"
+
+Contradictions that matter most, because they change targeting or disqualify the role:
+
+- **People-management scope** — "lead a team of PMs" vs. an IC/individual-contributor framing
+- **Seniority or title** — Director vs. Senior PM vs. Principal
+- **Location and work model** — onsite/hybrid/remote, and which office
+- **Compensation band** — especially where a pay-transparency disclosure appears only on the canonical post
+- **Hard requirements** — degree filters, years of experience, clearance, work authorization
+- **Required application materials** — essays, work samples, portfolios, take-homes that aggregators drop entirely
+
+If a contradiction invalidates the original fit rationale, say so directly and correct the stored `fit_signals` or `gaps` in `recommendations.json` — do not let a wrong signal survive into the tracker. If the canonical posting cannot be found or fetched, tell the user the JD is unverified and name the specific risk, rather than proceeding silently.
+
+**Target role and company** — extract from the canonical JD if not stated explicitly.
 
 **ExperienceLibrary** — read `{user_dir}/CareerNavigator/ExperienceLibrary.json`. If the file is missing or the `units` array is empty:
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first, then I can tailor one for this role."
@@ -60,9 +79,13 @@ Present the full assessment returned by `resume-coach` before saving:
 
 ```
 Resume assembled for {Role} at {Company}
+JD source: {canonical URL} {(verified against the listing on file | CONTRADICTIONS FOUND — see below)}
 
 ATS score: {n}/100
 Keyword coverage: {matched_keywords} / {total_required} must-have keywords matched
+
+JD contradictions (omit this block if none)
+- {What the listing on file said} → {what the canonical JD actually says} → {what it changes}
 
 Strengths
 - {What the ExperienceLibrary covers well for this role}
@@ -99,7 +122,8 @@ Once the user confirms (or if the score is ≥ 70 with no gaps flagged), save th
   "ats_score": {n},
   "source_units": ["{unit_ids used}"],
   "jd_keywords": ["{keywords matched}"],
-  "notes": ""
+  "jd_source_url": "{canonical careers-page or ATS URL the JD was verified against}",
+  "notes": "{record any JD contradictions found during verification}"
 }
 ```
 
