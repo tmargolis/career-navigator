@@ -17,7 +17,9 @@ Keep prompts aligned with **`skills/*/`** triggers and **`references/career-navi
 
 - A valid `{user_dir}` with `CareerNavigator/profile.md`.
 - At least one source resume/CV in `{user_dir}`.
-- `CareerNavigator/tracker.json` with a mix of open and resolved applications.
+- `CareerNavigator/tracker.json` with a mix of open and resolved applications, in the split layout defined in [tracker-schema.md](tracker-schema.md) — summary rows only, each with `application`, `detail_file`, `notes_count`, `stage_count`, `latest_stage`, and `latest_stage_date`.
+- `CareerNavigator/applications/<application_id>.json` for every summary row, holding that application's `stage_history[]` and `notes[]`.
+- `CareerNavigator/contacts/<company-slug>.json` for at least one company, with each contact carrying the `"<company> — <role>"` `application` label.
 - `CareerNavigator/artifacts-index.json` populated with at least one resume and one cover letter.
 
 ---
@@ -70,12 +72,12 @@ Session just started—run focus-career for critical-only alerts using my Career
 ### Tests
 - Run `tailor-resume` and `cover-letter`; verify artifacts are written and indexed.
 - Run `resume-score` and `ats-optimization`; verify ATS output and fix guidance.
-- Run `track-application` across stage transitions (applied -> interview -> offer/rejected).
-- Run `pattern-analysis`; verify `search_performance` and ExperienceLibrary weight updates.
+- Run `track-application` across stage transitions (applied -> interview -> offer/rejected); after each transition verify the append landed in `applications/<application_id>.json` → `stage_history[]` and that the `tracker.json` summary row's `status`, `stage_count`, `latest_stage`, and `latest_stage_date` were updated in the same write.
+- Run `pattern-analysis`; verify it loads each row's `detail_file` (stage history exists nowhere else — computing from `tracker.json` alone yields zeros) and that `search_performance` and ExperienceLibrary weight updates are written.
 - Run `search-jobs`; verify ranking changes after pattern-analysis updates.
 
 ### Pass Criteria
-- Artifacts and tracker updates remain schema-consistent.
+- Artifacts and application-record updates remain schema-consistent: no `notes`, `stage_history`, or `contacts` array reappears inside a `tracker.json` summary row; every `detail_file` resolves; `notes_count` / `stage_count` / `contact_count` match the arrays they count; application ids stay descriptive slugs (`app-hex-senior-pm`), never UUIDs or `app-NNN`.
 - Analyst outputs feed downstream ranking inputs.
 
 ### Example prompts (copy/paste)
@@ -157,7 +159,7 @@ Run full career analysis / pipeline dashboard generation so I can open the HTML 
 - Run `/career-navigator:assessment`; verify norm/exception/strategy output and confidence tier.
 - Run `/career-navigator:training-roi`; verify option matrix + primary/fallback recommendation.
 - Run `/career-navigator:market-brief`; verify demand/displacement/geography sections.
-- Run `/career-navigator:suggest-roles`; verify `strategy_signals` is written to tracker.
+- Run `/career-navigator:suggest-roles`; verify `strategy_signals` is written as a top-level key of `tracker.json` (not into a detail file).
 - Re-run `search-jobs`; verify strategy signal dimension appears in rationale/score behavior.
 
 ### Pass Criteria
@@ -253,7 +255,7 @@ I added a new resume PDF to my job search folder—run daily-schedule and confir
 
 ### Test data (recommended)
 - `CareerNavigator/profile.md` with **Target Roles**, **Target Companies** (or infer from `tracker.json`), and **Location** (local-only vs remote/travel-open affects event-radar scope).
-- `tracker.json` with at least one application listing **`contacts`** (can be empty) to validate gap/path logic.
+- At least one application whose summary row has a **`contacts_file`** and matching **`contact_count`**, plus that `contacts/<company-slug>.json` file (entries may be empty) to validate gap/path logic. Contacts no longer live inside `tracker.json` → `applications[]`.
 - Optional: stale or missing `CareerNavigator/network-map.md` to validate create vs update behavior.
 
 ### Example prompts (copy/paste)
@@ -649,11 +651,11 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 ### Tests
 - Run prep + mock interview across multiple stages/vibes.
 - **`mock-interview` with no mode/vibe:** model **announces** selected `mock_mode` + `vibe` (defaults per §2.1) before first question.
-- Validate **daily-schedule** includes **Pre-interview brief** when `stage_history` has a meeting **today**; validate **omitted** when none.
+- Validate **daily-schedule** includes **Pre-interview brief** when a summary row's **`latest_stage_date`** is **today** with an allowlisted **`latest_stage`** (or a future-dated row's `detail_file` hides a today-dated `stage_history` entry); validate **omitted** when none.
 - Validate **`/career-navigator:morning-brief`** focused output (pre-interview slice only when applicable).
-- **`[prep]`** tracker note + file under `CareerNavigator/interview-prep/` after prep.
+- **`[prep]`** note appended to `applications/<application_id>.json` → `notes[]` with `notes_count` bumped on the summary row, plus the brief file under `CareerNavigator/interview-prep/`, after prep.
 - **`mcp-voice` MCP (Claude Desktop Extension `mcp-voice.mcpb`):** **TTS** — call **`speak`** with a short string; expect audio playback through local speaker and `"Speech complete."` response. **STT** — call **`listen`** and speak a short phrase; expect returned transcript matching spoken content.
-- **`interview-capture`:** opt-in flow; employer warning once; **`[capture]`** or structured note in tracker when transcript processed.
+- **`interview-capture`:** opt-in flow; employer warning once; **`[capture]`** or structured note appended to the application's `detail_file` with the summary row's counters updated in the same transaction when transcript processed.
 - **Deferred until shipped:** full **`interview-debrief`** automation if not yet present.
 
 ### Pass Criteria
@@ -663,10 +665,10 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 
 | ID | Scenario | Pass hint |
 | --- | --- | --- |
-| 2B-P1 | `/career-navigator:prep-interview` for HM + company in tracker | Brief file + `[prep]` note; cites ExperienceLibrary |
+| 2B-P1 | `/career-navigator:prep-interview` for HM + company in tracker | Brief file + `[prep]` note in `applications/<application_id>.json`, `notes_count` bumped on the row; cites ExperienceLibrary |
 | 2B-P2 | Prep for **recruiter screen** | Emphasizes process, comp, timeline, fit-to-role |
 | 2B-D1 | `/career-navigator:daily-schedule` with **no** meeting today per §3.1 allowlist | Output **lacks** **Pre-interview brief** subsection |
-| 2B-D2 | `daily-schedule` with interview/recruiter stage **today** in `stage_history` | **Pre-interview brief (today)** present; ≥1 company covered |
+| 2B-D2 | `daily-schedule` with a summary row whose `latest_stage_date` is **today** and `latest_stage` is interview/recruiter | **Pre-interview brief (today)** present; ≥1 company covered; detail file opened only for qualifying applications |
 | 2B-D3 | `/career-navigator:morning-brief` | Same pre-interview behavior as 2B-D2 when applicable; no full pipeline table unless user asked |
 | 2B-M1 | `mock-interview` adaptive, neutral, **recruiter** | Session runs **without** requiring audio |
 | 2B-M2 | `mock-interview` challenging vibe, **hiring_manager** | Observable tougher tone / pressure |
@@ -675,7 +677,7 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 | 2B-A2 | Prep/mock with **STT** (`listen`) | Mic recording → transcript text matches spoken content |
 | 2B-A3 | **TTS** (`speak`) | Audio plays through local speaker; `"Speech complete."` returned |
 | 2B-V1 | **End-to-end voice** (optional) | `speak` delivers question aloud; `listen` captures spoken answer; transcript used in next mock turn |
-| 2B-C1 | `/career-navigator:interview-capture` with opt-in | Warning once; `interview-capture-settings.json`; tracker update after STT |
+| 2B-C1 | `/career-navigator:interview-capture` with opt-in | Warning once; `interview-capture-settings.json`; detail-file note + summary-row counter update after STT |
 
 ### Example prompts (copy/paste)
 
@@ -867,7 +869,7 @@ Run a LinkedIn-automation workflow only if it complies with policy—show guardr
 ## Regression Checklist (Run Every Phase)
 
 - Validate SKILL frontmatter (`name`, `description`, `triggers`) parses for all changed skills (including **`draft-outreach`**, **`content-suggest`**, **`evaluate-post`**).
-- Validate core JSON files remain valid (`tracker.json`, `ExperienceLibrary.json`, `artifacts-index.json`).
+- Validate core JSON files remain valid (`tracker.json`, every `applications/<application_id>.json`, every `contacts/<company-slug>.json`, `ExperienceLibrary.json`, `artifacts-index.json`) and that the split layout is internally consistent per [tracker-schema.md](tracker-schema.md): each `detail_file` resolves, counters match their arrays, and `latest_stage` matches the last `stage_history` entry.
 - Re-run `search-jobs`, `track-application`, `tailor-resume`, and `daily-schedule` as smoke tests.
 - Confirm docs match actual behavior (README + spec).
 - **If you shipped or changed user-facing behavior**, add or update **`### Example prompts (copy/paste)`** under the owning phase (see convention at top of this file).

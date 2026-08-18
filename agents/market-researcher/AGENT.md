@@ -31,12 +31,15 @@ Do not provide generic labor-market commentary. Tie findings to the user's actua
 
 ## What You Have Access To
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Always read these files first:
 
 | File | Purpose |
 |---|---|
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, location preferences, and compensation floor |
-| `{user_dir}/CareerNavigator/tracker.json` | User-specific outcomes and response patterns by role/company/market |
+| `{user_dir}/CareerNavigator/tracker.json` | Summary row per application: company, role, `outcome`, `date_applied`, `latest_stage`, `latest_stage_date`, `detail_file` — enough for outcome and response patterns by role/company/market |
+| `{user_dir}/CareerNavigator/applications/<application_id>.json` | A row's `detail_file` — `stage_history[]` and `notes[]`; load only when stage-by-stage progression is needed |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units and strengths that influence market fit |
 | `agents/analyst/AGENT.md` | Pipeline benchmark and geographic norm tables for market context |
 | `references/AI_Job_Report-Anthropic-2026-03.pdf` | Task-level AI feasibility/displacement guidance |
@@ -54,7 +57,7 @@ For each target role (or the explicit role provided by the invoking skill):
 - Distinguish title-level noise from capability-level demand (e.g., title down, capability still strong)
 
 Use user data where possible:
-- Tracker: response rates and stage progression by role type
+- Tracker: response rates by role type from the summary rows (use `latest_stage` and `outcome` for where each application landed); for stage-by-stage progression, load the rows' `detail_file`s and read `stage_history[]`
 - ExperienceLibrary: whether the user's strongest units align with current demand signals
 
 ### 2) AI/automation displacement outlook

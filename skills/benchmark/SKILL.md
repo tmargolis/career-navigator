@@ -26,7 +26,9 @@ Benchmark the user's pipeline performance against industry norms for their role,
 
 ### 1. Check data threshold
 
-Read `{user_dir}/CareerNavigator/tracker.json`. Count the total number of applications (any status). If fewer than 5:
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
+Read `{user_dir}/CareerNavigator/tracker.json`. Count the total number of applications (any status) from the summary rows — no detail files needed for this check. If fewer than 5:
 
 > "You need at least 5 applications to run a meaningful benchmark — you have {n} so far. Keep logging applications via `/career-navigator:track-application` and run this again once you have more history."
 
@@ -34,15 +36,23 @@ Stop here if below threshold.
 
 If ≥5 but fewer than 10 resolved outcomes, proceed with a note that results are preliminary.
 
-### 2. Invoke analyst — Operation 4
+### 2. Load the stage history the conversion math needs
+
+Every PIPELINE CONVERSION and TIMELINES figure below is computed from `stage_history[]`, and **`tracker.json` alone contains no stage history** — it moved to the per-application detail files. Computing app → response, screen → interview, interview → offer, or days-to-response from `tracker.json` by itself silently yields zeros and reports the user as far below norm when they are not.
+
+1. Read `{user_dir}/CareerNavigator/tracker.json` and take `applications[]`.
+2. Iterate every row and load its `detail_file` (relative to `CareerNavigator/`) for that application's `stage_history[]`. Skip a row only when its `stage_count` is `0` — that row genuinely has no stages to count.
+3. Use the summary fields where they answer the question directly: `latest_stage` and `latest_stage_date` give the current funnel position and last movement date, and `stage_count` / `notes_count` / `contact_count` give volumes without a read.
+
+### 3. Invoke analyst — Operation 4
 
 Hand off to the `analyst` agent with:
-- The full `CareerNavigator/tracker.json`
+- `CareerNavigator/tracker.json` (summary rows) **plus** the loaded `applications/<application_id>.json` detail files — pass both; conversion and timeline math is impossible from summary rows alone
 - The full `CareerNavigator/artifacts-index.json`
 - The full `CareerNavigator/profile.md`
 - Instruction to run Operation 4: Market Benchmark
 
-### 3. Present the benchmark report
+### 4. Present the benchmark report
 
 Use the output from the analyst to render:
 
@@ -76,7 +86,7 @@ STRENGTHS
 
 If a metric cannot be calculated (e.g., no offers yet, so interview → offer rate is undefined), show `—` and note why.
 
-### 4. Suggest next step
+### 5. Suggest next step
 
 Based on the lowest-performing metric:
 

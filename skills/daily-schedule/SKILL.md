@@ -110,29 +110,39 @@ with company, role, and deadline (if present).
 
 ### 3. Build the daily operating brief
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read `{user_dir}/CareerNavigator/tracker.json` and `{user_dir}/CareerNavigator/artifacts-index.json`.
 
+Compute every number below from the `tracker.json` **summary rows alone** — `status`, `outcome`, `follow_up_date`, `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`, and `contact_count` all live on the row. Do **not** open `applications/<application_id>.json` or `contacts/<company-slug>.json` while computing the digest; those are opened only for the few applications that qualify for the pre-interview brief in **§3.2**.
+
 Compute:
-- Pipeline counts by status (`applied`, `phone_screen`, `interview`, `offer`, `accepted`, `rejected`, `withdrew`, `ghosted`) from `tracker.json`; plus count of `considering` records from `recommendations.json` (reported separately as "X roles under consideration")
+- Pipeline counts by status (`applied`, `phone_screen`, `interview`, `offer`, `accepted`, `rejected`, `withdrew`, `ghosted`) from the `tracker.json` summary rows; plus count of `considering` records from `recommendations.json` (reported separately as "X roles under consideration")
 - Overdue follow-up count (using `follow_up_date` if present)
-- **Meetings today** — count `stage_history` entries where **`date` is today** (local) and **`stage`** matches the allowlist below (case-insensitive substring on `stage` string)
+- **Meetings today** — count summary rows where **`latest_stage_date` is today** (local) and **`latest_stage`** matches the allowlist below (case-insensitive substring on the `latest_stage` string)
 - Artifact counts by type (`resume`, `cover_letter`)
 
 #### 3.1 Stage allowlist — interview / recruiter / screen today
 
-Treat a `stage_history` row as **“meeting today”** when `date` equals **today** and any substring match holds:
+Treat a summary row as **“meeting today”** when `latest_stage_date` equals **today** and `latest_stage` matches any substring:
 
 `interview`, `recruiter`, `phone screen`, `phone_screen`, `hiring manager`, `hm `, `hm interview`, `technical`, `panel`, `onsite`, `executive`, `final round`, `final interview`
 
-Build the list of **applications** that have **at least one** such row today (dedupe by `application id`).
+Two refinements on that cheap pass:
+- Skip rows with `stage_count: 0` — they have no stage history at all.
+- A row whose `latest_stage_date` is **later than today** can still hide a today-dated stage, because scheduled interviews are logged with future dates. **Only for those rows**, read `{user_dir}/CareerNavigator/` + the row's `detail_file` and scan its `stage_history[]` for a today-dated allowlist match.
+
+Never load every detail file to answer this question — the summary row answers it for almost every application.
+
+Build the list of **applications** that qualify today (dedupe by the summary row's `id`).
 
 #### 3.2 Pre-interview brief subsection
 
 - **If no applications** qualify for meetings today: **omit** the entire **Pre-interview brief** subsection from the output (no placeholder).
-- **If one or more qualify:** append a subsection **after** the pipeline block (see §5) titled **`Pre-interview brief (today)`**. For **each** qualifying application, produce **short** bullets only (strict brevity — this is not a full prep doc):
+- **If one or more qualify:** append a subsection **after** the pipeline block (see §5) titled **`Pre-interview brief (today)`**. For **each** qualifying application — and only these — read `{user_dir}/CareerNavigator/` + its `detail_file`; that file holds `stage_history[]` (including `interviewers`) and `notes[]`, none of which exist in `tracker.json` any more. Then produce **short** bullets only (strict brevity — this is not a full prep doc):
   - One **news or company hook** (only if grounded via tracker/artifacts or verifiable web; else say “no verified headline—run `/career-navigator:prep-interview` for depth”)
   - **2–3 talking points** from `ExperienceLibrary` + role fit
-  - **Interviewer** reminder if `contacts[]` or `stage_history[].interviewers` has a name
+  - **Interviewer** reminder if today's `stage_history` entry in the detail file lists `interviewers`, or if the application has contacts: when the row's `contact_count` is above 0, read `{user_dir}/CareerNavigator/` + its `contacts_file`, keep only entries whose **`application`** equals the row's **`application`** label (`"<company> — <role>"`), and **dedupe by `name`** before naming anyone
   - One **watch** line (risk, gap, or follow-up to confirm)
 
 Follow **`agents/interview-coach/AGENT.md`** in **`morning_section`** mode for tone and limits. You are implementing that mode **inline** in this skill (no separate skill file).

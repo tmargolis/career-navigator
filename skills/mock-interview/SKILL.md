@@ -20,6 +20,8 @@ triggers:
 
 ### 1. Resolve `{user_dir}` and gate
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Same as `prep-interview`: require `CareerNavigator/profile.md`, `ExperienceLibrary.json`, and `tracker.json` unless the user only wants a generic mock with pasted JD (then still need profile + EL minimum; create minimal context note if tracker empty).
 
 ### 2. Parameters (ask once if missing)
@@ -37,7 +39,7 @@ The model **must** choose a concrete `mock_mode` and `vibe` before starting—**
 
 - **`mock_mode` (if user omitted):** use **`adaptive`** (default for learning and feedback). If the user asked for “surprise me,” “mix it up,” or equivalent, pick `random` **at random** and state that you did.
 - **`vibe` (if user omitted):** use **`neutral`**. If the user asked for “surprise” / “mix it up,” pick **one** vibe **at random** from the five allowed values and state it.
-- **`interview_stage` (if user omitted):** infer from **`tracker.json`** (next likely stage for the active application—e.g. `phone_screen` / recruiter → **`recruiter`**; otherwise **`hiring_manager`**). If no application context, default **`hiring_manager`**.
+- **`interview_stage` (if user omitted):** infer from the **`tracker.json` summary row** for the active application — its `status`, `latest_stage`, and `latest_stage_date` give the next likely stage without opening anything (e.g. `phone_screen` / `latest_stage: "recruiter"` → **`recruiter`**; otherwise **`hiring_manager`**). Read the row's `detail_file` (`applications/<application_id>.json`) only when the user asks to practice against the actual interview history, and only for that one application. If no application context, default **`hiring_manager`**.
 - **Announce** in one line before the first question, e.g.:  
   `Selected: mode=adaptive, vibe=neutral, stage=hiring_manager (defaults — say if you want different).`
 
@@ -59,4 +61,18 @@ Run the mock **turn-by-turn** in chat until the user ends or you reach a natural
 
 ### 5. Optional tracker note
 
-If the user wants a log: append a short `applications[].notes` entry (no `[prep]` required) e.g. `[mock]` with date and stage—only when they ask or when it aids follow-up.
+Only when the user asks for a log (or it clearly aids follow-up), write the **multi-file
+transaction** for appending a note, per [references/tracker-schema.md](../../references/tracker-schema.md) — never edit one file and skip the other:
+
+1. Find the application's summary row in `tracker.json` (match on `id`; check `previous_ids` if the id came from an older brief) and take its `detail_file`.
+2. Append to that file's `notes[]` — never overwrite or reorder existing entries:
+   ```json
+   { "date": "YYYY-MM-DD", "text": "[mock] {interview_stage} mock — {mode}/{vibe}, {one-line takeaway}" }
+   ```
+3. Set the summary row's `notes_count` to the new array length.
+
+A mock is not a real interview: do **not** append to `stage_history[]`, and do not touch
+`status`, `latest_stage`, or `latest_stage_date`.
+
+Load and re-dump both files programmatically (`json.load` / `json.dump` with `indent=2`,
+`ensure_ascii=False`) and reload to validate — hand-editing this JSON has corrupted files before.

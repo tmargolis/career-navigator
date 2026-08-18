@@ -41,7 +41,9 @@ Apply **1 → 2 → (3 only when needed)** per integration—**omit** steps 2–
 
 ### 2. Check for existing data files
 
-After confirming `{user_dir}`, check whether each of the five core data files exists. Handle each independently.
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write. This skill builds the tracker from scratch on first run, so it must create the split layout — a summary-row `tracker.json` plus the `applications/` and `contacts/` directories — never a monolithic tracker.
+
+After confirming `{user_dir}`, check whether each of the core data files exists. Handle each independently.
 
 #### Files to check
 
@@ -49,7 +51,9 @@ After confirming `{user_dir}`, check whether each of the five core data files ex
 |---|---|
 | Profile | `{user_dir}/CareerNavigator/profile.md` |
 | ExperienceLibrary | `{user_dir}/CareerNavigator/ExperienceLibrary.json` |
-| Tracker | `{user_dir}/CareerNavigator/tracker.json` |
+| Tracker (summary rows) | `{user_dir}/CareerNavigator/tracker.json` |
+| Application details | `{user_dir}/CareerNavigator/applications/{application_id}.json` |
+| Company contacts | `{user_dir}/CareerNavigator/contacts/{company-slug}.json` |
 | Artifacts index | `{user_dir}/CareerNavigator/artifacts-index.json` |
 | Story corpus | `{user_dir}/CareerNavigator/StoryCorpus.json` |
 | Networking | `{user_dir}/CareerNavigator/networking.json` |
@@ -66,7 +70,13 @@ After confirming `{user_dir}`, check whether each of the five core data files ex
 
 - **`CareerNavigator/ExperienceLibrary.json`**: Must be valid JSON with a `meta` object and a non-empty `units` array. Each unit must have `id`, `type`, `company` (or `institution`), `title`, and `dates`. Flag any units missing required fields and prompt the user to supply them. If the array is empty, treat the file as missing and rebuild it.
 
-- **`CareerNavigator/tracker.json`**: Must be valid JSON with `meta`, `applications` array, and `pipeline_summary`. Each application entry must have at minimum `id`, `company`, `role`, and `status`. `applications[]` contains only submitted applications — pre-application roles live in `recommendations.json`. Recalculate `pipeline_summary` counts from the actual `applications` array and update if stale.
+- **`CareerNavigator/tracker.json`**: Must be valid JSON with `meta`, `applications` array, and `pipeline_summary`. Every entry in `applications[]` is a **summary row** and must have at minimum `id`, `company`, `role`, `status`, `application` (the `"{company} — {role}"` label), and `detail_file`. `applications[]` contains only submitted applications — pre-application roles live in `recommendations.json`. Recalculate `pipeline_summary` counts from the actual `applications` array and update if stale.
+
+  Then validate the split layout itself:
+  - If any row still carries an inline `notes`, `stage_history`, or `contacts` array, the file is pre-split (v1). Move each array out: `notes[]` and `stage_history[]` into `applications/{application_id}.json`, `contacts[]` into `contacts/{company-slug}.json` with each contact tagged with the row's `application` label. Then delete the inline arrays from the row. Tell the user the tracker was migrated.
+  - If any `id` is a UUID, a bare sequence (`app-001`), or date-suffixed, rename it to a descriptive slug (`app-{company-slug}-{role-keywords}`, e.g. `app-hex-senior-pm`), rename the detail file to match, and append the old id to that row's `previous_ids`.
+  - Every row's `detail_file` must resolve on disk; `notes_count` and `stage_count` must equal the detail arrays' lengths; `latest_stage` and `latest_stage_date` must match the last `stage_history` entry. Recompute any that are stale.
+  - Every row with contacts must have a `contacts_file` that resolves, and its `contact_count` must equal the number of entries in that file whose `application` equals the row's `application` label. List `CareerNavigator/contacts/` and reuse existing files — never invent a second slug for a company that already has one.
 
 - **`artifacts-index.json`**: Must be valid JSON with a `meta` object and an `artifacts` array. Cross-check the listed artifact filenames against files actually present in `{user_dir}`. Remove entries for files that no longer exist. Add entries for PDF/DOCX files found in `{user_dir}` that are not yet indexed.
 
@@ -82,7 +92,7 @@ After validation, report to the user:
 1. Scan `{user_dir}` (non-recursively) for readable documents: PDF, DOCX, TXT, MD files.
 2. Read each document and extract relevant content.
 3. Build the missing file(s) following the schemas below.
-4. Create any missing subdirectories (`profile/`, `tracker/`) before writing.
+4. Create any missing subdirectories before writing — including `CareerNavigator/applications/` and `CareerNavigator/contacts/`, which must exist even when they start empty.
 5. Inform the user which documents were used and what was created.
 
 If no source documents exist in `{user_dir}` at all, create minimal placeholder files and prompt the user to add their resume:
@@ -153,10 +163,20 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
 }
 ```
 
-**`CareerNavigator/tracker.json`**
+**`CareerNavigator/tracker.json`** — summary rows only. Create `CareerNavigator/applications/` and `CareerNavigator/contacts/` alongside it, even if both start empty.
 ```json
 {
-  "meta": { "created": "{today}", "version": "1.0", "description": "..." },
+  "meta": {
+    "created": "{today}",
+    "version": "2.0",
+    "schema": "tracker_v2_split",
+    "last_updated": "{today}",
+    "layout": {
+      "applications": "applications/<application_id>.json — notes[] and stage_history[] for one application",
+      "contacts": "contacts/<company-slug>.json — every contact at one company"
+    },
+    "description": "..."
+  },
   "applications": [],
   "pipeline_summary": {
     "as_of": "{today}",
@@ -166,6 +186,82 @@ If no source documents exist in `{user_dir}` at all, create minimal placeholder 
   }
 }
 ```
+
+A summary row — written only when the user already has submitted applications to import. It carries no `notes`, `stage_history`, or `contacts` array:
+```json
+{
+  "id": "app-hex-senior-pm",
+  "application": "Hex — Senior Product Manager",
+  "company": "Hex",
+  "role": "Senior Product Manager",
+  "location": "...",
+  "status": "applied",
+  "date_applied": "YYYY-MM-DD",
+  "follow_up_date": null,
+  "next_step": null,
+  "priority": "high",
+  "outcome": "pending",
+  "resume_version": null,
+  "artifacts": [],
+  "detail_file": "applications/app-hex-senior-pm.json",
+  "contacts_file": "contacts/hex.json",
+  "notes_count": 1,
+  "stage_count": 1,
+  "contact_count": 1,
+  "latest_stage": "applied",
+  "latest_stage_date": "YYYY-MM-DD"
+}
+```
+
+Mint the `id` as `app-{company-slug}-{role-keywords}` (e.g. `app-hex-senior-pm`, `app-anthropic-research-pm-labs`) — never a UUID, a bare sequence (`app-001`), or a date-suffixed id. Omit `contacts_file` and `contact_count` when the application has no contacts.
+
+**`CareerNavigator/applications/{application_id}.json`** — one file per application, written in the same transaction as its summary row.
+```json
+{
+  "schema": "application_detail_v1",
+  "application_id": "app-hex-senior-pm",
+  "application": "Hex — Senior Product Manager",
+  "company": "Hex",
+  "role": "Senior Product Manager",
+  "stage_history": [
+    {
+      "stage": "applied",
+      "date": "YYYY-MM-DD",
+      "notes": "...",
+      "interview_type": null,
+      "interviewers": [],
+      "post_notes": null
+    }
+  ],
+  "notes": [
+    { "date": "YYYY-MM-DD", "text": "..." }
+  ]
+}
+```
+
+**`CareerNavigator/contacts/{company-slug}.json`** — one file per company, serving every application at that company. Each contact's `application` field is the summary row's `"{company} — {role}"` label.
+```json
+{
+  "company": "Hex",
+  "contacts": [
+    {
+      "name": "Carlos Aguilar",
+      "application": "Hex — Senior Product Manager",
+      "title": "Head of Product",
+      "relationship": "hiring_manager",
+      "notes": "...",
+      "interactions": [
+        { "date": "YYYY-MM-DD", "type": "email", "notes": "..." }
+      ]
+    }
+  ],
+  "contact_count": 1
+}
+```
+
+Company slug: lowercase the company name, strip accents, replace every run of non-alphanumeric characters with a single hyphen, trim leading/trailing hyphens (`84.51°` → `84-51`). List `CareerNavigator/contacts/` first and reuse any file already there rather than minting a second slug for the same company.
+
+After writing, verify: every summary row's `detail_file` resolves, `notes_count` / `stage_count` match the detail arrays, `latest_stage` matches the last `stage_history` entry, and each `contact_count` matches the filtered contacts file.
 
 **`CareerNavigator/networking.json`**
 ```json

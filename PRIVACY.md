@@ -12,6 +12,7 @@ This policy applies to data handled by the plugin in this repository, including:
 
 - Job-search documents you provide (resumes, cover letters, notes, interview prep materials)
 - Structured plugin artifacts and metadata written under `CareerNavigator/` (for example `profile.md`, `tracker.json`, `ExperienceLibrary.json`, `StoryCorpus.json`, and generated artifacts index files)
+- Application records, which are split across three locations under `CareerNavigator/`: summary rows in `tracker.json`, per-application notes and stage history in `applications/<application_id>.json`, and third-party contact details (names, titles, and interaction history for recruiters and hiring managers) in `contacts/<company-slug>.json`. The layout is defined in [references/tracker-schema.md](references/tracker-schema.md)
 - Optional connector-derived context when you explicitly enable and approve those integrations
 
 This policy does not replace the privacy terms of Anthropic, Claude, or third-party connector providers (for example Indeed, Google, Microsoft, Apify, LinkedIn, Notion, Dropbox, OneDrive, Google Drive, Meetup, Eventbrite, Luma). Those services have their own policies and controls.
@@ -21,7 +22,7 @@ This policy does not replace the privacy terms of Anthropic, Claude, or third-pa
 Depending on how you use the plugin, processed data may include:
 
 - Profile and preference data (target roles, locations, compensation floor, differentiators)
-- Application pipeline data (companies, roles, links, stages, notes, contacts, timestamps)
+- Application pipeline data (companies, roles, links, stages, notes, contacts, timestamps) — spread across `tracker.json`, `applications/`, and `contacts/`
 - Resume and cover letter content (source and generated)
 - Networking and content-planning data
 - Interview preparation and debrief content
@@ -79,7 +80,7 @@ Interview capture is optional and opt-in.
 Current implemented scope:
 
 - User-audio transcription workflow only (not full two-party recording)
-- Structured notes are written to local tracker data
+- Structured notes are written to local application data — the application's `applications/<application_id>.json` file, with counters updated on its `tracker.json` summary row
 - Employer warning/consent notice behavior is included in the workflow design
 - Audio/transcript data is user-deletable
 
@@ -107,6 +108,7 @@ Data may be accessed by external services only when you explicitly enable and us
 You control your data via your local files:
 
 - Edit or delete artifacts directly in your `{user_dir}`
+- To remove one application completely, delete its summary row in `CareerNavigator/tracker.json`, its `CareerNavigator/applications/<application_id>.json` file, and its entries in `CareerNavigator/contacts/<company-slug>.json` — application data lives in all three places
 - Remove connector access in your host application's connector settings
 - Disable optional local extensions (for example voice/event bundles) in the host
 - Stop using specific workflows at any time

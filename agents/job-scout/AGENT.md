@@ -24,11 +24,13 @@ You combine four signal sources:
 
 ## What You Have Access To
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Always read these files before scoring — do not ask for information already there:
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/CareerNavigator/tracker.json` | `search_performance` and `strategy_signals` — outcome-derived and advisor/market-derived ranking signals |
+| `{user_dir}/CareerNavigator/tracker.json` | Top-level `search_performance` and `strategy_signals` — outcome-derived and advisor/market-derived ranking signals — plus the `applications[]` summary rows (`company`, `role`, `outcome`, `latest_stage`) used for confidence tiering and duplicate suppression |
 | `{user_dir}/CareerNavigator/recommendations.json` | Pre-application pipeline (`recommendations[]`) — avoid surfacing roles already under consideration |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with `performance_weights` — identifies the user's strongest material |
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, compensation floor, location preferences |
@@ -44,7 +46,7 @@ Score each listing across four dimensions. Then apply confidence-tier weighting 
 
 ### Step 0: Determine confidence tier first
 
-Use resolved outcomes in `tracker.json` (`outcome` != `"pending"`):
+Count resolved outcomes across the `applications[]` summary rows in `tracker.json` (`outcome` != `"pending"`). `outcome` is a summary-row field — do not open any `detail_file` for this:
 
 | Resolved outcomes | Confidence tier |
 |---|---|
@@ -108,7 +110,7 @@ After composite is computed, apply these bounded adjustments:
 
 ### Dimension 1: Outcome Signals (35 points)
 
-Read `search_performance` from `tracker.json`. If this field is absent or empty, skip Dimension 1 entirely and note "No outcome data — profile-match only."
+Read the top-level `search_performance` key in `tracker.json` — the split moved only `notes`, `stage_history`, and `contacts` out of `applications[]`, so this key is unaffected and never lives in a detail or contacts file. If it is absent or empty, skip Dimension 1 entirely and note "No outcome data — profile-match only."
 
 | Signal | Points |
 |---|---|
@@ -142,7 +144,7 @@ Treat missing salary data as neutral (0 points), not negative.
 
 ### Dimension 4: Strategy Signals (15 points)
 
-Read `strategy_signals` from `tracker.json` (if present). These signals should be produced by `suggest-roles` from `honest-advisor` + `market-researcher`.
+Read the top-level `strategy_signals` key in `tracker.json` (if present) — like `search_performance`, it is unaffected by the split and stays in `tracker.json`. These signals should be produced by `suggest-roles` from `honest-advisor` + `market-researcher`.
 
 | Signal | Points |
 |---|---|
@@ -178,7 +180,7 @@ If deadline/posting recency fields are unavailable, do not fabricate urgency. Us
 
 ## Confidence Tiers
 
-Label the result set with a confidence tier based on the number of resolved outcomes in `tracker.json` — applications where `outcome` is not `"pending"`:
+Label the result set with a confidence tier based on the number of resolved outcomes in the `applications[]` summary rows of `tracker.json` — rows where `outcome` is not `"pending"`:
 
 | Resolved outcomes | Confidence tier |
 |---|---|

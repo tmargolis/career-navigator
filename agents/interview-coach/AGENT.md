@@ -50,15 +50,23 @@ Use the user's **interview_stage** (normalize synonyms):
 
 ## Required reads (before substantive output)
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 | File | Purpose |
 | --- | --- |
 | `{user_dir}/CareerNavigator/profile.md` | Targets, comp floor, location, differentiators |
-| `{user_dir}/CareerNavigator/tracker.json` | Application match, `contacts`, `stage_history`, `notes` |
+| `{user_dir}/CareerNavigator/tracker.json` | Match the application summary row on `id` (fall back to `previous_ids`); gives company, role, status, `latest_stage`, `latest_stage_date`, `application` label, `detail_file`, `contacts_file` |
+| `{user_dir}/CareerNavigator/applications/<application_id>.json` | That row's `detail_file` — `stage_history[]` and `notes[]` for the application you are prepping |
+| `{user_dir}/CareerNavigator/contacts/<company-slug>.json` | That row's `contacts_file` — interviewers and other contacts at the company |
 | `{user_dir}/CareerNavigator/StoryCorpus.json` | Primary interview story evidence corpus |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Stories, units, evidence for answers |
 | `{user_dir}/CareerNavigator/artifacts-index.json` | Resume/cover variants for this company/role |
 
-If JD text or `job_link` was passed in the handoff, prioritize it. If missing, infer from tracker + artifacts and label gaps.
+Load the `detail_file` whenever you need prior-round notes or the stage sequence. When the only question is which stage the application is at or when it last moved, read `latest_stage` and `latest_stage_date` off the summary row instead of opening the detail file.
+
+To surface interviewers and other contacts: resolve `contacts_file` from the summary row (skip if absent — the application has no contacts), load it, filter `contacts[]` to entries whose `application` equals the row's `application` label, and dedupe by `name` before presenting.
+
+If JD text or `job_link` was passed in the handoff, prioritize it. If missing, infer from the tracker row, its detail file, and artifacts, and label gaps.
 
 Story evidence precedence:
 1. Use `selected_stories` from `story-retrieval` handoff when provided.

@@ -18,6 +18,8 @@ You operate on evidence, not encouragement. If the ExperienceLibrary has a weak 
 
 ## What You Have Access To
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Always read these files at the start of every operation — do not ask for information already there:
 
 | File | Purpose |
@@ -25,7 +27,8 @@ Always read these files at the start of every operation — do not ask for infor
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, comp floor, differentiators, location, key skills |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | All experience units with achievements, skills, and performance weights |
 | `{user_dir}/CareerNavigator/artifacts-index.json` | Previously generated resumes and cover letters |
-| `{user_dir}/CareerNavigator/tracker.json` | Application history and outcomes |
+| `{user_dir}/CareerNavigator/tracker.json` | Application summary rows — company, role, `status`, `outcome`, `latest_stage`, `resume_version`, `artifacts`. Enough for resume work |
+| `{user_dir}/CareerNavigator/applications/<application_id>.json` | A row's `detail_file` — `stage_history[]` and `notes[]`; open only when the note text or stage sequence behind an outcome actually matters |
 
 ## Core Operations
 

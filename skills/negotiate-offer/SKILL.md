@@ -29,12 +29,17 @@ containing `CareerNavigator/`).
 This skill reads:
 - `{user_dir}/CareerNavigator/profile.md`
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
-- `{user_dir}/CareerNavigator/tracker.json`
+- `{user_dir}/CareerNavigator/tracker.json` (summary rows)
+- `{user_dir}/CareerNavigator/applications/<application_id>.json` (the one offer being negotiated)
+- `{user_dir}/CareerNavigator/contacts/<company-slug>.json` (the recipient of the negotiation message)
 - `{user_dir}/CareerNavigator/offer-context-{application_id}.json` (if present)
 
 Do not share the whole workspace or unrelated folders.
 
 ### 1. Confirm required data exists
+
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read:
 - `{user_dir}/CareerNavigator/profile.md`
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
@@ -46,18 +51,30 @@ If required files are missing, output:
 ### 2. Identify which offer to negotiate
 Preferred path:
 - If a user message includes `company` and `role` (or job link / deadline),
-  match them to an application in tracker where `status` is `"offer"`.
+  match them to a `tracker.json` summary row where `status` is `"offer"`.
 
-If there is exactly one `"offer"` application in the tracker: use it.
+If there is exactly one `"offer"` row in the tracker: use it.
 
 If multiple offer applications exist and matching is ambiguous:
 - ask for ONE clarification question: "Which company/role offer are we negotiating?"
 
-Set `application_id`.
+Set `application_id` from the row's `id`, and keep its `application` label, `detail_file`,
+`contacts_file`, `contact_count`, `latest_stage`, and `latest_stage_date`.
+
+Then load, for **this application only**:
+- `{user_dir}/CareerNavigator/` + `detail_file` — `stage_history[]` and `notes[]` carry what
+  has already been said about comp, what stage the offer came at, and any prior counter.
+  Neither array is in `tracker.json`; drafting without them repeats ground already covered.
+- `{user_dir}/CareerNavigator/` + `contacts_file`, when there is a named recipient. Keep
+  only entries whose **`application`** equals the row's **`application`** label, **dedupe by
+  `name`**, and use their `title`, `relationship`, and prior `interactions[]` to pick the
+  recipient and channel. A row with no `contacts_file` has no contacts on file — do not
+  invent a slug or a name.
 
 ### 3. Load persisted OfferContext (skip re-collect if present)
 Check for:
 `{user_dir}/CareerNavigator/offer-context-{application_id}.json`
+(if absent, check the row's `previous_ids` for a context file saved under an earlier id)
 
 If found:
 - load it
@@ -97,8 +114,27 @@ Show the `writer` draft in full and ask:
 
 Do not send anything automatically.
 
+### 7. Log the send when the user confirms
+Only after the user says they sent it, write the **multi-file transaction** from
+[references/tracker-schema.md](../../references/tracker-schema.md) — never update one file
+and skip the others:
+
+- In `{user_dir}/CareerNavigator/` + `detail_file`, append to `notes[]`:
+  `{ "date": "YYYY-MM-DD", "text": "[negotiation] {ask} sent via {channel}" }`, then set the
+  summary row's `notes_count` to the new array length.
+- If a contact received it, append to that contact's `interactions[]` in `contacts_file` —
+  the entry whose `name` matches **and** whose `application` equals the row's `application`
+  label: `{ "date": "YYYY-MM-DD", "type": "email | call", "notes": "Negotiation ask sent" }`.
+  If no contact was named, skip this step rather than inventing one.
+- On the summary row, set `next_step` to "Await negotiation response" and move
+  `follow_up_date` to the agreed check-in date.
+
+Load and re-dump each file programmatically (`json.load` / `json.dump` with `indent=2`,
+`ensure_ascii=False`) and reload to verify the counters still match their arrays.
+
 *** End note (host tool safety) ***
 - Never use error text as filenames or paths.
-- If any host write fails (should be rare in this skill because we only read
-  files), do not fake persistence; just continue in chat.
+- If any host write fails, do not fake persistence; say which file did not write and
+  continue in chat. A partially applied §7 transaction is worse than none — if the detail
+  file wrote but the summary row did not, report the mismatch so it can be repaired.
 

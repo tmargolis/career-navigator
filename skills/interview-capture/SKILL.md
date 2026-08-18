@@ -38,6 +38,8 @@ If **`employer_warning_acknowledged`** is already **true**, do **not** repeat th
 
 ### 1. Resolve `{user_dir}` and gate
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Require `CareerNavigator/profile.md` and `tracker.json`. If missing, send user to **`/career-navigator:launch`**.
 
 ### 2. Opt-in and warning
@@ -47,7 +49,7 @@ Require `CareerNavigator/profile.md` and `tracker.json`. If missing, send user t
 
 ### 3. Match application
 
-Identify **`application_id`** (or company + role) for the interview being logged. If unknown, ask before writing tracker updates.
+Identify **`application_id`** (or company + role) for the interview being logged. Match it against `tracker.json` → `applications[]` on `id`, falling back to each row's `previous_ids`. Hold onto the matched row's `detail_file`, `contacts_file`, and `application` label — the writes in step 5 need all three. If unknown, ask before writing tracker updates.
 
 ### 4. Transcription (STT)
 
@@ -64,7 +66,14 @@ From the transcript (user side only), extract:
 - Committed follow-ups
 - Next-round or outcome hints
 
-Append to **`applications[].notes`** with prefix **`[capture]`** and date; update **`stage_history`** or **`next_step`** via the same patterns as **`track-application`** when appropriate.
+Write as a multi-file transaction, following the same patterns as **`track-application`**:
+
+1. **Note** — append `{ "date": "YYYY-MM-DD", "text": "[capture] ..." }` to the detail file **`CareerNavigator/applications/<application_id>.json`** → `notes[]`. Never overwrite existing entries. Then set the summary row's **`notes_count`** to the new array length.
+2. **Stage** — when the capture records an interview that is not yet in the detail file's `stage_history[]`, append the stage entry there (or populate `post_notes` on the matching existing entry). Then set the summary row's **`stage_count`**, **`latest_stage`**, and **`latest_stage_date`**, and update **`status`** if the stage moves it.
+3. **Contacts** — if the user names interviewers, add or update them in **`CareerNavigator/contacts/<company-slug>.json`** with the row's `application` label on each entry, then recompute that file's `contact_count` and the summary row's `contact_count`. Set `contacts_file` on the row if it was absent.
+4. **Row fields** — update **`next_step`** and **`follow_up_date`** on the `tracker.json` summary row when the user committed to a follow-up.
+
+Load and re-dump each JSON file programmatically (`json.load` / `json.dump`, `indent=2`, `ensure_ascii=False`) and reload to verify. After the write, confirm `notes_count` and `stage_count` match the detail arrays and `latest_stage` matches the last `stage_history` entry.
 
 ### 6. Artifacts (optional)
 

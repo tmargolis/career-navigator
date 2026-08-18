@@ -61,6 +61,8 @@ If the user confirms the default, proceed without further prompting.
 
 ## 4. Build the self-contained task prompt
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write. The task prompt below carries its own copy of that instruction, because each scheduled run starts in a fresh session.
+
 Resolve `{user_dir}` to its actual absolute path on disk (e.g. `/Users/jane/career`).
 
 Build the following prompt, substituting the real path everywhere `{actual_user_dir}` appears:
@@ -74,11 +76,23 @@ Run the Career Navigator daily brief.
 {actual_user_dir}
 
 ## Data files (all under {actual_user_dir}/CareerNavigator/)
-- tracker.json        — submitted applications: status, stage history, follow_up_date
+- tracker.json        — one summary row per submitted application: status, outcome,
+                        follow_up_date, next_step, plus application, detail_file,
+                        contacts_file, notes_count, stage_count, contact_count,
+                        latest_stage, latest_stage_date
+- applications/<application_id>.json — stage_history[] and notes[] for one application
+- contacts/<company-slug>.json       — every contact at one company, each tagged with
+                        the application label it belongs to
 - recommendations.json — pre-application pipeline: status values considering / pending_decision / pass
 - networking.json     — recruiter relationships and LinkedIn post analytics
 - artifacts-index.json — resume and cover letter inventory
 - profile.md          — target roles, companies, compensation floor
+
+Application data uses the split layout defined in the Career Navigator plugin's
+references/tracker-schema.md — read it before any read or write. tracker.json no
+longer contains notes, stage_history, or contacts inside applications[]. Compute the
+digest from the summary rows alone and open a detail or contacts file only for the
+few applications that need one.
 
 ## Step 1 — Reconcile artifacts
 
@@ -97,7 +111,7 @@ Query: newer_than:7d (recruiter OR "your application" OR "thank you for applying
 "process completed") in:inbox
 
 **Search B — 30-day company backfill:**
-Read tracker.json; collect company names whose status is NOT a terminal state
+Read tracker.json; collect company names from the summary rows whose status is NOT a terminal state
 (rejected, withdrawn, expired, declined_by_candidate, ghosted). Build and run:
 Query: newer_than:30d ({company_1} OR {company_2} OR ...) (application OR position OR
 role OR interview OR recruiter OR "next steps" OR "not moving forward" OR "other
@@ -108,15 +122,20 @@ For each email found in either search:
   cross-check against tracker.json
 - Moves forward (interview invite, screen request, assessment link) → flag as
   🔔 ACTION REQUIRED and surface prominently
-- Rejection or "process completed" → immediately update tracker.json:
-    - Set status to "rejected"
-    - Add stage_history entry with the EMAIL's date (not today) as the date
-    - Add to notes[]: record both the email received date AND today's discovery date
-    - Clear follow_up_date (set to null)
+- Rejection or "process completed" → immediately write the multi-file transaction
+  from references/tracker-schema.md; never update one file and leave the others stale:
+    - In applications/<application_id>.json (the row's detail_file): append the
+      stage_history entry with the EMAIL's date (not today) as the date, and append
+      a notes[] entry recording both the email received date AND today's discovery date
+    - In tracker.json, on that summary row: set status to "rejected", set
+      latest_stage and latest_stage_date from the new stage, bump stage_count and
+      notes_count to the new array lengths, and clear follow_up_date (set to null)
+    - Recalculate pipeline_summary
 - Other recruiter outreach → flag for review
 
 CRITICAL: Always use the DATE OF THE EMAIL (not today) as the rejection/event date
-in tracker.json. Note the discovery gap explicitly (e.g. "Rejection email received
+on the stage_history entry (and therefore in latest_stage_date). Note the discovery
+gap explicitly (e.g. "Rejection email received
 2026-04-24, discovered 2026-05-08").
 
 If Gmail is unavailable: note "Gmail check skipped — run /career-navigator:follow-up
@@ -124,17 +143,21 @@ to review manually."
 
 ## Step 3 — Compute pipeline counts
 
-From tracker.json — count by status:
+From tracker.json summary rows — count by status:
 - Applied | Phone screen | Interview | Offer
 
 From recommendations.json — count records where status = "considering":
 - Considering (report separately, not inside the applied funnel)
 
 Also compute:
-- Follow-up due: tracker entries where follow_up_date is today or past
-- Meetings today: stage_history entries where date = today (local) and stage matches
-  any of: interview, recruiter, phone screen, phone_screen, hiring manager, hm,
-  hm interview, technical, panel, onsite, executive, final round, final interview
+- Follow-up due: summary rows where follow_up_date is today or past
+- Meetings today: summary rows where latest_stage_date = today (local) and
+  latest_stage matches (case-insensitive substring) any of: interview, recruiter,
+  phone screen, phone_screen, hiring manager, hm, hm interview, technical, panel,
+  onsite, executive, final round, final interview. Skip rows with stage_count 0.
+  Only for a row whose latest_stage_date is LATER than today, read its detail_file
+  and scan stage_history[] for a today-dated match — future-dated scheduled stages
+  hide today's entry. Never load every detail file for this count.
 
 From artifacts-index.json — count by type: resume | cover_letter
 
@@ -180,11 +203,11 @@ New Recommendations
   If none found: "No new roles matched criteria today."}
 
 Then append at most 3 action bullets, highest urgency first, based on:
-- Actual follow_up_date values from tracker.json
+- Actual follow_up_date values from the tracker.json summary rows
 - Approaching response windows (check company-windows.json if present)
-- Pending next_steps in tracker.json
+- Pending next_step values on the tracker.json summary rows
 
-Append if no strategy_signals in tracker.json:
+Append if no strategy_signals key in tracker.json:
 > Run /career-navigator:suggest-roles to refresh strategy signals for job-scout ranking.
 
 Append if no market brief in the past 7 days:
@@ -197,6 +220,8 @@ Append if no market brief in the past 7 days:
 - The 30-day company backfill search MUST run every day — this is the primary
   safeguard against missed rejection or status emails
 - New job discoveries go to recommendations.json only — never tracker.json
+- Any write that changes application data is a multi-file transaction: tracker.json
+  summary row plus the detail file (and contacts file when contacts change)
 ```
 
 ---

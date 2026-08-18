@@ -19,7 +19,11 @@ Invoke **`networking-strategist`** in **`network-map`** mode.
 
 ## Workflow
 
-1. Read `{user_dir}/CareerNavigator/profile.md`, `tracker.json`, and `ExperienceLibrary.json`.
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
+1. Read `{user_dir}/CareerNavigator/profile.md`, `tracker.json` (summary rows), and `ExperienceLibrary.json`.
+   - **Known contacts (the confirmed nodes of the map):** contacts no longer live in `applications[]`. For each target application, take `contacts_file` from its summary row, load `{user_dir}/CareerNavigator/` + that path (`contacts/<company-slug>.json`), and filter `contacts[]` to entries whose `application` equals the row's `application` label. Never derive the slug yourself; a row without `contacts_file` has no contacts on file. One company file serves every application at that company, so the same person can appear more than once — **dedupe by `name`** so a person becomes one node, not several.
+   - **Relationship evidence:** each matched contact's `relationship`, `title`, `notes`, and `interactions[]` are the confirmed edges. Open a row's `detail_file` (`applications/<application_id>.json`) for `notes[]` / `stage_history[]` only for the applications actually in play — the row's `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`, and `contact_count` usually answer the question without opening anything.
 2. If the user names specific companies or contacts, include them as **confirmed**; everything else is **hypothesis** with confidence labels.
 3. Require the agent to:
    - summarize **targets → paths → gaps** in readable form;

@@ -28,11 +28,15 @@ You work with evidence. Every insight must be grounded in data from the user's f
 
 ## What You Have Access To
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Always read these files before analysis — do not ask for information already there:
 
 | File | Purpose |
 |---|---|
-| `{user_dir}/CareerNavigator/tracker.json` | All applications with status, stage history, outcomes, and notes |
+| `{user_dir}/CareerNavigator/tracker.json` | Summary row per application: status, outcome, dates, `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`, `contact_count`, `detail_file`, `contacts_file` |
+| `{user_dir}/CareerNavigator/applications/<application_id>.json` | Per-application `stage_history[]` and `notes[]` — the only place stage and note text exists |
+| `{user_dir}/CareerNavigator/contacts/<company-slug>.json` | Every contact at one company, each tagged with the `application` label it belongs to |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with current performance weights |
 | `{user_dir}/CareerNavigator/artifacts-index.json` | Generated artifacts with source units, JD keywords, ATS scores, and linked applications |
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, key skills, differentiators, industries |
@@ -42,7 +46,17 @@ Always read these files before analysis — do not ask for information already t
 
 ## Operation 1: Outcome Pattern Analysis
 
-Cross-reference `tracker.json` applications with `artifacts-index.json` to find correlations between what was submitted and what advanced.
+Cross-reference the application records with `artifacts-index.json` to find correlations between what was submitted and what advanced.
+
+### Load the full history first
+
+This operation needs stage history and note text across the *whole* application history, so summary rows alone are not enough.
+
+1. Read `tracker.json` and take `applications[]` — this gives you every scalar field, plus `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`, and `contact_count`.
+2. Iterate `applications[]` and load each row's `detail_file` (relative to `CareerNavigator/`) to get that application's `stage_history[]` and `notes[]`.
+3. Skip a `detail_file` load only when the question is answered by a summary field — e.g. current stage (`latest_stage`), date of the last stage change (`latest_stage_date`), or a count (`stage_count`, `notes_count`, `contact_count`).
+
+**Timeline and stage-drop-off analysis run entirely on `stage_history[]`, which does not exist in `tracker.json`.** Attempting stage or timeline analysis from `tracker.json` alone silently analyzes an empty set and reports "no patterns found" when patterns exist. Load the detail files.
 
 **Resume variant performance**
 - Which artifacts (identified by `source_units[]` and `ats_score`) advanced to phone screen or beyond?
@@ -59,9 +73,9 @@ Cross-reference `tracker.json` applications with `artifacts-index.json` to find 
 - Where is the user consistently getting stuck in the pipeline?
 - Are there geography or remote/hybrid patterns in what's advancing?
 
-**Timeline patterns**
+**Timeline patterns** — computed from each detail file's `stage_history[]`
 - Average days from application to first response by role type and company size
-- Applications exceeding normal response windows (surface these as follow-up candidates)
+- Applications exceeding normal response windows (surface these as follow-up candidates) — screen candidates cheaply on the summary row's `latest_stage_date`, then open the detail file for the ones that qualify
 - Stage drop-off: where is the most attrition?
 
 ### Update Performance Weights
@@ -88,7 +102,7 @@ Write a `weight_update_log` entry for each change:
 }
 ```
 
-After updating weights, write a `search_performance` summary to `tracker.json` for use by job-scout:
+After updating weights, write a `search_performance` summary to `tracker.json` for use by job-scout. `search_performance` and `strategy_signals` are **top-level keys in `tracker.json`** — the split moved only `notes`, `stage_history`, and `contacts` out of `applications[]`, so read and write these two keys in `tracker.json` and do not look for them in a detail or contacts file:
 ```json
 {
   "search_performance": {
@@ -196,18 +210,20 @@ Compare the user's actual pipeline metrics against industry norms segmented by r
 
 ### Step 1 — Calculate actual metrics
 
-Read `tracker.json` and `artifacts-index.json`. Compute:
+Read `tracker.json` and `artifacts-index.json`, then iterate `applications[]` and load each row's `detail_file` — every stage-based metric below reads `stage_history[]`, which lives only in the detail files. Compute:
 
 | Metric | How to calculate |
 |---|---|
-| App → Response rate | Applications with any stage beyond `applied` ÷ total applications |
+| App → Response rate | Applications with any `stage_history` entry beyond `applied` ÷ total applications |
 | Response → Screen rate | Applications reaching `phone_screen` ÷ applications with any response |
 | Screen → Interview rate | Applications reaching `interview` ÷ applications that had a phone screen |
 | Interview → Offer rate | Applications reaching `offer` ÷ applications that had an interview |
-| Ghosting rate | Applications with status `ghosted` or no activity in 30+ days ÷ total applications |
-| Avg days to first response | Mean days from `date_applied` to first `stage_history` entry beyond `applied` |
-| Avg days to offer | Mean days from `date_applied` to `offer` stage, for applications that reached it |
+| Ghosting rate | Applications with status `ghosted`, or whose summary row's `latest_stage_date` is 30+ days old, ÷ total applications |
+| Avg days to first response | Mean days from the summary row's `date_applied` to the first `stage_history` entry beyond `applied` in the detail file |
+| Avg days to offer | Mean days from `date_applied` to the `offer` entry in `stage_history[]`, for applications that reached it |
 | Avg ATS score | Mean `ats_score` across all artifacts in `artifacts-index.json` with a score present |
+
+Use the summary row wherever it already answers the question — `latest_stage` for where an application currently sits, `latest_stage_date` for last movement, `stage_count` / `notes_count` / `contact_count` for volume — and open the detail file only for the per-stage dates and text the row cannot give you.
 
 Only count applications with enough history to contribute to each metric. If a metric has fewer than 3 data points, report it as `insufficient data` rather than a number.
 
@@ -221,7 +237,7 @@ From `profile.md` and `tracker.json`, identify:
 - Director — "Director", "Sr. Director", "Group PM", "Head of"
 - VP / Executive — "VP", "SVP", "C-suite", "Partner"
 
-**Company size mix** — from `tracker.json` applications (use context clues in notes, company names, or job descriptions; if unknown, mark as mixed):
+**Company size mix** — from the `tracker.json` summary rows (use context clues in company names, job descriptions, or the `notes[]` text in each row's `detail_file`; if unknown, mark as mixed):
 - Startup: < 200 employees
 - Mid-market: 200–2,000 employees
 - Enterprise: 2,000+ employees
@@ -272,7 +288,7 @@ Use the norm tables below. Select the row matching the user's level and company 
 
 ### Step 4 — Compensation positioning
 
-Do not run a new Apify salary lookup here. Instead, check whether `salary-research` has been run recently (look for any compensation data in the conversation or in notes within `tracker.json`). If comp data is available, contextualize it by level and company size:
+Do not run a new Apify salary lookup here. Instead, check whether `salary-research` has been run recently (look for any compensation data in the conversation, in each summary row's `salary_range`, or in the `notes[]` of the applications' `detail_file`s you already loaded). If comp data is available, contextualize it by level and company size:
 
 - Startups typically offer 15–30% below enterprise base, offset by equity
 - Enterprise (FAANG-tier) typically at or above market median with lower equity upside
@@ -306,6 +322,7 @@ When invoked to run all four operations (via the `report` skill when benchmark d
 - Do not reference artifacts by ID tag (e.g., `artifact-001`) — always use the document's name or filename
 - Do not reference experience units by ID (e.g., `exp-001`) — always use role title and employer
 - Do not fabricate outcome correlations not present in tracker data
+- Do not run stage, timeline, or note-based analysis off `tracker.json` alone — iterate `applications[]` and load each `detail_file` first, or the analysis silently sees nothing
 - Do not adjust weights significantly on fewer than 3 data points
 - Do not overstate transferability of domain-specific skills
 - Do not present low-confidence findings as definitive

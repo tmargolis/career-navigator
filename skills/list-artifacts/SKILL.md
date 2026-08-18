@@ -30,7 +30,14 @@ Read `{user_dir}/CareerNavigator/artifacts-index.json`. If the file does not exi
 
 ### 2. Cross-reference with tracker
 
-Read `{user_dir}/CareerNavigator/tracker.json`. For each artifact, check whether it appears in any application's `artifacts[]` array. If so, note the application's current `status` — this lets the user see which resumes and cover letters are attached to live applications and what outcome (if any) they produced.
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
+Read `{user_dir}/CareerNavigator/tracker.json`. For each artifact, check whether it appears in any summary row's `artifacts[]` array. If so, note that row's current `status`, its `application` label (`"<company> — <role>"`), and its `outcome` — this lets the user see which resumes and cover letters are attached to live applications and what outcome (if any) they produced.
+
+The summary rows carry everything this listing needs. Do **not** open
+`applications/<application_id>.json` or `contacts/<company-slug>.json` here — artifact
+links live on the row, and loading detail files for every application to print a list
+is exactly what the split layout exists to avoid.
 
 ### 3. Organize the output
 
@@ -43,7 +50,7 @@ Group artifacts by type: **resumes** first, then **cover letters**, then **`link
    Target:   {Company} — {Role}  (or "Base / unattached" if no target; for linkedin_post use "—" or notes topic)
    Created:  {date_created}
    ATS score: {ats_score}/100  (omit if not available or not applicable)
-   Used in:  {Company — Role, status: {status}}  (omit if not linked to any application)
+   Used in:  {row's `application` label, status: {status}}  (omit if not linked to any application)
 ```
 
 For **`type: "linkedin_post"`**, omit ATS and usually **Used in**; show **`notes`** or path if helpful so the user can find the draft on disk.

@@ -20,21 +20,30 @@ Run `follow-up-timing` to get brief timing nudges based on your tracker:
 ## Workflow
 
 ### 1. Load tracker and required files
+
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read:
 - `{user_dir}/CareerNavigator/tracker.json`
 
 If missing:
 > Follow-up-timing skipped: run `/career-navigator:launch`.
 
+This is an ambient nudge and must stay cheap: every field it needs (`id`, `company`,
+`role`, `status`, `offer.deadline`, `follow_up_date`, `latest_stage`,
+`latest_stage_date`) is on the `tracker.json` summary row. Never open
+`applications/<application_id>.json` or `contacts/<company-slug>.json` from this skill.
+
 ### 2. Offer evaluation check
-For each application in tracker where:
+For each summary row in `tracker.json` → `applications[]` where:
 - `status` is `"offer"`
 - `offer.deadline` may be set (if present)
-- and `{user_dir}/CareerNavigator/offer-context-{application_id}.json` is
-  not present
+- and `{user_dir}/CareerNavigator/offer-context-{id}.json` is
+  not present (use the row's `id`; if a stored context file uses an older id, check
+  the row's `previous_ids` before declaring the evaluation missing)
 
-Output a short prompt:
-> Offer evaluation due for {company} — {role}. Run `/career-navigator:evaluate-offer`.
+Output a short prompt, using the row's `application` label verbatim:
+> Offer evaluation due for {application}. Run `/career-navigator:evaluate-offer`.
 
 ### 3. Output format
 If there are no offer-evaluation due items:

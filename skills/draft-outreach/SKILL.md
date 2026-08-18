@@ -18,6 +18,8 @@ Invoke **`writer`** in **`draft-outreach`** mode.
 
 ## Workflow
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 0. **Prior communication history (enrichment — default for named recipients):** Outreach to a **specific person** or **known contact at a company** should be **grounded in real mail/calendar context** when the host allows—not guesswork.
 
    1. If a **ContactContextBrief** is **already** in chat → use it as-is (full block to **`writer`**).
@@ -34,14 +36,15 @@ Invoke **`writer`** in **`draft-outreach`** mode.
 6. **Sent confirmation + auto-track:** After presenting the copy, say:
    > "Let me know when you've sent this and I'll log it to your tracker."
 
-   When the user confirms (e.g. "sent", "I sent it", "done", "sent it just now"):
-   - Read `{user_dir}/CareerNavigator/tracker.json`
-   - If a matching application exists (same company): append to `contacts[].interactions[]`:
+   When the user confirms (e.g. "sent", "I sent it", "done", "sent it just now"), write the multi-file transaction from [references/tracker-schema.md](../../references/tracker-schema.md) — never update one file and leave the others stale:
+   - Read `{user_dir}/CareerNavigator/tracker.json` (summary rows only) and find a row for the same company
+   - If a matching row exists, load `{user_dir}/CareerNavigator/` + its `contacts_file` (`contacts/<company-slug>.json`) — take the path from the row, never derive the slug yourself. Find the entry whose `name` matches the recipient **and** whose `application` equals the row's `application` label, and append to that contact's `interactions[]`:
      ```json
      { "date": "YYYY-MM-DD", "type": "linkedin | email", "notes": "Sent outreach: {one-line summary of message objective}" }
      ```
-     Also append to `notes[]`: `{ "date": "YYYY-MM-DD", "text": "Outreach sent via {channel} to {recipient} — {objective}" }`
-     Update `next_step` to "Await response"
+     If the row has no `contacts_file`, or the person is not in it yet, add the contact per the schema's **Adding or updating a contact** rules (create `contacts/<slug>.json` if needed, set `application` to the row's label, recompute `contact_count` in both the file and the row).
+     Also append to `notes[]` in `{user_dir}/CareerNavigator/` + the row's `detail_file` (`applications/<application_id>.json`): `{ "date": "YYYY-MM-DD", "text": "Outreach sent via {channel} to {recipient} — {objective}" }`, then set the row's `notes_count` to the new array length
+     Update the summary row's `next_step` to "Await response"
    - If no matching application exists but the recipient is at a target company: offer to log a new networking entry in `networking.json` under `networking[]`
    - Confirm: `Logged: outreach to {recipient} at {company} ({channel}) — {date}`
 

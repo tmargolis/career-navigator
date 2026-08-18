@@ -22,9 +22,12 @@ Generate a self-contained HTML dashboard visualizing the user's job search pipel
 
 ## Data files
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 | File | Purpose |
 |---|---|
-| `{user_dir}/CareerNavigator/tracker.json` | Applications, stage history, pipeline summary |
+| `{user_dir}/CareerNavigator/tracker.json` | Summary rows for every application — `status`, `outcome`, `date_applied`, plus `application`, `detail_file`, `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`, `contact_count`; also `pipeline_summary` |
+| `{user_dir}/CareerNavigator/applications/<application_id>.json` | `stage_history[]` + `notes[]` for one application — the only source of stage transitions |
 | `{user_dir}/CareerNavigator/recommendations.json` | Pre-application roles being considered (count shown at top of funnel) |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with performance weights and update log |
 | `{user_dir}/CareerNavigator/artifacts-index.json` | Generated artifacts with ATS scores |
@@ -36,7 +39,13 @@ Generate a self-contained HTML dashboard visualizing the user's job search pipel
 
 ### 1. Assemble the data object
 
-Read all three files and build the following JSON object. This will be embedded directly into the HTML file.
+Read the files above and build the following JSON object. This will be embedded directly into the HTML file.
+
+**What comes from where.** The timeline rows, status colors, considering count, and confidence tier come straight from the `tracker.json` summary rows — no detail file needed, which is the point of the split. The **benchmark conversion rates are different**: they are computed from stage transitions, and `tracker.json` no longer contains `stage_history`. This dashboard renders per-application history, so you **must** load each application's `detail_file` explicitly:
+
+- For every summary row with `stage_count` greater than `0`, read `{user_dir}/CareerNavigator/` + its `detail_file` and use that file's `stage_history[]` for the funnel and conversion math.
+- Skip rows with `stage_count: 0` — there is nothing to load.
+- **Warning:** computing this dashboard from `tracker.json` alone fails silently. No error is raised — the funnel and every conversion rate come out at zero or `null`, any per-application stage detail renders empty, and the charts still look like real data.
 
 ```json
 {
@@ -49,7 +58,7 @@ Read all three files and build the following JSON object. This will be embedded 
       "role": "{role — truncate to 40 chars if longer}",
       "date_applied": "{YYYY-MM-DD or null}",
       "status": "{status}",
-      "last_stage_date": "{date of most recent stage_history entry}"
+      "last_stage_date": "{the summary row's latest_stage_date, or null}"
     }
   ],
   "benchmarks": [
@@ -92,11 +101,11 @@ Read all three files and build the following JSON object. This will be embedded 
 ```
 
 **Computing benchmark values:**
-- Use the same method as analyst Operation 4 — calculate from `tracker.json` and compare against the norm tables for the user's level and company size mix
+- Use the same method as analyst Operation 4 — calculate from the `stage_history[]` arrays in the detail files loaded above (not from `tracker.json`, which holds no stage history) and compare against the norm tables for the user's level and company size mix
 - If a metric has fewer than 3 resolved data points, set `user_value` to `null`
 - Use the norm ranges from the analyst benchmark tables (Director level, enterprise/mid-market mix, Chicago/remote geography as appropriate for the user's profile)
 
-**Confidence tier:** count applications where `outcome` != `"pending"` — use analyst Op 4 thresholds (0–4: Preliminary, 5–14: Directional, 15–29: Moderate, 30+: High)
+**Confidence tier:** count summary rows where `outcome` != `"pending"` — use analyst Op 4 thresholds (0–4: Preliminary, 5–14: Directional, 15–29: Moderate, 30+: High)
 
 **ExperienceLibrary units:** read `units[]` from `CareerNavigator/ExperienceLibrary.json`. For `update_note`, use the most recent entry from `weight_update_log` for that unit (match by `unit_id`), or `null` if none.
 

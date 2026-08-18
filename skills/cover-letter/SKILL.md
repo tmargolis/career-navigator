@@ -21,6 +21,8 @@ Build a **CoverLetterBrief**, then invoke **`writer`** for final letter prose. D
 
 ### 1. Collect inputs
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 **Job description** — required. If not already in context, ask the user to provide it.
 
 **Tailored resume** — check `{user_dir}/CareerNavigator/artifacts-index.json` for a resume artifact for this company and role. If one exists, use it as the primary source for experience framing. If none exists:
@@ -28,14 +30,14 @@ Build a **CoverLetterBrief**, then invoke **`writer`** for final letter prose. D
 
 **Profile** — read `{user_dir}/CareerNavigator/profile.md` for differentiators, tone preferences, and any standing instructions.
 
-**Contact context** — check `tracker.json` for any known contacts at the company. If a contact is present, note it for the brief (do not draft named flattery unless accurate).
+**Contact context** — contacts are no longer inside `applications[]`. In `tracker.json`, find the summary row for this company and role, take its `contacts_file`, and load `{user_dir}/CareerNavigator/` + that path (`contacts/<company-slug>.json`); a row with `contact_count: 0` or no `contacts_file` has no contacts on file, so skip the read. Filter the file's `contacts[]` to entries whose `application` equals the row's `application` label (`"<company> — <role>"`), and dedupe by `name` before presenting. If a contact is present, note it for the brief (do not draft named flattery unless accurate).
 
 ### 2. Research the company
 
 Before briefing, identify 1–2 **specific, verifiable** things about the company relevant to fit:
 - Recent product launches, initiatives, or strategic direction
 - Team/culture signals from the JD
-- Notes in `tracker.json` or profile about this company
+- Notes about this company — in the summary row's `detail_file` (`applications/<application_id>.json` → `notes[]`), or in profile. Skip the detail read when the row's `notes_count` is `0`.
 
 Do not use generic praise. If no specific signals, say so in the brief—**`writer`** will omit flattery.
 

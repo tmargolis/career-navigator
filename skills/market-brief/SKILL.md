@@ -33,6 +33,8 @@ Important invocation/data-source rules:
 
 ### 1. Confirm required context
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read `{user_dir}/CareerNavigator/profile.md`.
 
 If target roles are missing:
@@ -41,14 +43,14 @@ If target roles are missing:
 If location preferences are missing, continue but mark geographic confidence as limited.
 
 Optionally read:
-- `{user_dir}/CareerNavigator/tracker.json` for user-specific conversion/timeline signals
+- `{user_dir}/CareerNavigator/tracker.json` for user-specific conversion/timeline signals — the summary rows (`status`, `outcome`, `date_applied`, `latest_stage`, `latest_stage_date`) carry these; this skill does not need per-application stage history, so do not open `detail_file`s
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json` for capability-fit context
 
 ### 2. Invoke market-researcher
 
 Hand off to `market-researcher` with:
 - The full `CareerNavigator/profile.md`
-- The full `CareerNavigator/tracker.json` (if present)
+- The full `CareerNavigator/tracker.json` (if present) — summary rows only; note to the agent that stage history lives in `applications/<application_id>.json` and is not needed for this brief
 - The full `CareerNavigator/ExperienceLibrary.json` (if present)
 - Instruction to include all three required sections:
   1. Role demand trends

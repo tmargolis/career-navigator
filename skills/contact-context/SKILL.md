@@ -42,7 +42,7 @@ If the user says they **sent** an email (or it **bounced** / **failed** / **wron
 
 **Instead, pivot immediately to helping them find a *correct* email address** (or a short list of **evidence-backed candidates**) for this contact:
 
-1. **`tracker.json`** / **`profile.md`** — any stored email, title, or company for this person.
+1. **`tracker.json`** / **`profile.md`** — any stored email, title, or company for this person. Addresses live in the company contacts file, not in `tracker.json`: find the company's summary row, load `{user_dir}/CareerNavigator/` + its `contacts_file`, and filter `contacts[]` to entries whose `application` equals that row's `application` label. Check every application at that company before concluding nothing is on file, and dedupe by `name`.
 2. **Mail search that *does* work on MCP:** plain **`Firstname Lastname`**, **`company`**, **`to:`** / **`from:`** with a **simple** address or domain (one clause at a time). Look at **Sent** and **Inbox** for **real threads** (signatures, forwards, calendar invites), not **`mailer-daemon`** unless the user **explicitly** asks you to hunt a bounce.
 3. **Reasonable variants** — alternate **domains** (parent vs subsidiary), **`first.last`**, **`firstlast`**, **`flast`** — label each as **guess** vs **cited** from a source.
 4. **Ask the user** to paste an address from **LinkedIn**, the company site, or a prior reply when the connector can’t confirm.
@@ -56,7 +56,20 @@ If step **2** (below) doesn’t surface a clear thread, search mail for the cont
 
 ## Workflow
 
-1. Read `{user_dir}/CareerNavigator/profile.md`, **`tracker.json`** (`applications[].contacts[]`), and **`networking.json`** (`networking[]`, `recruiter_relationships[]`) for any **known** facts about this person—do not contradict tracker evidence. **If inbox tools are missing** in this session, skip mail search below and note in **caveats**. **If calendar tools are missing**, skip the calendar step and set **calendar_notes**, **upcoming_meetings**, and **warm_networking** to "—" or **`not searched — no calendar tools`** as appropriate.
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
+1. Read `{user_dir}/CareerNavigator/profile.md`, **`tracker.json`** (summary rows), the matching **company contacts file**, and **`networking.json`** (`networking[]`, `recruiter_relationships[]`) for any **known** facts about this person—do not contradict tracker evidence.
+
+   **Contacts lookup (do this, not `applications[].contacts[]` — that array no longer exists):**
+   1. In `tracker.json`, find the summary row(s) for the contact's **company**.
+   2. Take `contacts_file` from the row and load `{user_dir}/CareerNavigator/` + that path (`contacts/<company-slug>.json`). Never derive the slug yourself; a row with no `contacts_file` has no contacts on file.
+   3. Filter the file's `contacts[]` to entries whose **`application`** equals that row's **`application`** label (`"<company> — <role>"`). One company file serves **every** application at that company, so unfiltered entries belong to other roles.
+   4. When the contact may span several applications at the company, gather the matches across each relevant row and **dedupe by `name`** before presenting or summarizing—the same person gets one entry per application.
+   5. Pull `title`, `relationship`, `notes`, and prior `interactions[]` (dates, types) from the matched entries as the **known** facts baseline.
+
+   For **stage or note context** (e.g. "we met at the onsite"), read the row's `detail_file` (`applications/<application_id>.json`) — and only for the applications actually in play. The row's `latest_stage`, `latest_stage_date`, `notes_count`, and `stage_count` usually answer the question without opening anything.
+
+   **If inbox tools are missing** in this session, skip mail search below and note in **caveats**. **If calendar tools are missing**, skip the calendar step and set **calendar_notes**, **upcoming_meetings**, and **warm_networking** to "—" or **`not searched — no calendar tools`** as appropriate.
 2. With **approval**, use host **Gmail** / **Microsoft 365** tools to **search** and **read** relevant threads (by address, domain, company, plain name). **Read-only:** do not send, draft, or delete mail. Skip if step **1** determined there are no inbox tools.
 3. **Calendar (when tools exist and approval includes calendar):** Use **Google Calendar** and/or **Microsoft 365** calendar tools to find **events** where the contact appears as **attendee** (email match) or **title/description/location** plausibly reference the person or company. Cover:
    - **Past:** events that already occurred in the lookback window (default ~12 months)—**commitments** or **next steps** in notes/description.

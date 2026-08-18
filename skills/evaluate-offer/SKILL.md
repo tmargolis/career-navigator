@@ -30,12 +30,17 @@ containing `CareerNavigator/`).
 This skill reads/writes:
 - `{user_dir}/CareerNavigator/profile.md`
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
-- `{user_dir}/CareerNavigator/tracker.json`
+- `{user_dir}/CareerNavigator/tracker.json` (summary rows)
+- `{user_dir}/CareerNavigator/applications/<application_id>.json` (the offer application's `notes[]` + `stage_history[]`)
+- `{user_dir}/CareerNavigator/contacts/<company-slug>.json` (that company's contacts, when recruiter context matters)
 - `{user_dir}/CareerNavigator/offer-context-{application_id}.json`
 
 Do not share the whole workspace or unrelated folders.
 
 ### 1. Confirm required data exists
+
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read:
 - `{user_dir}/CareerNavigator/profile.md`
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
@@ -45,14 +50,21 @@ If missing required files, output:
 > Offer evaluation skipped: run `/career-navigator:launch` to initialize `CareerNavigator/`.
 
 ### 2. Identify the offer-stage application
-From `{user_dir}/CareerNavigator/tracker.json`, find applications where:
+From the `tracker.json` summary rows, find applications where:
 - `status` is `"offer"`
 
 Cases:
-- If exactly one such application exists: use it as `application_id`.
+- If exactly one such application exists: use its `id` as `application_id`.
 - If multiple exist: ask for the company and role (or the job link / deadline) and
   pick the matching application.
 - If none exist: ask the user to log the offer first via `/career-navigator:track-application`.
+
+Keep from the matched row: `application` (the `"<company> — <role>"` label), `detail_file`,
+`contacts_file`, `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`. Then
+read `{user_dir}/CareerNavigator/` + `detail_file` for **this one application** — its
+`stage_history[]` and `notes[]` are the interview record the evaluation reasons over, and
+they no longer exist inside `tracker.json`. Do not load detail files for any other
+application.
 
 ### 3. Determine scenario A/B/C (do not ask user to self-identify)
 Actively classify one of these scenarios:
@@ -65,15 +77,18 @@ Heuristics:
   - If it says employed (or lists a current comp package): use Scenario A.
   - If it says unemployed (or lists unemployment/severance/income sources + runway): use Scenario B.
   - If it says unknown: use Scenario C.
-- Otherwise, if tracker/profile indicates current employment context is present in
-  notes or recent stage history: use it.
+- Otherwise, if the employment context appears in the detail file loaded in §2 —
+  its `notes[]` or recent `stage_history[]` entries — use it. (`notes_count: 0` and
+  `stage_count: 0` on the summary row mean there is nothing there to read.)
 - Otherwise, if the user explicitly states "I have a job" or "I'm between roles"
   in their message: use that.
 - If still unclear: ask ONE clarifying question to resolve A vs B.
 
 ### 4. Extract/confirm offer details
 Collect offer fields from either:
-- the existing `tracker.json` offer fields for this `application_id` (if present)
+- the summary row's scalars for this `application_id` (`salary_range`, `offer`, `next_step`,
+  `follow_up_date`) plus any offer terms recorded in the detail file's `notes[]` /
+  `stage_history[]` loaded in §2
 - the user's message (for missing parts)
 
 Fields to extract when available:
@@ -121,6 +136,9 @@ Instruct `honest-advisor` to:
 Write to:
 `{user_dir}/CareerNavigator/offer-context-{application_id}.json`
 
+`OfferContext` lives **outside** the split layout: writing it touches no tracker file, so
+no transaction is required for this step alone.
+
 Schema requirement (minimum fields; include more if helpful):
 ```json
 {
@@ -157,6 +175,18 @@ If write-to-disk fails:
 - Do not fake a saved file.
 - Show the OfferEvaluationReport plus the OfferContext JSON in a fenced code block
   and tell the user to save it manually to the path above.
+
+### 7.5 Logging the evaluation back to the application (only if the user asks)
+If the user wants the evaluation, a captured deadline, or a status change recorded, write
+the **multi-file transaction** from [references/tracker-schema.md](../../references/tracker-schema.md) — never edit one file and skip the others:
+
+- **Note:** append `{ "date": "YYYY-MM-DD", "text": "[offer] evaluation: {verdict} — {recommendation}" }` to the detail file's `notes[]`, then set the summary row's `notes_count` to the new array length.
+- **Stage:** if the offer itself is a new stage, append it to the detail file's `stage_history[]`, then set the summary row's `stage_count`, `latest_stage`, `latest_stage_date`, and `status`.
+- **Offer scalars** (`offer.deadline`, `salary_range`, `next_step`, `follow_up_date`) stay on the summary row.
+
+Load and re-dump each file programmatically (`json.load` / `json.dump` with `indent=2`,
+`ensure_ascii=False`), then reload to verify `notes_count` / `stage_count` match the arrays
+and `latest_stage` matches the last `stage_history` entry.
 
 ### 8. Handoff to next step
 If the report indicates negotiation is appropriate, prompt the user:

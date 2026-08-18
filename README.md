@@ -101,10 +101,10 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling; **Pre-interview brief (today)** when tracker shows interview/recruiter/screen **today** |
 | **`/career-navigator:morning-brief`** | Day-of only | Same **`daily-schedule`** skill — **focused** output: pre-interview slice only (see `skills/daily-schedule/SKILL.md` §3.3) |
 | **`/career-navigator:setup-schedule`** | Run once after launch | **Phase 3:** creates the `career-navigator-daily-brief` Cowork scheduled task — two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerts, and top new job recommendations appended to `recommendations.json` automatically each morning |
-| **`/career-navigator:pipeline-status-artifact`** | Run once after launch | **Phase 3:** creates a persistent Cowork live artifact — filterable pipeline status table (active / focus / closed) reading `tracker.json`, `recommendations.json`, and `artifacts-index.json` live on each open; resume view links and one-click tailor shortcuts |
-| **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in **`tracker.json`** |
+| **`/career-navigator:pipeline-status-artifact`** | Run once after launch | **Phase 3:** creates a persistent Cowork live artifact — filterable pipeline status table (active / focus / closed) reading the `tracker.json` summary rows, `recommendations.json`, and `artifacts-index.json` live on each open; resume view links and one-click tailor shortcuts |
+| **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in the application's **`applications/<application_id>.json`** |
 | **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1); optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`** |
-| **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): user-audio STT → structured notes + **`tracker.json`**; §13.1 warning; uses **`mcp-voice`** **`listen`** when the extension is installed |
+| **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): user-audio STT → structured notes in **`applications/<application_id>.json`** + the **`tracker.json`** summary row; §13.1 warning; uses **`mcp-voice`** **`listen`** when the extension is installed |
 | **`mine-stories`** | Setup or when new notes/journals appear | One-time/incremental extraction pipeline that builds **`StoryCorpus.json`** from journals, PKM, debriefs, and related documents |
 | **`story-retrieval`** | During prep/mock flow | Retrieves competency-matched stories (typically 8-12) from **`StoryCorpus.json`** for STAR mapping without loading full journals |
 | **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
@@ -129,7 +129,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
 | **`search-jobs`** | “Find jobs…”, `/career-navigator:search-jobs` | Ranked search (Indeed MCP when connected) |
-| **`track-application`** | “I applied…”, status updates | **`tracker.json`** application records |
+| **`track-application`** | “I applied…”, status updates | Application records — **`tracker.json`** summary row plus **`applications/`** and **`contacts/`** files |
 | **`application-update`** | Right after **`track-application`** writes | Nudge job-scout refresh / **pattern-analysis** at milestones |
 | **`follow-up`** | Queue / overdue / “ghosted?” | Company windows → **FollowUpBrief** → **`writer`** messages |
 | **`pattern-analysis`** | “What’s converting?”, outcome review | Refresh ExperienceLibrary **performance_weights** from your history |
@@ -202,7 +202,9 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── profile.md               — your targets, comp floor, differentiators
 │   ├── ExperienceLibrary.json   — experience units extracted from source resumes/CVs
 │   ├── StoryCorpus.json         — extracted interview story corpus from journals/PKM/debriefs
-│   ├── tracker.json             — applications + stage history (submitted applications only)
+│   ├── tracker.json             — one summary row per submitted application (no notes, stage history, or contacts inline)
+│   ├── applications/            — one file per application: <application_id>.json with that application's stage_history[] + notes[]
+│   ├── contacts/                — one file per company: <company-slug>.json with every contact there, each tagged with its application
 │   ├── recommendations.json     — pre-application pipeline (roles under consideration)
 │   ├── networking.json          — recruiter relationships + **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`** from **`linkedin-post-analytics`**)
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
@@ -214,6 +216,8 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── interview-prep/          — markdown briefs from **`prep-interview`**
 │   └── pipeline-dashboard.html  — generated interactive dashboard artifact
 ```
+
+**How application data is split:** `tracker.json` holds the pipeline at a glance — one summary row per application with its company, role, status, dates, and small counters (`notes_count`, `stage_count`, `contact_count`, `latest_stage`, `latest_stage_date`). The bulky parts live beside it: each application's stage history and notes in `applications/<application_id>.json`, and every contact at a company in `contacts/<company-slug>.json`, where each contact carries the `"<company> — <role>"` label of the application it belongs to. Skills read `tracker.json` for the overview and open a detail or contacts file only for the applications actually in play. Application ids are readable slugs (`app-hex-senior-pm`), so you can find an application's file by name. The full field-by-field definition is in [references/tracker-schema.md](references/tracker-schema.md).
 
 No data leaves your machine unless you configure a cloud connector (see [CONNECTORS.md](CONNECTORS.md)).
 
@@ -291,7 +295,7 @@ Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Event intelligence se
 - **`focus-career`** — Use when you open a session (or schedule a tight cadence with `/schedule` if you want proactive critical checks). Surfaces only urgent items: imminent offer deadlines, follow-ups due today, same-day interview actions.
 - **`daily-schedule`** — **Recommended daily** via Claude Cowork **`/schedule`**. Delivers the routine digest (pipeline, follow-ups, interviews today, artifacts). Before counts, it runs **`artifact-saved`** when PDF/DOCX artifacts exist in `{user_dir}` so `artifacts-index.json` stays aligned with disk.
 - **`daily-schedule`** — also performs a monthly career-plan staleness check and nudges `/career-navigator:career-plan` when trajectory data is outdated.
-- **`application-update`** — After **`track-application`** updates `tracker.json`, run this workflow in the same turn for refresh guidance and pattern-analysis nudges.
+- **`application-update`** — After **`track-application`** updates an application record (`tracker.json` summary row plus its detail/contacts files), run this workflow in the same turn for refresh guidance and pattern-analysis nudges.
 - **`follow-up-timing`** — when an application reaches offer stage and no evaluation context exists yet, nudge `/career-navigator:evaluate-offer` before deadline pressure compounds.
 - **`artifact-saved`** — After saving tailored resumes/cover letters, or when `daily-schedule` detects artifact files on disk.
 
@@ -341,7 +345,7 @@ Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Event intelligence se
 Phase 2 connects Career Navigator to the external services that complete the full job search experience. Sub-phases are independently deployable.
 
 - **Phase 2A ([Release v2.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.1.0)) — Inbox + Calendar Context (Completed):** *before you draft outreach, Career Navigator can (with explicit permission) pull and summarize the relevant email threads and meeting history so your messages are grounded in real context—not guesswork.* **Impact:** warm outreach becomes evidence-based and consistent.
-  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), optional HTTP MCP entries in **`.mcp.json`** (`gmail`, `google-calendar`, `ms365`), **`contact-context`** + **`draft-outreach`** / **`writer`** enrichment; past and **upcoming** meetings (**`warm_networking`**); **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`tracker.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
+  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), optional HTTP MCP entries in **`.mcp.json`** (`gmail`, `google-calendar`, `ms365`), **`contact-context`** + **`draft-outreach`** / **`writer`** enrichment; past and **upcoming** meetings (**`warm_networking`**); **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`networking.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
 
 - **Phase 2B ([Release v2.2.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.2.0)) — Full Interview Loop (Prep → Practice → Capture → Debrief) (Completed):** *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
   - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes, morning brief (via **`daily-schedule`**), debrief flow; optional local **`mcp-voice`** MCP extension (**`speak`** / **`listen`**) + opt-in capture with retention/consent framework (see spec §13).
@@ -391,4 +395,3 @@ Contributions welcome. Please open an issue before submitting a pull request for
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
-```

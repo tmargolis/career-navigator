@@ -24,6 +24,8 @@ Important invocation rule:
 
 ### 1. Confirm data exists
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read:
 - `{user_dir}/CareerNavigator/profile.md`
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
@@ -34,7 +36,7 @@ If profile has no target roles:
 If ExperienceLibrary `units` is empty:
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume before role suggestions."
 
-Optionally read `{user_dir}/CareerNavigator/tracker.json` for confidence and outcome context.
+Optionally read `{user_dir}/CareerNavigator/tracker.json` for confidence and outcome context. Summary rows answer this — `outcome`, `latest_stage`, and `latest_stage_date` per row are enough; do not open any `detail_file`.
 
 ### 2. Run advisor pass (competitiveness + transferable fit)
 
@@ -59,7 +61,7 @@ Combine both outputs into a ranked role list:
 
 ### 5. Write job-scout scoring signals
 
-Update `{user_dir}/CareerNavigator/tracker.json` with a `strategy_signals` object (create if missing):
+Update `{user_dir}/CareerNavigator/tracker.json` with a `strategy_signals` object (create if missing). `strategy_signals` is a top-level key of `tracker.json` and is unaffected by the split — do not write it into a detail or contacts file:
 
 ```json
 {

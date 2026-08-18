@@ -26,6 +26,8 @@ triggers:
 
 ### 1. Resolve `{user_dir}` and gate
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Require `CareerNavigator/profile.md`, `ExperienceLibrary.json`, and `tracker.json`. If missing:
 
 > Run `/career-navigator:launch` first to initialize Career Navigator.
@@ -39,7 +41,9 @@ Story corpus gate:
 
 From user message or tracker:
 
-- Prefer **`application_id`** if given; else match **company** + **role** against `tracker.json` `applications[]`.
+- Prefer **`application_id`** if given; else match **company** + **role** against `tracker.json` `applications[]`. If an `application_id` matches no row's `id`, check each row's `previous_ids` before declaring no match — prep briefs saved under earlier ids still resolve.
+- Keep the matched row's `detail_file`, `contacts_file`, and `application` label; the write in step 6 needs them.
+- Pull prior stage history and notes from the row's `detail_file` (`CareerNavigator/applications/<application_id>.json`) — `tracker.json` holds only `latest_stage` and `latest_stage_date`. Load the `contacts_file` only if interviewer background is needed, filtering its `contacts[]` to entries whose `application` equals the row's `application`.
 - If ambiguous, ask one short disambiguation question.
 
 Collect if missing:
@@ -79,7 +83,7 @@ After the coach content is produced:
 
 1. **Directory:** Ensure `{user_dir}/CareerNavigator/interview-prep/` exists.
 2. **File:** Save the full prep brief as markdown using the path convention from the agent (company-slug, stage, date = today in local context unless user specified interview date for filename suffix).
-3. **Tracker:** Append to the matched `applications[].notes` an object:
+3. **Detail file:** Append to `notes[]` in the matched row's `detail_file` — `{user_dir}/CareerNavigator/applications/<application_id>.json` — an object:
 
 ```json
 {
@@ -88,7 +92,11 @@ After the coach content is produced:
 }
 ```
 
-Update `tracker.json` in place. If no application matched, skip tracker write but still save the file under `interview-prep/` with a clear filename and tell the user to link it via `/career-navigator:track-application` if needed.
+Never overwrite or reorder existing note entries.
+
+4. **Summary row:** Set the matching `tracker.json` → `applications[]` row's `notes_count` to the detail file's new `notes[]` length. This note does not add a stage, so leave `stage_count`, `latest_stage`, `latest_stage_date`, and `status` untouched.
+
+Load and re-dump both JSON files programmatically (`json.load` / `json.dump`, `indent=2`, `ensure_ascii=False`), then reload to verify `notes_count` matches the detail array. If no application matched, skip both writes but still save the file under `interview-prep/` with a clear filename and tell the user to link it via `/career-navigator:track-application` if needed.
 
 ### 7. Close
 

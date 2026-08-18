@@ -154,7 +154,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 | Name | Type | Description |
 | --- | --- | --- |
-| **/career-navigator:launch** | Command | **Launch** the user's job search workspace: conversational wizard that configures `{user_dir}`, reads existing documents, builds the user profile and ExperienceLibrary, and walks through connectors for live job search (Indeed, optional Apify, etc.). **Offers** optional **`linkedin-post-analytics`** when the user wants a first run—read-only own-post snapshots into **`tracker.json`**, subject to host browser automation and explicit consent. Same setup responsibilities as before; framed as the entry point to start searching. Validates inputs before saving; re-runnable to update keys or reconfigure. |
+| **/career-navigator:launch** | Command | **Launch** the user's job search workspace: conversational wizard that configures `{user_dir}`, reads existing documents, builds the user profile and ExperienceLibrary, and walks through connectors for live job search (Indeed, optional Apify, etc.). **Offers** optional **`linkedin-post-analytics`** when the user wants a first run—read-only own-post snapshots into **`networking.json`** (**`networking[]`**), subject to host browser automation and explicit consent. Same setup responsibilities as before; framed as the entry point to start searching. Validates inputs before saving; re-runnable to update keys or reconfigure. |
 
 ## **3.1 Resume & Cover Letter Commands**
 
@@ -187,7 +187,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | --- | --- | --- |
 | **/career-navigator:prep-interview** | Command | Launches a full interview preparation session for a specific role. Pulls in company research, generates predicted questions, and optionally launches a mock interview. |
 | **/career-navigator:mock-interview** | Command | Starts a mock interview session. Accepts mode (guided/random/adaptive), stage (recruiter/HM/technical/panel/executive), and vibe (supportive/neutral/challenging/antagonistic/bored). **If mode or vibe omitted, the system selects defaults** (see `skills/mock-interview/SKILL.md` §2.1). |
-| **/career-navigator:interview-capture** | Command | Opt-in **skill** (not an agent): transcribe **user** audio, extract takeaways, update **`tracker.json`**; employer warning once; §13.1 retention. Uses **`mcp-voice`** **`listen`** when the extension is installed. |
+| **/career-navigator:interview-capture** | Command | Opt-in **skill** (not an agent): transcribe **user** audio, extract takeaways, update the application record as a multi-file transaction (detail file **`applications/<application_id>.json`** plus the **`tracker.json`** summary row); employer warning once; §13.1 retention. Uses **`mcp-voice`** **`listen`** when the extension is installed. |
 | **/career-navigator:interview-debrief** | Command | Post-interview Q&A flow that captures the candidate's experience conversationally and structures it into the tracker. Fallback for users who do not use audio capture. |
 | **/career-navigator:morning-brief** | Command | **Alias** for the **`daily-schedule`** skill: focused output = **Pre-interview brief (today)** only (see `skills/daily-schedule/SKILL.md` §3.3). No separate `morning-brief` skill. |
 
@@ -253,9 +253,9 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **content-suggest** | Skill | Invokes **`writer`** for LinkedIn/professional topic recommendations. Also invocable via `/career-navigator:content-suggest`. |
 | **evaluate-post** | Skill | Invokes **`writer`** for audience fit and **cultural / political / reputational risk** vs target company profiles. Risk evaluation is dynamic: **`market-researcher`** is queried for target-company/industry-specific norms before assessment. The system informs the user of risk context; it does not suppress or prescribe content decisions. Also invocable via `/career-navigator:evaluate-post`. |
 | **linkedin-post-analytics** | Skill | **Read-only** capture of the user’s **own** LinkedIn post analytics from the live site UI, appended to **`networking.json`** `networking[]` as **`type: "linkedin_post"`** entries with an **`analytics_history`** array (dated snapshots). **Does not** post, like, or comment. **Requires** host browser automation (**Claude in Chrome** or **computer / browser use**) and **explicit user approval** before running; if unavailable, the skill instructs the model to stop and ask the user to enable tooling. Also invocable via `/career-navigator:linkedin-post-analytics`. |
-| **prep-interview** | Skill | Full interview preparation for a tracked (or specified) role: company/news context, **stage-specific** questions (**recruiter** through **final**), talking points from ExperienceLibrary, saved brief under **`CareerNavigator/interview-prep/`**, **`[prep]`** note in **`tracker.json`**. Invokes **`interview-coach`** (`prep` mode). Also invocable via `/career-navigator:prep-interview`. |
+| **prep-interview** | Skill | Full interview preparation for a tracked (or specified) role: company/news context, **stage-specific** questions (**recruiter** through **final**), talking points from ExperienceLibrary, saved brief under **`CareerNavigator/interview-prep/`**, **`[prep]`** note appended to the application's detail file (**`applications/<application_id>.json`** → **`notes[]`**, with **`notes_count`** bumped on the `tracker.json` summary row). Invokes **`interview-coach`** (`prep` mode). Also invocable via `/career-navigator:prep-interview`. |
 | **mock-interview** | Skill | Mock session: **guided** / **random** / **adaptive**; **stage** + **vibe**; **selects defaults** when mode/vibe omitted (see skill §2.1). Invokes **`interview-coach`** (`mock` mode). Optional **`mcp-voice`** MCP (**`speak`**, **`listen`**). Also invocable via `/career-navigator:mock-interview`. |
-| **interview-capture** | Skill | **Not an agent.** Opt-in post-interview **user-audio** transcription (e.g. **`mcp-voice`** **`listen`** or compatible STT), structured takeaways, **`tracker.json`** updates; employer warning once; §13.1 retention. Also invocable via `/career-navigator:interview-capture`. |
+| **interview-capture** | Skill | **Not an agent.** Opt-in post-interview **user-audio** transcription (e.g. **`mcp-voice`** **`listen`** or compatible STT), structured takeaways, application-record updates (detail file **`applications/<application_id>.json`** plus the **`tracker.json`** summary row); employer warning once; §13.1 retention. Also invocable via `/career-navigator:interview-capture`. |
 | **mine-stories** | Skill | Offline/cheap extraction pass over journals, PKM notes, debriefs, and related sources to build/update **`StoryCorpus.json`**. Runs at launch/setup and as incremental refresh when new source documents appear in `{user_dir}`. |
 | **story-retrieval** | Skill | Retrieves a small competency-matched subset (typically 8-12) from **`StoryCorpus.json`** for interview prep/mock STAR mapping. This is the default interview story selection layer; raw journal rereads are avoided at query time. |
 
@@ -282,8 +282,8 @@ Career Navigator does **not** ship its own cron daemon or hook runtime inside th
 | **focus-career** | Skill | Run when the user opens a session (or on a tight cadence via `/schedule` if they want proactive critical checks). Surfaces **critical-only** alerts (imminent deadlines, same-day follow-ups, urgent interview-day actions). |
 | **daily-schedule** | Skill | **Recommended daily** via `/schedule`. Before the digest, checks `{user_dir}` for artifact files and runs `artifact-saved` when present; then pipeline digest, follow-ups, **meetings today** (interview/recruiter/screen — see skill §3.1), **conditional Pre-interview brief** when applicable, market/strategy prompts. **`/career-navigator:morning-brief`** triggers a **focused** run (pre-interview slice only). |
 | **setup-schedule** | Skill | **Phase 3.** Run once after launch to create the `career-navigator-daily-brief` Cowork scheduled task. Builds a fully self-contained task prompt (resolved `{user_dir}` paths) that runs the daily-schedule workflow on the user's chosen cadence (default 7 AM daily). Includes two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerting, and new job discovery appended to `recommendations.json`. Detects and updates existing tasks to prevent duplicates. Invocable via `/career-navigator:setup-schedule`. |
-| **pipeline-status-artifact** | Skill | **Phase 3.** Run once after launch to create (or update) a persistent Cowork live artifact — `Job Search — Pipeline Status`. Reads `tracker.json`, `recommendations.json`, and `artifacts-index.json` on every open; no re-running a skill needed. Filterable by status / section / resume / rating. Resume column shows a view link when a tailored artifact exists; or a `tailor ↗` button that invokes `/career-navigator:tailor-resume` via `sendPrompt()`. Paths are embedded at creation time. Invocable via `/career-navigator:pipeline-status-artifact`. |
-| **application-update** | Skill | Run **after** `track-application` writes to `tracker.json` (same turn). Classifies refresh priority for outcome-weighted scoring and nudges `pattern-analysis` at milestones. |
+| **pipeline-status-artifact** | Skill | **Phase 3.** Run once after launch to create (or update) a persistent Cowork live artifact — `Job Search — Pipeline Status`. Reads the `tracker.json` summary rows, `recommendations.json`, and `artifacts-index.json` on every open — opening `applications/<application_id>.json` or `contacts/<company-slug>.json` only where a row's counters say there is something to load; no re-running a skill needed. Filterable by status / section / resume / rating. Resume column shows a view link when a tailored artifact exists; or a `tailor ↗` button that invokes `/career-navigator:tailor-resume` via `sendPrompt()`. Paths are embedded at creation time. Invocable via `/career-navigator:pipeline-status-artifact`. |
+| **application-update** | Skill | Run **after** `track-application` writes an application record (`tracker.json` summary row plus detail/contacts files, same turn). Classifies refresh priority for outcome-weighted scoring and nudges `pattern-analysis` at milestones. |
 | **artifact-saved** | Skill | Run **after** new resumes/cover letters are saved, and/or from `daily-schedule` when PDF/DOCX artifacts exist. Reconciles `artifacts-index.json` with files on disk; prepares analytics handoff metadata when connectors exist. |
 
 ## **6.1 Host hooks (`hooks/hooks.json`)**
@@ -366,9 +366,11 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 | **mcp-voice** (local MCP bundle) | Claude Desktop **Extension** (`.mcpb`) | **Local** TTS and STT for **`prep-interview`**, **`mock-interview`**, **`interview-capture`**. Install **`mcp-voice.mcpb`** from [GitHub Releases](https://github.com/tmargolis/career-navigator/releases): **Settings** (⌘/Ctrl + comma) → **Extensions** → drag bundle → **Install** → enable. Source: **`mcp-voice/`**; tools **`speak`**, **`listen`**. Not declared in project **`.mcp.json`**. |
 | **Whisper (OpenAI)** | MCP | Alternate STT when **`mcp-voice`** is unavailable or user prefers another host. Phase 2B. MVP scope: user audio only. |
 | **Meetup / Eventbrite / Luma** | MCP + host browser/manual fallback | Event discovery for networking radar. For Luma, install local **`mcp-luma.mcpb`** from [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (source: **`mcp-luma/`**). For Meetup/Eventbrite, use optional **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback. |
-| **Host browser automation** | Host capability (not plugin MCP) | **Claude in Chrome**, **computer use**, or equivalent: enables **`linkedin-post-analytics`** to navigate a logged-in browser **read-only** and record own-post metrics into **`tracker.json`**. User must opt in per session or schedule; distinct from the **LinkedIn** MCP row (which describes optional connector features such as search and messaging). |
+| **Host browser automation** | Host capability (not plugin MCP) | **Claude in Chrome**, **computer use**, or equivalent: enables **`linkedin-post-analytics`** to navigate a logged-in browser **read-only** and record own-post metrics into **`networking.json`** (**`networking[]`**). User must opt in per session or schedule; distinct from the **LinkedIn** MCP row (which describes optional connector features such as search and messaging). |
 
 # **10. Core Data Model**
+
+Application data uses the split layout defined in [tracker-schema.md](tracker-schema.md) — read it before any read or write. §10.2 below is the formal field-level definition; `tracker-schema.md` is the operational reference agents and skills follow.
 
 ## **10.0 User Profile**
 
@@ -400,23 +402,69 @@ The ExperienceLibrary is not a collection of discrete resumes — it is a struct
 
 ## **10.2 Application Record**
 
-*Stored in:* `{user_dir}/CareerNavigator/tracker.json` → `applications[]`.
+*Stored in:* three file types under `{user_dir}/CareerNavigator/` — a summary row in `tracker.json` → `applications[]`, a detail file at `applications/<application_id>.json`, and a per-company contacts file at `contacts/<company-slug>.json`. *Operational reference:* [tracker-schema.md](tracker-schema.md).
+
+```
+{user_dir}/CareerNavigator/
+├── tracker.json                       summary rows only
+├── applications/<application_id>.json notes[] + stage_history[] for one application
+└── contacts/<company-slug>.json       every contact at one company
+```
+
+`tracker.json` does not contain `notes`, `stage_history`, or `contacts` inside `applications[]`. Reading `tracker.json` alone gives the whole pipeline at a glance without loading detail — that is the point of the split. Detail and contacts files are loaded only for the applications actually in play.
+
+**application\_id** is a descriptive slug of the form `app-<company-slug>-<role-keywords>` (e.g. `app-hex-senior-pm`, `app-anthropic-research-pm-labs`) — never a UUID, a bare sequence (`app-001`), or a date-suffixed id.
+
+### Summary row — `tracker.json` → `applications[]`
 
 | Name | Type | Description |
 | --- | --- | --- |
-| **application\_id** | UUID | Unique identifier |
+| **id** (application\_id) | Slug | Unique identifier, `app-<company-slug>-<role-keywords>` |
+| **application** | String | Display label, exactly `"<company> — <role>"`; the join value used in contacts files |
 | **company** | String | Company name |
-| **role\_title** | String | Job title applied for |
-| **jd\_text** | Text | Full job description text |
-| **source\_board** | String | Where the posting was found |
+| **role** (role\_title) | String | Job title applied for |
+| **location** | String | Posting location |
+| **job\_link** / **req\_id** | String | Where the posting was found and its requisition id |
+| **salary\_range** | String | Posted or negotiated range |
 | **date\_applied** | Date | Application submission date |
 | **status** | Enum | Applied / Phone Screen / HM Interview / Panel / Final / Offer / Rejected / Withdrawn / Ghosted |
-| **stage\_history[ ]** | Array | Timestamped log of every status change |
-| **artifacts\_used[ ]** | Array | IDs of resume and cover letter artifacts submitted |
-| **contacts[ ]** | Array | Known contacts at the company with relationship strength |
-| **notes** | Text | Freeform notes from conversational input or interview debrief |
+| **follow\_up\_date** / **next\_step** / **priority** | Date / Text / Enum | Follow-up scheduling and triage |
+| **resume\_version** / **artifacts[ ]** | String / Array | Resume version and IDs of artifacts submitted |
 | **outcome** | Enum | Pending / Hired / Rejected / Withdrew |
 | **outcome\_notes** | Text | Reason for outcome if known |
+| **detail\_file** | String | Path relative to `CareerNavigator/`, e.g. `applications/app-hex-senior-pm.json`. Always present |
+| **contacts\_file** | String | Path relative to `CareerNavigator/`, e.g. `contacts/hex.json`. Present only when the application has contacts |
+| **notes\_count** | Int | Number of entries in the detail file's `notes[]` |
+| **stage\_count** | Int | Number of entries in the detail file's `stage_history[]` |
+| **contact\_count** | Int | Number of contacts at this company linked to this application |
+| **latest\_stage** | String | `stage` of the last `stage_history` entry |
+| **latest\_stage\_date** | Date | `date` of the last `stage_history` entry |
+| **previous\_ids[ ]** | Array | Former ids for this application. Present only when renamed |
+
+### Detail file — `applications/<application_id>.json`
+
+| Name | Type | Description |
+| --- | --- | --- |
+| **schema** | String | `application_detail_v1` |
+| **application\_id** | Slug | Matches the summary row's `id` |
+| **application** | String | The `"<company> — <role>"` label |
+| **company** / **role** | String | Denormalized from the summary row |
+| **stage\_history[ ]** | Array | Timestamped log of every status change: `stage`, `date`, `notes`, `interview_type`, `interviewers[ ]`, `post_notes`. The only place stage history exists |
+| **notes[ ]** | Array | Freeform `{ date, text }` entries from conversational input or interview debrief. The only place note text exists |
+
+### Contacts file — `contacts/<company-slug>.json`
+
+| Name | Type | Description |
+| --- | --- | --- |
+| **company** | String | Company name |
+| **contacts[ ]** | Array | Known contacts at the company: `name`, `application` (the label of the application this entry belongs to), `title`, `relationship`, `notes`, `interactions[ ]` (`date`, `type`, `notes`) |
+| **contact\_count** | Int | Number of entries in `contacts[]` |
+
+One company file serves every application at that company; filter `contacts[]` by the summary row's `application` label when reading, and dedupe by `name` when presenting. The company slug is the lowercased company name with accents stripped and every run of non-alphanumeric characters replaced by a single hyphen (`84.51°` → `84-51`).
+
+### Write rules
+
+Every write that changes application data is a **multi-file transaction** — the summary row's counters (`notes_count`, `stage_count`, `contact_count`, `latest_stage`, `latest_stage_date`) are updated in the same operation that appends to a detail or contacts file. Full rules, including id renaming and verification steps, are in [tracker-schema.md](tracker-schema.md).
 
 ## **10.3 Artifact Record**
 
@@ -426,7 +474,7 @@ The ExperienceLibrary is not a collection of discrete resumes — it is a struct
 | --- | --- | --- |
 | **artifact\_id** | UUID | Unique identifier |
 | **type** | Enum | Resume / Cover Letter / LinkedIn post draft (`linkedin_post`) / Portfolio / Other |
-| **application\_id** | UUID | Associated application (nullable for templates) |
+| **application\_id** | Slug | Associated application id, e.g. `app-hex-senior-pm` (nullable for templates) |
 | **source\_units[ ]** | Array | Experience unit IDs included in this artifact |
 | **jd\_keywords[ ]** | Array | Keywords targeted in this artifact |
 | **ats\_score** | Float | ATS compatibility score at time of generation |
@@ -484,7 +532,7 @@ The core differentiator of Career Navigator is a closed feedback loop that conne
 
 * User applies using artifact A, assembled from experience units X, Y, Z
 * Outcome is logged (callback / rejection / silence)
-* Insight engine analyzes outcome patterns across all applications
+* Insight engine analyzes outcome patterns across all applications — reading the `tracker.json` summary rows plus each application's `detail_file`, since stage history lives only in the detail files
 * Patterns are surfaced to the user in the pipeline dashboard and daily digest
 * Performance weights on experience units are adjusted based on outcome correlation
 * Job scout incorporates updated weights into future role ranking

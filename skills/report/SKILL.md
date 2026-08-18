@@ -24,11 +24,15 @@ Invoke the `analyst` agent to run all three operations and deliver the integrate
 
 ### 1. Confirm data exists
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read `{user_dir}/CareerNavigator/tracker.json`, `{user_dir}/CareerNavigator/ExperienceLibrary.json`, `{user_dir}/CareerNavigator/profile.md`, and `{user_dir}/CareerNavigator/artifacts-index.json`. If the ExperienceLibrary is empty:
 
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first."
 
 If the tracker has no applications, note this inline — pattern analysis will be limited but the other two operations can still run.
+
+`tracker.json` now holds **summary rows only**. Operations 2 and 3 (transferable strengths, AI displacement) run off those rows plus the ExperienceLibrary and need nothing else. Operations 1 and 4 (outcome patterns, market benchmark) reason over stage transitions and note text, which live in the per-application detail files — so before the handoff, collect `{user_dir}/CareerNavigator/` + `detail_file` for every summary row with `stage_count` greater than `0` **or** `outcome` != `"pending"`, and skip the rest. Do not load contacts files; no analyst operation uses them.
 
 ### 1.5 Ensure ATS scores exist (resume artifacts)
 
@@ -43,7 +47,8 @@ If any artifact with `type: "resume"` is missing `ats_score` (or has `ats_score:
 ### 2. Invoke analyst — all four operations
 
 Hand off to the `analyst` agent with:
-- The full `CareerNavigator/tracker.json`
+- The full `CareerNavigator/tracker.json` (summary rows — `status`, `outcome`, `date_applied`, `follow_up_date`, `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`, `contact_count`, `pipeline_summary`, `search_performance`)
+- The `CareerNavigator/applications/<application_id>.json` detail files selected in step 1, keyed by `application_id` — these carry the `stage_history[]` and `notes[]` that Op 1 and Op 4 need. State plainly that stage history is **not** in `tracker.json`: running the conversion math on summary rows alone yields zero conversions with no error raised
 - The full `CareerNavigator/ExperienceLibrary.json`
 - The full `artifacts-index.json`
 - The full `CareerNavigator/profile.md`

@@ -21,6 +21,8 @@ Invoke `honest-advisor` in `training-roi` mode to compare learning options and r
 
 ### 1. Confirm baseline context
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read:
 - `{user_dir}/CareerNavigator/profile.md`
 - `{user_dir}/CareerNavigator/ExperienceLibrary.json`
@@ -31,7 +33,7 @@ If target roles are missing:
 If ExperienceLibrary `units` are missing/empty:
 > "I need your ExperienceLibrary to estimate learning ROI. Run `/career-navigator:add-source` to add a resume first."
 
-Optionally read `{user_dir}/CareerNavigator/tracker.json` for confidence and bottleneck context.
+Optionally read `{user_dir}/CareerNavigator/tracker.json` for confidence and bottleneck context. The summary rows carry everything this skill needs — `status`, `outcome`, `latest_stage`, and `latest_stage_date` show where applications stall, so do not open any `detail_file`.
 
 ### 2. Gather optional constraints
 

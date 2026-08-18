@@ -64,6 +64,8 @@ If required fields are missing, ask for only the missing fields before ranking.
 
 ### 1. Load search parameters
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read `{user_dir}/CareerNavigator/profile.md` and extract:
 - **Role/query** — use the first 1–2 entries from `## Target Roles` as the search query
 - **Location preferences** — parse `## Location` into:
@@ -145,7 +147,7 @@ For non-Indeed/manual listings, treat pasted metadata as the detail payload and 
 ### 4. Score and rank with job-scout
 
 Pass all retrieved listings to the `job-scout` agent for outcome-weighted scoring. Job-scout will:
-- Read `search_performance` and `strategy_signals` from `tracker.json`, plus `performance_weights` from `CareerNavigator/ExperienceLibrary.json`
+- Read `search_performance` and `strategy_signals` from `tracker.json` (both are top-level keys, unaffected by the split), plus `performance_weights` from `CareerNavigator/ExperienceLibrary.json`
 - Read `{user_dir}/CareerNavigator/career-trajectory.md` when present and apply trajectory alignment bonus from `career_trajectory_v1`
 - Score each listing across outcome signals, ExperienceLibrary fit, profile fit, and strategy signals using confidence-tier adaptive weights
 - Apply bounded calibration (recency, outcome quality, transferability)
@@ -153,7 +155,7 @@ Pass all retrieved listings to the `job-scout` agent for outcome-weighted scorin
 
 When invoking `job-scout`, explicitly pass:
 - full listing payloads (including full JDs/metadata),
-- `profile.md`, `tracker.json`, `ExperienceLibrary.json`,
+- `profile.md`, `tracker.json` (summary rows — scoring needs `company`, `role`, `status`, `outcome`, and `latest_stage`, not stage history, so do not pass `detail_file` contents), `ExperienceLibrary.json`,
 - and `{user_dir}/CareerNavigator/career-trajectory.md` if it exists.
 
 If `career-trajectory.md` exists but cannot be parsed, continue scoring and label trajectory alignment as unavailable rather than dropping `job-scout`.

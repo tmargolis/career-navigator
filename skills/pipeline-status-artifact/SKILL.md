@@ -25,8 +25,26 @@ the view is always current without re-running a skill.
 
 ## 1. Verify Career Navigator setup
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read `{user_dir}/CareerNavigator/tracker.json` and
 `{user_dir}/CareerNavigator/recommendations.json` to confirm the files exist.
+
+Every column this artifact renders (`id`, `company`, `role`, `status`, `priority`,
+`location`, `job_link`, `follow_up_date`, `artifacts`) is a **summary row** field, so the
+artifact loads exactly three files and never touches
+`applications/<application_id>.json` or `contacts/<company-slug>.json`. That is the
+performance win of the split — the table stays one read per file no matter how large the
+pipeline gets. The row also carries `application`, `latest_stage`, `latest_stage_date`,
+`notes_count`, `stage_count`, and `contact_count`, so a "last stage" or "contacts" column
+can be added with no extra reads.
+
+**If you ever extend this artifact to render per-application detail** — a stage timeline,
+note excerpts, contact names — it must load each application's `detail_file` (and
+`contacts_file`, filtered to entries whose `application` matches the row's `application`
+label, deduped by `name`) explicitly, one read per application. Reading `tracker.json`
+alone will silently produce empty timelines and blank contact cells: no error, just an
+artifact that looks fine and shows nothing.
 
 If both are missing, output:
 > Pipeline artifact not set up: run `/career-navigator:launch` first to initialize Career Navigator.
@@ -370,6 +388,7 @@ async function loadData() {
     artifactsData = JSON.parse(txt);
   } catch(e) { /* artifacts-index is optional */ }
 
+  // tracker.json holds summary rows only — no notes[], stage_history[], or contacts[]
   var apps  = (trackerData && trackerData.applications)    || [];
   var recs  = (recsData    && recsData.recommendations)    || [];
   var resumeLookup = buildResumeLookup(artifactsData);
@@ -602,6 +621,9 @@ or a "tailor ↗" shortcut to invoke /career-navigator:tailor-resume from chat.
 - Always use `mcp__cowork__update_artifact` if an existing pipeline artifact is found
   rather than creating a duplicate
 - The artifact is read-only: it never writes to tracker.json or any other file
+- The artifact reads summary rows only; it must not attempt to fetch
+  `applications/*.json` or `contacts/*.json` per row from the browser — a table-sized fan-out
+  of filesystem reads is exactly what the split layout is meant to avoid
 - `artifacts-index.json` is optional — if it fails to load, the Resume column shows
   "tailor ↗" for all non-closed rows (graceful degradation)
 - `sendPrompt()` is the preferred mechanism for the tailor button; clipboard fallback

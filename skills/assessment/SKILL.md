@@ -21,6 +21,8 @@ Invoke the `honest-advisor` agent to run a norm/exception/strategy assessment, t
 
 ### 1. Confirm data exists
 
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Read `{user_dir}/CareerNavigator/profile.md`. If it has no `target_roles` (or equivalent target-role fields):
 
 > "I need your target role(s) to run an assessment. Run `/career-navigator:launch` (or update your `CareerNavigator/profile.md`)."
@@ -29,7 +31,7 @@ Read `{user_dir}/CareerNavigator/ExperienceLibrary.json`. If the ExperienceLibra
 
 > "Your ExperienceLibrary is empty. Run `/career-navigator:add-source` to add a resume first."
 
-Optionally read `{user_dir}/CareerNavigator/tracker.json` to estimate how strong your evidence base is. If resolved outcomes are < 5, expect confidence to be `Preliminary`.
+Optionally read `{user_dir}/CareerNavigator/tracker.json` to estimate how strong your evidence base is. Count resolved outcomes from the summary rows' `outcome` field — do not open any `detail_file` for this. If resolved outcomes are < 5, expect confidence to be `Preliminary`.
 
 ### 2. Invoke honest-advisor — assessment + gap analysis
 

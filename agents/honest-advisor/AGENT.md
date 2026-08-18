@@ -30,12 +30,16 @@ Hard rules:
 ---
 
 ## What You Have Access To
+
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
 Always read these files before producing an assessment:
 
 | File | Purpose |
 |---|---|
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, comp floor, key differentiators, and preferences (level/geo signals) |
-| `{user_dir}/CareerNavigator/tracker.json` | Application history with stage history and outcomes (your evidence for exceptions) |
+| `{user_dir}/CareerNavigator/tracker.json` | Application summary rows: status, `outcome`, `date_applied`, `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`, `detail_file` (your evidence for exceptions) |
+| `{user_dir}/CareerNavigator/applications/<application_id>.json` | A row's `detail_file` — `stage_history[]` and `notes[]`; load these for funnel-stage math and recruiter-feedback evidence |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units and `performance_weights` (what the user is actually positioned to emphasize) |
 | `{user_dir}/CareerNavigator/artifacts-index.json` | Generated resumes/cover letters with ATS scores (evidence for ATS/process exceptions) |
 | `agents/analyst/AGENT.md` | Contains the pipeline norm tables and confidence tier thresholds to use as "general norm" expectations |
@@ -58,7 +62,7 @@ If the invoking context provides these, use them. If not, fall back to `CareerNa
 ## Operation 1: Define the competitiveness question
 1. Restate the assessment target in one line (role, level, geography/market frame).
 2. Define the evidence sources you will use (tracker outcomes, artifacts ATS, and ExperienceLibrary weights).
-3. Set your confidence tier based on available resolved outcomes in `tracker.json`:
+3. Set your confidence tier by counting `applications[]` summary rows in `tracker.json` whose `outcome` is not `"pending"` — a summary-row field, so no detail files are needed for this step:
    - 0-4 resolved outcomes: Preliminary (exceptions may be speculative)
    - 5-14 resolved outcomes: Directional
    - 15-29: Moderate
@@ -70,6 +74,7 @@ If the invoking context provides these, use them. If not, fall back to `CareerNa
 State what typically happens in this situation across the market.
 
 Use the norm tables from `agents/analyst/AGENT.md` (pipeline conversion norms and geographic signals). Compute or approximate the user's current funnel metrics for the best-matching subset of applications:
+- Select the subset from the `tracker.json` summary rows, then load each selected row's `detail_file` for its `stage_history[]` — per-stage progression exists only in the detail files, never in `tracker.json`. Where the summary row's `latest_stage` and `latest_stage_date` already answer the question (where an application currently sits, when it last moved), use them and skip the detail file.
 - If you cannot isolate a sufficient sample for the exact target role/level, use the closest available subset and explicitly label it.
 
 Norm output must include:
@@ -84,8 +89,8 @@ Identify where the user's reality deviates from norm and explain why.
 Exceptions categories (must pick those that match evidence):
 - ATS/relevance exception: weak ATS scores or obvious JD keyword gaps correlate with low App -> Response or weak Response -> Screen.
 - Targeting exception: funnel stage bottlenecks persist even when ATS is acceptable; implies mis-targeting (role/company mismatch) rather than formatting.
-- Narrative/seniority exception: resume content does not match seniority expectations; may show in Screen -> Interview gaps and recruiter feedback notes (if present).
-- Market exception: the user's outcomes are better or worse than norm due to role-specific supply/demand, employer type, or geography nuance captured in tracker notes.
+- Narrative/seniority exception: resume content does not match seniority expectations; may show in Screen -> Interview gaps and recruiter feedback recorded in a detail file's `notes[]` or `stage_history[].post_notes` (if present).
+- Market exception: the user's outcomes are better or worse than norm due to role-specific supply/demand, employer type, or geography nuance captured in the detail files' `notes[]`.
 - Confidence/data exception: insufficient history; do not overfit.
 
 For each exception you name:

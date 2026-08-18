@@ -40,7 +40,9 @@ If these are missing, treat as first run and output:
 
 ### 2. Returning session: critical-only checks
 
-Read `{user_dir}/CareerNavigator/tracker.json`.
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
+Read `{user_dir}/CareerNavigator/tracker.json`. Checks 1 and 2 below are answered by the **summary rows alone** (`status`, `offer.deadline`, `follow_up_date`, `latest_stage`, `latest_stage_date`, `notes_count`); only check 3 opens a detail file, and only for applications that already qualify. This skill must stay cheap — never walk every `applications/<application_id>.json`.
 
 Only surface **critical** notifications:
 
@@ -55,8 +57,8 @@ Only surface **critical** notifications:
    - If current local time is within the last 6 hours of the day, mark as critical "due in a few hours."
 
 3. **Meeting today with no prep logged**
-   - Same **meeting-today** rule as `daily-schedule` **§3.1**: any `stage_history` row with **`date` = today** and **`stage`** (case-insensitive) containing any of: `interview`, `recruiter`, `phone screen`, `phone_screen`, `hiring manager`, `hm `, `hm interview`, `technical`, `panel`, `onsite`, `executive`, `final round`, `final interview`.
-   - For that application, **prep is logged** if any `notes[]` entry in the **last 48 hours** has `text` starting with **`[prep]`**.
+   - Same **meeting-today** rule as `daily-schedule` **§3.1**, run against the summary rows: a row qualifies when **`latest_stage_date` = today** and **`latest_stage`** (case-insensitive) contains any of: `interview`, `recruiter`, `phone screen`, `phone_screen`, `hiring manager`, `hm `, `hm interview`, `technical`, `panel`, `onsite`, `executive`, `final round`, `final interview`. Skip rows with `stage_count: 0`; for a row whose `latest_stage_date` is **later than today**, read its `detail_file` and scan `stage_history[]` for a today-dated allowlist match (future-dated scheduled stages hide today's row).
+   - For each application that qualifies, decide **prep is logged** from its detail file: if the row's `notes_count` is `0` there are no notes at all — treat prep as not logged and skip the read. Otherwise read `{user_dir}/CareerNavigator/` + `detail_file` and check whether any `notes[]` entry in the **last 48 hours** has `text` starting with **`[prep]`** (`notes[]` no longer lives in `tracker.json`).
    - If meeting today and **no** qualifying **`[prep]`** note in 48h → **critical** (suggest day-of brief + deep prep).
 
 Do **not** output full pipeline digest, overdue rollups, or artifact counts here. Those belong to `daily-schedule`.
