@@ -20,3 +20,16 @@ career-navigator.code-workspace
 able-imprint-176422-8a96535f0abc.json
 __pycache__/
 mcp-voice/mcp-voice.mcpb
+
+# Local transcription vocabulary (proper nouns — never commit)
+mcp-transcribe/vocabulary.local.json
+
+# Transcription outputs (may contain interview content)
+*.transcript.txt
+*.segments.json
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Python venvs inside MCP servers
+mcp-transcribe/.venv/

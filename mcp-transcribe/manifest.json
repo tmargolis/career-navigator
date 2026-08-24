@@ -1,0 +1,39 @@
+{
+  "manifest_version": "0.2",
+  "name": "mcp-transcribe",
+  "version": "1.0.0",
+  "description": "Local MCP server that transcribes existing audio files with Whisper. Uses mlx-whisper on Apple Silicon (Metal-accelerated) and falls back to faster-whisper on CPU. No microphone or speaker access, by design.",
+  "author": {
+    "name": "Todd Margolis",
+    "email": "tmargo@gmail.com",
+    "url": "https://toddmargolis.net"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "server/main.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--project", "${__dirname}", "${__dirname}/server/main.py"]
+    }
+  },
+  "tools": [
+    {
+      "name": "transcribe_file",
+      "description": "Transcribe an audio file on disk and return the transcript plus timed segments"
+    },
+    {
+      "name": "backend_info",
+      "description": "Report the active STT backend and whether ffmpeg is present"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmargolis/career-navigator"
+  },
+  "keywords": ["transcription", "stt", "whisper", "mlx", "interview"],
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": { "python": ">=3.11,<3.14" }
+  }
+}

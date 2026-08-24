@@ -1,0 +1,15 @@
+[project]
+name = "mcp-transcribe"
+version = "1.0.0"
+description = "Local MCP server for batch transcription of recorded audio files. No microphone, no TTS."
+# 3.11-3.13 deliberately. Several audio/ML wheels still have no cp314 build;
+# pinning >=3.14 is what makes a server fail to start before it ever registers.
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "mcp[cli]>=1.27.0",
+    "faster-whisper>=1.2.1",
+]
+
+[project.optional-dependencies]
+# Apple Silicon acceleration. Installed by install_transcribe_mcp.py on arm64 Macs.
+mlx = ["mlx-whisper>=0.4.2"]

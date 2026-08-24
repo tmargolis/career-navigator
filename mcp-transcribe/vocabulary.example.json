@@ -1,0 +1,21 @@
+{
+  "_comment": [
+    "Copy this file to vocabulary.local.json and put your real terms there.",
+    "vocabulary.local.json is gitignored and never committed.",
+    "These are proper nouns Whisper would otherwise mangle: employers, products,",
+    "people, acronyms, jargon. They are injected into the Whisper initial_prompt.",
+    "Keep the total under ~200 tokens; Whisper truncates a long prompt."
+  ],
+  "always": [
+    "AcmeCorp",
+    "Widgetron",
+    "ExampleProject"
+  ],
+  "groups": {
+    "example-employer": [
+      "Example Holdings",
+      "J. Doe",
+      "SomeAcronym"
+    ]
+  }
+}
