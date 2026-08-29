@@ -44,6 +44,6 @@ jobs:
           files: |
             mcp-voice/*.mcpb
             career-navigator-v${{ steps.ver.outputs.version }}.zip
-          generate_release_notes: true
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
