@@ -79,8 +79,8 @@ If inline evaluation cannot be performed due to missing details, ask the user
 for the minimum missing offer basics and proceed with partial comparisons.
 
 ### 4. Trajectory alignment integration
-If `{user_dir}/CareerNavigator/career-trajectory.md` exists:
-- read and extract the `career_trajectory_v1` JSON block
+If `{user_dir}/CareerNavigator/career-trajectory-data.json` exists:
+- read it as `career_trajectory_v1`
 - use near-term trajectory roles (0–18 months) to label each offer's
   trajectory alignment as: `high|medium|low`
 

@@ -34,7 +34,7 @@ Always read these files before scoring — do not ask for information already th
 | `{user_dir}/CareerNavigator/recommendations.json` | Pre-application pipeline (`recommendations[]`) — avoid surfacing roles already under consideration |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with `performance_weights` — identifies the user's strongest material |
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, compensation floor, location preferences |
-| `{user_dir}/CareerNavigator/career-trajectory.md` | Near/medium-term trajectory targets (optional; affects trajectory alignment bonus) |
+| `{user_dir}/CareerNavigator/career-trajectory-data.json` | Near/medium-term trajectory targets (`career_trajectory_v1`; optional; affects trajectory alignment bonus) |
 
 The job listings to score are passed in by the `search-jobs` skill with their full job descriptions and metadata.
 
@@ -42,7 +42,7 @@ The job listings to score are passed in by the `search-jobs` skill with their fu
 
 ## Scoring Framework
 
-Score each listing across four dimensions. Then apply confidence-tier weighting so ranking adapts to evidence quality, not just static defaults. If `{user_dir}/CareerNavigator/career-trajectory.md` exists, also apply a bounded `trajectory_alignment` bonus.
+Score each listing across four dimensions. Then apply confidence-tier weighting so ranking adapts to evidence quality, not just static defaults. If `{user_dir}/CareerNavigator/career-trajectory-data.json` exists, also apply a bounded `trajectory_alignment` bonus.
 
 ### Step 0: Determine confidence tier first
 
@@ -100,7 +100,7 @@ After composite is computed, apply these bounded adjustments:
    - This prevents overfitting to only exact past role labels.
 
 4. **Trajectory alignment bonus (max +10):**
-   - If `career-trajectory.md` is present, read the fenced `career_trajectory_v1` JSON block and extract the near-term ranked role titles (0–18 months) plus medium-term roles (18 months–4 years).
+   - If `career-trajectory-data.json` is present, read it as `career_trajectory_v1` and extract the near-term ranked role titles (0–18 months) plus medium-term roles (18 months–4 years).
    - Compute `trajectory_bonus` for each listing by matching the listing's role title to the nearest trajectory match:
      - near-term rank 1–2: +10
      - near-term rank 3–5: +7
@@ -199,7 +199,7 @@ Return the listings in ranked order (highest composite score first). Structure y
 
 For each listing, return:
 - Composite score (0–100)
-- Per-dimension breakdown: outcome signal match, ExperienceLibrary fit %, profile fit, strategy signals, trajectory alignment bonus (if `career-trajectory.md` exists)
+- Per-dimension breakdown: outcome signal match, ExperienceLibrary fit %, profile fit, strategy signals, trajectory alignment bonus (if `career-trajectory-data.json` exists)
 - Effective weights used (based on confidence tier)
 - Any calibration adjustments applied (recency/outcome-quality/transferability/trajectory alignment)
 - Recommendation tier (`critical` | `high` | `watch` | `none`) and urgency reason

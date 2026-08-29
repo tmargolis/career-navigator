@@ -107,9 +107,9 @@ If any requested channel cannot be searched live via MCP in-session, generate co
 
 ### 1.5 Load trajectory context (for scoring)
 
-Before searching, check for `{user_dir}/CareerNavigator/career-trajectory.md`.
+Before searching, check for `{user_dir}/CareerNavigator/career-trajectory-data.json`.
 
-- If present, read it and extract the fenced `career_trajectory_v1` JSON (especially `as_of`, `near_term_roles`, `medium_term_roles`).
+- If present, read it as `career_trajectory_v1` (especially `as_of`, `near_term_roles`, `medium_term_roles`).
 - If missing, continue with no trajectory context.
 - If present but JSON cannot be parsed, continue and mark trajectory as unavailable due to parse error (do not silently drop this signal).
 
@@ -148,7 +148,7 @@ For non-Indeed/manual listings, treat pasted metadata as the detail payload and 
 
 Pass all retrieved listings to the `job-scout` agent for outcome-weighted scoring. Job-scout will:
 - Read `search_performance` and `strategy_signals` from `tracker.json` (both are top-level keys, unaffected by the split), plus `performance_weights` from `CareerNavigator/ExperienceLibrary.json`
-- Read `{user_dir}/CareerNavigator/career-trajectory.md` when present and apply trajectory alignment bonus from `career_trajectory_v1`
+- Read `{user_dir}/CareerNavigator/career-trajectory-data.json` when present and apply trajectory alignment bonus from `career_trajectory_v1`
 - Score each listing across outcome signals, ExperienceLibrary fit, profile fit, and strategy signals using confidence-tier adaptive weights
 - Apply bounded calibration (recency, outcome quality, transferability)
 - Return the listings in ranked order with composite scores, per-factor rationale, and recommendation tiers (`critical` | `high` | `watch` | `none`)
@@ -156,9 +156,9 @@ Pass all retrieved listings to the `job-scout` agent for outcome-weighted scorin
 When invoking `job-scout`, explicitly pass:
 - full listing payloads (including full JDs/metadata),
 - `profile.md`, `tracker.json` (summary rows — scoring needs `company`, `role`, `status`, `outcome`, and `latest_stage`, not stage history, so do not pass `detail_file` contents), `ExperienceLibrary.json`,
-- and `{user_dir}/CareerNavigator/career-trajectory.md` if it exists.
+- and `{user_dir}/CareerNavigator/career-trajectory-data.json` if it exists.
 
-If `career-trajectory.md` exists but cannot be parsed, continue scoring and label trajectory alignment as unavailable rather than dropping `job-scout`.
+If `career-trajectory-data.json` exists but cannot be parsed, continue scoring and label trajectory alignment as unavailable rather than dropping `job-scout`.
 
 Use job-scout's ranked order for the final presentation. If job-scout returns a tie (within 5 points), preserve the original Indeed relevance order within the tied group.
 

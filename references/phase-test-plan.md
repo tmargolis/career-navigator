@@ -483,7 +483,8 @@ Retry behavior is validated by observing logs or the host’s agent tool—not a
 ### Scope
 - New skills: `career-plan`, `evaluate-offer`, `negotiate-offer`, `compare-offers`
 - Artifact outputs:
-  - `{user_dir}/CareerNavigator/career-trajectory.md` + `career_trajectory_v1`
+  - `{user_dir}/CareerNavigator/career-trajectory.md` (report)
+  - `{user_dir}/CareerNavigator/career-trajectory-data.json` (`career_trajectory_v1`)
   - `{user_dir}/CareerNavigator/offer-context-{application_id}.json`
 - Integration:
   - `job-scout` reads `career_trajectory_v1` and applies trajectory alignment bonus
@@ -500,7 +501,8 @@ Retry behavior is validated by observing logs or the host’s agent tool—not a
 
 ### Tests
 - Run `/career-navigator:career-plan`
-  - Confirm `career-trajectory.md` is created and includes `career_trajectory_v1`.
+  - Confirm `career-trajectory.md` is created (human-readable report).
+  - Confirm `career-trajectory-data.json` is created with valid `career_trajectory_v1` schema.
 - Run `/career-navigator:evaluate-offer`
   - Confirm `offer-context-{application_id}.json` is created for the correct offer app.
   - Confirm the offer evaluation includes scenario classification and a direct recommendation.
@@ -512,7 +514,7 @@ Retry behavior is validated by observing logs or the host’s agent tool—not a
   - Confirm `job-scout` output includes trajectory alignment and that scores reflect it.
   - Confirm trajectory evidence is explicit: `trajectory_context_status` and `trajectory_as_of` are returned, and the user-facing output includes a trajectory context line.
 - Run `/career-navigator:daily-schedule`
-  - Confirm it prompts for monthly career-plan refresh when `career-trajectory.md` is missing/stale.
+  - Confirm it prompts for monthly career-plan refresh when `career-trajectory-data.json` is missing/stale.
   - Confirm it prompts offer evaluation due when an active offer exists with missing OfferContext.
 - Run `focus-career` for a deadline edge case
   - Create/prepare a tracker offer with deadline within 24h and missing OfferContext.
@@ -521,7 +523,7 @@ Retry behavior is validated by observing logs or the host’s agent tool—not a
 ### Pass Criteria
 - All new slash commands exist with correct triggers.
 - Required artifacts are written to the specified `{user_dir}` paths (or manual-save fallback is shown).
-- `job-scout` trajectory bonus is present when `career-trajectory.md` exists and explicitly absent when it does not.
+- `job-scout` trajectory bonus is present when `career-trajectory-data.json` exists and explicitly absent when it does not.
 - Nudges appear in `daily-schedule` and (for imminent deadlines) in `focus-career`.
 
 ### Example prompts (copy/paste)
@@ -578,11 +580,11 @@ and startup-behavior fixes.
   - Confirm critical-only output format is unchanged.
 - Run startup with backward alias:
   - Confirm `/career-navigator:session-start` still maps to the same behavior.
-- Run `search-jobs` with a valid `career-trajectory.md` present:
+- Run `search-jobs` with a valid `career-trajectory-data.json` present:
   - Confirm output includes a trajectory context line:
     - `Trajectory context: used (as_of YYYY-MM-DD)` (or unavailable reason)
   - Confirm listing line uses `Recommendation: {critical|high|watch|none}`.
-- Temporarily force trajectory parse failure (or remove JSON block):
+- Temporarily force trajectory parse failure (or remove/rename `career-trajectory-data.json`):
   - Confirm search still works and reports trajectory as unavailable/unparseable.
 
 #### Pass criteria

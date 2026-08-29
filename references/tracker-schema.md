@@ -23,7 +23,6 @@ file only for the applications actually in play.
 {
   "meta": { "schema": "tracker_v2_split", "last_updated": "YYYY-MM-DD", "layout": { ... } },
   "applications": [ /* summary rows, see below */ ],
-  "networking": [ ... ],
   "pipeline_summary": { ... },
   "search_performance": { ... },
   "strategy_signals": { ... }

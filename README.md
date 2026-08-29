@@ -209,7 +209,8 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── networking.json          — recruiter relationships + **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`** from **`linkedin-post-analytics`**)
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
-│   ├── career-trajectory.md     — career_trajectory_v1 artifact from `career-plan`
+│   ├── career-trajectory.md     — human-readable trajectory report from `career-plan`
+│   ├── career-trajectory-data.json — `career_trajectory_v1` structured data from `career-plan`
 │   ├── offer-context-*.json     — persisted offer evaluation context for negotiation/comparison workflows
 │   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`
 │   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering

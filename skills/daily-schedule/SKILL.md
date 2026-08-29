@@ -87,10 +87,12 @@ If refresh fails:
   - `Story corpus refresh failed; run "mine-stories" to retry.`
 
 ### 2.7 Monthly career-plan checkpoint
-If `{user_dir}/CareerNavigator/career-trajectory.md` exists, determine whether it
-is stale:
-- Prefer to parse the report `as_of` date from the `career_trajectory_v1` JSON
-  block, or a heading like `## Career trajectory analysis ({YYYY-MM-DD})`.
+If `{user_dir}/CareerNavigator/career-trajectory-data.json` or
+`{user_dir}/CareerNavigator/career-trajectory.md` exists, determine whether the
+plan is stale:
+- Prefer the `as_of` field from `career-trajectory-data.json`.
+- If the JSON file is missing, fall back to a heading like
+  `## Career trajectory analysis ({YYYY-MM-DD})` in `career-trajectory.md`.
 - Consider the file "stale" when:
   - the file is missing (first run), OR
   - it was generated more than 30 days ago, OR

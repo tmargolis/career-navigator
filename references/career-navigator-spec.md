@@ -176,7 +176,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 | **/career-navigator:follow-up** | Command | Classifies applications by response windows, builds **FollowUpBrief** entries, invokes **`writer`** for send-ready messages. Email/calendar enrichment Phase 2A. |
 | **/career-navigator:market-brief** | Command | Generates a current market intelligence report for the user's target roles and industries, including trend data, competition levels, and AI/automation impact assessment. |
 | **/career-navigator:suggest-roles** | Command | Analyzes the user's full ExperienceLibrary and suggests non-obvious role types their skills could be applied to, with rationale for each suggestion. |
-| **/career-navigator:career-plan** | Command | Generates a realistic career trajectory plan (near/mid/long horizon) with ROI-ranked gap priorities and saves `career_trajectory_v1` to `career-trajectory.md`. |
+| **/career-navigator:career-plan** | Command | Generates a realistic career trajectory plan (near/mid/long horizon) with ROI-ranked gap priorities; saves the report to `career-trajectory.md` and `career_trajectory_v1` to `career-trajectory-data.json`. |
 | **/career-navigator:evaluate-offer** | Command | Performs scenario-aware offer evaluation (employed/unemployed context), role-fit/utilization analysis, and compensation fairness determination. Persists `offer-context-{application_id}.json` for downstream use. |
 | **/career-navigator:compare-offers** | Command | Compares active offers side-by-side on compensation, fit, trajectory alignment, and risk, then returns an honest ranking. |
 | **/career-navigator:negotiate** | Command | Builds negotiation strategy and leverage points, then hands off a `NegotiationHandoffBrief` to `writer` for a send-ready draft. |
@@ -240,7 +240,7 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | **market-brief** | Skill | Fires when the user asks for current market conditions. Invokes `market-researcher` to summarize role demand trends, AI/automation displacement signals, and geography-specific competitiveness. Also invocable via `/career-navigator:market-brief`. |
 | **suggest-roles** | Skill | Fires when the user asks what adjacent or non-obvious roles they should target. Invokes `honest-advisor` and `market-researcher`, then writes `strategy_signals` to `tracker.json` for job-scout scoring improvements. Also invocable via `/career-navigator:suggest-roles`. |
 | **training-roi** | Skill | Fires when the user asks what to learn next. Compares certifications, degrees, bootcamps, and self-study using a cost-benefit-time ROI framework and recommends a primary and fallback path. Queries available MCPs (including CareerOneStop DOL API if connected) for live certification-value and labor-market outcome data before falling back to static knowledge. See Phase 1C note in §15. |
-| **career-plan** | Skill | Produces `CareerTrajectoryReport` (near/mid/long horizon + ROI-ranked gaps) and persists `career_trajectory_v1` to `{user_dir}/CareerNavigator/career-trajectory.md`. Also invocable via `/career-navigator:career-plan`. |
+| **career-plan** | Skill | Produces `CareerTrajectoryReport` (near/mid/long horizon + ROI-ranked gaps); persists the report to `{user_dir}/CareerNavigator/career-trajectory.md` and `career_trajectory_v1` to `{user_dir}/CareerNavigator/career-trajectory-data.json`. Also invocable via `/career-navigator:career-plan`. |
 | **evaluate-offer** | Skill | Produces `OfferEvaluationReport` with scenario-aware context, role fit/utilization, and compensation fairness; persists `offer-context-{application_id}.json` for downstream negotiation/comparison. Also invocable via `/career-navigator:evaluate-offer`. |
 | **compare-offers** | Skill | Produces `OfferComparisonReport` across active offers and outputs an honest ranking with tiebreakers when needed. Also invocable via `/career-navigator:compare-offers`. |
 | **negotiate-offer** | Skill | Produces `NegotiationBrief` and emits `NegotiationHandoffBrief` for `writer` to draft send-ready negotiation messaging. Also invocable via `/career-navigator:negotiate`. |
@@ -519,7 +519,10 @@ Interview prep/mocks use this corpus as the source of truth for "how have I done
 Two decision-support artifacts are persisted for reuse across skills:
 
 - **`{user_dir}/CareerNavigator/career-trajectory.md`**  
-  Produced by `career-plan`. Includes a human-readable trajectory report plus a `career_trajectory_v1` JSON block used by downstream ranking and scheduling nudges.
+  Produced by `career-plan`. Human-readable trajectory report (markdown only; no embedded JSON).
+
+- **`{user_dir}/CareerNavigator/career-trajectory-data.json`**  
+  Produced by `career-plan`. Machine-readable `career_trajectory_v1` schema used by `job-scout`, `search-jobs`, `compare-offers`, and `daily-schedule` staleness checks.
 
 - **`{user_dir}/CareerNavigator/offer-context-{application_id}.json`**  
   Produced by `evaluate-offer`. Captures scenario classification, benchmark framing, and leverage context so `negotiate-offer` and `compare-offers` can continue without redundant re-collection.
@@ -558,7 +561,7 @@ The plugin documents **recommended cadences** inside skills; **execution** is ow
 | Name | Suggested cadence | How to run |
 | --- | --- | --- |
 | **Daily operating brief** | Daily (user picks time) | Schedule a task whose payload invokes the `daily-schedule` skill (e.g. `/career-navigator:daily-schedule` or natural language equivalent). |
-| **Career trajectory refresh check** | Monthly checkpoint inside daily runs | `daily-schedule` checks staleness of `career-trajectory.md` and nudges `/career-navigator:career-plan` when refresh is due. |
+| **Career trajectory refresh check** | Monthly checkpoint inside daily runs | `daily-schedule` checks staleness of `career-trajectory-data.json` (fallback: `career-trajectory.md` heading) and nudges `/career-navigator:career-plan` when refresh is due. |
 | **Follow-up / pipeline hygiene** | Daily (often same task as above) | Covered by `daily-schedule` + conversational `follow-up` as needed. |
 | **Market intelligence** | Weekly | Schedule `/career-navigator:market-brief` (or invoke `market-brief` skill). |
 | **Outcome pattern refresh** | Weekly or after milestone outcomes | User runs `/career-navigator:pattern-analysis` or schedules it after major tracker updates. |
@@ -717,7 +720,7 @@ Phase 1F adds “decision-grade” career planning and offer evaluation / negoti
 
 **Critical mechanics shipped:**
 
-- **`career-plan`** writes `career_trajectory_v1` to `career-trajectory.md` for downstream reuse.
+- **`career-plan`** writes the trajectory report to `career-trajectory.md` and `career_trajectory_v1` to `career-trajectory-data.json` for downstream reuse.
 - **`evaluate-offer`** writes `offer-context-{application_id}.json` so later workflows can skip repetitive data capture.
 - **`compare-offers`** consumes existing offer contexts and runs inline evaluation only when a context is missing.
 - **`negotiate-offer`** generates a `NegotiationHandoffBrief` consumed by `writer` for final send-ready negotiation copy.
@@ -960,7 +963,7 @@ This phase is explicitly shaped by industry trends kicked off by **OpenClaw** �
 | **/career-navigator:follow-up** | **FollowUpBrief** + **`writer`** messages |
 | **/career-navigator:market-brief** | Current market intelligence report |
 | **/career-navigator:suggest-roles** | Discover non-obvious role opportunities |
-| **/career-navigator:career-plan** | Trajectory analysis + ROI-ranked gap plan (`career_trajectory_v1`) |
+| **/career-navigator:career-plan** | Trajectory analysis + ROI-ranked gap plan (`career-trajectory.md` + `career-trajectory-data.json`) |
 | **/career-navigator:evaluate-offer** | Scenario-aware offer evaluation + persisted offer context |
 | **/career-navigator:compare-offers** | Side-by-side multi-offer comparison and recommendation |
 | **/career-navigator:negotiate** | Negotiation strategy + `writer` handoff for send-ready draft |
