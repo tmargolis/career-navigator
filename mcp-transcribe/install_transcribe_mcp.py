@@ -94,6 +94,11 @@ config["mcpServers"]["mcp-transcribe"] = {
     "type": "stdio",
     "command": uv,
     "args": ["run", "--project", str(SCRIPT_DIR), str(SERVER)],
+    # Pinned so this server always gets its own venv even though
+    # UV_PROJECT_ENVIRONMENT is exported globally in ~/.zshrc for Interlock.
+    # Without this, mcp-transcribe silently syncs into ~/.venvs/interlock
+    # and clobbers whatever that project needs.
+    "env": {"UV_PROJECT_ENVIRONMENT": str(SCRIPT_DIR / ".venv")},
 }
 
 if CONFIG.exists():

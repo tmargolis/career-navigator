@@ -6,7 +6,7 @@ description = "Local MCP server for batch transcription of recorded audio files.
 # pinning >=3.14 is what makes a server fail to start before it ever registers.
 requires-python = ">=3.11,<3.14"
 dependencies = [
-    "mcp[cli]>=1.27.0",
+    "mcp[cli]>=1.27.0,<2",
     "faster-whisper>=1.2.1",
 ]
 
