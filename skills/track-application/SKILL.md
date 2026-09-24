@@ -203,6 +203,7 @@ If the user mentions a role they're interested in but **haven't applied to yet**
 - Append a new entry to `recommendations[]` with: `id` (next `rec-NNN`), `company`, `role`, `job_link`, `comp_estimate`, `location`, `status: "considering"`, `priority`, `next_step`, `notes`, `fit_signals` (from user context if available), `gaps` (if mentioned), `decision_notes: null`, `outcome: "pending"`, `artifacts: []`.
 - Do **not** add to `applications[]` or update `pipeline_summary` — pre-application roles are tracked separately.
 - When the user later says they applied, move the record: remove from `recommendations[]`, run the full new-application write in Section 3 (mint the `app-<company-slug>-<role-keywords>` id, write the detail file, append the summary row) with `status: "applied"`, and update `pipeline_summary`.
+- When the user says they're passing on / declining a `recommendations.json` entry (not applying, not pursuing it further), move the record: remove it from `recommendations[]` and append it to `{user_dir}/CareerNavigator/passed.json` → `passed[]`, setting `status: "pass"`, `date_passed` (today unless the user gives another date), and `decision_notes` to the reason if one was given (otherwise leave it `null`). Do not add passed roles to `tracker.json` or `pipeline_summary`.
 
 ---
 

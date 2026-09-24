@@ -280,6 +280,14 @@ After writing, verify: every summary row's `detail_file` resolves, `notes_count`
 }
 ```
 
+**`CareerNavigator/passed.json`**
+```json
+{
+  "meta": { "created": "{today}", "version": "1.0", "description": "Roles considered and explicitly passed on before applying" },
+  "passed": []
+}
+```
+
 **`artifacts-index.json`**
 ```json
 {

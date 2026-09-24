@@ -100,8 +100,8 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`focus-career`** | New session (hook) or `/schedule` | Critical-only: deadlines, same-day follow-ups, urgent interview actions |
 | **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling; **Pre-interview brief (today)** when tracker shows interview/recruiter/screen **today** |
 | **`/career-navigator:morning-brief`** | Day-of only | Same **`daily-schedule`** skill — **focused** output: pre-interview slice only (see `skills/daily-schedule/SKILL.md` §3.3) |
-| **`/career-navigator:setup-schedule`** | Run once after launch | **Phase 3:** creates the `career-navigator-daily-brief` Cowork scheduled task — two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerts, and top new job recommendations appended to `recommendations.json` automatically each morning |
-| **`/career-navigator:pipeline-status-artifact`** | Run once after launch | **Phase 3:** creates a persistent Cowork live artifact — filterable pipeline status table (active / focus / closed) reading the `tracker.json` summary rows, `recommendations.json`, and `artifacts-index.json` live on each open; resume view links and one-click tailor shortcuts |
+| **`/career-navigator:setup-schedule`** | Run once after launch | **Phase 3:** creates the `career-navigator-daily-brief` Cowork scheduled task — two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerts, and top new job recommendations appended to `recommendations.json` automatically each morning. Optionally also creates `career-navigator-pipeline-refresh`, a second scheduled task that regenerates `pipeline-status.html` nightly |
+| **`/career-navigator:pipeline-status`** | Run any time, or scheduled nightly via `setup-schedule` | Generates the pipeline status page — filterable table (active / focus / closed / passed) with an embedded application timeline — reading `tracker.json`, `recommendations.json`, and `passed.json`, and opens it in the browser |
 | **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in the application's **`applications/<application_id>.json`** |
 | **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1); optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`** |
 | **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): user-audio STT → structured notes in **`applications/<application_id>.json`** + the **`tracker.json`** summary row; §13.1 warning; uses **`mcp-voice`** **`listen`** when the extension is installed |
@@ -176,7 +176,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
 | **`report`** | “Full analysis”, integrated read | **`analyst`** + tracker + EL + artifacts |
-| **`pipeline-dashboard`** | Dashboard refresh | **`pipeline-dashboard.html`** + graph data |
+| **`pipeline-status`** | Dashboard refresh, or nightly via `setup-schedule` | **`pipeline-status.html`** + `pipeline-data.js` + `timeline.html` |
 
 ---
 
@@ -206,6 +206,7 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── applications/            — one file per application: <application_id>.json with that application's stage_history[] + notes[]
 │   ├── contacts/                — one file per company: <company-slug>.json with every contact there, each tagged with its application
 │   ├── recommendations.json     — pre-application pipeline (roles under consideration)
+│   ├── passed.json              — pre-application roles explicitly passed on / declined
 │   ├── networking.json          — recruiter relationships + **`networking[]`** (e.g. **`linkedin_post`** + **`analytics_history`** from **`linkedin-post-analytics`**)
 │   ├── artifacts-index.json     — index of generated resumes and cover letters
 │   ├── company-windows.json     — company-specific response windows for follow-up timing
@@ -215,7 +216,9 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`
 │   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering
 │   ├── interview-prep/          — markdown briefs from **`prep-interview`**
-│   └── pipeline-dashboard.html  — generated interactive dashboard artifact
+│   ├── pipeline-status.html     — generated pipeline status page (opens in browser)
+│   ├── pipeline-data.js         — data backing pipeline-status.html, regenerated each run
+│   └── timeline.html            — generated application timeline, embedded in pipeline-status.html
 ```
 
 **How application data is split:** `tracker.json` holds the pipeline at a glance — one summary row per application with its company, role, status, dates, and small counters (`notes_count`, `stage_count`, `contact_count`, `latest_stage`, `latest_stage_date`). The bulky parts live beside it: each application's stage history and notes in `applications/<application_id>.json`, and every contact at a company in `contacts/<company-slug>.json`, where each contact carries the `"<company> — <role>"` label of the application it belongs to. Skills read `tracker.json` for the overview and open a detail or contacts file only for the applications actually in play. Application ids are readable slugs (`app-hex-senior-pm`), so you can find an application's file by name. The full field-by-field definition is in [references/tracker-schema.md](references/tracker-schema.md).
@@ -364,7 +367,7 @@ Status: In progress
 Phase 3 evolves Career Navigator from “a powerful assistant you sit down with” into an always-on, context-maintaining career operating layer that runs on a cadence and meets you in the channels you already use. This direction reflects industry trends kicked off by **OpenClaw** (persistent threads, async dispatch, event-driven channels) while remaining host-agnostic (Anthropic/Claude and NemoClaw are examples, not dependencies).
 
 - **Morning Digest** ✅: *overnight recruiter replies summarized, stale follow-ups flagged, new matching roles surfaced before you open a laptop.* Automated via **`/career-navigator:setup-schedule`** — creates a Cowork scheduled task with a two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerting, and new job discovery. **Impact:** eliminates daily manual checks across email, job boards, and your tracker.
-- **Live Pipeline Status Artifact** ✅: *always-current filterable table of your full pipeline — active applications, recommended roles, closed entries — with resume links and one-click tailor shortcuts. Reads from disk on every open.* Created via **`/career-navigator:pipeline-status-artifact`**. **Impact:** a persistent status page that stays accurate without re-running a skill.
+- **Pipeline Status Page** ✅: *filterable table of your full pipeline — active applications, focus/recommended roles, closed entries, and passed-on roles — with an embedded application timeline.* Generated via **`/career-navigator:pipeline-status`**, and can be scheduled to refresh nightly via **`/career-navigator:setup-schedule`**. **Impact:** an always-current status page without manually regenerating it.
 - **Weekly Market Brief** ✅: *Monday report on role demand shifts, target-company hiring signals, and events/CFPs tied to your targets.* **Impact:** replaces ad-hoc research with a consistent intelligence cadence.
 - **Follow-up Alert** ✅: *overdue response detected against benchmarks with a pre-drafted follow-up ready to review and send from mobile.* **Impact:** nothing falls through the cracks; the system manages the pipeline clock.
 - **Weekly Insight Report**: *Friday plain-language funnel summary plus one specific positioning adjustment based on what’s converting.* **Impact:** turns a job search from feelings-based to data-informed.

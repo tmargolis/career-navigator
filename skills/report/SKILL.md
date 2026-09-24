@@ -3,10 +3,10 @@ name: report
 description: >
   Runs all four analyst operations — outcome pattern analysis, transferable
   strengths, AI displacement assessment, and market benchmark — and delivers
-  a unified insight report followed by an interactive D3 pipeline dashboard
-  opened in the browser. The integrated view of the user's search health,
-  career capital, future positioning, and how their metrics compare to
-  industry norms. Invokes the analyst agent and pipeline-dashboard skill.
+  a unified insight report followed by the pipeline status page opened in
+  the browser. The integrated view of the user's search health, career
+  capital, future positioning, and how their metrics compare to industry
+  norms. Invokes the analyst agent and pipeline-status skill.
 triggers:
   - "run the analyst"
   - "analyst report"
@@ -131,9 +131,9 @@ Dashboard subkeys (when available):
 - `ai_displacement_outlook`: `overall_risk`, `exposure_min_pct`, `exposure_max_pct`, `durable_min_pct`, `durable_max_pct`
 - `transferable_strengths[]`: `name`, `rating`, `score_0_100` (plus optional `evidence` and `destinations[]`)
 
-### 5. Generate the pipeline dashboard
+### 5. Generate the pipeline status page
 
-After presenting the text report, invoke the `pipeline-dashboard` skill. It will read the same data files, build the visualization, write `{user_dir}/CareerNavigator/pipeline-dashboard.html`, and open it in the browser automatically.
+After presenting the text report, invoke the `pipeline-status` skill. It will read tracker/recommendations/passed data, write `{user_dir}/CareerNavigator/pipeline-status.html` (plus `pipeline-data.js` and `timeline.html`), and open it in the browser automatically.
 
 Do not wait for the user to ask — generate it every time the report runs.
 

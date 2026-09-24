@@ -1,6 +1,6 @@
 ---
 name: setup-schedule
-description: "Creates or updates the Career Navigator daily brief as a Cowork scheduled task. Runs automatically each day at the user's preferred time: pipeline digest, Gmail inbox scan, follow-up alerts, and new job recommendations. Also invocable via /career-navigator:setup-schedule."
+description: "Creates or updates the Career Navigator daily brief and/or nightly pipeline status refresh as Cowork scheduled tasks. The daily brief runs each morning: pipeline digest, Gmail inbox scan, follow-up alerts, and new job recommendations. The optional pipeline refresh regenerates pipeline-status.html each night. Also invocable via /career-navigator:setup-schedule."
 triggers:
   - "set up daily brief"
   - "schedule my daily brief"
@@ -30,19 +30,23 @@ Then stop.
 
 ---
 
-## 2. Check for an existing scheduled task
+## 2. Check for existing scheduled tasks
 
-Load and call `mcp__scheduled-tasks__list_scheduled_tasks`. Look for any task whose `taskName` contains `career-navigator` or whose prompt mentions Career Navigator.
+Load and call `mcp__scheduled-tasks__list_scheduled_tasks`. Look for a task named `career-navigator-daily-brief` and a task named `career-navigator-pipeline-refresh` (or whose prompt otherwise mentions Career Navigator).
 
-**If a matching task is found:**
+**If the daily brief task is found:**
 - Display its current schedule and a one-line summary of its prompt
 - Ask: "A daily brief is already scheduled. Would you like to update the time, update the prompt, or keep it as-is?"
 - If the user wants to update: follow Steps 3–5 but use `mcp__scheduled-tasks__update_scheduled_task` with the existing task's ID instead of creating a new one
-- If the user wants to keep it: confirm "Your daily brief is already scheduled." and stop
+- If the user wants to keep it: confirm "Your daily brief is already scheduled." and continue to check the pipeline-refresh task below rather than stopping
+
+**If the pipeline-refresh task is found:** display its current schedule and offer the same update/keep choice, using `update_scheduled_task` if the user wants a change.
+
+If both tasks already exist and the user wants to keep both as-is, confirm "Your daily brief and pipeline refresh are already scheduled." and stop.
 
 ---
 
-## 3. Confirm preferred schedule
+## 3. Confirm preferred schedule(s)
 
 Ask: "What time would you like your daily brief? Default is **7:00 AM daily**."
 
@@ -56,6 +60,10 @@ Accept natural language and convert to a cron expression:
 | "6am every day" | `0 6 * * *` |
 
 If the user confirms the default, proceed without further prompting.
+
+Then ask: "Would you also like your pipeline status dashboard (`pipeline-status.html`) to refresh automatically each night? Default is **2:00 AM daily**."
+
+Convert the answer to a cron expression the same way as above. If the user declines, skip Step 4b and Step 5's second task entirely — the daily-brief-only flow is unaffected.
 
 ---
 
@@ -226,15 +234,35 @@ Append if no market brief in the past 7 days:
 
 ---
 
-## 5. Create (or update) the scheduled task
+## 4b. Build the pipeline-refresh task prompt (if the user opted in)
+
+If the user opted into the nightly pipeline refresh in Step 3, build a second, independent self-contained prompt (same rule as Step 4: no ephemeral state, `{actual_user_dir}` fully resolved):
+
+```
+Run the Career Navigator pipeline-status skill for {actual_user_dir}, regenerating
+pipeline-data.js, pipeline-status.html, and timeline.html from the latest
+tracker.json, recommendations.json, and passed.json.
+```
+
+---
+
+## 5. Create (or update) the scheduled task(s)
 
 Load `mcp__scheduled-tasks__create_scheduled_task`.
 
-Create the task with:
+Create the daily brief task with:
 - `taskName`: `career-navigator-daily-brief`
 - `description`: `Career Navigator daily brief — pipeline digest, Gmail inbox scan, follow-up alerts, and new job recommendations`
 - `prompt`: the task prompt built in Step 4 (fully resolved paths, no placeholders)
 - `cronExpression`: the cron expression from Step 3
+
+If the user opted into the pipeline refresh, create it as a **second, independent task**:
+- `taskName`: `career-navigator-pipeline-refresh`
+- `description`: `Career Navigator pipeline status refresh — regenerates pipeline-status.html nightly`
+- `prompt`: the task prompt built in Step 4b
+- `cronExpression`: the pipeline-refresh cron expression from Step 3
+
+These are two separate scheduled tasks — a failure in one must not block the other, and the user can decline or later remove either independently.
 
 ---
 
@@ -246,9 +274,23 @@ Create the task with:
   Skill:    career-navigator:daily-schedule
   Folder:   {user_dir}
   Task:     career-navigator-daily-brief
+```
 
-To adjust the schedule or prompt, say "reschedule my daily brief"
-or run /career-navigator:setup-schedule again.
+If the pipeline refresh was also scheduled, append:
+
+```
+✅ Pipeline status refresh scheduled — runs every day at {time}.
+
+  Skill:    career-navigator:pipeline-status
+  Folder:   {user_dir}
+  Task:     career-navigator-pipeline-refresh
+```
+
+Then:
+
+```
+To adjust either schedule or prompt, say "reschedule my daily brief" /
+"reschedule my pipeline refresh", or run /career-navigator:setup-schedule again.
 ```
 
 ---
@@ -256,6 +298,7 @@ or run /career-navigator:setup-schedule again.
 ## Guardrails
 
 - Always use `update_scheduled_task` (not `create`) when a matching task already exists — avoids duplicates
-- Prompt must be fully self-contained: no references to "the current session," "above context," or ephemeral state
-- Paths in the prompt must be absolute and fully resolved — `{user_dir}` must be replaced before saving
-- Gmail search is read-only; never include send/draft/delete instructions in the task prompt
+- Each prompt must be fully self-contained: no references to "the current session," "above context," or ephemeral state
+- Paths in each prompt must be absolute and fully resolved — `{user_dir}` must be replaced before saving
+- Gmail search is read-only; never include send/draft/delete instructions in the daily-brief task prompt
+- The daily brief and pipeline refresh are independent scheduled tasks — always check for and manage them separately in Step 2
