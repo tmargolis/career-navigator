@@ -4,9 +4,8 @@ description: >
   Starts a mock interview session with configurable mode (guided, random,
   adaptive), stage (recruiter, hiring manager, technical, panel, executive,
   final), and vibe (supportive through bored). If mode or vibe are omitted,
-  the system selects defaults and announces them. Delegates to interview-coach;
-  optional mcp-voice MCP TTS/STT when tools are present. Also invocable via
-  /career-navigator:mock-interview.
+  the system selects defaults and announces them. Delegates to interview-coach.
+  Text-only. Also invocable via /career-navigator:mock-interview.
 triggers:
   - "/mock-interview"
   - "/career-navigator:mock-interview"
@@ -45,11 +44,7 @@ The model **must** choose a concrete `mock_mode` and `vibe` before starting—**
 
 **Recruiter practice:** When the user asks to practice for a **recruiter** or **phone screen**, set `interview_stage` to **`recruiter`**.
 
-### 3. Audio (**mcp-voice** Extension)
-
-**Discover** session tools: if **`speak`** (TTS) or **`listen`** (STT) from the **`mcp-voice`** extension are present, **prefer** them for mock practice per **`agents/interview-coach/AGENT.md`**. Otherwise **text-only**. Never require audio.
-
-### 4. Invoke **interview-coach**
+### 3. Invoke **interview-coach**
 
 Read and follow **`agents/interview-coach/AGENT.md`** with:
 
@@ -59,7 +54,7 @@ Read and follow **`agents/interview-coach/AGENT.md`** with:
 
 Run the mock **turn-by-turn** in chat until the user ends or you reach a natural wrap-up per the agent.
 
-### 5. Optional tracker note
+### 4. Optional tracker note
 
 Only when the user asks for a log (or it clearly aids follow-up), write the **multi-file
 transaction** for appending a note, per [references/tracker-schema.md](../../references/tracker-schema.md) — never edit one file and skip the other:

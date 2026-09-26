@@ -451,7 +451,7 @@ Apply **Connector pattern**; **do not** ask about **Apify** if its tools are alr
 
 The `salary-research` skill uses the **Apify** MCP tools to pull live compensation data. This step is optional — skip it if the user doesn't need salary benchmarking.
 
-**Do not** ask the user to paste their Apify token into chat, edit `claude_desktop_config.json`, or rely on `.env` / `APIFY_TOKEN` for MCP startup — Claude Desktop does not expand `${APIFY_TOKEN}` inside MCP `args` the way a shell would. **They** paste the token into the **Apify** connector form in the app—do not use browser automation to configure it.
+**Do not** ask the user to paste their Apify token into chat, edit `claude_desktop_config.json`, or rely on a local environment variable or dotfile for MCP startup — Claude Desktop does not perform shell-style variable expansion inside MCP `args`. **They** paste the token into the **Apify** connector form in the app — do not use browser automation to configure it, and the plugin itself never reads, stores, or transmits this token.
 
 First check if the Apify MCP is already connected. It may be in a deferred state, so double check and make sure to activate them if you need to. If they are active, suggest they run `/career-navigator:salary-research` for a role and location from their profile. If not, ask the user:
 > "Would you like to set up salary benchmarking? It uses Apify's free tier ($5/month in credits — enough for personal job search use) to pull live salary data by role and location."
@@ -604,25 +604,10 @@ If they choose a provider:
 - Do not use browser automation for storage setup; the user performs sync/backup steps.
 - If they skip, keep local filesystem storage in `{user_dir}` and continue launch normally.
 
-### 8. Set up local voice MCP (optional)
+### 8. Interview transcription (optional)
 
-**Discover:** Check whether tools named **`speak`** and **`listen`** are available in this session. If both are present, the **`mcp-voice`** MCP is already available — acknowledge briefly and skip this step entirely.
+`prep-interview` and `mock-interview` are text-only. Separately, if the user wants recorded interviews transcribed automatically (for `/career-navigator:interview-capture`), offer once:
 
-**If voice tools are missing**, offer once:
+> "If you'd like recorded interviews transcribed automatically, run `/career-navigator:setup-transcribe` any time — it installs a small local server and walks you through it without needing a terminal."
 
-> "Career Navigator supports optional **voice features** — text-to-speech for mock interview questions and speech-to-text to capture your answers. It runs entirely on your machine with no cloud account. You install a small **Claude Desktop Extension** (`.mcpb`) from GitHub — want the steps?"
-
-**If yes**, give these steps (do **not** edit `claude_desktop_config.json` or project **`.mcp.json`** for voice):
-
-1. Open **[Career Navigator releases](https://github.com/tmargolis/career-navigator/releases)** and download **`mcp-voice.mcpb`** from the latest release.
-2. In **Claude Desktop**, open **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
-3. Go to **Extensions**.
-4. Drag **`mcp-voice.mcpb`** into the Extensions window.
-5. Click **Install**.
-6. Ensure the **mcp-voice** extension is **enabled**.
-7. Start a **new chat** if tools do not appear.
-
-Point to **README.md** (Optional: Local voice) and **CONNECTORS.md** (Voice section) for copy-paste detail.
-
-**If skipped:**
-> "No problem — run `/career-navigator:launch` again any time to enable voice features."
+Do not block launch on this either way.

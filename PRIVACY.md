@@ -84,7 +84,7 @@ Current implemented scope:
 - Employer warning/consent notice behavior is included in the workflow design
 - Audio/transcript data is user-deletable
 
-The local `mcp-voice` path (when installed) is designed to run on-device for TTS/STT.
+The local `mcp-transcribe` path (when installed) is designed to run on-device for audio-file transcription.
 
 ## Why Data Is Used
 

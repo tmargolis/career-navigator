@@ -4,7 +4,8 @@ description: >
   Full interview preparation for a specific application or role: company and
   news context, stage-specific questions (recruiter, hiring manager, technical,
   panel, executive, final), and story evidence retrieved from StoryCorpus
-  (with ExperienceLibrary fallback), optional voice/STT via interview-coach.
+  (with ExperienceLibrary fallback). Text-only; accepts a pasted host-STT
+  transcript if the user dictates instead of typing.
   Saves a brief under CareerNavigator/interview-prep/ and logs a [prep] note in
   tracker.json. Also invocable via /career-navigator:prep-interview.
 triggers:
@@ -51,9 +52,9 @@ Collect if missing:
 - **`interview_stage`:** `recruiter` | `hiring_manager` | `technical` | `panel` | `executive` | `final` (default: infer from wording; recruiter call / phone screen → `recruiter`).
 - Optional: **interviewer** name/title, **interview date**, JD text or paste.
 
-### 3. Optional STT / voice
+### 3. Optional dictated input
 
-If the **`mcp-voice`** MCP exposes **`speak`** / **`listen`**, use them per **`agents/interview-coach/AGENT.md`**. If the user is **speaking** or pastes a **transcript** from host STT, pass it as `user_audio_transcript` in the handoff to **`interview-coach`**.
+Text-only. If the user pastes a **transcript** from host-level speech-to-text instead of typing, pass it as `user_audio_transcript` in the handoff to **`interview-coach`**.
 
 ### 4. Retrieve targeted stories
 
@@ -100,4 +101,4 @@ Load and re-dump both JSON files programmatically (`json.load` / `json.dump`, `i
 
 ### 7. Close
 
-Offer **`/career-navigator:mock-interview`** for a voice or text practice session. Do not claim features that are not shipped.
+Offer **`/career-navigator:mock-interview`** for a text practice session. Do not claim features that are not shipped.

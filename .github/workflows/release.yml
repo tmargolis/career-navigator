@@ -1,4 +1,4 @@
-name: Build and release mcp-luma MCPB
+name: Release career-navigator plugin zip
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -8,9 +8,8 @@ on:
     branches:
       - main
     paths:
-      - "mcp-luma/**"
       - ".claude-plugin/plugin.json"
-      - ".github/workflows/mcp-luma-mcpb.yml"
+      - ".github/workflows/release.yml"
 
 permissions:
   contents: write
@@ -25,20 +24,16 @@ jobs:
         id: ver
         run: echo "version=$(jq -r .version .claude-plugin/plugin.json)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v5
-        with:
-          node-version: "24"
+      - name: Create plugin zip
+        run: git archive --format=zip -o "career-navigator-v${{ steps.ver.outputs.version }}.zip" HEAD
 
-      - name: Pack MCPB
-        working-directory: mcp-luma
-        run: npx --yes @anthropic-ai/mcpb pack .
-
-      - name: Upload release asset
+      - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.ver.outputs.version }}
+          name: Career Navigator v${{ steps.ver.outputs.version }}
           files: |
-            mcp-luma/*.mcpb
+            career-navigator-v${{ steps.ver.outputs.version }}.zip
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

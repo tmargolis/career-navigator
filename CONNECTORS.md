@@ -30,8 +30,8 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
 | PKM knowledge bases (story mining) | `~~pkm` | **Notion** first-party connector (official) and/or **Capacities** via local MCP extension/server when available in host session | Obsidian, Roam, Logseq, and manual export/import workflows |
-| Events (Luma) | — | Optional **Claude Desktop Extension** — install the **`mcp-luma.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes Luma event discovery MCP tools for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback |
-| Voice (TTS/STT) | — | Optional **Claude Desktop Extension** — install the **`mcp-voice.mcpb`** bundle from the repo’s [GitHub Releases](https://github.com/tmargolis/career-navigator/releases) (see **README.md**). Exposes **`mcp-voice`** MCP tools **`speak`**, **`listen`**. Fully local (Kokoro TTS + faster-whisper STT + webrtcvad). | Text only |
+| Events (Luma) | — | Optional, not shipped — use a Luma MCP server if one is already in the user's session (e.g. the independent **[`alx1p/luma-mcp`](https://github.com/alx1p/luma-mcp)** project) for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback |
+| Interview transcription | — | Optional local MCP server — **`mcp-transcribe`**, installed via `/career-navigator:setup-transcribe` (or manually per `mcp-transcribe/README.md`). Exposes **`transcribe_file`** for recorded interview audio, used by **`interview-capture`**. Fully local (Whisper via mlx-whisper or faster-whisper). | Session-sandbox `faster-whisper`, or a pasted transcript |
 
 ---
 
@@ -111,28 +111,17 @@ These rules complement `skills/search-jobs/SKILL.md` and should be used when liv
 
 ---
 
-## Event intelligence — Luma (optional MCP bundle)
+## Event intelligence — Luma (optional, not shipped)
 
-The **`mcp-luma`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-luma/`** directory in this repository. It provides local MCP tools for Luma event discovery used by **`event-radar`** and **`event-intelligence`**.
+Career Navigator does not ship a Luma MCP server. If a Luma event-discovery MCP is present in the user's session, **`event-radar`** and **`event-intelligence`** use it; otherwise they fall back to Meetup/Eventbrite paths or manual capture below.
 
-**Install (end users):**
-
-1. Download **`mcp-luma.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** for this repository (release workflow publishes the bundle when `mcp-luma/` changes).
-2. Open **Claude Desktop** → **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
-3. Open **Extensions**.
-4. Drag **`mcp-luma.mcpb`** into that window.
-5. Click **Install**.
-6. Ensure the **mcp-luma** extension is **enabled**.
-
-Start a **new chat** if Luma tools do not appear immediately.
+If the user wants Luma event discovery, the independent open-source **[`alx1p/luma-mcp`](https://github.com/alx1p/luma-mcp)** project provides it as a Claude Desktop Extension — point them to its own README for install and setup; this repo does not vendor or distribute it.
 
 | Step | Action |
 | --- | --- |
-| **1 — Discover** | If Luma event tools appear in **this session**, `mcp-luma` is available—**do not** prompt for setup. |
-| **2 — Configure** | **Only if** tools are missing: walk through the install steps above (Releases → `.mcpb` → Settings → Extensions → drag → Install → enabled). |
-| **3 — Fallback** | If `mcp-luma` is unavailable, continue with connector-first policy: other MCP sources where available, then browser-assisted capture, then manual ingestion. |
-
-**Developers:** The extension source is in **`mcp-luma/`** and is distributed as **`mcp-luma.mcpb`** via GitHub Releases.
+| **1 — Discover** | If Luma event tools appear in **this session**, use them — **do not** prompt for setup. |
+| **2 — Configure** | Only if the user asks how to get Luma tools: point them to `alx1p/luma-mcp` on GitHub. Do not walk them through installing it yourself. |
+| **3 — Fallback** | If no Luma MCP is available, continue with connector-first policy: other MCP sources where available, then browser-assisted capture, then manual ingestion. |
 
 ---
 
@@ -230,31 +219,20 @@ See also **`skills/launch/SKILL.md`** Step 7 for conversational setup during **`
 
 ---
 
-## Voice — Local TTS & STT (optional MCP bundle)
+## Prep & mock interviews — text-only
 
-The **`mcp-voice`** MCP ships as a **Claude Desktop Extension** (`.mcpb`) built from the **`mcp-voice/`** directory in this repository. It uses **Kokoro** for TTS, **faster-whisper** for STT, and **webrtcvad** for end-of-utterance detection on **`listen`**. No cloud credentials — audio stays on the machine.
+**`prep-interview`** and **`mock-interview`** run entirely in chat text; there is no live TTS/STT in this plugin. If the user dictates via the host's own speech-to-text and pastes the result, `interview-coach` accepts it as `user_audio_transcript` — that's the user providing text, not the agent capturing audio.
 
-**Install (end users):**
+## Interview transcription — `mcp-transcribe` (optional MCP server)
 
-1. Download **`mcp-voice.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** for this repository (release workflow publishes the bundle when `mcp-voice/` changes).
-2. Open **Claude Desktop** → **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
-3. Open **Extensions**.
-4. Drag **`mcp-voice.mcpb`** into that window.
-5. Click **Install**.
-6. Ensure the **mcp-voice** extension is **enabled**.
+The **`mcp-transcribe`** MCP is a local server, source in **`mcp-transcribe/`** in this repository, that transcribes **recorded audio files that already exist on disk** — never a live microphone. It uses **mlx-whisper** (Apple Silicon) or **faster-whisper** (CPU fallback). No cloud credentials — audio stays on the machine.
 
-Start a **new chat** if **`speak`** / **`listen`** do not appear immediately.
+**Install (end users):** Run `/career-navigator:setup-transcribe` — it runs the prerequisite checks and installer for the user and requires no terminal use. Advanced users can instead follow the manual steps in **`mcp-transcribe/README.md`**.
 
 | Step | Action |
 | --- | --- |
-| **1 — Discover** | If **`speak`** and **`listen`** appear in **this session**, **mcp-voice** is available—**do not** prompt for setup. |
-| **2 — Configure** | **Only if** tools are missing: walk through the install steps above (Releases → `.mcpb` → Settings → Extensions → drag → Install → enabled). |
-| **3 — Tools** | **`speak(text, voice?, speed?)`** — Kokoro TTS → sounddevice playback. Default voice: `af_heart`. **`listen(duration_seconds?, pause_seconds?, vad_mode?)`** — microphone stream → faster-whisper STT; trailing silence ends recording early. Returns transcript or `"(no speech detected)"`. |
+| **1 — Discover** | If `backend_info` / `transcribe_file` appear in **this session**, `mcp-transcribe` is available — **do not** prompt for setup. |
+| **2 — Configure** | **Only if** tools are missing and the user wants recorded-interview transcription: offer `/career-navigator:setup-transcribe`. |
+| **3 — Tools** | **`transcribe_file(path, initial_prompt, vocabulary_group, language, model, out_dir, write_files)`** — transcribes a recording, returns text + timed segments. **`backend_info()`** — reports the active backend and whether `ffmpeg` is present. |
 
-**Prep / mock:** **`interview-coach`** prefers **`speak`** / **`listen`** when present for reading questions aloud and transcribing user answers.
-
-**Fallback:** **`prep-interview`** / **`mock-interview`** work **text-only** when **`mcp-voice`** is not loaded.
-
-**Post-interview capture:** The **`interview-capture`** skill uses **`listen`** to log **user** audio into structured notes; it does **not** replace **`interview-debrief`** for users who skip audio.
-
-**Developers:** The extension entrypoint is **`mcp-voice/server/main.py`** (run via **`uv`** per the bundle manifest). Voice is optional and installed through **Extensions**.
+**Post-interview capture:** The **`interview-capture`** skill uses **`transcribe_file`** on a recording the user already made, then logs structured notes; it does **not** replace **`interview-debrief`** for users who skip audio entirely.

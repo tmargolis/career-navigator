@@ -648,7 +648,8 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 ## Phase 2B — Interview Intelligence
 
 ### Scope
-- Interview prep (`prep-interview`, **`interview-coach`**), mock interview modes (**defaults** when mode/vibe omitted), **`interview-capture`** **skill** (not agent), optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`**, **Pre-interview brief** as part of **`daily-schedule`** ( **`/career-navigator:morning-brief`** = focused alias). **`interview-debrief`** may remain deferred.
+- Interview prep (`prep-interview`, **`interview-coach`**), mock interview modes (**defaults** when mode/vibe omitted, text-only), **`interview-capture`** **skill** (not agent, uses **`mcp-transcribe`** — see **`CONNECTORS.md`**), **Pre-interview brief** as part of **`daily-schedule`** ( **`/career-navigator:morning-brief`** = focused alias). **`interview-debrief`** may remain deferred.
+- **Retired (v3.1.1):** the `mcp-voice` MCP and its TTS/STT smoke tests below (2B-A2, 2B-A3, 2B-V1) covered a bundle that was later found not to reliably start (see `mcp-transcribe/README.md` "Why this replaced mcp-voice") and is no longer shipped. Left in place for historical record only — do not use these to validate current releases.
 
 ### Tests
 - Run prep + mock interview across multiple stages/vibes.
