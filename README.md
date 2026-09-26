@@ -103,8 +103,8 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`/career-navigator:setup-schedule`** | Run once after launch | **Phase 3:** creates the `career-navigator-daily-brief` Cowork scheduled task — two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerts, and top new job recommendations appended to `recommendations.json` automatically each morning. Optionally also creates `career-navigator-pipeline-refresh`, a second scheduled task that regenerates `pipeline-status.html` nightly |
 | **`/career-navigator:pipeline-status`** | Run any time, or scheduled nightly via `setup-schedule` | Generates the pipeline status page — filterable table (active / focus / closed / passed) with an embedded application timeline — reading `tracker.json`, `recommendations.json`, and `passed.json`, and opens it in the browser |
 | **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in the application's **`applications/<application_id>.json`** |
-| **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1); optional **`mcp-voice`** MCP (`speak`, `listen`) per **`CONNECTORS.md`** |
-| **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): user-audio STT → structured notes in **`applications/<application_id>.json`** + the **`tracker.json`** summary row; §13.1 warning; uses **`mcp-voice`** **`listen`** when the extension is installed |
+| **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Text-only practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1) |
+| **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): recorded-audio-file STT → structured notes in **`applications/<application_id>.json`** + the **`tracker.json`** summary row; §13.1 warning; uses **`mcp-transcribe`** (see `/career-navigator:setup-transcribe`) |
 | **`mine-stories`** | Setup or when new notes/journals appear | One-time/incremental extraction pipeline that builds **`StoryCorpus.json`** from journals, PKM, debriefs, and related documents |
 | **`story-retrieval`** | During prep/mock flow | Retrieves competency-matched stories (typically 8-12) from **`StoryCorpus.json`** for STAR mapping without loading full journals |
 | **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
@@ -264,31 +264,17 @@ See [CONNECTORS.md](CONNECTORS.md) for setup and fallback behavior.
 
 Never paste your token into this repository or into chat logs you do not trust. Tool permission prompts (e.g. “needs approval”) are normal — approve when you intend to run salary research.
 
-### Optional: Local voice — TTS & STT (`mcp-voice` MCP bundle)
+### Optional: Interview audio transcription (`mcp-transcribe`)
 
-Mock interviews and **`interview-capture`** can use **local** text-to-speech and speech-to-text via the **`mcp-voice`** Claude Desktop Extension (no Google Cloud account). The server runs on your machine (**Kokoro** + **faster-whisper**).
+`interview-capture` can transcribe recorded interview audio files automatically via the local **`mcp-transcribe`** MCP server (Whisper-based, runs entirely on your machine — no cloud account). Prep and mock interviews themselves are text-only; this is strictly for transcribing a recording after the fact.
 
-1. Download **`mcp-voice.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** (the release workflow publishes this asset when anything under **`mcp-voice/`** changes).
-2. In **Claude Desktop**, open **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
-3. Open **Extensions**.
-4. Drag **`mcp-voice.mcpb`** into the Extensions window.
-5. Click **Install**.
-6. Confirm the extension is **enabled**, then start a **new chat** if **`speak`** and **`listen`** tools do not show up.
+Run `/career-navigator:setup-transcribe` — it checks prerequisites, installs, and registers the server with Claude Desktop for you, without needing a terminal. Advanced users can instead follow the manual steps in [`mcp-transcribe/README.md`](mcp-transcribe/README.md).
 
-Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Voice section). The repo’s **`.mcp.json`** is only for optional HTTP connectors (e.g. Gmail, Calendar, Microsoft 365); it does **not** include the voice server.
+Details: [CONNECTORS.md](CONNECTORS.md) (Interview transcription section). The repo's **`.mcp.json`** is only for optional HTTP connectors (e.g. Gmail, Calendar, Microsoft 365); it does **not** include this server.
 
-### Optional: Local events — Luma discovery (`mcp-luma` MCP bundle)
+### Optional: Local events — Luma discovery
 
-For event intelligence workflows (**`event-radar`**, **`event-intelligence`**), you can install the local **`mcp-luma`** Claude Desktop Extension. This provides connector-style Luma event discovery tools from a local MCP bundle.
-
-1. Download **`mcp-luma.mcpb`** from the latest **[GitHub Release](https://github.com/tmargolis/career-navigator/releases)** (published when files under **`mcp-luma/`** change).
-2. In **Claude Desktop**, open **Settings** (macOS: **⌘ Command + comma**; Windows: **Ctrl + comma**).
-3. Open **Extensions**.
-4. Drag **`mcp-luma.mcpb`** into the Extensions window.
-5. Click **Install**.
-6. Confirm the extension is **enabled**, then start a **new chat** if the Luma tools do not show up.
-
-Details and tool behavior: [CONNECTORS.md](CONNECTORS.md) (Event intelligence section). Like `mcp-voice`, this is a local extension bundle and is not declared in project **`.mcp.json`**.
+For event intelligence workflows (**`event-radar`**, **`event-intelligence`**), Career Navigator can use Luma event discovery tools if you have an MCP server for it available in your session. This isn't shipped or required — if you want it, the open-source **[`alx1p/luma-mcp`](https://github.com/alx1p/luma-mcp)** project is a Claude Desktop Extension you can install independently; see its own README for setup. Without it, `event-radar` / `event-intelligence` fall back to browser-assisted or manual event capture.
 
 ---
 
@@ -352,13 +338,13 @@ Phase 2 connects Career Navigator to the external services that complete the ful
   - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), optional HTTP MCP entries in **`.mcp.json`** (`gmail`, `google-calendar`, `ms365`), **`contact-context`** + **`draft-outreach`** / **`writer`** enrichment; past and **upcoming** meetings (**`warm_networking`**); **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`networking.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
 
 - **Phase 2B ([Release v2.2.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.2.0)) — Full Interview Loop (Prep → Practice → Capture → Debrief) (Completed):** *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
-  - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes, morning brief (via **`daily-schedule`**), debrief flow; optional local **`mcp-voice`** MCP extension (**`speak`** / **`listen`**) + opt-in capture with retention/consent framework (see spec §13).
+  - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes (text-only), morning brief (via **`daily-schedule`**), debrief flow; opt-in recorded-audio capture via **`mcp-transcribe`** with retention/consent framework (see spec §13).
 
 - **Phase 2C ([Release v2.3.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.3.0)) — Portability + Employer-System Awareness (Completed):** *cloud storage connectors and ATS read-only status syncing keep your search durable across devices and aligned with where applications actually live.* **Impact:** fewer manual updates and less “lost state.”
   - **Scope includes**: Google Drive, OneDrive or Dropbox portability via **app sync or manual backup/restore** for job files, IllinoisJobLink connector, Greenhouse/Workday/Lever read-only connectors.
 
 - **Phase 2D ([Release v2.4.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.4.0)) — Event Intelligence + Interview Story Intelligence (Completed):** *event discovery matures into refreshable feeds while interview prep gains stronger story mining from journals, notes, and PKM sources.* **Impact:** better opportunity selection and sharper interview narratives grounded in the user’s own evidence.
-  - **Scope includes**: Luma event discovery via local MCP bundle (`mcp-luma`), plus optional Meetup/Eventbrite sourcing through **Claude in Chrome**, **computer use**, or **manual copy/paste**, and interview-story intelligence with a three-layer pipeline: one-time extraction (`mine-stories`), persistent `StoryCorpus.json`, and on-demand competency mapping (`story-retrieval`) for prep/mock workflows.
+  - **Scope includes**: optional Luma event discovery via a third-party MCP server (not shipped — see `alx1p/luma-mcp`), plus optional Meetup/Eventbrite sourcing through **Claude in Chrome**, **computer use**, or **manual copy/paste**, and interview-story intelligence with a three-layer pipeline: one-time extraction (`mine-stories`), persistent `StoryCorpus.json`, and on-demand competency mapping (`story-retrieval`) for prep/mock workflows.
 
 ### Phase 3 — Always-On Career Agent
 

@@ -56,17 +56,18 @@ Identify **`application_id`** (or company + role) for the interview being logged
 Resolve a transcript in this order. Do **not** invent transcripts at any step.
 
 1. **User already has a transcript** — use it. Skip transcription entirely.
-2. **Recorded audio file + `mcp-transcribe` MCP available** — the normal path. Call **`transcribe_file`**:
+2. **Recorded audio file, `mcp-transcribe` not yet installed** — offer to run `/career-navigator:setup-transcribe`, which installs and registers it without requiring the user to use a terminal. If they decline, fall through to step 3.
+3. **Recorded audio file + `mcp-transcribe` MCP available** — the normal path. Call **`transcribe_file`**:
    - Pass **`initial_prompt`** built at run time from the matched tracker row — company, role, and interviewer names from `contacts_file` — plus any product, project, or acronym likely to be spoken. Build this from the user's own data; never hardcode real names into this skill, which ships in a public repository. Cross-cutting terms the tracker does not carry can live in the server's gitignored `vocabulary.local.json` and be selected with `vocabulary_group`.
    - This is not optional. Whisper mangles unfamiliar proper nouns badly without it — expect vendor names to become common English words and surnames to become different surnames.
    - Call **`backend_info`** first only if a prior call failed; it distinguishes a bad file from a backend that never loaded.
-3. **Recorded audio file, no MCP** — transcribe in the session sandbox with `faster-whisper`. One pass only, at the model you intend to ship:
+4. **Recorded audio file, no MCP and the user declined setup** — transcribe in the session sandbox with `faster-whisper`. One pass only, at the model you intend to ship:
    - `medium.en`, `compute_type="int8"`, `cpu_threads=<nproc>`. Roughly 2x realtime on 2 cores — budget ~11 min for a 25-min recording, and start it in the background while reading tracker and prep-brief files.
    - **`vad_filter=False`.** VAD drops speech at silence boundaries; on a real 23-minute screen it silently removed ~28 seconds including the interviewer's answer on process.
-   - Seed `initial_prompt` exactly as in step 2.
+   - Seed `initial_prompt` exactly as in step 3.
    - Do **not** run a smaller model first as a recon pass, then re-run larger. That doubles the wall clock and produces nothing you keep.
-4. **Live recap instead of a recording** — if the user wants to narrate rather than upload, that needs a live-mic tool. `mcp-transcribe` deliberately has none. Ask the user to record on their phone or Mac and give you the file path.
-5. **Nothing available** — ask for a pasted transcript.
+5. **Live recap instead of a recording** — if the user wants to narrate rather than upload, that needs a live-mic tool. `mcp-transcribe` deliberately has none. Ask the user to record on their phone or Mac and give you the file path.
+6. **Nothing available** — ask for a pasted transcript.
 
 **Diarization:** none of these backends label speakers. Attribute turns from content — who asks vs. answers, self-references, names, dialect and idiom tells — and mark low-confidence passages in brackets rather than guessing silently.
 
