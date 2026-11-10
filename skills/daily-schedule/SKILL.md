@@ -1,0 +1,202 @@
+---
+name: daily-schedule
+description: "Runs on the daily scheduler. Delivers the routine operating brief (pipeline digest, overdue follow-ups, interview context, conditional pre-interview brief for today, market summary, and action prompts). /career-navigator:morning-brief triggers a focused day-of prep slice only—no separate morning-brief skill."
+when_to_use: >
+  Use when the user says things like: "daily job search brief", "career
+  navigator daily digest", "pipeline summary for my applications", "morning
+  job search summary", "run my daily career brief", "morning brief before my
+  interview", "interviews today brief", "what do I need for my interviews
+  today", "day of interview brief".
+---
+
+### Scheduling (Claude Cowork)
+
+This skill is designed to run as a **daily scheduled task** using Cowork’s **`/schedule`** (or equivalent). Example payload the user might schedule:
+
+> Run the Career Navigator `daily-schedule` skill for my job search folder. Deliver the daily brief per `skills/daily-schedule/SKILL.md`.
+
+After the first successful run, Cowork typically refines the scheduled prompt with learned paths, connectors, and context.
+
+## Workflow
+
+### 1. Resolve `{user_dir}` and validate data files
+
+Check:
+- `{user_dir}/CareerNavigator/profile.md`
+- `{user_dir}/CareerNavigator/ExperienceLibrary.json`
+- `{user_dir}/CareerNavigator/tracker.json`
+- `{user_dir}/CareerNavigator/artifacts-index.json`
+- `{user_dir}/CareerNavigator/StoryCorpus.json` (create-on-demand is allowed via `mine-stories`)
+
+If missing, output:
+> Daily brief skipped: run `/career-navigator:launch` to initialize Career Navigator.
+
+### 2. Reconcile artifacts before summary
+
+Before computing the brief, scan `{user_dir}` for any PDF/DOCX artifacts.
+
+If one or more artifact files are present, run `artifact-saved` first so
+`artifacts-index.json` is synchronized before counts are calculated.
+
+If no artifacts are found, continue without running `artifact-saved`.
+
+### 2.5 Auto-ingest new source documents
+
+Before finalizing the brief, detect whether newly discovered resume/CV-style files are present in `{user_dir}` but not yet represented as source entries in `ExperienceLibrary`.
+
+When such files are found:
+- Automatically run `add-source` for each newly discovered source document (no manual prompt required).
+- After each successful ingest, re-run `artifact-saved` once to keep `artifacts-index.json` consistent.
+- In the final brief, include a one-line note listing how many files were auto-ingested.
+
+If an ingest fails for any file:
+- Continue with the daily brief.
+- List failed filenames under a short "Needs attention" line.
+- Recommend rerunning `/career-navigator:add-source` for those specific files.
+
+### 2.6 Incremental story corpus refresh
+
+Before finalizing the brief, detect whether story-bearing source files changed since
+the last story mining run:
+
+- journals / logs
+- PKM notes/exports
+- interview debrief notes
+- resume/CV/cover-letter prose that may add interview evidence
+
+Use `CareerNavigator/StoryCorpus.json` `source_index` entries (path + mtime) as the
+baseline when available.
+
+When at least one new/changed eligible source file is detected:
+- Automatically run `mine-stories` in incremental mode (no manual prompt required).
+- Refresh `StoryCorpus.json` and its `meta.updated` + `source_index`.
+- In the final brief, add one short line:
+  - `Story corpus refreshed: {n_files} source file(s) scanned, {n_stories} stories added/updated.`
+
+If refresh fails:
+- Continue with the daily brief.
+- Add a concise "Needs attention" line:
+  - `Story corpus refresh failed; run "mine-stories" to retry.`
+
+### 2.7 Monthly career-plan checkpoint
+If `{user_dir}/CareerNavigator/career-trajectory-data.json` or
+`{user_dir}/CareerNavigator/career-trajectory.md` exists, determine whether the
+plan is stale:
+- Prefer the `as_of` field from `career-trajectory-data.json`.
+- If the JSON file is missing, fall back to a heading like
+  `## Career trajectory analysis ({YYYY-MM-DD})` in `career-trajectory.md`.
+- Consider the file "stale" when:
+  - the file is missing (first run), OR
+  - it was generated more than 30 days ago, OR
+  - the tracker has 5 or more new outcome events since the file's `as_of`
+    (rejections, offers, accepted completions; do not count `pending`).
+
+If stale, set `career_plan_refresh_due = true`.
+
+### 2.8 Offer evaluation nudge
+Check tracker for any active application where:
+- `status` is `"offer"`
+- and `{user_dir}/CareerNavigator/offer-context-{application_id}.json` does
+  not exist (offer evaluation has not been run yet)
+
+If any exist, set `offer_evaluation_due = true` and capture up to 3 items
+with company, role, and deadline (if present).
+
+### 3. Build the daily operating brief
+
+Application data uses the split layout defined in [references/tracker-schema.md](../../references/tracker-schema.md) — read it before any read or write.
+
+Read `{user_dir}/CareerNavigator/tracker.json` and `{user_dir}/CareerNavigator/artifacts-index.json`.
+
+Compute every number below from the `tracker.json` **summary rows alone** — `status`, `outcome`, `follow_up_date`, `latest_stage`, `latest_stage_date`, `notes_count`, `stage_count`, and `contact_count` all live on the row. Do **not** open `applications/<application_id>.json` or `contacts/<company-slug>.json` while computing the digest; those are opened only for the few applications that qualify for the pre-interview brief in **§3.2**.
+
+Compute:
+- Pipeline counts by status (`applied`, `phone_screen`, `interview`, `offer`, `accepted`, `rejected`, `withdrew`, `ghosted`) from the `tracker.json` summary rows; plus count of `considering` records from `recommendations.json` (reported separately as "X roles under consideration")
+- Overdue follow-up count (using `follow_up_date` if present)
+- **Meetings today** — count summary rows where **`latest_stage_date` is today** (local) and **`latest_stage`** matches the allowlist below (case-insensitive substring on the `latest_stage` string)
+- Artifact counts by type (`resume`, `cover_letter`)
+
+#### 3.1 Stage allowlist — interview / recruiter / screen today
+
+Treat a summary row as **“meeting today”** when `latest_stage_date` equals **today** and `latest_stage` matches any substring:
+
+`interview`, `recruiter`, `phone screen`, `phone_screen`, `hiring manager`, `hm `, `hm interview`, `technical`, `panel`, `onsite`, `executive`, `final round`, `final interview`
+
+Two refinements on that cheap pass:
+- Skip rows with `stage_count: 0` — they have no stage history at all.
+- A row whose `latest_stage_date` is **later than today** can still hide a today-dated stage, because scheduled interviews are logged with future dates. **Only for those rows**, read `{user_dir}/CareerNavigator/` + the row's `detail_file` and scan its `stage_history[]` for a today-dated allowlist match.
+
+Never load every detail file to answer this question — the summary row answers it for almost every application.
+
+Build the list of **applications** that qualify today (dedupe by the summary row's `id`).
+
+#### 3.2 Pre-interview brief subsection
+
+- **If no applications** qualify for meetings today: **omit** the entire **Pre-interview brief** subsection from the output (no placeholder).
+- **If one or more qualify:** append a subsection **after** the pipeline block (see §5) titled **`Pre-interview brief (today)`**. For **each** qualifying application — and only these — read `{user_dir}/CareerNavigator/` + its `detail_file`; that file holds `stage_history[]` (including `interviewers`) and `notes[]`, none of which exist in `tracker.json` any more. Then produce **short** bullets only (strict brevity — this is not a full prep doc):
+  - One **news or company hook** (only if grounded via tracker/artifacts or verifiable web; else say “no verified headline—run `/career-navigator:prep-interview` for depth”)
+  - **2–3 talking points** from `ExperienceLibrary` + role fit
+  - **Interviewer** reminder if today's `stage_history` entry in the detail file lists `interviewers`, or if the application has contacts: when the row's `contact_count` is above 0, read `{user_dir}/CareerNavigator/` + its `contacts_file`, keep only entries whose **`application`** equals the row's **`application`** label (`"<company> — <role>"`), and **dedupe by `name`** before naming anyone
+  - One **watch** line (risk, gap, or follow-up to confirm)
+
+Follow **`agents/interview-coach/AGENT.md`** in **`morning_section`** mode for tone and limits. You are implementing that mode **inline** in this skill (no separate skill file).
+
+### 3.3 `/career-navigator:morning-brief` — focused run
+
+If the user’s message is **primarily** a day-of interview request (triggers include `/career-navigator:morning-brief`, “morning brief before my interview”, etc.):
+
+1. Still perform **§1** validation and, when appropriate, **§2** artifact reconciliation (lightweight).
+2. **Skip** the full pipeline table and artifact counts unless the user also asked for a full digest.
+3. Output **only**:
+   - A one-line header: **`Career Navigator — Pre-interview brief`** [{today}]
+   - The **Pre-interview brief (today)** content per **§3.2**, or a clear line that **no** qualifying meetings appear in `tracker.json` for today—then suggest `/career-navigator:track-application` to log scheduled screens and `/career-navigator:prep-interview` for deep prep.
+
+If the user runs a **general daily** trigger, produce the **full** template in **§5**, including **Pre-interview brief** when **§3.2** applies.
+
+### 4. Add market and strategy prompts
+
+If user has run market workflows recently, summarize top signal in one line.
+If no recent strategy signals exist in tracker data, append:
+> Run `/career-navigator:suggest-roles` to refresh strategy signals for job-scout ranking.
+
+If no market brief has been generated recently, append:
+> Run `/career-navigator:market-brief` for weekly demand and displacement updates.
+
+### 5. Output format
+
+```
+**Career Navigator — Daily Brief** [{today}]
+
+Pipeline
+  Considering      {n}
+  Applied          {n}
+  Phone screen     {n}
+  Interview        {n}
+  Offer            {n}
+
+Follow-up due      {n}
+Meetings today     {n from §3.1 or "None scheduled"}
+
+Artifacts
+  Resumes          {n}
+  Cover letters    {n}
+```
+
+If **§3.2** applies, append:
+
+```
+Pre-interview brief (today)
+  {per-application concise bullets — see §3.2}
+```
+
+Then append at most 3 concise action bullets, highest urgency first. Include:
+- If `offer_evaluation_due`: an "Offer evaluation due" bullet with the top item(s)
+  and prompt to run `/career-navigator:evaluate-offer`.
+- If `career_plan_refresh_due`: a "Career plan refresh due" bullet prompting
+  the user to run `/career-navigator:career-plan`.
+
+## Guardrails
+
+- Keep this as the primary place for routine summaries; do not duplicate in `focus-career`
+- If data is sparse, say so explicitly and keep recommendations lightweight
+- Do not fabricate market news, dates, or deadlines

@@ -1,0 +1,46 @@
+{
+  "schema": "external_reports_v1",
+  "description": "Research reports Career Navigator's agents read. The plugin stores only where to get them; launch saves a copy into the user's job search folder.",
+  "save_dir": "CareerNavigator/references",
+  "reports": [
+    {
+      "id": "anthropic-labor-market-impacts-2026-03",
+      "title": "Labor market impacts of AI: A new measure and early evidence",
+      "publisher": "Anthropic",
+      "published": "2026-03-05",
+      "landing_url": "https://www.anthropic.com/research/labor-market-impacts",
+      "pdf_url": null,
+      "filename": "AI_Job_Report-Anthropic-2026-03.pdf",
+      "fetch": "launch",
+      "required_for": ["AI displacement assessment"],
+      "used_by": ["analyst", "market-researcher", "ai-analysis", "report"],
+      "notes": "Primary source for task-level AI exposure (the observed exposure measure). The report PDF is linked from the landing page."
+    },
+    {
+      "id": "anthropic-economic-index-2026-06",
+      "title": "Anthropic Economic Index report: Cadences",
+      "publisher": "Anthropic",
+      "published": "2026-06-26",
+      "landing_url": "https://www.anthropic.com/research/economic-index-june-2026-report",
+      "pdf_url": null,
+      "filename": "Anthropic-Economic-Index-2026-06.pdf",
+      "fetch": "launch",
+      "required_for": [],
+      "used_by": ["analyst", "market-researcher"],
+      "notes": "Most recent Economic Index edition at the time this list was written: how and when people use Claude at work, plus worker survey findings. Supplements the labor market paper; it does not replace its exposure measure. Newer editions are listed at https://www.anthropic.com/research/team/economics."
+    },
+    {
+      "id": "stanford-ai-index-2026",
+      "title": "The AI Index 2026 Annual Report",
+      "publisher": "Stanford HAI",
+      "published": "2026-04",
+      "landing_url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+      "pdf_url": "https://hai.stanford.edu/assets/files/ai_index_report_2026.pdf",
+      "filename": "ai_index_report_2026.pdf",
+      "fetch": "ask",
+      "required_for": [],
+      "used_by": ["market-researcher"],
+      "notes": "Optional background on the AI economy and labor market. About 37 MB and 423 pages, so ask before downloading."
+    }
+  ]
+}

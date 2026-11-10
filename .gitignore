@@ -1,0 +1,42 @@
+# Secrets
+.env
+*.env
+.env.*
+
+# Personal job search data (user_dir — never commit)
+career/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Local Claude instructions
+CLAUDE.md
+
+# Editor
+.vscode/
+career-navigator.code-workspace
+
+able-imprint-176422-8a96535f0abc.json
+__pycache__/
+mcp-transcribe/mcp-transcribe.mcpb
+
+# Retired from the shipped plugin (v3.1.1): mcp-voice never reliably ran (see
+# mcp-transcribe/README.md "Why this replaced mcp-voice"), and mcp-luma was an
+# unused vendored fork of github.com/alx1p/luma-mcp that no skill ever called.
+# Kept on disk locally, no longer tracked or distributed.
+mcp-voice/
+mcp-luma/
+
+# Local transcription vocabulary (proper nouns — never commit)
+mcp-transcribe/vocabulary.local.json
+
+# Transcription outputs (may contain interview content)
+*.transcript.txt
+*.segments.json
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Python venvs inside MCP servers
+mcp-transcribe/.venv/
