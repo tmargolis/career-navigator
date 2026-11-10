@@ -2,16 +2,11 @@
 name: launch
 description: >
   Launch your job search with Career Navigator: the single entry point for configuration. Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents, walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, optional Gmail / Microsoft 365 inbox and optional Google Calendar connectors (OAuth) for outreach and meeting context, optional LinkedIn post analytics, and optional cloud storage connectors (Google Drive, OneDrive, Dropbox) when applicable. No Customize button required — run this command to do everything.
-triggers:
-  - "/career-navigator:launch"
-  - "/launch"
-  - "launch career"
-  - "launch career navigator"
-  - "begin my job search with career navigator"
-  - "set up career"
-  - "set up career navigator"
-  - "configure career navigator"
-  - "get started with career navigator"
+when_to_use: >
+  Use when the user says things like: "launch career", "launch career
+  navigator", "begin my job search with career navigator", "set up career",
+  "set up career navigator", "configure career navigator", "get started with
+  career navigator".
 ---
 
 Use this after installing the plugin — it is how you **launch** Career Navigator: registering your job search folder, reading your existing documents, building your profile and ExperienceLibrary, and configuring integrations (the same setup flow as before, framed as starting your search).
@@ -608,6 +603,20 @@ If they choose a provider:
 
 `prep-interview` and `mock-interview` are text-only. Separately, if the user wants recorded interviews transcribed automatically (for `/career-navigator:interview-capture`), offer once:
 
-> "If you'd like recorded interviews transcribed automatically, run `/career-navigator:setup-transcribe` any time — it installs a small local server and walks you through it without needing a terminal."
+> "`/career-navigator:interview-capture` works from a transcript of your recording. If this app can't transcribe audio for you, `/career-navigator:setup-transcribe` explains the optional local add-on that can."
 
 Do not block launch on this either way.
+
+### 9. Save the reference reports
+
+The AI displacement and market analyses read published research reports. The plugin stores only where to find them, in `references/external-reports.json` in the plugin folder. Save copies now so later analysis does not depend on a network connection.
+
+1. Read `references/external-reports.json`. Create `{user_dir}/CareerNavigator/references/` if it does not exist.
+2. For each report, skip it if its `filename` (or a Markdown copy named `<id>.md`) is already in that folder.
+3. For reports with `"fetch": "launch"`: tell the user which reports you are about to download and from where, then save each one.
+   - If `pdf_url` is set, download that file to `{user_dir}/CareerNavigator/references/<filename>`.
+   - Otherwise open `landing_url`, find the link to the report's PDF on that page, and download it to `<filename>`. If the page offers no PDF, save the page's text as `<id>.md` with the title, publisher, date and URL at the top.
+4. For reports with `"fetch": "ask"`: say what the report is and how large it is (from `notes`), and download it only if the user says yes.
+5. Confirm what was saved. If a download fails, say so in one line and move on — the agents fall back to reading the landing page live.
+
+These are inbound downloads of public documents; nothing about the user is sent. Do not block launch if the user declines or is offline.

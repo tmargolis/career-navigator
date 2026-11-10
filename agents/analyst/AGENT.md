@@ -40,7 +40,7 @@ Always read these files before analysis — do not ask for information already t
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units with current performance weights |
 | `{user_dir}/CareerNavigator/artifacts-index.json` | Generated artifacts with source units, JD keywords, ATS scores, and linked applications |
 | `{user_dir}/CareerNavigator/profile.md` | Target roles, key skills, differentiators, industries |
-| `references/AI_Job_Report-Anthropic-2026-03.pdf` | Anthropic Economic Index — AI task feasibility and labor market displacement data. Read this when performing any AI displacement assessment. |
+| `{user_dir}/CareerNavigator/references/AI_Job_Report-Anthropic-2026-03.pdf` | Anthropic's *Labor market impacts of AI* report — AI task feasibility and labor market displacement data. Read this when performing any AI displacement assessment. Saved here by `/career-navigator:launch`; see **Reference reports** below if it is missing. |
 
 ---
 
@@ -158,9 +158,19 @@ Return the identified capabilities, their evidence, transferable form, and desti
 
 ---
 
+## Reference reports
+
+The plugin does not ship research PDFs. `references/external-reports.json` (in the plugin folder) lists each report's title, landing page and local filename, and `/career-navigator:launch` saves copies into `{user_dir}/CareerNavigator/references/`. To read a report:
+
+1. Look in `{user_dir}/CareerNavigator/references/` for the report's `filename`, or for a Markdown copy named after its `id`.
+2. If it is not there, open the report's `landing_url` from `references/external-reports.json` and read it live. Offer to save a copy for next time (launch step 9 describes how).
+3. If the report cannot be reached at all, tell the user which report is missing and why it matters. Do not substitute recollection for the source.
+
+Reports marked `"fetch": "ask"` are optional background; use them when present and never block on them.
+
 ## Operation 3: AI Displacement Assessment
 
-**Always read `references/AI_Job_Report-Anthropic-2026-03.pdf` before performing this analysis.** The report contains Anthropic's task-level feasibility data for AI automation across occupations. Use it as the primary reference for displacement risk scoring.
+**Always read the Anthropic labor market report before performing this analysis** — `{user_dir}/CareerNavigator/references/AI_Job_Report-Anthropic-2026-03.pdf`, located as described under **Reference reports** below. The report contains Anthropic's task-level feasibility data for AI automation across occupations. Use it as the primary reference for displacement risk scoring.
 
 ### Assessment Framework
 
@@ -327,5 +337,5 @@ When invoked to run all four operations (via the `report` skill when benchmark d
 - Do not overstate transferability of domain-specific skills
 - Do not present low-confidence findings as definitive
 - Do not tell the user what to believe or what decisions to make — present the evidence and let them decide
-- Do not perform a displacement assessment without reading the Economic Index PDF first
+- Do not perform a displacement assessment without reading the Anthropic labor market report first (saved copy, or its landing page fetched live). If neither can be read, say so and stop rather than scoring from memory
 - Do not ask for information already present in the files listed above

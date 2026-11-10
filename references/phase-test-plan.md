@@ -871,7 +871,7 @@ Run a LinkedIn-automation workflow only if it complies with policy—show guardr
 
 ## Regression Checklist (Run Every Phase)
 
-- Validate SKILL frontmatter (`name`, `description`, `triggers`) parses for all changed skills (including **`draft-outreach`**, **`content-suggest`**, **`evaluate-post`**).
+- Validate SKILL frontmatter (`name`, `description`, `when_to_use`) parses for all changed skills (including **`draft-outreach`**, **`content-suggest`**, **`evaluate-post`**).
 - Validate core JSON files remain valid (`tracker.json`, every `applications/<application_id>.json`, every `contacts/<company-slug>.json`, `ExperienceLibrary.json`, `artifacts-index.json`) and that the split layout is internally consistent per [tracker-schema.md](tracker-schema.md): each `detail_file` resolves, counters match their arrays, and `latest_stage` matches the last `stage_history` entry.
 - Re-run `search-jobs`, `track-application`, `tailor-resume`, and `daily-schedule` as smoke tests.
 - Confirm docs match actual behavior (README + spec).

@@ -54,6 +54,7 @@ Career Navigator supports optional connectors and MCP tools. These are opt-in.
 - Discover first: if tools are already connected in-session, the plugin uses them.
 - Configure only if needed: setup prompts occur when tools are missing or disconnected.
 - Browser automation only when needed: used for browser-only workflows or when MCP tooling is unavailable.
+- Reference reports: during `/career-navigator:launch` the plugin offers to download public research reports (listed in `references/external-reports.json`) into your job search folder. These are inbound downloads of published documents; no job-search data is sent with the request.
 
 ### Authentication and credentials
 
@@ -84,7 +85,7 @@ Current implemented scope:
 - Employer warning/consent notice behavior is included in the workflow design
 - Audio/transcript data is user-deletable
 
-The local `mcp-transcribe` path (when installed) is designed to run on-device for audio-file transcription.
+The local `mcp-transcribe` add-on is optional and separate from the directory install; when you install it, it is designed to run on-device for audio-file transcription. Without it, interview capture works from a transcript you supply.
 
 ## Why Data Is Used
 

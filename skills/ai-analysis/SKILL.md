@@ -5,17 +5,11 @@ description: >
   target roles at the task level, using the Anthropic Economic Index. Identifies
   durable differentiators and suggests narrative reframes where the user's
   positioning overweights high-risk tasks. Invokes the analyst agent.
-triggers:
-  - "AI displacement"
-  - "AI risk"
-  - "is my job at risk from AI"
-  - "how AI-proof is my career"
-  - "future-proof my career"
-  - "what parts of my job will AI replace"
-  - "assess AI risk"
-  - "AI automation risk"
-  - "how durable are my skills"
-  - "what's my AI displacement risk"
+when_to_use: >
+  Use when the user says things like: "AI displacement", "AI risk", "is my job
+  at risk from AI", "how AI-proof is my career", "future-proof my career",
+  "what parts of my job will AI replace", "assess AI risk", "AI automation
+  risk", "how durable are my skills", "what's my AI displacement risk".
 ---
 
 Invoke the `analyst` agent to assess AI and automation displacement risk for the user's current and target roles.
@@ -35,7 +29,7 @@ Otherwise, proceed.
 Hand off to the `analyst` agent with:
 - The full `CareerNavigator/ExperienceLibrary.json`
 - The full `CareerNavigator/profile.md`
-- Instruction to read `references/AI_Job_Report-Anthropic-2026-03.pdf` before analysis
+- Instruction to read the Anthropic labor market report before analysis — `{user_dir}/CareerNavigator/references/AI_Job_Report-Anthropic-2026-03.pdf`, or its landing page from the plugin's `references/external-reports.json` if no saved copy exists
 
 The agent will decompose the user's current and target roles into tasks, score each task against the Economic Index, build a role-level risk profile, identify durable differentiators, and suggest narrative reframes where needed.
 

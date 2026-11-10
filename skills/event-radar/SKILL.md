@@ -1,13 +1,9 @@
 ---
 name: event-radar
 description: "Discovers networking events across local, regional, national, and international scopes with ROI tiers and presentation flags. Invokes networking-strategist."
-triggers:
-  - "event radar"
-  - "upcoming conferences"
-  - "networking events near me"
-  - "meetups for my role"
-  - "events this quarter"
-  - "/career-navigator:event-radar"
+when_to_use: >
+  Use when the user says things like: "event radar", "upcoming conferences",
+  "networking events near me", "meetups for my role", "events this quarter".
 ---
 
 Invoke **`networking-strategist`** in **`event-radar`** mode.

@@ -6,13 +6,9 @@ description: >
   final), and vibe (supportive through bored). If mode or vibe are omitted,
   the system selects defaults and announces them. Delegates to interview-coach.
   Text-only. Also invocable via /career-navigator:mock-interview.
-triggers:
-  - "/mock-interview"
-  - "/career-navigator:mock-interview"
-  - "mock interview"
-  - "practice interview"
-  - "run a mock interview"
-  - "interview practice"
+when_to_use: >
+  Use when the user says things like: "mock interview", "practice interview",
+  "run a mock interview", "interview practice".
 ---
 
 ## Workflow

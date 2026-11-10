@@ -3,12 +3,10 @@ name: linkedin-post-analytics
 description: >
   Read-only snapshot of the user's own LinkedIn post analytics into networking.json networking entries.
   Requires browser control (Claude in Chrome MCP or approved computer/browser use). Scheduled-friendly.
-triggers:
-  - "linkedin post analytics"
-  - "linkedin-post-analytics"
-  - "snapshot linkedin analytics"
-  - "append linkedin analytics to tracker"
-  - "/career-navigator:linkedin-post-analytics"
+when_to_use: >
+  Use when the user says things like: "linkedin post analytics",
+  "linkedin-post-analytics", "snapshot linkedin analytics", "append linkedin
+  analytics to tracker".
 ---
 
 ## Gate (run first)

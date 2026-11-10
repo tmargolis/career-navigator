@@ -4,15 +4,11 @@ description: >
   Recommends learning investments using a cost-benefit-time ROI analysis across
   certifications, degrees, bootcamps, and self-study. Invokes the
   honest-advisor agent in training-roi mode.
-triggers:
-  - "training roi"
-  - "learning roi"
-  - "what should i learn next"
-  - "is a bootcamp worth it"
-  - "is a certification worth it"
-  - "should i get a degree"
-  - "upskilling plan"
-  - "best training path for my target role"
+when_to_use: >
+  Use when the user says things like: "training roi", "learning roi", "what
+  should i learn next", "is a bootcamp worth it", "is a certification worth
+  it", "should i get a degree", "upskilling plan", "best training path for my
+  target role".
 ---
 
 Invoke `honest-advisor` in `training-roi` mode to compare learning options and recommend the highest-ROI path for the user's target role.

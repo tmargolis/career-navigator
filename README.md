@@ -104,7 +104,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`/career-navigator:pipeline-status`** | Run any time, or scheduled nightly via `setup-schedule` | Generates the pipeline status page — filterable table (active / focus / closed / passed) with an embedded application timeline — reading `tracker.json`, `recommendations.json`, and `passed.json`, and opens it in the browser |
 | **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `interview-prep/*.md` (in your job search folder) + **`[prep]`** note in the application's **`applications/<application_id>.json`** |
 | **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Text-only practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1) |
-| **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): recorded-audio-file STT → structured notes in **`applications/<application_id>.json`** + the **`tracker.json`** summary row; §13.1 warning; uses **`mcp-transcribe`** (see `/career-navigator:setup-transcribe`) |
+| **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): recorded-audio-file STT → structured notes in **`applications/<application_id>.json`** + the **`tracker.json`** summary row; §13.1 warning; works from any transcript, or the optional **`mcp-transcribe`** add-on (see `/career-navigator:setup-transcribe`) |
 | **`mine-stories`** | Setup or when new notes/journals appear | One-time/incremental extraction pipeline that builds **`StoryCorpus.json`** from journals, PKM, debriefs, and related documents |
 | **`story-retrieval`** | During prep/mock flow | Retrieves competency-matched stories (typically 8-12) from **`StoryCorpus.json`** for STAR mapping without loading full journals |
 | **`artifact-saved`** | After saves or from **`daily-schedule`** | Sync **`artifacts-index.json`** with files on disk; analytics handoff stub |
@@ -176,7 +176,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
 | **`report`** | “Full analysis”, integrated read | **`analyst`** + tracker + EL + artifacts |
-| **`pipeline-status`** | Dashboard refresh, or nightly via `setup-schedule` | **`pipeline-status.html`** + `pipeline-data.js` + `timeline.html` |
+| **`pipeline-status`** | Dashboard refresh, or nightly via `setup-schedule` | **`pipeline-status.html`** + `pipeline-data.js` + `timeline.html` + `timeline-data.js` |
 
 ---
 
@@ -219,7 +219,9 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering
 │   ├── pipeline-status.html     — generated pipeline status page (opens in browser)
 │   ├── pipeline-data.js         — data backing pipeline-status.html, regenerated each run
-│   └── timeline.html            — generated application timeline, embedded in pipeline-status.html
+│   ├── timeline.html            — application timeline page, embedded in pipeline-status.html (installed once from the plugin's template)
+│   ├── timeline-data.js         — data backing timeline.html, regenerated each run
+│   └── references/              — research reports saved by `launch` (see the plugin's `references/external-reports.json`)
 ```
 
 **How application data is split:** `tracker.json` holds the pipeline at a glance — one summary row per application with its company, role, status, dates, and small counters (`notes_count`, `stage_count`, `contact_count`, `latest_stage`, `latest_stage_date`). The bulky parts live beside it: each application's stage history and notes in `applications/<application_id>.json`, and every contact at a company in `contacts/<company-slug>.json`, where each contact carries the `"<company> — <role>"` label of the application it belongs to. Skills read `tracker.json` for the overview and open a detail or contacts file only for the applications actually in play. Application ids are readable slugs (`app-hex-senior-pm`), so you can find an application's file by name. The full field-by-field definition is in [references/tracker-schema.md](references/tracker-schema.md).
@@ -267,9 +269,9 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 ### Optional: Interview audio transcription (`mcp-transcribe`)
 
-`interview-capture` can transcribe recorded interview audio files automatically via the local **`mcp-transcribe`** MCP server (Whisper-based, runs entirely on your machine — no cloud account). Prep and mock interviews themselves are text-only; this is strictly for transcribing a recording after the fact.
+`interview-capture` works from a transcript of your recording, from whatever source you have: your phone's recorder, a meeting app, dictation software, or the app's own audio support where it has one. Prep and mock interviews themselves are text-only.
 
-Run `/career-navigator:setup-transcribe` — it checks prerequisites, installs, and registers the server with Claude Desktop for you, without needing a terminal. Advanced users can instead follow the manual steps in [`mcp-transcribe/README.md`](mcp-transcribe/README.md).
+If you want transcription done locally, **`mcp-transcribe`** is an optional add-on: a Whisper-based MCP server that runs entirely on your machine with no cloud account. It is a separate component and is **not included** when you install Career Navigator from Anthropic's plugin directory, which accepts instruction files only. Get it from [`mcp-transcribe/` in the GitHub repo](https://github.com/tmargolis/career-navigator/tree/main/mcp-transcribe) and follow its README. If you installed the plugin from the GitHub release zip or a clone, the folder is already there and `/career-navigator:setup-transcribe` will run the installer for you.
 
 Details: [CONNECTORS.md](CONNECTORS.md) (Interview transcription section). The repo's **`.mcp.json`** is only for optional HTTP connectors (e.g. Gmail, Calendar, Microsoft 365); it does **not** include this server.
 

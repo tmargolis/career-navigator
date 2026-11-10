@@ -5,11 +5,10 @@ description: >
   CareerNavigator/StoryCorpus.json for prep and mock interview workflows.
   Returns only the highest-fit stories so the model can expand into STAR
   responses without loading full raw journals.
-triggers:
-  - "retrieve interview stories"
-  - "find stories for this interview"
-  - "story retrieval"
-  - "pull stories for competency"
+when_to_use: >
+  Use when the user says things like: "retrieve interview stories", "find
+  stories for this interview", "story retrieval", "pull stories for
+  competency".
 ---
 
 Select targeted stories from the persistent story corpus for immediate interview use.

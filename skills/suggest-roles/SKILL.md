@@ -4,13 +4,10 @@ description: >
   Suggests non-obvious role opportunities based on transferable strengths and
   market conditions. Invokes honest-advisor and market-researcher, then writes
   outcome-driven role signals for job-scout scoring improvements.
-triggers:
-  - "suggest roles"
-  - "what roles should i target"
-  - "non-obvious roles for me"
-  - "what else could i apply to"
-  - "role pivot suggestions"
-  - "/career-navigator:suggest-roles"
+when_to_use: >
+  Use when the user says things like: "suggest roles", "what roles should i
+  target", "non-obvious roles for me", "what else could i apply to", "role
+  pivot suggestions".
 ---
 
 Invoke both `honest-advisor` and `market-researcher` to generate role suggestions and write actionable signals that improve `job-scout` ranking.

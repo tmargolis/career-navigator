@@ -4,12 +4,9 @@ description: >
   Ambient nudge for offer-evaluation and follow-up timing based on tracker
   state. Prompts the user to run evaluate-offer when an active offer exists
   but OfferContext has not been created yet.
-triggers:
-  - "offer evaluation due"
-  - "i have an offer"
-  - "offer deadline"
-  - "offer evaluation"
-  - "/career-navigator:follow-up-timing"
+when_to_use: >
+  Use when the user says things like: "offer evaluation due", "i have an
+  offer", "offer deadline", "offer evaluation".
 ---
 
 Run `follow-up-timing` to get brief timing nudges based on your tracker:

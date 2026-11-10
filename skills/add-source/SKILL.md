@@ -5,19 +5,11 @@ description: >
   Extracts structured experience units and merges them into CareerNavigator/ExperienceLibrary.json.
   Fires when the user uploads or references a new source document. Also
   invocable via /career-navigator:add-source.
-triggers:
-  - "add this resume"
-  - "add my resume"
-  - "add this CV"
-  - "ingest this document"
-  - "add to my ExperienceLibrary"
-  - "add a source"
-  - "/add-source"
-  - "here's my resume"
-  - "upload my resume"
-  - "I have a new resume"
-  - "I have another resume"
-  - "add this to the ExperienceLibrary"
+when_to_use: >
+  Use when the user says things like: "add this resume", "add my resume", "add
+  this CV", "ingest this document", "add to my ExperienceLibrary", "add a
+  source", "here's my resume", "upload my resume", "I have a new resume", "I
+  have another resume", "add this to the ExperienceLibrary".
 ---
 
 Extract structured experience units from a source document and merge them into the user's ExperienceLibrary.

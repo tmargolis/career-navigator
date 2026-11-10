@@ -7,19 +7,12 @@ description: >
   response window data for any company not yet on file. Builds FollowUpBrief
   entries and invokes writer for send-ready messages. Connector context
   enriches briefs with email/calendar data when available and approved.
-triggers:
-  - "follow up on my applications"
-  - "what needs a follow-up"
-  - "should I follow up"
-  - "what should I follow up on"
-  - "follow-up queue"
-  - "any follow-ups due"
-  - "check my follow-ups"
-  - "should I follow up on"
-  - "how long has it been since I applied"
-  - "am I being ghosted"
-  - "any overdue applications"
-  - "what's taking so long"
+when_to_use: >
+  Use when the user says things like: "follow up on my applications", "what
+  needs a follow-up", "should I follow up", "what should I follow up on",
+  "follow-up queue", "any follow-ups due", "check my follow-ups", "should I
+  follow up on", "how long has it been since I applied", "am I being ghosted",
+  "any overdue applications", "what's taking so long".
 ---
 
 Surface follow-up priorities for all active applications using company-specific response window data.

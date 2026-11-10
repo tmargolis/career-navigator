@@ -4,20 +4,13 @@ description: >
   Benchmarks the user's pipeline conversion rates, response timelines, ATS
   scores, and compensation positioning against industry norms segmented by
   role, level, company size, and geography. Invokes analyst Operation 4.
-triggers:
-  - "how does my search compare"
-  - "benchmark my search"
-  - "benchmark my numbers"
-  - "am I above average"
-  - "am I below average"
-  - "how are my response rates"
-  - "how do my numbers look"
-  - "how does my pipeline compare"
-  - "how am I doing compared to other candidates"
-  - "what's a normal response rate"
-  - "is my conversion rate good"
-  - "how long does it usually take to get an offer"
-  - "how competitive is my market"
+when_to_use: >
+  Use when the user says things like: "how does my search compare", "benchmark
+  my search", "benchmark my numbers", "am I above average", "am I below
+  average", "how are my response rates", "how do my numbers look", "how does
+  my pipeline compare", "how am I doing compared to other candidates", "what's
+  a normal response rate", "is my conversion rate good", "how long does it
+  usually take to get an offer", "how competitive is my market".
 ---
 
 Benchmark the user's pipeline performance against industry norms for their role, level, company size, and geography.

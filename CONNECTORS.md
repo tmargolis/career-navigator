@@ -31,7 +31,7 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
 | PKM knowledge bases (story mining) | `~~pkm` | **Notion** first-party connector (official) and/or **Capacities** via local MCP extension/server when available in host session | Obsidian, Roam, Logseq, and manual export/import workflows |
 | Events (Luma) | — | Optional, not shipped — use a Luma MCP server if one is already in the user's session (e.g. the independent **[`alx1p/luma-mcp`](https://github.com/alx1p/luma-mcp)** project) for **`event-radar`** / **`event-intelligence`** workflows. | Meetup/Eventbrite via **Claude in Chrome**, **computer use**, or **manual copy/paste** fallback |
-| Interview transcription | — | Optional local MCP server — **`mcp-transcribe`**, installed via `/career-navigator:setup-transcribe` (or manually per `mcp-transcribe/README.md`). Exposes **`transcribe_file`** for recorded interview audio, used by **`interview-capture`**. Fully local (Whisper via mlx-whisper or faster-whisper). | Session-sandbox `faster-whisper`, or a pasted transcript |
+| Interview transcription | — | Optional add-on, not part of the directory install — **`mcp-transcribe`**, a local MCP server from [https://github.com/tmargolis/career-navigator/tree/main/mcp-transcribe](https://github.com/tmargolis/career-navigator/tree/main/mcp-transcribe) (`/career-navigator:setup-transcribe` runs its installer when the folder is present). Exposes **`transcribe_file`** for recorded interview audio, used by **`interview-capture`**. Fully local (Whisper via mlx-whisper or faster-whisper). | A transcript from any tool, the host's own audio support, or session-sandbox `faster-whisper` |
 
 ---
 
@@ -225,14 +225,16 @@ See also **`skills/launch/SKILL.md`** Step 7 for conversational setup during **`
 
 ## Interview transcription — `mcp-transcribe` (optional MCP server)
 
-The **`mcp-transcribe`** MCP is a local server, source in **`mcp-transcribe/`** in this repository, that transcribes **recorded audio files that already exist on disk** — never a live microphone. It uses **mlx-whisper** (Apple Silicon) or **faster-whisper** (CPU fallback). No cloud credentials — audio stays on the machine.
+The **`mcp-transcribe`** MCP is an optional add-on: a local server, source in [**`mcp-transcribe/`**](https://github.com/tmargolis/career-navigator/tree/main/mcp-transcribe) in the GitHub repository, that transcribes **recorded audio files that already exist on disk** — never a live microphone. It uses **mlx-whisper** (Apple Silicon) or **faster-whisper** (CPU fallback). No cloud credentials — audio stays on the machine.
 
-**Install (end users):** Run `/career-navigator:setup-transcribe` — it runs the prerequisite checks and installer for the user and requires no terminal use. Advanced users can instead follow the manual steps in **`mcp-transcribe/README.md`**.
+**Not included in directory installs.** Anthropic's plugin directory accepts instruction files only, so the copy of Career Navigator installed from there has no `mcp-transcribe/` folder. `interview-capture` still works from any transcript the user supplies.
+
+**Install:** from a GitHub release zip or a clone, run `/career-navigator:setup-transcribe` — it runs the prerequisite checks and installer and requires no terminal use. From a directory install, download the add-on from the GitHub link above and follow its README; the skill explains this and does not fetch code itself.
 
 | Step | Action |
 | --- | --- |
 | **1 — Discover** | If `backend_info` / `transcribe_file` appear in **this session**, `mcp-transcribe` is available — **do not** prompt for setup. |
-| **2 — Configure** | **Only if** tools are missing and the user wants recorded-interview transcription: offer `/career-navigator:setup-transcribe`. |
+| **2 — Configure** | **Only if** tools are missing, the user has no transcript, and they want local transcription: offer `/career-navigator:setup-transcribe`. |
 | **3 — Tools** | **`transcribe_file(path, initial_prompt, vocabulary_group, language, model, out_dir, write_files)`** — transcribes a recording, returns text + timed segments. **`backend_info()`** — reports the active backend and whether `ffmpeg` is present. |
 
 **Post-interview capture:** The **`interview-capture`** skill uses **`transcribe_file`** on a recording the user already made, then logs structured notes; it does **not** replace **`interview-debrief`** for users who skip audio entirely.

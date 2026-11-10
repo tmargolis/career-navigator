@@ -1,14 +1,10 @@
 ---
 name: network-map
 description: "Maps plausible paths and gaps from the user to target employers—bridges, hypotheses, and dream-job leverage points. Outputs prose plus network_map_v1 JSON for a future visualization layer. Invokes networking-strategist."
-triggers:
-  - "network map"
-  - "map my network"
-  - "who can introduce me"
-  - "dream job connections"
-  - "path to company"
-  - "introduction strategy"
-  - "/career-navigator:network-map"
+when_to_use: >
+  Use when the user says things like: "network map", "map my network", "who
+  can introduce me", "dream job connections", "path to company", "introduction
+  strategy".
 ---
 
 Invoke **`networking-strategist`** in **`network-map`** mode.

@@ -1,12 +1,10 @@
 ---
 name: artifact-saved
 description: "Runs after artifact writes. Reconciles artifacts-index with files on disk in the user job search folder and prepares an analytics-ready artifact event summary."
-triggers:
-  - "reconcile artifacts index"
-  - "sync artifacts index with files"
-  - "fix artifacts-index.json"
-  - "refresh artifact inventory from disk"
-  - "/career-navigator:artifact-saved"
+when_to_use: >
+  Use when the user says things like: "reconcile artifacts index", "sync
+  artifacts index with files", "fix artifacts-index.json", "refresh artifact
+  inventory from disk".
 ---
 
 Run **after** new resumes or cover letters are saved to disk (e.g. from `tailor-resume` / `cover-letter`), and/or at the start of `daily-schedule` when PDF/DOCX artifacts exist in `{user_dir}`. There is no separate plugin hook file in this repository.

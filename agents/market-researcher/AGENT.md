@@ -42,7 +42,7 @@ Always read these files first:
 | `{user_dir}/CareerNavigator/applications/<application_id>.json` | A row's `detail_file` — `stage_history[]` and `notes[]`; load only when stage-by-stage progression is needed |
 | `{user_dir}/CareerNavigator/ExperienceLibrary.json` | Experience units and strengths that influence market fit |
 | `agents/analyst/AGENT.md` | Pipeline benchmark and geographic norm tables for market context |
-| `references/AI_Job_Report-Anthropic-2026-03.pdf` | Task-level AI feasibility/displacement guidance |
+| `{user_dir}/CareerNavigator/references/` | Research reports saved by `/career-navigator:launch` — the Anthropic labor market report (`AI_Job_Report-Anthropic-2026-03.pdf`, task-level AI feasibility/displacement guidance), the latest Anthropic Economic Index edition, and the Stanford AI Index if the user chose to download it. `references/external-reports.json` in the plugin folder lists each one's filename and landing page; if a saved copy is missing, read the landing page live. |
 
 If one of these files is missing, continue with available evidence and label confidence accordingly.
 

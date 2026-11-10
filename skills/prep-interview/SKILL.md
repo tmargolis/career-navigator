@@ -8,19 +8,11 @@ description: >
   transcript if the user dictates instead of typing.
   Saves a brief under {user_dir}/interview-prep/ and logs a [prep] note in
   tracker.json. Also invocable via /career-navigator:prep-interview.
-triggers:
-  - "/prep-interview"
-  - "/career-navigator:prep-interview"
-  - "prep me for my interview"
-  - "prep for my interview"
-  - "interview prep for"
-  - "prepare for my interview"
-  - "recruiter call tomorrow"
-  - "recruiter screen with"
-  - "phone screen with"
-  - "hiring manager interview"
-  - "HM interview"
-  - "mock prep for"
+when_to_use: >
+  Use when the user says things like: "prep me for my interview", "prep for my
+  interview", "interview prep for", "prepare for my interview", "recruiter
+  call tomorrow", "recruiter screen with", "phone screen with", "hiring
+  manager interview", "HM interview", "mock prep for".
 ---
 
 ## Workflow

@@ -37,3 +37,60 @@ jobs:
           overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Anthropic's plugin directory accepts only Markdown, text, JSON, YAML and
+      # images from community plugins. `main` keeps the full project (scripts,
+      # the mcp-transcribe add-on, this workflow); the `directory` branch is the
+      # same tree with everything else removed, and is the branch the directory
+      # listing tracks.
+      - name: Build directory tree
+        run: |
+          set -euo pipefail
+          mkdir out
+          git archive HEAD | tar -x -C out
+          cd out
+          rm -rf .github mcp-transcribe scripts
+          find . -type f \
+            ! -name '*.md' ! -name '*.txt' ! -name '*.json' \
+            ! -name '*.yml' ! -name '*.yaml' \
+            ! -name '*.png' ! -name '*.jpg' ! -name '*.jpeg' \
+            ! -name '*.gif' ! -name '*.webp' ! -name '*.ico' \
+            ! -name 'LICENSE' ! -name '.gitignore' \
+            ! -path './.claude-plugin/icon.svg' \
+            -print -delete
+          find . -type d -empty -delete
+          # Refuse to publish anything the directory would reject on content.
+          bad=0
+          while IFS= read -r -d '' f; do
+            case "$f" in *.png|*.jpg|*.jpeg|*.gif|*.webp|*.ico) continue ;; esac
+            if [ "$(head -c 2 "$f")" = '#!' ]; then echo "starts with #!: $f"; bad=1; fi
+            if ! iconv -f UTF-8 -t UTF-8 "$f" >/dev/null 2>&1; then echo "not UTF-8: $f"; bad=1; fi
+            if [ "$(tr -d '\000' < "$f" | wc -c)" != "$(wc -c < "$f")" ]; then echo "contains NUL: $f"; bad=1; fi
+          done < <(find . -type f -print0)
+          [ "$bad" = 0 ]
+          echo "Directory tree: $(find . -type f | wc -l) files"
+
+      - name: Publish directory branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          remote="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          if git ls-remote --exit-code --heads "$remote" directory >/dev/null 2>&1; then
+            git clone --quiet --depth 1 --branch directory "$remote" pub
+          else
+            git init --quiet -b directory pub
+            git -C pub remote add origin "$remote"
+          fi
+          find pub -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a out/. pub/
+          cd pub
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "directory branch already up to date"
+          else
+            git commit --quiet -m "Career Navigator v${{ steps.ver.outputs.version }} (from main@${GITHUB_SHA::7})"
+            git push --quiet origin directory
+          fi
