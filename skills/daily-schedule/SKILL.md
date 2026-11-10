@@ -1,20 +1,12 @@
 ---
 name: daily-schedule
 description: "Runs on the daily scheduler. Delivers the routine operating brief (pipeline digest, overdue follow-ups, interview context, conditional pre-interview brief for today, market summary, and action prompts). /career-navigator:morning-brief triggers a focused day-of prep slice only—no separate morning-brief skill."
-triggers:
-  - "daily job search brief"
-  - "career navigator daily digest"
-  - "pipeline summary for my applications"
-  - "morning job search summary"
-  - "run my daily career brief"
-  - "/daily-schedule"
-  - "/career-navigator:daily-schedule"
-  - "/career-navigator:morning-brief"
-  - "/morning-brief"
-  - "morning brief before my interview"
-  - "interviews today brief"
-  - "what do I need for my interviews today"
-  - "day of interview brief"
+when_to_use: >
+  Use when the user says things like: "daily job search brief", "career
+  navigator daily digest", "pipeline summary for my applications", "morning
+  job search summary", "run my daily career brief", "morning brief before my
+  interview", "interviews today brief", "what do I need for my interviews
+  today", "day of interview brief".
 ---
 
 ### Scheduling (Claude Cowork)

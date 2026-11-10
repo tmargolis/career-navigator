@@ -1,24 +1,21 @@
 ---
 name: setup-transcribe
 description: >
-  Installs and registers the local mcp-transcribe MCP server with Claude
-  Desktop so /career-navigator:interview-capture can transcribe recorded
-  interview audio files. Runs the prerequisite checks and installer commands
-  on the user's behalf so they don't need to use a terminal themselves.
+  Sets up the optional mcp-transcribe add-on, a local Whisper server that
+  lets /career-navigator:interview-capture transcribe recorded interview
+  audio. When the add-on's folder is present alongside the plugin, runs the
+  prerequisite checks and installer for the user; otherwise explains where to
+  get it. Not needed if the user already has transcripts.
   Also invocable via /career-navigator:setup-transcribe.
-triggers:
-  - "set up interview transcription"
-  - "install mcp-transcribe"
-  - "enable interview capture"
-  - "set up audio transcription"
-  - "set up mcp-transcribe"
-  - "/career-navigator:setup-transcribe"
-  - "/setup-transcribe"
+when_to_use: >
+  Use when the user says things like: "set up interview transcription",
+  "install mcp-transcribe", "enable interview capture", "set up audio
+  transcription", "set up mcp-transcribe".
 ---
 
 Install the local `mcp-transcribe` MCP server so `/career-navigator:interview-capture` can transcribe recorded interview audio files. This walks a non-technical user through the same steps `mcp-transcribe/README.md` documents for the command line — but Claude runs them, with confirmation before anything is installed or changed.
 
-This is optional. Skip it entirely if the user doesn't plan to use `interview-capture`.
+This is optional. `interview-capture` works without it whenever the user can supply a transcript or the host can transcribe audio itself. `mcp-transcribe` is a separate add-on: its source lives in the Career Navigator GitHub repository and is **not included** in the copy of the plugin installed from Anthropic's plugin directory.
 
 ---
 
@@ -32,11 +29,13 @@ If not, continue.
 
 ## 2. Locate the plugin directory
 
-Resolve the absolute path to this plugin's `mcp-transcribe/` directory (the same repo `skills/setup-transcribe/SKILL.md` lives in). If it can't be found (e.g. the plugin was installed as a zip without this optional directory), tell the user:
+Resolve the absolute path to this plugin's `mcp-transcribe/` directory (the same folder `skills/setup-transcribe/SKILL.md` lives under). If it isn't there — which is the normal case for a plugin-directory install — tell the user:
 
-> Interview transcription setup isn't available from this install — it needs the `mcp-transcribe/` folder from the Career Navigator GitHub repo. Clone or download the repo from https://github.com/tmargolis/career-navigator and re-run this from inside it.
+> Local transcription is an optional add-on that doesn't come with this install. You have two choices:
+> - Keep using `/career-navigator:interview-capture` with a transcript from any tool you like (your phone's recorder, a meeting app, dictation software).
+> - Install the add-on yourself from https://github.com/tmargolis/career-navigator/tree/main/mcp-transcribe — its README has the steps. Once it's registered with Claude Desktop, `interview-capture` picks it up automatically.
 
-Then stop.
+Then stop. Do **not** download, clone or run the add-on's code on the user's behalf from this skill; installing software from outside the plugin is the user's decision and action.
 
 ---
 

@@ -4,15 +4,10 @@ description: >
   Produces a targeted cover letter via a CoverLetterBrief and writer
   final prose—honest, specific, voice-matched. Saves to the artifact inventory.
   Fires after tailoring or on request. Also /career-navigator:cover-letter.
-triggers:
-  - "write a cover letter"
-  - "cover letter for"
-  - "draft a cover letter"
-  - "generate a cover letter"
-  - "I need a cover letter"
-  - "/cover-letter"
-  - "cover letter for this role"
-  - "cover letter for this job"
+when_to_use: >
+  Use when the user says things like: "write a cover letter", "cover letter
+  for", "draft a cover letter", "generate a cover letter", "I need a cover
+  letter", "cover letter for this role", "cover letter for this job".
 ---
 
 Build a **CoverLetterBrief**, then invoke **`writer`** for final letter prose. Do not write the full letter in this skill—**`writer`** owns send-ready copy.

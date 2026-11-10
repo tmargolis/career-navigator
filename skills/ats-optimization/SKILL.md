@@ -6,16 +6,11 @@ description: >
   suggestions — each showing the original text and a specific proposed
   rewrite. Distinct from resume-score, which produces a formal score card
   on explicit request. This skill suggests and applies fixes.
-triggers:
-  - "check this for ATS"
-  - "optimize this resume"
-  - "fix ATS issues"
-  - "clean up my resume"
-  - "improve my resume"
-  - "make this ATS-friendly"
-  - "ATS check"
-  - "check for ATS problems"
-  - "what ATS issues does this have"
+when_to_use: >
+  Use when the user says things like: "check this for ATS", "optimize this
+  resume", "fix ATS issues", "clean up my resume", "improve my resume", "make
+  this ATS-friendly", "ATS check", "check for ATS problems", "what ATS issues
+  does this have".
 ---
 
 Check a resume for ATS-hostile formatting, keyword gaps, and narrative weaknesses, then propose specific inline fixes. Invoke `resume-coach` to perform the analysis.

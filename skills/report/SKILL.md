@@ -7,15 +7,10 @@ description: >
   the browser. The integrated view of the user's search health, career
   capital, future positioning, and how their metrics compare to industry
   norms. Invokes the analyst agent and pipeline-status skill.
-triggers:
-  - "run the analyst"
-  - "analyst report"
-  - "full analyst report"
-  - "run full analysis"
-  - "give me an analyst report"
-  - "run all three analyses"
-  - "full career analysis"
-  - "show me the full report"
+when_to_use: >
+  Use when the user says things like: "run the analyst", "analyst report",
+  "full analyst report", "run full analysis", "give me an analyst report",
+  "run all three analyses", "full career analysis", "show me the full report".
 ---
 
 Invoke the `analyst` agent to run all three operations and deliver the integrated insight report.
@@ -52,7 +47,7 @@ Hand off to the `analyst` agent with:
 - The full `CareerNavigator/ExperienceLibrary.json`
 - The full `artifacts-index.json`
 - The full `CareerNavigator/profile.md`
-- Instruction to read `references/AI_Job_Report-Anthropic-2026-03.pdf` before the displacement assessment
+- Instruction to read the Anthropic labor market report before the displacement assessment — `{user_dir}/CareerNavigator/references/AI_Job_Report-Anthropic-2026-03.pdf`, or its landing page from the plugin's `references/external-reports.json` if no saved copy exists
 - Instruction to run all four operations: outcome patterns (Op 1), transferable strengths (Op 2), AI displacement (Op 3), market benchmark (Op 4)
 - Instruction: return graph-ready data in addition to the narrative, suitable for writing to `{user_dir}/CareerNavigator/analyst-graph-data.json`, using this schema:
   - `ai_displacement_outlook`: `{overall_risk, exposure_min_pct, exposure_max_pct, durable_min_pct, durable_max_pct, durable_differentiators[], narrative_reframe}`

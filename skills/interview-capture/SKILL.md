@@ -3,17 +3,14 @@ name: interview-capture
 description: >
   Opt-in post-interview capture: transcribe the user's own audio (user audio
   only), extract structured takeaways, and update tracker.json. Surfaces
-  employer policy warning once; jurisdiction/retention per spec §13.1. Uses
-  the local mcp-transcribe MCP (Whisper file STT) when available. Not an
+  employer policy warning once; jurisdiction/retention per spec §13.1. Works
+  from a transcript the user supplies, the host's own audio transcription, or
+  the optional mcp-transcribe add-on (local Whisper) when installed. Not an
   agent—a skill orchestrating tools and track-application patterns. Also
   invocable via /career-navigator:interview-capture.
-triggers:
-  - "/interview-capture"
-  - "/career-navigator:interview-capture"
-  - "capture my interview"
-  - "transcribe my interview notes"
-  - "log interview from audio"
-  - "interview audio capture"
+when_to_use: >
+  Use when the user says things like: "capture my interview", "transcribe my
+  interview notes", "log interview from audio", "interview audio capture".
 ---
 
 ## Scope (§13.1)
@@ -55,16 +52,17 @@ Identify **`application_id`** (or company + role) for the interview being logged
 
 Resolve a transcript in this order. Do **not** invent transcripts at any step.
 
-1. **User already has a transcript** — use it. Skip transcription entirely.
-2. **Recorded audio file, `mcp-transcribe` not yet installed** — offer to run `/career-navigator:setup-transcribe`, which installs and registers it without requiring the user to use a terminal. If they decline, fall through to step 3.
-3. **Recorded audio file + `mcp-transcribe` MCP available** — the normal path. Call **`transcribe_file`**:
+1. **User already has a transcript** — use it. Skip transcription entirely. A transcript from any tool is fine: a phone recorder's built-in transcription, a meeting app's export, or dictation software.
+2. **Recorded audio file, and this session can transcribe audio itself** — if the host gives you a way to read or transcribe an attached audio file (a native capability or any speech-to-text tool present in the session), use it. Confirm it actually returned the words of this recording before relying on it; if you cannot open the audio, say so and move to the next step.
+3. **Recorded audio file + `mcp-transcribe` tools available** (`transcribe_file`, `backend_info`) — `mcp-transcribe` is an optional local add-on, not part of the base plugin. When its tools are present, call **`transcribe_file`**:
    - Pass **`initial_prompt`** built at run time from the matched tracker row — company, role, and interviewer names from `contacts_file` — plus any product, project, or acronym likely to be spoken. Build this from the user's own data; never hardcode real names into this skill, which ships in a public repository. Cross-cutting terms the tracker does not carry can live in the server's gitignored `vocabulary.local.json` and be selected with `vocabulary_group`.
    - This is not optional. Whisper mangles unfamiliar proper nouns badly without it — expect vendor names to become common English words and surnames to become different surnames.
    - Call **`backend_info`** first only if a prior call failed; it distinguishes a bad file from a backend that never loaded.
-4. **Recorded audio file, no MCP and the user declined setup** — transcribe in the session sandbox with `faster-whisper`. One pass only, at the model you intend to ship:
+4. **Recorded audio file, none of the above** — mention once that `/career-navigator:setup-transcribe` explains how to add local transcription for next time, then, if the session has a sandbox that can run Python, transcribe there with `faster-whisper`. One pass only, at the model you intend to ship:
    - `medium.en`, `compute_type="int8"`, `cpu_threads=<nproc>`. Roughly 2x realtime on 2 cores — budget ~11 min for a 25-min recording, and start it in the background while reading tracker and prep-brief files.
    - **`vad_filter=False`.** VAD drops speech at silence boundaries; on a real 23-minute screen it silently removed ~28 seconds including the interviewer's answer on process.
    - Seed `initial_prompt` exactly as in step 3.
+   - Only take this path with the user's go-ahead, since it installs a Python package and downloads a speech model into the session.
    - Do **not** run a smaller model first as a recon pass, then re-run larger. That doubles the wall clock and produces nothing you keep.
 5. **Live recap instead of a recording** — if the user wants to narrate rather than upload, that needs a live-mic tool. `mcp-transcribe` deliberately has none. Ask the user to record on their phone or Mac and give you the file path.
 6. **Nothing available** — ask for a pasted transcript.

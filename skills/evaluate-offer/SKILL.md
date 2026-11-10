@@ -5,13 +5,10 @@ description: >
   unemployed context), including role fit, utilization analysis, compensation
   fairness using market benchmarks, and negotiation-readiness leverage points.
   Persists OfferContext for downstream negotiation/comparison.
-triggers:
-  - "evaluate my job offer"
-  - "should i take this offer"
-  - "offer evaluation"
-  - "help me evaluate an offer"
-  - "job offer assessment"
-  - "/career-navigator:evaluate-offer"
+when_to_use: >
+  Use when the user says things like: "evaluate my job offer", "should i take
+  this offer", "offer evaluation", "help me evaluate an offer", "job offer
+  assessment".
 ---
 
 Run `evaluate-offer` to produce an honest OfferEvaluationReport and persist an

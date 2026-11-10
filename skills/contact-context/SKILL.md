@@ -2,21 +2,12 @@
 name: contact-context
 description: >
   Surfaces prior email and Google Calendar / M365 calendar context when tools allow—read-only, user-approved. Includes past and upcoming meetings with a contact for meeting-history awareness and warm-networking identification (e.g. scheduled sync = warm relationship signal). If the user says they sent mail but the address was wrong, trust them and help find a better address (Gmail MCP is unreliable for bounces). Feeds draft-outreach and writer with a ContactContextBrief.
-triggers:
-  - "contact context"
-  - "prior emails with"
-  - "what did I last email"
-  - "email history with"
-  - "before I reach out"
-  - "thread context"
-  - "Address not found"
-  - "wasn't delivered"
-  - "550 Invalid Recipient"
-  - "email bounced"
-  - "/career-navigator:contact-context"
-  - "meeting scheduled with"
-  - "upcoming call with"
-  - "coffee chat with"
+when_to_use: >
+  Use when the user says things like: "contact context", "prior emails with",
+  "what did I last email", "email history with", "before I reach out", "thread
+  context", "Address not found", "wasn't delivered", "550 Invalid Recipient",
+  "email bounced", "meeting scheduled with", "upcoming call with", "coffee
+  chat with".
 ---
 
 Gather **evidence-backed** context from **Gmail** / **Microsoft 365** (and **calendar** when the host exposes it) so **`draft-outreach`** and **`writer`** do not guess about prior conversations.

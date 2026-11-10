@@ -1,14 +1,10 @@
 ---
 name: event-intelligence
 description: "Evaluates specific conferences and meetups for networking ROI, audience fit, cost-time tradeoffs, and presentation or speaking opportunities. Invokes networking-strategist."
-triggers:
-  - "event intelligence"
-  - "should I go to this conference"
-  - "conference ROI"
-  - "speaking opportunity"
-  - "CFP worth submitting"
-  - "which event should I attend"
-  - "/career-navigator:event-intelligence"
+when_to_use: >
+  Use when the user says things like: "event intelligence", "should I go to
+  this conference", "conference ROI", "speaking opportunity", "CFP worth
+  submitting", "which event should I attend".
 ---
 
 Invoke **`networking-strategist`** in **`event-intelligence`** mode.

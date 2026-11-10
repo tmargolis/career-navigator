@@ -5,18 +5,12 @@ description: >
   date created, target role and company, ATS score if available, and linked
   application outcome if known. Fires when the user asks to see their generated
   documents or artifact history. Also invocable via /career-navigator:list-artifacts.
-triggers:
-  - "list my artifacts"
-  - "show my artifacts"
-  - "what have I generated"
-  - "what resumes have I created"
-  - "show my resumes"
-  - "list my cover letters"
-  - "what documents have I made"
-  - "show my generated documents"
-  - "what's in my artifact inventory"
-  - "what have I created"
-  - "/list-artifacts"
+when_to_use: >
+  Use when the user says things like: "list my artifacts", "show my
+  artifacts", "what have I generated", "what resumes have I created", "show my
+  resumes", "list my cover letters", "what documents have I made", "show my
+  generated documents", "what's in my artifact inventory", "what have I
+  created".
 ---
 
 Display the user's artifact inventory in a readable format.

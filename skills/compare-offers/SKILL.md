@@ -4,12 +4,9 @@ description: >
   Compares multiple active offer-stage applications with side-by-side
   compensation, role fit, scenario-specific risk, and trajectory alignment.
   Produces an honest ranking and prompts negotiation handoff.
-triggers:
-  - "compare offers"
-  - "compare job offers"
-  - "which offer should i take"
-  - "side by side offer comparison"
-  - "/career-navigator:compare-offers"
+when_to_use: >
+  Use when the user says things like: "compare offers", "compare job offers",
+  "which offer should i take", "side by side offer comparison".
 ---
 
 Run `compare-offers` to produce an **OfferComparisonReport** across all active

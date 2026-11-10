@@ -5,13 +5,10 @@ description: >
   story candidates from raw sources (journals, PKM notes, debriefs, resumes,
   and related documents). Runs as a one-time/offline preprocessing pass and as
   an incremental refresh when new source files are detected in {user_dir}.
-triggers:
-  - "mine stories"
-  - "extract interview stories"
-  - "build story corpus"
-  - "refresh story corpus"
-  - "index my journal for interview stories"
-  - "update story corpus"
+when_to_use: >
+  Use when the user says things like: "mine stories", "extract interview
+  stories", "build story corpus", "refresh story corpus", "index my journal
+  for interview stories", "update story corpus".
 ---
 
 Create and maintain a persistent interview story corpus so downstream interview skills never need to read full raw journals repeatedly.

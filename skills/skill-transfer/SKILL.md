@@ -5,16 +5,12 @@ description: >
   ExperienceLibrary and maps them to role types and industries beyond their current track.
   Surfaces non-obvious destinations and flags domain-dependent vs. portable
   strengths. Invokes the analyst agent.
-triggers:
-  - "what are my transferable skills"
-  - "where else could I work"
-  - "what roles could I transition to"
-  - "what industries could I move into"
-  - "analyze my transferable strengths"
-  - "what are my core strengths"
-  - "where do my skills apply"
-  - "career pivot analysis"
-  - "what could I do besides"
+when_to_use: >
+  Use when the user says things like: "what are my transferable skills",
+  "where else could I work", "what roles could I transition to", "what
+  industries could I move into", "analyze my transferable strengths", "what
+  are my core strengths", "where do my skills apply", "career pivot analysis",
+  "what could I do besides".
 ---
 
 Invoke the `analyst` agent to identify the user's transferable strengths and map them to new destinations.

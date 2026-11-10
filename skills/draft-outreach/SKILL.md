@@ -1,13 +1,9 @@
 ---
 name: draft-outreach
 description: "Produces send-ready outreach copy (LinkedIn, email, InMail) from user intent and optional networking-strategist handoffs. Invokes writer. Prior communication history is folded in by default when mail/calendar connectors exist—via contact-context and ContactContextBrief—unless the user skips or the message is truly generic/cold with no named recipient."
-triggers:
-  - "draft outreach"
-  - "write a linkedin message"
-  - "cold email to"
-  - "connection request note"
-  - "inmail draft"
-  - "/career-navigator:draft-outreach"
+when_to_use: >
+  Use when the user says things like: "draft outreach", "write a linkedin
+  message", "cold email to", "connection request note", "inmail draft".
 ---
 
 Invoke **`writer`** in **`draft-outreach`** mode.

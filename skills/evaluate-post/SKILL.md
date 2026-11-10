@@ -1,13 +1,9 @@
 ---
 name: evaluate-post
 description: "Evaluates a professional post or outreach draft for audience fit and cultural/political/reputational risk vs target company profiles. Invokes writer."
-triggers:
-  - "evaluate this post"
-  - "cultural risk"
-  - "is this safe to post"
-  - "review my linkedin draft"
-  - "employer risk"
-  - "/career-navigator:evaluate-post"
+when_to_use: >
+  Use when the user says things like: "evaluate this post", "cultural risk",
+  "is this safe to post", "review my linkedin draft", "employer risk".
 ---
 
 Invoke **`writer`** in **`evaluate-post`** mode.

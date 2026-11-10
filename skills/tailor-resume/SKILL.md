@@ -6,20 +6,11 @@ description: >
   Fires automatically when the user shares or pastes a job description, or
   expresses intent to apply to a specific role. Also invocable via
   /career-navigator:tailor-resume.
-triggers:
-  - "tailor my resume"
-  - "tailor resume for"
-  - "customize my resume"
-  - "optimize my resume for"
-  - "/tailor-resume"
-  - "I want to apply to"
-  - "I'm applying to"
-  - "help me apply for"
-  - "write a resume for"
-  - "build a resume for"
-  - "here's the job description"
-  - "here's a JD"
-  - "I found a job posting"
+when_to_use: >
+  Use when the user says things like: "tailor my resume", "tailor resume for",
+  "customize my resume", "optimize my resume for", "I want to apply to", "I'm
+  applying to", "help me apply for", "write a resume for", "build a resume
+  for", "here's the job description", "here's a JD", "I found a job posting".
 ---
 
 Assemble the best possible resume for a specific role, drawn from the user's ExperienceLibrary. Invoke the `resume-coach` agent to do the work.

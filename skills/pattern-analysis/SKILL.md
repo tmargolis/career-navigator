@@ -4,15 +4,11 @@ description: >
   Analyzes application outcome data to find what's working and what isn't.
   Cross-references tracker history with artifact performance to update ExperienceLibrary
   weights and surface search_performance signals. Invokes the analyst agent.
-triggers:
-  - "analyze my search"
-  - "what's working in my search"
-  - "analyze my applications"
-  - "what patterns do you see"
-  - "update my weights"
-  - "how is my search going"
-  - "what's converting"
-  - "where am I getting stuck"
+when_to_use: >
+  Use when the user says things like: "analyze my search", "what's working in
+  my search", "analyze my applications", "what patterns do you see", "update
+  my weights", "how is my search going", "what's converting", "where am I
+  getting stuck".
 ---
 
 Invoke the `analyst` agent to run an outcome pattern analysis on the user's application history.

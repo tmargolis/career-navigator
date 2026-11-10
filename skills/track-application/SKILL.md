@@ -6,47 +6,19 @@ description: >
   logging, offer capture, outcome recording, and follow-up scheduling. Accepts
   any application event conversationally. Also invocable via
   /career-navigator:track-application.
-triggers:
-  - "/track-application"
-  - "I just applied to"
-  - "I applied to"
-  - "I submitted an application"
-  - "log an application"
-  - "track this application"
-  - "add to my tracker"
-  - "I got a callback"
-  - "I got a call from"
-  - "they reached out"
-  - "I have an interview"
-  - "I got an interview"
-  - "I scheduled an interview"
-  - "I had an interview"
-  - "I met with"
-  - "I spoke with the recruiter"
-  - "I met the hiring manager"
-  - "I got rejected"
-  - "they rejected me"
-  - "they ghosted me"
-  - "I withdrew"
-  - "I'm withdrawing"
-  - "I got an offer"
-  - "they made an offer"
-  - "I declined the offer"
-  - "I accepted the offer"
-  - "I accepted"
-  - "negotiating an offer"
-  - "update my application"
-  - "update the status"
-  - "add a contact"
-  - "log a contact"
-  - "I sent the message"
-  - "I sent the outreach"
-  - "I sent my follow-up"
-  - "I reached out to"
-  - "I messaged"
-  - "I emailed them"
-  - "sent it"
-  - "outreach sent"
+when_to_use: >
+  Use when the user says things like: "I just applied to", "I applied to", "I
+  submitted an application", "log an application", "track this application",
+  "add to my tracker", "I got a callback", "I got a call from", "they reached
+  out", "I have an interview", "I got an interview", "I scheduled an
+  interview", "I had an interview", "I met with", "I spoke with the
+  recruiter", "I met the hiring manager", "I got rejected", "they rejected
+  me", "they ghosted me", "I withdrew", "I'm withdrawing", "I got an offer",
+  "they made an offer", "I declined the offer", "I accepted the offer", "I
+  accepted", "negotiating an offer", "update my application", "update the
+  status", "add a contact", "log a contact", "I sent the message", "I sent the
+  outreach", "I sent my follow-up", "I reached out to", "I messaged", "I
+  emailed them", "sent it", "outreach sent".
 ---
 
 Log or update an application record. Extract as much as possible from what the user said before asking for anything.

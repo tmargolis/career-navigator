@@ -4,19 +4,11 @@ description: >
   Search and rank relevant job listings using connector-first discovery.
   Uses Indeed MCP when available, then browser/manual fallback for
   state/federal boards, niche boards, and company/ATS career pages.
-triggers:
-  - "/search-jobs"
-  - "search for jobs"
-  - "find jobs"
-  - "search jobs"
-  - "look for job listings"
-  - "find me jobs"
-  - "search indeed"
-  - "search wellfound"
-  - "search state jobs"
-  - "search company careers"
-  - "what jobs are out there"
-  - "show me job listings"
+when_to_use: >
+  Use when the user says things like: "search for jobs", "find jobs", "search
+  jobs", "look for job listings", "find me jobs", "search indeed", "search
+  wellfound", "search state jobs", "search company careers", "what jobs are
+  out there", "show me job listings".
 ---
 
 Search and rank job listings that match the user's profile using a connector-first strategy.

@@ -1,12 +1,9 @@
 ---
 name: content-suggest
 description: "Recommends LinkedIn and professional post topics, angles, and cadence aligned to profile and ExperienceLibrary. Invokes writer."
-triggers:
-  - "linkedin post ideas"
-  - "what should i post"
-  - "content suggestions"
-  - "topics for linkedin"
-  - "/career-navigator:content-suggest"
+when_to_use: >
+  Use when the user says things like: "linkedin post ideas", "what should i
+  post", "content suggestions", "topics for linkedin".
 ---
 
 Invoke **`writer`** in **`content-suggest`** mode.

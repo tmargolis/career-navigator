@@ -4,14 +4,10 @@ description: >
   Produces negotiation leverage and a send-ready negotiation draft via
   writer. Loads OfferContext persisted by evaluate-offer and
   avoids re-collecting already-known details.
-triggers:
-  - "negotiate my salary"
-  - "negotiate this offer"
-  - "raise negotiation"
-  - "promotion negotiation"
-  - "salary counter offer"
-  - "help me negotiate"
-  - "/career-navigator:negotiate"
+when_to_use: >
+  Use when the user says things like: "negotiate my salary", "negotiate this
+  offer", "raise negotiation", "promotion negotiation", "salary counter
+  offer", "help me negotiate".
 ---
 
 Run `negotiate-offer` to draft send-ready negotiation messaging in the

@@ -4,15 +4,11 @@ description: >
   Generates a market intelligence brief for the user's target roles, including
   role demand trends, AI/automation displacement signals, and geographic
   competitiveness context. Invokes the market-researcher agent.
-triggers:
-  - "market brief"
-  - "job market trends"
-  - "what does the market look like"
-  - "market demand for my role"
-  - "is this role in demand"
-  - "ai displacement outlook"
-  - "how competitive is my market right now"
-  - "/career-navigator:market-brief"
+when_to_use: >
+  Use when the user says things like: "market brief", "job market trends",
+  "what does the market look like", "market demand for my role", "is this role
+  in demand", "ai displacement outlook", "how competitive is my market right
+  now".
 ---
 
 ### Scheduling (Claude Cowork)

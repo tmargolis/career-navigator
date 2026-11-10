@@ -5,18 +5,11 @@ description: >
   compliance, and narrative strength. Fires when the user shares a resume
   alongside a job description without explicitly requesting tailoring, or
   explicitly asks for a score. Also invocable via /career-navigator:resume-score.
-triggers:
-  - "/resume-score"
-  - "score my resume"
-  - "score this resume"
-  - "how does my resume score"
-  - "check my resume against"
-  - "rate my resume"
-  - "evaluate my resume"
-  - "ATS score"
-  - "how does this resume match"
-  - "resume check"
-  - "how well does my resume match"
+when_to_use: >
+  Use when the user says things like: "score my resume", "score this resume",
+  "how does my resume score", "check my resume against", "rate my resume",
+  "evaluate my resume", "ATS score", "how does this resume match", "resume
+  check", "how well does my resume match".
 ---
 
 Score a resume against a job description. Be candid — a low score is useful information, not something to soften.

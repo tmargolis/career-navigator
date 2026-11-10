@@ -1,15 +1,10 @@
 ---
 name: focus-career
 description: "Surfaces only critical, time-sensitive notifications when the user begins a session or runs this skill on a cadence they configured in Cowork. Routine summaries belong in daily-schedule."
-triggers:
-  - "career navigator critical alerts"
-  - "any urgent job search deadlines"
-  - "critical application alerts"
-  - "session start job search"
-  - "focus career"
-  - "/career-navigator:focus-career"
-  - "/focus-career"
-  - "start a new session with career navigator"
+when_to_use: >
+  Use when the user says things like: "career navigator critical alerts", "any
+  urgent job search deadlines", "critical application alerts", "session start
+  job search", "focus career", "start a new session with career navigator".
 ---
 
 Run when the user opens a new Cowork session with Career Navigator, **or** when they have scheduled this skill via Cowork **`/schedule`** (optional — for tighter proactive critical checks).

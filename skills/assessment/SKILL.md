@@ -4,15 +4,10 @@ description: >
   Provides a candid, evidence-based assessment and gap analysis against the
   user's target role requirements using the `honest-advisor` agent's
   norm/exception/strategy pattern.
-triggers:
-  - "assessment"
-  - "role readiness"
-  - "gap analysis"
-  - "what gaps do I have"
-  - "am I qualified"
-  - "honest assessment"
-  - "how competitive am I for"
-  - "do I meet the requirements"
+when_to_use: >
+  Use when the user says things like: "assessment", "role readiness", "gap
+  analysis", "what gaps do I have", "am I qualified", "honest assessment",
+  "how competitive am I for", "do I meet the requirements".
 ---
 
 Invoke the `honest-advisor` agent to run a norm/exception/strategy assessment, then present the result as a gap analysis against the user's target role requirements.

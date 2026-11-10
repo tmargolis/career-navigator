@@ -6,19 +6,12 @@ description: >
   sorted by maximum salary, plus a compensation range summary (min, max,
   median). Fires when compensation is mentioned in any context — offer
   evaluation, role targeting, or explicit request.
-triggers:
-  - "what's the salary for"
-  - "what does a [role] make"
-  - "salary range for"
-  - "how much do [role]s earn"
-  - "compensation for"
-  - "benchmark my salary"
-  - "what should I be making"
-  - "market rate for"
-  - "salary data"
-  - "pay range for"
-  - "is this offer competitive"
-  - "what are [role]s paid"
+when_to_use: >
+  Use when the user says things like: "what's the salary for", "what does a
+  [role] make", "salary range for", "how much do [role]s earn", "compensation
+  for", "benchmark my salary", "what should I be making", "market rate for",
+  "salary data", "pay range for", "is this offer competitive", "what are
+  [role]s paid".
 ---
 
 Pull live salary data for a role and location via the Apify MCP server and return a structured compensation summary.

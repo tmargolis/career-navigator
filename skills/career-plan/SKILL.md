@@ -5,13 +5,9 @@ description: >
   analysis using profile + ExperienceLibrary, with market-informed demand and
   AI/automation displacement outlook. Saves `career-trajectory.md` (report) and
   `career-trajectory-data.json` (`career_trajectory_v1`) for downstream scoring.
-triggers:
-  - "career plan"
-  - "career trajectory"
-  - "where am i headed"
-  - "what should i target next"
-  - "/career-navigator:career-plan"
-  - "/career-navigator:career-trajectory"
+when_to_use: >
+  Use when the user says things like: "career plan", "career trajectory",
+  "where am i headed", "what should i target next".
 ---
 
 Run `career-plan` to produce a realistic career plan, a human-readable report

@@ -1,18 +1,11 @@
 ---
 name: setup-schedule
 description: "Creates or updates the Career Navigator daily brief and/or nightly pipeline status refresh as Cowork scheduled tasks. The daily brief runs each morning: pipeline digest, Gmail inbox scan, follow-up alerts, and new job recommendations. The optional pipeline refresh regenerates pipeline-status.html each night. Also invocable via /career-navigator:setup-schedule."
-triggers:
-  - "set up daily brief"
-  - "schedule my daily brief"
-  - "automate my morning brief"
-  - "schedule career navigator"
-  - "run my brief every day"
-  - "set up the daily schedule"
-  - "schedule the daily brief"
-  - "create daily brief task"
-  - "create scheduled task for daily brief"
-  - "/career-navigator:setup-schedule"
-  - "/setup-schedule"
+when_to_use: >
+  Use when the user says things like: "set up daily brief", "schedule my daily
+  brief", "automate my morning brief", "schedule career navigator", "run my
+  brief every day", "set up the daily schedule", "schedule the daily brief",
+  "create daily brief task", "create scheduled task for daily brief".
 ---
 
 Create or update the Career Navigator daily brief as a Cowork scheduled task. When the task fires each morning, it delivers a full operating brief: pipeline digest, Gmail inbox scan (two-pass strategy to catch missed status emails), follow-up alerts, and top new job recommendations appended to `recommendations.json`.
@@ -240,7 +233,7 @@ If the user opted into the nightly pipeline refresh in Step 3, build a second, i
 
 ```
 Run the Career Navigator pipeline-status skill for {actual_user_dir}, regenerating
-pipeline-data.js, pipeline-status.html, and timeline.html from the latest
+pipeline-data.js, pipeline-status.html, timeline.html, and timeline-data.js from the latest
 tracker.json, recommendations.json, and passed.json.
 ```
 

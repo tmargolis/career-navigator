@@ -1,14 +1,10 @@
 ---
 name: networking-strategy
 description: "Builds an evidence-based networking plan for target roles—priorities, sequencing, warm paths, and gap fixes. Outreach copy is handled by writer. Invokes networking-strategist."
-triggers:
-  - "networking strategy"
-  - "who should I network with"
-  - "how should I network"
-  - "job search networking plan"
-  - "warm intros"
-  - "informational interviews"
-  - "/career-navigator:networking-strategy"
+when_to_use: >
+  Use when the user says things like: "networking strategy", "who should I
+  network with", "how should I network", "job search networking plan", "warm
+  intros", "informational interviews".
 ---
 
 Invoke **`networking-strategist`** in **`networking-strategy`** mode.

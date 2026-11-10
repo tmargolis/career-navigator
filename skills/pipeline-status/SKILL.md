@@ -4,21 +4,16 @@ description: >
   Generates the Career Navigator pipeline status page: a filterable,
   collapsible table of every active application, focus/recommended role,
   closed outcome, and passed-on role, with an embedded application timeline.
-  Writes {user_dir}/CareerNavigator/pipeline-status.html (plus pipeline-data.js
-  and timeline.html) and opens it in the browser. Reads tracker.json,
+  Writes {user_dir}/CareerNavigator/pipeline-status.html (plus pipeline-data.js,
+  timeline.html and timeline-data.js) and opens it in the browser. Reads tracker.json,
   recommendations.json, and passed.json — always a fresh snapshot on request,
   and can be scheduled to refresh nightly via /career-navigator:setup-schedule.
   Also invocable via /career-navigator:pipeline-status.
-triggers:
-  - "show my pipeline status"
-  - "generate pipeline status page"
-  - "refresh pipeline dashboard"
-  - "show me my pipeline"
-  - "open the pipeline status page"
-  - "pipeline status"
-  - "regenerate pipeline status"
-  - "/career-navigator:pipeline-status"
-  - "/pipeline-status"
+when_to_use: >
+  Use when the user says things like: "show my pipeline status", "generate
+  pipeline status page", "refresh pipeline dashboard", "show me my pipeline",
+  "open the pipeline status page", "pipeline status", "regenerate pipeline
+  status".
 ---
 
 Generate the pipeline status page — a static, self-contained HTML dashboard covering the user's full job search pipeline — and open it in their browser.
@@ -377,15 +372,42 @@ document.getElementById('tbody').addEventListener('mouseout',function(e){
 
 ---
 
-## 5. Generate the embedded timeline
+## 5. Refresh the embedded timeline
 
-Run the plugin's timeline generator against the user's data directory:
+The timeline is two files in `{user_dir}/CareerNavigator/`: a fixed page, `timeline.html`, which `pipeline-status.html` embeds via iframe, and a data file, `timeline-data.js`, which the page loads. The page does all of its own layout, sorting, filtering and date math in the browser. Your job is only to install the page once and hand it current data.
+
+### 5a. Install the page (only when missing or out of date)
+
+Read the second line of `{user_dir}/CareerNavigator/timeline.html`. If the file exists and that line contains `career-navigator timeline template v2`, leave the file alone.
+
+Otherwise install it from [timeline-template.md](timeline-template.md), which sits next to this skill. Extract the page with the command given at the top of that file so it is copied byte for byte:
 
 ```bash
-python3 {plugin_dir}/scripts/build_timeline.py {user_dir}/CareerNavigator
+awk '/^```html$/{f=1;next} /^```$/{f=0} f' "{plugin_dir}/skills/pipeline-status/timeline-template.md" > "{user_dir}/CareerNavigator/timeline.html"
 ```
 
-This reads `tracker.json` (respecting the split `detail_file`/`contacts_file` schema) and writes `{user_dir}/CareerNavigator/timeline.html`, which `pipeline-status.html` embeds via iframe.
+Never write `timeline.html` from memory, and never edit it to change what the timeline shows — change the data instead.
+
+### 5b. Write `timeline-data.js`
+
+Write `{user_dir}/CareerNavigator/timeline-data.js` as a single assignment, nothing else in the file:
+
+```js
+window.TIMELINE_RAW = {"generated":"<local time, YYYY-MM-DDTHH:MM:SS>","applications":[ ... ]};
+```
+
+`applications` has one entry for **every** row in `tracker.json` → `applications[]`, in any order, each with:
+
+| Field | Source |
+|---|---|
+| `company`, `role`, `status`, `outcome`, `priority` | the summary row, as written |
+| `date_added`, `date_applied`, `applied_date` | the summary row, whichever of these it has |
+| `stage_history` | the row's `detail_file` → `stage_history[]`; keep `date`, `stage`, `notes` for each entry |
+| `contacts` | the row's `contacts_file` → `contacts[]`; keep `name` and, for each of `interactions[]`, `date`, `type`, `notes` |
+
+Use an empty array when a row has no detail or contacts file. Truncate each `notes` value to 400 characters. Copy values as they are: do not filter rows, sort them, rename stages, infer dates or add computed fields — the page derives everything else, and an application with no dates at all is simply not drawn.
+
+`timeline-template.md` shows a complete worked example of this file.
 
 ---
 
@@ -410,5 +432,6 @@ If the files already exist, overwrite them — this is always a fresh snapshot.
 
 - Never fabricate data. If `tracker.json`, `recommendations.json`, or `passed.json` is missing, direct the user to `/career-navigator:launch` and stop.
 - `pipeline-data.js` is a plain JS globals file, not JSON — do not wrap it in `export` or ES module syntax; `pipeline-status.html` loads it via a plain `<script src>` tag.
-- Keep `pipeline-data.js`, `pipeline-status.html`, and `timeline.html` co-located in `{user_dir}/CareerNavigator/` — the page's iframe and script-src references are relative paths.
+- `timeline-data.js` follows the same rule: one plain `window.TIMELINE_RAW = {...};` assignment.
+- Keep `pipeline-data.js`, `pipeline-status.html`, `timeline.html`, and `timeline-data.js` co-located in `{user_dir}/CareerNavigator/` — the page's iframe and script-src references are relative paths.
 - This skill can be run on demand or scheduled nightly via `/career-navigator:setup-schedule` (dashboard-refresh option) — either path performs the exact same steps.
