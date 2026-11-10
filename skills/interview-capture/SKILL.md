@@ -99,7 +99,7 @@ Both files below are part of the definition of done. Write them without being as
 2. **Debrief** — `{user_dir}/interview-debrief/{company}_{interviewer-first-name}_{M.D.YY}.md`
    Five sections: Overall Assessment (with an honest likelihood-of-advancing call), What Went Well, What Could Have Gone Better, Role & Company Intelligence Gathered, Next Steps. Footer: generation date, source transcript path, prep brief path, next action.
 
-Also fold the key intelligence into the matching `interview-prep/` brief as a **Debrief** section when one exists, so the next round starts from it.
+Also fold the key intelligence into the matching `{user_dir}/interview-prep/` brief as a **Debrief** section when one exists, so the next round starts from it.
 
 ## Guardrails
 

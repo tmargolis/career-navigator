@@ -656,7 +656,7 @@ Before /career-navigator:draft-outreach to [recruiter], pull last email exchange
 - **`mock-interview` with no mode/vibe:** model **announces** selected `mock_mode` + `vibe` (defaults per §2.1) before first question.
 - Validate **daily-schedule** includes **Pre-interview brief** when a summary row's **`latest_stage_date`** is **today** with an allowlisted **`latest_stage`** (or a future-dated row's `detail_file` hides a today-dated `stage_history` entry); validate **omitted** when none.
 - Validate **`/career-navigator:morning-brief`** focused output (pre-interview slice only when applicable).
-- **`[prep]`** note appended to `applications/<application_id>.json` → `notes[]` with `notes_count` bumped on the summary row, plus the brief file under `CareerNavigator/interview-prep/`, after prep.
+- **`[prep]`** note appended to `applications/<application_id>.json` → `notes[]` with `notes_count` bumped on the summary row, plus the brief file under `{user_dir}/interview-prep/`, after prep.
 - **`mcp-voice` MCP (Claude Desktop Extension `mcp-voice.mcpb`):** **TTS** — call **`speak`** with a short string; expect audio playback through local speaker and `"Speech complete."` response. **STT** — call **`listen`** and speak a short phrase; expect returned transcript matching spoken content.
 - **`interview-capture`:** opt-in flow; employer warning once; **`[capture]`** or structured note appended to the application's `detail_file` with the summary row's counters updated in the same transaction when transcript processed.
 - **Deferred until shipped:** full **`interview-debrief`** automation if not yet present.

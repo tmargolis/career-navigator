@@ -112,8 +112,8 @@ Deliver in chat (structured headings), then the invoking skill saves a file and 
 - **Talking points** and **questions to ask them**
 - Short **time-boxed prep checklist**
 
-**File path (unless skill overrides):** `{user_dir}/CareerNavigator/interview-prep/{company-slug}_{stage}_{YYYY-MM-DD}.md`  
-Use a filesystem-safe `company-slug`. Create `interview-prep/` if missing.
+**File path (unless skill overrides):** `{user_dir}/interview-prep/{company-slug}_{stage}_{YYYY-MM-DD}.md`  
+Use a filesystem-safe `company-slug`. Create `{user_dir}/interview-prep/` if missing. Never write briefs to `{user_dir}/CareerNavigator/interview-prep/`.
 
 ---
 

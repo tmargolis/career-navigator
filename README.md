@@ -102,7 +102,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 | **`/career-navigator:morning-brief`** | Day-of only | Same **`daily-schedule`** skill — **focused** output: pre-interview slice only (see `skills/daily-schedule/SKILL.md` §3.3) |
 | **`/career-navigator:setup-schedule`** | Run once after launch | **Phase 3:** creates the `career-navigator-daily-brief` Cowork scheduled task — two-pass Gmail inbox scan (7-day catch-all + 30-day company backfill), follow-up alerts, and top new job recommendations appended to `recommendations.json` automatically each morning. Optionally also creates `career-navigator-pipeline-refresh`, a second scheduled task that regenerates `pipeline-status.html` nightly |
 | **`/career-navigator:pipeline-status`** | Run any time, or scheduled nightly via `setup-schedule` | Generates the pipeline status page — filterable table (active / focus / closed / passed) with an embedded application timeline — reading `tracker.json`, `recommendations.json`, and `passed.json`, and opens it in the browser |
-| **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `CareerNavigator/interview-prep/*.md` + **`[prep]`** note in the application's **`applications/<application_id>.json`** |
+| **`prep-interview`** | “Prep me for…”, recruiter/HM/technical, `/career-navigator:prep-interview` | Full prep via **`interview-coach`**; saves `interview-prep/*.md` (in your job search folder) + **`[prep]`** note in the application's **`applications/<application_id>.json`** |
 | **`mock-interview`** | “Mock interview…”, `/career-navigator:mock-interview` | Text-only practice session: guided/random/adaptive, stage + vibe; **if mode/vibe omitted, defaults are selected** (see skill §2.1) |
 | **`interview-capture`** | Opt-in, `/career-navigator:interview-capture` | **Skill** (not an agent): recorded-audio-file STT → structured notes in **`applications/<application_id>.json`** + the **`tracker.json`** summary row; §13.1 warning; uses **`mcp-transcribe`** (see `/career-navigator:setup-transcribe`) |
 | **`mine-stories`** | Setup or when new notes/journals appear | One-time/incremental extraction pipeline that builds **`StoryCorpus.json`** from journals, PKM, debriefs, and related documents |
@@ -198,6 +198,8 @@ Everything lives in one folder — the job search directory you provide. Career 
 ├── resume-acme-pm-2026-03.md    ← Career Navigator outputs (saved here directly)
 ├── cover-letter-acme-pm-2026-03.md
 │
+├── interview-prep/              — markdown briefs from **`prep-interview`**
+│
 ├── CareerNavigator/
 │   ├── profile.md               — your targets, comp floor, differentiators
 │   ├── ExperienceLibrary.json   — experience units extracted from source resumes/CVs
@@ -215,7 +217,6 @@ Everything lives in one folder — the job search directory you provide. Career 
 │   ├── offer-context-*.json     — persisted offer evaluation context for negotiation/comparison workflows
 │   ├── voice-profile.md         — optional: pasted posts + **`writer`** voice notes / `voice_profile_v1`
 │   ├── analyst-graph-data.json  — graph-ready analyst output for dashboard rendering
-│   ├── interview-prep/          — markdown briefs from **`prep-interview`**
 │   ├── pipeline-status.html     — generated pipeline status page (opens in browser)
 │   ├── pipeline-data.js         — data backing pipeline-status.html, regenerated each run
 │   └── timeline.html            — generated application timeline, embedded in pipeline-status.html

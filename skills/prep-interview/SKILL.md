@@ -6,7 +6,7 @@ description: >
   panel, executive, final), and story evidence retrieved from StoryCorpus
   (with ExperienceLibrary fallback). Text-only; accepts a pasted host-STT
   transcript if the user dictates instead of typing.
-  Saves a brief under CareerNavigator/interview-prep/ and logs a [prep] note in
+  Saves a brief under {user_dir}/interview-prep/ and logs a [prep] note in
   tracker.json. Also invocable via /career-navigator:prep-interview.
 triggers:
   - "/prep-interview"
@@ -82,14 +82,14 @@ Use the exact agent name **`interview-coach`**.
 
 After the coach content is produced:
 
-1. **Directory:** Ensure `{user_dir}/CareerNavigator/interview-prep/` exists.
+1. **Directory:** Ensure `{user_dir}/interview-prep/` exists (directly in the job search folder, **not** under `CareerNavigator/`).
 2. **File:** Save the full prep brief as markdown using the path convention from the agent (company-slug, stage, date = today in local context unless user specified interview date for filename suffix).
 3. **Detail file:** Append to `notes[]` in the matched row's `detail_file` — `{user_dir}/CareerNavigator/applications/<application_id>.json` — an object:
 
 ```json
 {
   "date": "YYYY-MM-DD",
-  "text": "[prep] Interview prep brief saved: CareerNavigator/interview-prep/{filename}.md (stage: {stage})."
+  "text": "[prep] Interview prep brief saved: interview-prep/{filename}.md (stage: {stage})."
 }
 ```
 
@@ -97,7 +97,7 @@ Never overwrite or reorder existing note entries.
 
 4. **Summary row:** Set the matching `tracker.json` → `applications[]` row's `notes_count` to the detail file's new `notes[]` length. This note does not add a stage, so leave `stage_count`, `latest_stage`, `latest_stage_date`, and `status` untouched.
 
-Load and re-dump both JSON files programmatically (`json.load` / `json.dump`, `indent=2`, `ensure_ascii=False`), then reload to verify `notes_count` matches the detail array. If no application matched, skip both writes but still save the file under `interview-prep/` with a clear filename and tell the user to link it via `/career-navigator:track-application` if needed.
+Load and re-dump both JSON files programmatically (`json.load` / `json.dump`, `indent=2`, `ensure_ascii=False`), then reload to verify `notes_count` matches the detail array. If no application matched, skip both writes but still save the file under `{user_dir}/interview-prep/` with a clear filename and tell the user to link it via `/career-navigator:track-application` if needed.
 
 ### 7. Close
 
