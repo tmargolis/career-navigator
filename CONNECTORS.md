@@ -6,11 +6,11 @@ Plugin files use `~~category` as a placeholder for whatever tool the user connec
 
 Plugins are **tool-agnostic** — they describe workflows in terms of categories (chat, project tracker, knowledge base, etc.) rather than specific products.
 
-**The plugin declares no MCP servers of its own.** Every integration is a connector the user adds in the **Claude** app (**Settings / Customize → Connectors**), so tools appear in the session once the user connects them. For inbox and calendar context, pick **either** the Google pair (**Gmail**, **Google Calendar**) **or** **Microsoft 365** for Outlook mail and M365 calendar. (Plugin versions before 3.2.2 also shipped a `.mcp.json` pointing at hosted Gmail, Google Calendar and Microsoft 365 servers; it was removed because the connectors already provide the same tools and two of those addresses no longer resolve.) **Indeed** uses **OAuth in the browser** (Indeed on **secure.indeed.com**); **Apify** uses a token + **Enabled tools** in its connector form. **Gmail**, **Microsoft 365**, and **Google Calendar** use **OAuth** to the user’s (or org’s) account per Anthropic’s integration docs.
+**The plugin declares no MCP servers of its own.** Every integration is a connector the user adds in the **Claude** app (**Settings / Customize → Connectors**), so tools appear in the session once the user connects them. For inbox and calendar context, pick **either** the Google pair (**Gmail**, **Google Calendar**) **or** **Microsoft 365** for Outlook mail and M365 calendar. (Plugin versions before 3.2.2 also shipped a `.mcp.json` pointing at hosted Gmail, Google Calendar and Microsoft 365 servers; it was removed because the connectors already provide the same tools and two of those addresses no longer resolve.) **Indeed** uses **OAuth in the browser** (Indeed on **secure.indeed.com**); **Gmail**, **Microsoft 365**, and **Google Calendar** use **OAuth** to the user’s (or org’s) account per Anthropic’s integration docs.
 
 ## Three-step pattern (every integration)
 
-Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google Calendar**, **LinkedIn**, **PKM sources** (Capacities, Notion) (where applicable), and **future** connectors documented in this plugin:
+Use this order for **Indeed**, **Gmail**, **Microsoft 365**, **Google Calendar**, **LinkedIn**, **PKM sources** (Capacities, Notion) (where applicable), and **future** connectors documented in this plugin:
 
 1. **Discover** — **First**, check whether **this chat session** already exposes host tools for that integration (tool names vary). If tools are present and working, the service is **connected** for this session: **stop** for that integration—**do not** ask about setup, OAuth, or browser access unless the user says something is broken.
 
@@ -25,7 +25,7 @@ Use this order for **Indeed**, **Apify**, **Gmail**, **Microsoft 365**, **Google
 | Category | Placeholder | Primary in-repo / host path | Other options |
 |----------|-------------|----------------------------|---------------|
 | Career | `~~career` | **Indeed** MCP — Claude **Connectors** → **Indeed** → **Connect** → browser OAuth (`search_jobs`, `get_job_details`; connector URL `https://mcp.indeed.com/claude/mcp`) | LinkedIn, Glassdoor, Monster, ZipRecruiter, Dice, Handshake |
-| Salary benchmarks | — | **Apify** MCP via Claude **Desktop** connector; **Enabled tools:** `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search` | Future MCPs; skills should degrade gracefully if Apify is off |
+| Salary benchmarks | — | No connector of its own: **`salary-research`** uses posted pay from the **Indeed** connector plus the free, keyless **BLS OEWS** public API (`api.bls.gov`) for official wage percentiles | Either source alone if the other is unavailable |
 | Storage | `~~storage` | **Google Drive:** recommended **Drive app sync** (or manual backup/restore) for job files (PDF/DOCX/etc.). **OneDrive:** recommended **OneDrive app sync** (or manual backup/restore) for job files (plugin JSON artifacts aren’t reliably file-accessible via Claude’s Microsoft 365 connector). **Dropbox:** recommended **Dropbox app sync** (or manual backup/restore) for job files. | Local filesystem fallback in `{user_dir}` |
 | Inbox / Outlook (read) | `~~inbox` | **Gmail** and/or **Microsoft 365** first-party connectors (below) | Future: other hosts’ email MCPs if documented |
 | Calendar (Google) | — | **Google Calendar** first-party connector (below) | Outlook/Teams calendar via **Microsoft 365** where enabled |
@@ -182,7 +182,7 @@ Outlook mail for Career Navigator is provided through Anthropic’s **Microsoft 
 2. **Explicit approval:** Skills (**`draft-outreach`**, **`follow-up`**, **`contact-context`**) must **ask once** whether to search **mail** and/or **calendar** for a named person or company before calling tools—consistent with **`agents/networking-strategist/AGENT.md`** and **`agents/writer/AGENT.md`**. If only one connector is available, only ask for that scope.
 3. **No fabrication:** If connectors are off or the user declines, **do not** invent thread summaries; write copy that stands alone.
 4. **Minimum disclosure:** Summarize only what is needed for the outreach or follow-up; prefer thread excerpts and dates over dumping full bodies.
-5. **New chat after connect:** If tools do not appear after OAuth, start a **new chat** (same pattern as **Indeed** / **Apify**).
+5. **New chat after connect:** If tools do not appear after OAuth, start a **new chat** (same pattern as **Indeed**).
 
 See also **`skills/launch/SKILL.md`** Step 6 for a conversational setup offer during **`/career-navigator:launch`**.
 

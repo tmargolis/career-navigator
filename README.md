@@ -96,7 +96,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 
 | Skill / command | When it runs | Purpose |
 |-----------------|--------------|---------|
-| **`/career-navigator:launch`** | Run once (or again to reconfigure) | Configure `{user_dir}`, core `CareerNavigator/` files, connectors walkthrough (Indeed, Apify, Gmail/M365/Google Calendar, LinkedIn analytics), voice harvest; **offers** optional **`linkedin-post-analytics`** if you want a first snapshot |
+| **`/career-navigator:launch`** | Run once (or again to reconfigure) | Configure `{user_dir}`, core `CareerNavigator/` files, connectors walkthrough (Indeed, Gmail/M365/Google Calendar, LinkedIn analytics), voice harvest; **offers** optional **`linkedin-post-analytics`** if you want a first snapshot |
 | **`focus-career`** | New session (hook) or `/schedule` | Critical-only: deadlines, same-day follow-ups, urgent interview actions |
 | **`daily-schedule`** | **Recommended:** daily via Cowork **`/schedule`** | Routine digest; runs **`artifact-saved`** when PDF/DOCX artifacts need reconciling; **Pre-interview brief (today)** when tracker shows interview/recruiter/screen **today** |
 | **`/career-navigator:morning-brief`** | Day-of only | Same **`daily-schedule`** skill — **focused** output: pre-interview slice only (see `skills/daily-schedule/SKILL.md` §3.3) |
@@ -142,7 +142,7 @@ Insight & dashboard      →  full analyst report + pipeline visualization
 |-----------------|--------------|---------|
 | **`market-brief`** | Demand, trends, `/career-navigator:market-brief` | **`market-researcher`**: role demand, displacement, geography |
 | **`suggest-roles`** | Adjacent / non-obvious targets, `/career-navigator:suggest-roles` | Role ideas + **`strategy_signals`** for **`job-scout`** |
-| **`salary-research`** | Comp questions | Benchmarks via Apify MCP (when connected) |
+| **`salary-research`** | Comp questions | Free benchmarks: Indeed posted ranges + BLS wage percentiles |
 | **`benchmark`** | “Vs market”, funnel health | Norms by role / level / company size |
 | **`ai-analysis`** | AI displacement, future-proofing | Task-level risk + differentiators (**`analyst`**) |
 | **`skill-transfer`** | “What else could I do?” | Transferable strengths → adjacent roles/industries |
@@ -248,24 +248,14 @@ When non-Indeed connectors are unavailable in-session, `search-jobs` can still r
 - **Google Drive, OneDrive, Dropbox, etc.:** recommended via **application sync** (or manual backup/restore), since Claude’s native connectors are not reliable for typical job files (JSON/DOCX/etc.).
 See [CONNECTORS.md](CONNECTORS.md) for setup and fallback behavior.
 
-### Apify MCP for salary benchmarking (optional — Claude Desktop connector)
+### Salary benchmarking (no setup needed)
 
-`/career-navigator:salary-research` uses **Apify** over MCP. Add Apify as a **Desktop connector** in Claude: the app stores your Apify sign-in and tool list for you, and the plugin never handles it.
+`/career-navigator:salary-research` is free and needs no account of its own. It combines:
 
-1. Create an account at [apify.com](https://apify.com) and copy your **Personal API token** from **Console → Settings → Integrations**.
-2. In Claude Desktop, open **Customize** (or **Settings**) and go to **Connectors**.
-3. Under **Desktop**, select **Apify** (may appear as **apify-mcp-server**).
-4. Click **Configure** (or open the connector’s settings).
-5. Paste your token into **Apify token (Required)**.
-6. In **Enabled tools**, replace the default with this exact comma-separated list (no spaces):
+- **Posted pay ranges** from current listings via the **Indeed** connector (set up above).
+- **Official wage percentiles** (10th to 90th) for the matching occupation and metro area from the US Bureau of Labor Statistics [OEWS](https://www.bls.gov/oes/) public API, which needs no key.
 
-   `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`
-
-7. Click **Save**, ensure the connector is **enabled**, then **start a new chat** so tools load.
-
-8. Run `/career-navigator:salary-research` or ask for a salary range for a role and location.
-
-Never paste your token into this repository or into chat logs you do not trust. Tool permission prompts (e.g. “needs approval”) are normal — approve when you intend to run salary research.
+Ask for a salary range for a role and location, or run `/career-navigator:salary-research`. If Indeed isn't connected, you still get the BLS baseline.
 
 ### Optional: Interview audio transcription (`mcp-transcribe`)
 

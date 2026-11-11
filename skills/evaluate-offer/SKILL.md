@@ -106,8 +106,8 @@ produce a conservative, locally-grounded benchmark and label confidence.
 
 Additionally, if the benchmark comes back with any `unknown`/missing range values
 or confidence is not High, you must explicitly offer the user next step to
-fetch it via `/career-navigator:salary-research` (and mention that it may
-require the Apify connector in Claude Desktop) using the extracted role and
+fetch it via `/career-navigator:salary-research` (free: Indeed posted ranges
+plus BLS wage percentiles, no extra setup) using the extracted role and
 location.
 
 ### 6. Honest evaluation synthesis + leverage points
