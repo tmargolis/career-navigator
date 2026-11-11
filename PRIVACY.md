@@ -15,7 +15,7 @@ This policy applies to data handled by the plugin in this repository, including:
 - Application records, which are split across three locations under `CareerNavigator/`: summary rows in `tracker.json`, per-application notes and stage history in `applications/<application_id>.json`, and third-party contact details (names, titles, and interaction history for recruiters and hiring managers) in `contacts/<company-slug>.json`. The layout is defined in [references/tracker-schema.md](references/tracker-schema.md)
 - Optional connector-derived context when you explicitly enable and approve those integrations
 
-This policy does not replace the privacy terms of Anthropic, Claude, or third-party connector providers (for example Indeed, Google, Microsoft, Apify, LinkedIn, Notion, Dropbox, OneDrive, Google Drive, Meetup, Eventbrite, Luma). Those services have their own policies and controls.
+This policy does not replace the privacy terms of Anthropic, Claude, or third-party connector providers (for example Indeed, Google, Microsoft, LinkedIn, Notion, Dropbox, OneDrive, Google Drive, Meetup, Eventbrite, Luma). Those services have their own policies and controls.
 
 ## Data We Process
 
@@ -55,13 +55,14 @@ Career Navigator supports optional connectors and MCP tools. These are opt-in.
 - Configure only if needed: setup prompts occur when tools are missing or disconnected.
 - Browser automation only when needed: used for browser-only workflows or when MCP tooling is unavailable.
 - Reference reports: during `/career-navigator:launch` the plugin offers to download public research reports (listed in `references/external-reports.json`) into your job search folder. These are inbound downloads of published documents; no job-search data is sent with the request.
+- Salary benchmarks: `salary-research` requests public wage statistics from the US Bureau of Labor Statistics API (`api.bls.gov`). The request contains only an occupation code and a metro-area code, never your name, profile or application data.
 
 ### Authentication and credentials
 
 - OAuth-based connectors are authenticated through host/provider flows in the browser.
 - The plugin does not require you to place service passwords in repository files.
 - Long-lived secrets should not be committed to this repository.
-- Apify token setup is performed in connector UI, not stored in plugin source files.
+- Salary benchmarking needs no account or token: it uses the Indeed connector and the public BLS API.
 
 ### Read-only integration behavior (where implemented)
 
