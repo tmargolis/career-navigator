@@ -298,7 +298,7 @@ Use the norm tables below. Select the row matching the user's level and company 
 
 ### Step 4 — Compensation positioning
 
-Do not run a new Apify salary lookup here. Instead, check whether `salary-research` has been run recently (look for any compensation data in the conversation, in each summary row's `salary_range`, or in the `notes[]` of the applications' `detail_file`s you already loaded). If comp data is available, contextualize it by level and company size:
+Do not run a new salary lookup here. Instead, check whether `salary-research` has been run recently (look for any compensation data in the conversation, in each summary row's `salary_range`, or in the `notes[]` of the applications' `detail_file`s you already loaded). If comp data is available, contextualize it by level and company size:
 
 - Startups typically offer 15–30% below enterprise base, offset by equity
 - Enterprise (FAANG-tier) typically at or above market median with lower equity upside

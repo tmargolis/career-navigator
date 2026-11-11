@@ -1,7 +1,7 @@
 ---
 name: launch
 description: >
-  Launch your job search with Career Navigator: the single entry point for configuration. Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents, walks through the Indeed MCP connector (browser OAuth) for live job search, optional Apify for salary data, optional Gmail / Microsoft 365 inbox and optional Google Calendar connectors (OAuth) for outreach and meeting context, optional LinkedIn post analytics, and optional cloud storage connectors (Google Drive, OneDrive, Dropbox) when applicable. No Customize button required — run this command to do everything.
+  Launch your job search with Career Navigator: the single entry point for configuration. Sets up the job search folder, builds the user profile, ExperienceLibrary and application tracker from existing documents, walks through the Indeed MCP connector (browser OAuth) for live job search (which also supplies posted salary ranges), optional Gmail / Microsoft 365 inbox and optional Google Calendar connectors (OAuth) for outreach and meeting context, optional LinkedIn post analytics, and optional cloud storage connectors (Google Drive, OneDrive, Dropbox) when applicable. No Customize button required — run this command to do everything.
 when_to_use: >
   Use when the user says things like: "launch career", "launch career
   navigator", "begin my job search with career navigator", "set up career",
@@ -13,7 +13,7 @@ Use this after installing the plugin — it is how you **launch** Career Navigat
 
 The working directory (or relevant sub-directory) should be configured as the user's job search directory to be referred to as `{user_dir}`. All data this plugin produces— profile, ExperienceLibrary, tracker, generated artifacts — lives in subdirectories of the `{user_dir}` folder alongside the user's raw documents.
 
-**Integrations (Indeed, Apify, LinkedIn, Gmail, Microsoft 365, Google Calendar):** Follow [CONNECTORS.md](CONNECTORS.md): **only prompt for services that are not already connected** in this session (host tools missing or user reports a problem). If tools are already present, a **brief acknowledgment** is enough—**do not** ask setup, OAuth, or browser-access questions for those services.
+**Integrations (Indeed, LinkedIn, Gmail, Microsoft 365, Google Calendar):** Follow [CONNECTORS.md](CONNECTORS.md): **only prompt for services that are not already connected** in this session (host tools missing or user reports a problem). If tools are already present, a **brief acknowledgment** is enough—**do not** ask setup, OAuth, or browser-access questions for those services.
 
 ## Workflow
 
@@ -23,7 +23,7 @@ The working directory (or relevant sub-directory) should be configured as the us
 | --- | --- |
 | **1 — Discover** | Check tools in **this chat** for that integration. If **connected** (tools present), acknowledge briefly and **skip** further steps for it. |
 | **2 — Configure** | **Only if not connected:** **ask** if they want to set up; guide [CONNECTORS.md](CONNECTORS.md); **they** complete **Connectors** + OAuth/token. **Never** automate OAuth with Chrome/computer use. |
-| **3 — Browser access** | **Only if not connected via MCP** or the flow is **browser-only** (e.g. **LinkedIn** analytics). **Do not** ask for **Indeed** / **Apify** / inbox / **calendar** when MCP tools already work. |
+| **3 — Browser access** | **Only if not connected via MCP** or the flow is **browser-only** (e.g. **LinkedIn** analytics). **Do not** ask for **Indeed** / inbox / **calendar** when MCP tools already work. |
 
 Apply **1 → 2 → (3 only when needed)** per integration—**omit** steps 2–3 when step 1 already succeeded.
 
@@ -440,47 +440,20 @@ If tools are missing after OAuth, have them verify: Indeed account authorized, c
 
 **Claude Cowork / other hosts:** Use the host’s documented way to enable **Indeed** job search MCP (same tool names when available). Do not invent credentials or scrape Indeed without the official connector.
 
-### 4. Configure Apify for salary benchmarking (optional)
+### 4. Salary benchmarking (no setup needed)
 
-Apply **Connector pattern**; **do not** ask about **Apify** if its tools are already available—suggest **`/career-navigator:salary-research`** and move on.
+`salary-research` needs no account, key or connector of its own. It combines posted pay ranges from the **Indeed** connector (Step 3) with official wage percentiles from the US Bureau of Labor Statistics public API, which is free and keyless.
 
-The `salary-research` skill uses the **Apify** MCP tools to pull live compensation data. This step is optional — skip it if the user doesn't need salary benchmarking.
+Tell the user in one line, then move on:
+> "Salary benchmarking is ready: ask for a pay range for any role and city, or run `/career-navigator:salary-research`. It uses Indeed's posted ranges plus government wage data, and costs nothing."
 
-**Do not** ask the user to paste their Apify token into chat or into any file. **They** paste it into the **Apify** connector form in the app — do not use browser automation to configure it. The plugin itself never reads, stores, or transmits this token; the connector holds it.
-
-First check if the Apify MCP is already connected. It may be in a deferred state, so double check and make sure to activate them if you need to. If they are active, suggest they run `/career-navigator:salary-research` for a role and location from their profile. If not, ask the user:
-> "Would you like to set up salary benchmarking? It uses Apify's free tier ($5/month in credits — enough for personal job search use) to pull live salary data by role and location."
-
-**If yes — Claude Desktop connector flow:**
-
-1. Direct them to sign up at **https://apify.com** (free account).
-
-2. They copy their **Personal API token** from **Console → Settings → Integrations** (they keep it private — **do not** ask them to paste it into this conversation).
-
-3. Walk them through the host UI:
-   - Open **Customize** (or **Settings**) → **Connectors**
-   - Under **Desktop**, choose **Apify** (may show as **apify-mcp-server**)
-   - Open **Configure**
-   - Paste the token into **Apify token (Required)**
-   - Set **Enabled tools** to this exact string (comma-separated, no spaces):
-
-     `call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`
-
-   - **Save**, turn the connector **on**, start a **new chat** so MCP tools load
-
-4. Validation: Confirm Apify tools are available (e.g. **Call Actor**, **Get Actor run**, **Get dataset items**). If tools need to be activated from a deferred state, then do that. If the tools are missing, summarize what they should double-check (token, enabled tools string, connector enabled, new session). If Apify is **already connected**, **do not** ask further questions about it.
-
-**Cowork / other hosts:** If the user is not on Claude Desktop, tell them to add Apify MCP the way their host documents (same **Enabled tools** string and a secure token field if the UI offers one). Do not invent a JSON config that embeds the token.
-
-**If no or skipped:**
-
-> "No problem — salary benchmarking is off for now. You can set it up any time by running `/career-navigator:launch` again."
+If Indeed was skipped in Step 3, add that salary benchmarks will use the government data alone until Indeed is connected.
 
 ### 5. Offer LinkedIn post analytics (optional)
 
 Apply **Connector pattern** (LinkedIn is usually **no** host MCP for this flow—**browser access** is the main lever).
 
-After **Indeed** and **Apify** (or if the user skipped Apify), offer a **read-only** snapshot of **their own** LinkedIn post metrics into **`{user_dir}/CareerNavigator/networking.json`** (`networking[]`, per **`linkedin-post-analytics`**). This is optional; do not run it without a clear **yes**.
+After **Indeed** (or if the user skipped it), offer a **read-only** snapshot of **their own** LinkedIn post metrics into **`{user_dir}/CareerNavigator/networking.json`** (`networking[]`, per **`linkedin-post-analytics`**). This is optional; do not run it without a clear **yes**.
 
 **1 — Discover:** There is typically **no** LinkedIn MCP tool for this plugin path; note that analytics use **browser** access (step 3).
 
@@ -513,7 +486,7 @@ If they pick **both**, save `mode: either`.
 
 Apply **Connector pattern**; **do not** prompt for **Gmail**, **Microsoft 365**, or **Google Calendar** if tools for that service are **already** in **this chat** (brief acknowledgment only).
 
-After **Indeed**, **Apify**, and the **LinkedIn post analytics** offer (or skips), offer **Gmail** and/or **Microsoft 365** (inbox) and/or **Google Calendar** so **`draft-outreach`**, **`follow-up`**, and **`contact-context`** can search **read-only** mail and summarize **recent meetings** with a contact **when the user explicitly approves** each lookup.
+After **Indeed** and the **LinkedIn post analytics** offer (or skips), offer **Gmail** and/or **Microsoft 365** (inbox) and/or **Google Calendar** so **`draft-outreach`**, **`follow-up`**, and **`contact-context`** can search **read-only** mail and summarize **recent meetings** with a contact **when the user explicitly approves** each lookup.
 
 **Step 2 only:** never automate **Connectors** with Chrome/computer-use tools. **Ask** if they want to set up or re-enable Gmail/M365/Calendar; if **yes**, they complete **Connectors** + OAuth **themselves** while you give instructions.
 

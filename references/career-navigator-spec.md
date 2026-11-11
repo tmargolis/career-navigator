@@ -111,7 +111,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Analytics Layer (Phase 1)** | SQLite + D3 visualization (additional connectors in Phase 3) |
 | **AI Services** | Claude API (via MCP); optional **local** file-transcription STT via **`mcp-transcribe`** MCP (installed via `/career-navigator:setup-transcribe`); prep/mock interviews are text-only |
 | **Job Search (Phase 1)** | **Indeed** MCP via Claude Desktop **Customize → Connectors** — **Connect** → browser OAuth on **secure.indeed.com**; tools **`search_jobs`**, **`get_job_details`** (connector `https://mcp.indeed.com/claude/mcp`). User must complete OAuth; assisted-manual fallback when connector unavailable |
-| **Salary benchmarks (Phase 1, optional)** | Apify MCP added in Claude Desktop **Customize → Connectors → Desktop → Apify** (sign-in + **Enabled tools** list in connector UI) |
+| **Salary benchmarks (Phase 1, optional)** | No setup: **Indeed** connector posted ranges + free, keyless **BLS OEWS** public API (Apify dependency removed in v3.2.3) |
 
 # **2. Plugin File Structure**
 
@@ -152,7 +152,7 @@ All commands are namespaced under career-navigator: and accessible via Claude Co
 
 | Name | Type | Description |
 | --- | --- | --- |
-| **/career-navigator:launch** | Command | **Launch** the user's job search workspace: conversational wizard that configures `{user_dir}`, reads existing documents, builds the user profile and ExperienceLibrary, and walks through connectors for live job search (Indeed, optional Apify, etc.). **Offers** optional **`linkedin-post-analytics`** when the user wants a first run—read-only own-post snapshots into **`networking.json`** (**`networking[]`**), subject to host browser automation and explicit consent. Same setup responsibilities as before; framed as the entry point to start searching. Validates inputs before saving; re-runnable to update keys or reconfigure. |
+| **/career-navigator:launch** | Command | **Launch** the user's job search workspace: conversational wizard that configures `{user_dir}`, reads existing documents, builds the user profile and ExperienceLibrary, and walks through connectors for live job search (Indeed, etc.). **Offers** optional **`linkedin-post-analytics`** when the user wants a first run—read-only own-post snapshots into **`networking.json`** (**`networking[]`**), subject to host browser automation and explicit consent. Same setup responsibilities as before; framed as the entry point to start searching. Validates inputs before saving; re-runnable to update keys or reconfigure. |
 
 ## **3.1 Resume & Cover Letter Commands**
 
@@ -262,7 +262,7 @@ Skills are auto-triggered capabilities that Claude activates when relevant conte
 | Name | Type | Description |
 | --- | --- | --- |
 | **ats-optimization** | Skill | Fires automatically when a resume is being edited or generated. Checks for ATS-hostile formatting, missing keywords, and structural issues. Suggests fixes inline. |
-| **salary-research** | Skill | Fires when compensation is mentioned in any context. Pulls current market data for the role, level, and geography under discussion. |
+| **salary-research** | Skill | Fires when compensation is mentioned in any context. Combines posted pay ranges from the Indeed connector with BLS OEWS wage percentiles (free, keyless public API) for the role, level, and geography under discussion. |
 | **follow-up-timing** | Skill | Fires when an application is viewed in the tracker. Evaluates elapsed time against company-specific norms and flags if a follow-up action is warranted. |
 | **cultural-risk-flag** | Skill | Fires when drafting LinkedIn content or outreach messages. Routes evaluation through **`evaluate-post`** / **`writer`** + **`market-researcher`** for a single, target-specific risk rubric; may nudge the user to run **`evaluate-post`** before publishing. |
 | **contact-context** | Skill | Fires when a contact at a target company is identified or the user asks for prior-thread context before outreach. Searches email and calendar (**past** + **scheduled** meetings) for correspondence and warm-networking signals; surfaces **ContactContextBrief** for **`writer`** / **`draft-outreach`** (Phase 2A). Requires user approval before use. Also invocable via **`/career-navigator:contact-context`**. |
@@ -335,7 +335,7 @@ The analytics layer consumes structured event data from the storage connector an
 
 # **9. External Service Integrations**
 
-The plugin declares no MCP servers of its own (a `.mcp.json` with hosted Gmail, Google Calendar and Microsoft 365 entries was removed in v3.2.2); every connector is configured in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. The Apify sign-in is entered directly into the host's connector UI and held there; the plugin never handles it. For **inbox and calendar context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors and/or **Google Calendar** (**OAuth** in the browser—no passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**. **Google Calendar** is a separate connector from **Gmail** in the Connectors catalog. For **PKM-backed interview story mining** (**`mine-stories`**), users can connect **Notion** via first-party connector and/or use **Capacities** through an available MCP integration in the host session; if unavailable, the workflow falls back to file-based exports in `{user_dir}`.
+The plugin declares no MCP servers of its own (a `.mcp.json` with hosted Gmail, Google Calendar and Microsoft 365 entries was removed in v3.2.2); every connector is configured in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). **salary-research** needs no connector of its own: it reuses the **Indeed** connector for posted pay ranges and calls the free, keyless **BLS OEWS** public API for wage percentiles. For **inbox and calendar context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors and/or **Google Calendar** (**OAuth** in the browser—no passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**. **Google Calendar** is a separate connector from **Gmail** in the Connectors catalog. For **PKM-backed interview story mining** (**`mine-stories`**), users can connect **Notion** via first-party connector and/or use **Capacities** through an available MCP integration in the host session; if unavailable, the workflow falls back to file-based exports in `{user_dir}`.
 
 Run `/career-navigator:launch` for a conversational walkthrough. Each integration is optional; skills degrade when a connector is absent.
 
@@ -347,7 +347,7 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 
 | Name | Type | Description |
 | --- | --- | --- |
-| **Apify** | MCP (Desktop connector) | Powers **`salary-research`** via **cheapget/best-job-search** and related tools. Configured in Claude Desktop connector UI. |
+| **BLS OEWS API** | Public HTTPS API (no key) | Official wage percentiles by occupation (SOC) and metro area for **`salary-research`**. Requests carry only public series IDs. |
 | **Indeed** | MCP (Claude connector) | Official **`search-jobs`** path: **`search_jobs`**, **`get_job_details`**; OAuth at **secure.indeed.com** after **Connect** in **Customize → Connectors**. Connector endpoint `https://mcp.indeed.com/claude/mcp`. Walkthrough in `/career-navigator:launch` Step 3. |
 | **LinkedIn** | MCP | Job posting search, connection graph access, InMail drafting, post publishing and analytics. Required for networking strategy features. |
 | **JobSearch** | MCP | Broader job-data integrations (scraping APIs, additional boards). Phase 1A primary live search is **Indeed** MCP above; this row covers alternate/future sources. |
@@ -645,7 +645,7 @@ Phase 1 builds the complete local-first job search intelligence platform. The fo
 Status: Completed
 
 * Plugin scaffold: manifest, directory structure
-* **`launch` skill** and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index); walks Indeed (and optional Apify); **offers** optional **Gmail** / **Microsoft 365** inbox connectors, optional **Google Calendar**, and optional **`linkedin-post-analytics`** when the user opts in. Slash command: **`/career-navigator:launch`**.
+* **`launch` skill** and conversational configuration wizard — scans the job search folder, auto-imports existing resumes into ExperienceLibrary, builds user profile from available documents; falls back to conversational Q&A if no source documents found; initializes all data schemas (ExperienceLibrary, tracker, artifacts index); walks Indeed (which also feeds `salary-research`); **offers** optional **Gmail** / **Microsoft 365** inbox connectors, optional **Google Calendar**, and optional **`linkedin-post-analytics`** when the user opts in. Slash command: **`/career-navigator:launch`**.
 * `search-jobs` skill — live job search via Indeed connector; assisted-manual fallback
 * `focus-career` skill — critical-only alerts when the user begins a session (or on a user-scheduled cadence via Cowork `/schedule`); onboarding on first run
 * Local filesystem storage — all data written to `{user_dir}`; no cloud dependency
@@ -759,7 +759,7 @@ Status: Completed
 * Contact context skill: surfaces prior email/meeting history before outreach drafting
 * Outreach drafting enriched with prior communication history
 * Meeting history awareness for warm networking identification — **past** and **scheduled (upcoming)** calendar events with a contact; **`contact-context`** emits **`upcoming_meetings`** and **`warm_networking`** so outreach does not cold-open when a meeting is already on the calendar
-* **`linkedin-post-analytics`** skill and **`/career-navigator:linkedin-post-analytics`** command: **read-only** snapshots of the user’s **own** LinkedIn post analytics into **`networking.json`** `networking[]` (see §10.4, §12.1). Depends on **host browser automation** (**Claude in Chrome**, **computer / browser use**, or equivalent) and **explicit user approval**; **`networking-strategist`** recommends cadence for visibility-focused users. **`/career-navigator:launch`** **offers** this as an optional step after Indeed/Apify when the user wants a first run.
+* **`linkedin-post-analytics`** skill and **`/career-navigator:linkedin-post-analytics`** command: **read-only** snapshots of the user’s **own** LinkedIn post analytics into **`networking.json`** `networking[]` (see §10.4, §12.1). Depends on **host browser automation** (**Claude in Chrome**, **computer / browser use**, or equivalent) and **explicit user approval**; **`networking-strategist`** recommends cadence for visibility-focused users. **`/career-navigator:launch`** **offers** this as an optional step after Indeed when the user wants a first run.
 
 ### **Phase 2B — Interview intelligence**
 
