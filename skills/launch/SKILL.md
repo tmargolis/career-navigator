@@ -415,7 +415,7 @@ After core files and voice profile:
 
 Apply **Connector pattern**; **do not** ask about **Indeed** if **`search_jobs`** / **`get_job_details`** are already available in **this chat**.
 
-Career Navigator’s **`search-jobs`** skill expects the **Indeed** MCP tools **`search_jobs`** and **`get_job_details`**. On **Claude Desktop**, those tools appear only after the user connects **Indeed** under **Customize → Connectors** and finishes **browser-based OAuth** with Indeed (this is **not** a static API key you paste into `.mcp.json`). **Only if tools are missing**, run **Configure**; **they** complete **Connect** and OAuth—do not drive it via **Claude in Chrome** or **computer use**.
+Career Navigator’s **`search-jobs`** skill expects the **Indeed** MCP tools **`search_jobs`** and **`get_job_details`**. On **Claude Desktop**, those tools appear only after the user connects **Indeed** under **Customize → Connectors** and finishes **browser-based OAuth** with Indeed (not a static key the user pastes anywhere). **Only if tools are missing**, run **Configure**; **they** complete **Connect** and OAuth—do not drive it via **Claude in Chrome** or **computer use**.
 
 **What to expect in Claude Desktop:**
 
@@ -446,7 +446,7 @@ Apply **Connector pattern**; **do not** ask about **Apify** if its tools are alr
 
 The `salary-research` skill uses the **Apify** MCP tools to pull live compensation data. This step is optional — skip it if the user doesn't need salary benchmarking.
 
-**Do not** ask the user to paste their Apify token into chat, edit `claude_desktop_config.json`, or rely on a local environment variable or dotfile for MCP startup — Claude Desktop does not perform shell-style variable expansion inside MCP `args`. **They** paste the token into the **Apify** connector form in the app — do not use browser automation to configure it, and the plugin itself never reads, stores, or transmits this token.
+**Do not** ask the user to paste their Apify token into chat or into any file. **They** paste it into the **Apify** connector form in the app — do not use browser automation to configure it. The plugin itself never reads, stores, or transmits this token; the connector holds it.
 
 First check if the Apify MCP is already connected. It may be in a deferred state, so double check and make sure to activate them if you need to. If they are active, suggest they run `/career-navigator:salary-research` for a role and location from their profile. If not, ask the user:
 > "Would you like to set up salary benchmarking? It uses Apify's free tier ($5/month in credits — enough for personal job search use) to pull live salary data by role and location."
@@ -534,7 +534,7 @@ After **Indeed**, **Apify**, and the **LinkedIn post analytics** offer (or skips
 
 #### 6b. Microsoft 365 (unchanged pattern)
 
-Offer **Microsoft 365** when relevant (see **6d**). Optional: if **Microsoft 365** tools are already in this session (including via project **`.mcp.json`** **`ms365`** → `https://microsoft365.mcp.claude.com/mcp` — Outlook/M365 as an **alternate** to Gmail/Google Calendar), acknowledge and skip redundant install instructions.
+Offer **Microsoft 365** when relevant (see **6d**). Optional: if **Microsoft 365** tools are already in this session (Outlook/M365 as an **alternate** to Gmail/Google Calendar), acknowledge and skip redundant install instructions.
 
 #### 6c. Google Calendar — check connection first
 

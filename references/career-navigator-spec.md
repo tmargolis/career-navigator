@@ -35,7 +35,7 @@ recruiters, career coaches, reverse recruiters, and market analysts into a singl
 
 [Chapter 8. Analytics Connectors](#8-analytics-connectors)
 
-[Chapter 9. External Service Integrations (.mcp.json)](#9-external-service-integrations-mcpjson)
+[Chapter 9. External Service Integrations](#9-external-service-integrations)
 
 [Chapter 10. Core Data Model](#10-core-data-model)
 >[10.1 ExperienceLibrary](#101-experiencelibrary)
@@ -111,7 +111,7 @@ The plugin is architected around a feedback loop: every action taken and outcome
 | **Analytics Layer (Phase 1)** | SQLite + D3 visualization (additional connectors in Phase 3) |
 | **AI Services** | Claude API (via MCP); optional **local** file-transcription STT via **`mcp-transcribe`** MCP (installed via `/career-navigator:setup-transcribe`); prep/mock interviews are text-only |
 | **Job Search (Phase 1)** | **Indeed** MCP via Claude Desktop **Customize → Connectors** — **Connect** → browser OAuth on **secure.indeed.com**; tools **`search_jobs`**, **`get_job_details`** (connector `https://mcp.indeed.com/claude/mcp`). User must complete OAuth; assisted-manual fallback when connector unavailable |
-| **Salary benchmarks (Phase 1, optional)** | Apify MCP added in Claude Desktop **Customize → Connectors → Desktop → Apify** (token + **Enabled tools** list in connector UI); not stored in project **`.mcp.json`** |
+| **Salary benchmarks (Phase 1, optional)** | Apify MCP added in Claude Desktop **Customize → Connectors → Desktop → Apify** (sign-in + **Enabled tools** list in connector UI) |
 
 # **2. Plugin File Structure**
 
@@ -121,7 +121,6 @@ The plugin is architected around a feedback loop: every action taken and outcome
 
 **│ └── plugin.json**
 
-**├── .mcp.json** — may include Anthropic **HTTP MCP** entries for **Gmail** / **Google Calendar** and/or **`ms365`** (Outlook / Microsoft 365) as an alternate channel (no secrets); other MCPs (e.g. Apify for salary) are configured in the host app. **Does not** include **`mcp-transcribe`** — see below.
 
 **├── mcp-transcribe/** — local MCP server (source-installed via `/career-navigator:setup-transcribe`, no prebuilt bundle) for recorded-interview file transcription; not published via GitHub Releases
 
@@ -334,9 +333,9 @@ The analytics layer consumes structured event data from the storage connector an
 | **qlik** | Connector | Integrates with Qlik Sense or QlikView via the Qlik Engine API. Enables associative analysis across the full application dataset. |
 | **d3** | Connector | Exports structured event data in D3-compatible JSON format for custom visualization development. |
 
-# **9. External Service Integrations (.mcp.json)**
+# **9. External Service Integrations**
 
-The plugin ships **`.mcp.json`** with optional Anthropic **HTTP MCP** servers for **Gmail**, **Google Calendar**, and/or **`ms365`** (Microsoft 365 / Outlook—alternate to Google for inbox and calendar context; see file); other connectors are configured in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. The token is entered directly into the host's connector UI and held there — the plugin never reads it from a local environment variable, dotfile, or config file, which avoids brittle remote-MCP configs where a shell-style variable reference in JSON args is passed through literally and never expanded. For **inbox and calendar context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors and/or **Google Calendar** (**OAuth** in the browser—no passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**. **Google Calendar** is a separate connector from **Gmail** in the Connectors catalog. For **PKM-backed interview story mining** (**`mine-stories`**), users can connect **Notion** via first-party connector and/or use **Capacities** through an available MCP integration in the host session; if unavailable, the workflow falls back to file-based exports in `{user_dir}`.
+The plugin declares no MCP servers of its own (a `.mcp.json` with hosted Gmail, Google Calendar and Microsoft 365 entries was removed in v3.2.2); every connector is configured in the **client** where the user runs Claude. For **`search-jobs`**, users add the **Indeed** connector under **Claude Desktop → Customize → Connectors**, click **Connect**, and complete **browser OAuth** on **secure.indeed.com** (**Grant access to Indeed** in-app; tools **`search_jobs`**, **`get_job_details`**). For **salary-research**, users add the **Apify** **Desktop** connector, paste their **Apify token**, set **Enabled tools** to **`call-actor,get-actor-run,get-dataset-items,cheapget/best-job-search`**, save, enable, and start a new session. The Apify sign-in is entered directly into the host's connector UI and held there; the plugin never handles it. For **inbox and calendar context** (**`draft-outreach`**, **`follow-up`**, **`contact-context`**), users add Anthropic’s **Gmail** and/or **Microsoft 365** connectors and/or **Google Calendar** (**OAuth** in the browser—no passwords or refresh tokens in repo JSON); see table below and **`CONNECTORS.md`**. **Google Calendar** is a separate connector from **Gmail** in the Connectors catalog. For **PKM-backed interview story mining** (**`mine-stories`**), users can connect **Notion** via first-party connector and/or use **Capacities** through an available MCP integration in the host session; if unavailable, the workflow falls back to file-based exports in `{user_dir}`.
 
 Run `/career-navigator:launch` for a conversational walkthrough. Each integration is optional; skills degrade when a connector is absent.
 
@@ -348,14 +347,14 @@ Run `/career-navigator:launch` for a conversational walkthrough. Each integratio
 
 | Name | Type | Description |
 | --- | --- | --- |
-| **Apify** | MCP (Desktop connector) | Powers **`salary-research`** via **cheapget/best-job-search** and related tools. Configured in Claude Desktop connector UI, not committed in `.mcp.json`. |
+| **Apify** | MCP (Desktop connector) | Powers **`salary-research`** via **cheapget/best-job-search** and related tools. Configured in Claude Desktop connector UI. |
 | **Indeed** | MCP (Claude connector) | Official **`search-jobs`** path: **`search_jobs`**, **`get_job_details`**; OAuth at **secure.indeed.com** after **Connect** in **Customize → Connectors**. Connector endpoint `https://mcp.indeed.com/claude/mcp`. Walkthrough in `/career-navigator:launch` Step 3. |
 | **LinkedIn** | MCP | Job posting search, connection graph access, InMail drafting, post publishing and analytics. Required for networking strategy features. |
 | **JobSearch** | MCP | Broader job-data integrations (scraping APIs, additional boards). Phase 1A primary live search is **Indeed** MCP above; this row covers alternate/future sources. |
 | **Glassdoor** | MCP | Company culture research, interview experience data, salary benchmarks, and recruiter process timelines. |
 | **CareerOneStop** | MCP | U.S. Department of Labor API. Free. Provides labor market data, salary ranges, occupation outlook, and American Job Center locations. Also a candidate live data source for the `training-roi` skill — see Phase 1C note in §15. |
 | **IllinoisJobLink** | MCP | Illinois-specific job board. State employment resources and local posting discovery. |
-| **Gmail** | Claude first-party connector | **Settings / Customize → Connectors → Gmail → Connect** — Google **OAuth** in the browser; do not commit tokens in `.mcp.json`. Anthropic documents **search and analyze** mail; **no create/send/modify** via this integration. **Pro / Max / Team / Enterprise** per Claude docs (confirm in-product). Career Navigator: **`draft-outreach`**, **`follow-up`**, **`contact-context`** use mail only after **explicit user approval** per lookup. See `CONNECTORS.md`, [Gmail integration](https://claude.com/docs/connectors/google/gmail). |
+| **Gmail** | Claude first-party connector | **Settings / Customize → Connectors → Gmail → Connect** — Google **OAuth** in the browser. Anthropic documents **search and analyze** mail; **no create/send/modify** via this integration. **Pro / Max / Team / Enterprise** per Claude docs (confirm in-product). Career Navigator: **`draft-outreach`**, **`follow-up`**, **`contact-context`** use mail only after **explicit user approval** per lookup. See `CONNECTORS.md`, [Gmail integration](https://claude.com/docs/connectors/google/gmail). |
 | **Microsoft 365** (Outlook mail, SharePoint, OneDrive, Teams per product scope) | Claude first-party connector | **Connectors → Microsoft 365 → Connect** — Microsoft **OAuth**; **Team/Enterprise** and often **tenant admin** setup per Anthropic. Documented as **read-only** (no modify/delete/create through the connector). Outlook thread search supports the same Career Navigator skills as Gmail. See `CONNECTORS.md`, [Microsoft 365 connector](https://claude.com/docs/connectors/microsoft/365). |
 | **Google Calendar** | Claude first-party connector (Google) | **Settings / Customize → Connectors → Google Calendar → Connect** — Google **OAuth** in the browser (separate card from **Gmail**). Anthropic documents schedule and event access per [Google Calendar integration](https://claude.com/docs/connectors/google/calendar). Career Navigator: **`contact-context`** (and downstream drafting) uses **read-only** **past** and **upcoming** meeting context **after explicit user approval** per lookup—**warm** identification when a meeting is scheduled; do not create or move events unless the user asks. See `CONNECTORS.md`. |
 | **Notion** | Claude first-party connector | Optional PKM source for interview story mining. When connected, `mine-stories` may read eligible notes/pages for story candidate extraction into `StoryCorpus.json` (connector-permission scope applies). |
