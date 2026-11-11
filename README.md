@@ -250,7 +250,7 @@ See [CONNECTORS.md](CONNECTORS.md) for setup and fallback behavior.
 
 ### Apify MCP for salary benchmarking (optional — Claude Desktop connector)
 
-`/career-navigator:salary-research` uses **Apify** over MCP. The plugin does **not** put your token in `.mcp.json` (environment variable substitution in MCP `args` is not expanded reliably). Instead, add Apify as a **Desktop connector** in Claude so the app stores your token and tool list for you.
+`/career-navigator:salary-research` uses **Apify** over MCP. Add Apify as a **Desktop connector** in Claude: the app stores your Apify sign-in and tool list for you, and the plugin never handles it.
 
 1. Create an account at [apify.com](https://apify.com) and copy your **Personal API token** from **Console → Settings → Integrations**.
 2. In Claude Desktop, open **Customize** (or **Settings**) and go to **Connectors**.
@@ -273,7 +273,7 @@ Never paste your token into this repository or into chat logs you do not trust. 
 
 If you want transcription done locally, **`mcp-transcribe`** is an optional add-on: a Whisper-based MCP server that runs entirely on your machine with no cloud account. It is a separate component and is **not included** when you install Career Navigator from Anthropic's plugin directory, which accepts instruction files only. Get it from [`mcp-transcribe/` in the GitHub repo](https://github.com/tmargolis/career-navigator/tree/main/mcp-transcribe) and follow its README. If you installed the plugin from the GitHub release zip or a clone, the folder is already there and `/career-navigator:setup-transcribe` will run the installer for you.
 
-Details: [CONNECTORS.md](CONNECTORS.md) (Interview transcription section). The repo's **`.mcp.json`** is only for optional HTTP connectors (e.g. Gmail, Calendar, Microsoft 365); it does **not** include this server.
+Details: [CONNECTORS.md](CONNECTORS.md) (Interview transcription section).
 
 ### Optional: Local events — Luma discovery
 
@@ -338,7 +338,7 @@ For event intelligence workflows (**`event-radar`**, **`event-intelligence`**), 
 Phase 2 connects Career Navigator to the external services that complete the full job search experience. Sub-phases are independently deployable.
 
 - **Phase 2A ([Release v2.1.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.1.0)) — Inbox + Calendar Context (Completed):** *before you draft outreach, Career Navigator can (with explicit permission) pull and summarize the relevant email threads and meeting history so your messages are grounded in real context—not guesswork.* **Impact:** warm outreach becomes evidence-based and consistent.
-  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), optional HTTP MCP entries in **`.mcp.json`** (`gmail`, `google-calendar`, `ms365`), **`contact-context`** + **`draft-outreach`** / **`writer`** enrichment; past and **upcoming** meetings (**`warm_networking`**); **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`networking.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
+  - **Scope includes**: Gmail/Outlook OAuth (read-only), Google/Outlook Calendar (read-only), optional HTTP MCP entries in **`.mcp.json`** (`gmail`, `google-calendar`, `ms365`; removed in v3.2.2 in favour of the app's connectors), **`contact-context`** + **`draft-outreach`** / **`writer`** enrichment; past and **upcoming** meetings (**`warm_networking`**); **`linkedin-post-analytics`** (read-only own LinkedIn post metrics → **`networking.json`** via host browser automation + explicit consent; **`networking-strategist`** recommends cadence).
 
 - **Phase 2B ([Release v2.2.0](https://github.com/tmargolis/career-navigator/releases/tag/v2.2.0)) — Full Interview Loop (Prep → Practice → Capture → Debrief) (Completed):** *a single integrated layer for morning brief + mock interviews + post-interview capture so each interview round improves the next.* **Impact:** interviews become a repeatable feedback loop instead of isolated events.
   - **Scope includes**: `interview-coach`, **`interview-capture`** (**skill**), guided/random/adaptive mocks across stages/vibes (text-only), morning brief (via **`daily-schedule`**), debrief flow; opt-in recorded-audio capture via **`mcp-transcribe`** with retention/consent framework (see spec §13).
