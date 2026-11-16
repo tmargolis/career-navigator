@@ -88,7 +88,7 @@ def main():
                 if not d(it.get("date")):
                     continue
                 t = (it.get("type") or "").lower()
-                if any(k in t for k in ("meet", "zoom")) or t == "phone_screen":
+                if any(k in t for k in ("meet", "zoom", "call", "screen", "interview")):
                     kind = "meeting"
                 elif "inbound" in t or t.endswith("_reply"):
                     kind = "inbound"
@@ -202,7 +202,7 @@ html,body{height:100%;margin:0;padding:0}
 #tl-root .mlab{font-size:10px;fill:#9ca3af}
 #tl-root .axis{stroke:#eceef1;stroke-width:1}
 #tl-root .todayln{stroke:#10b981;stroke-width:1;stroke-dasharray:2 3}
-#tl-root .tl-tip{position:fixed;pointer-events:none;z-index:9999;background:#111827;color:#f9fafb;padding:8px 10px;border-radius:7px;font-size:11px;line-height:1.45;width:280px;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;transition:opacity .08s;white-space:normal}
+#tl-root .tl-tip{position:fixed;pointer-events:auto;user-select:text;z-index:9999;background:#111827;color:#f9fafb;padding:8px 10px;border-radius:7px;font-size:11px;line-height:1.45;width:350px;box-shadow:0 6px 20px rgba(0,0,0,.25);opacity:0;transition:opacity .08s;white-space:normal;overflow-y:auto;overscroll-behavior:contain}
 #tl-root .tl-tip b{color:#fff}
 #tl-root .tl-tip .ev{color:#cbd5e1}
 </style>
@@ -295,6 +295,8 @@ const LABEL_W = 168, PAD_R = 20, ROW_H = 20, AXIS_H = 26, BOT = 14;
 
 let VIEW = [];              // rows currently drawn (post-filter), indexed by data-i
 let FILTER = 'active';
+let FIRST_TICK_X = 0;       // x (chart px) of the first month gridline right of the
+                             // company-name column — the tooltip's fixed anchor point
 
 function matchFilter(r,f){
   if(f==='all') return true;
@@ -338,6 +340,7 @@ function render(){
   while(m.getTime()<=hi){ ticks.push(new Date(m)); m=new Date(m.getFullYear(), m.getMonth()+1, 1); }
   const xt = x(todayT);
   const bodyH = rows.length*ROW_H + 6;
+  FIRST_TICK_X = ticks.length ? x(ticks[0].getTime()) : plotX0;
 
   // ---- fixed axis header (does not scroll) --------------------------------
   let hs = `<svg class="tl-chart" viewBox="0 0 ${W} ${AXIS_H}" style="width:${W}px;height:${AXIS_H}px" preserveAspectRatio="xMinYMin meet">`;
@@ -425,10 +428,16 @@ const STLAB = {applied:'Applied',considering:'Considering',recruiter:'Recruiter 
 
 const DIRLAB = {outbound:'you reached out', inbound:'contact replied', meeting:'meeting'};
 
+let TIP_HIDE_TIMER = null;
+function cancelTipHide(){ if(TIP_HIDE_TIMER){ clearTimeout(TIP_HIDE_TIMER); TIP_HIDE_TIMER = null; } }
+function scheduleTipHide(tip){ cancelTipHide(); TIP_HIDE_TIMER = setTimeout(()=>{ tip.style.opacity = 0; }, 150); }
+
 function attachTips(wrap){
   const tip = document.getElementById('tl-tip');
+  const headEl = document.getElementById('tl-axis');
   wrap.querySelectorAll('.rowhit').forEach(g=>{
-    g.addEventListener('mousemove',ev=>{
+    g.addEventListener('mouseenter',()=>{
+      cancelTipHide();
       const r = VIEW[+g.dataset.i];
       if(!r) return;
       const items = [];
@@ -442,21 +451,39 @@ function attachTips(wrap){
                      : r.active ? `active · ${r.status}` : r.status;
       tip.innerHTML = `<b>${esc(r.co)}</b><br>${esc(r.role)}<br>`
         + `<span class="ev">${statusLine}</span><br><br>${evs}`;
-      // anchor a corner at the cursor; expand into whichever side has room
-      const GAP = 14, M = 8;
-      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      // fixed anchor: just under the month-header row, just right of the
+      // first month gridline past the company-name column. Same screen
+      // spot for every row, so the tip never trails the cursor or covers
+      // the row being inspected.
+      const GAP = 8, M = 8;
+      const headRect = headEl.getBoundingClientRect();
+      const tw = tip.offsetWidth;
       const vw = window.innerWidth, vh = window.innerHeight;
-      let left = ev.clientX + GAP;
-      if(left + tw + M > vw) left = ev.clientX - GAP - tw;   // flip left
-      if(left < M) left = M;
-      let top = ev.clientY + GAP;
-      if(top + th + M > vh) top = ev.clientY - GAP - th;     // flip up
-      if(top < M) top = M;
+      let left = headRect.left + FIRST_TICK_X + GAP;
+      let top = headRect.bottom + GAP;
+      if(left + tw + M > vw) left = vw - tw - M;
+      // Cap the tip's height to whatever vertical space is left below the
+      // fixed anchor point and let it scroll internally, rather than
+      // letting a long interaction list push its top edge off-screen.
+      tip.style.maxHeight = Math.max(120, vh - top - M) + 'px';
       tip.style.left = left+'px'; tip.style.top = top+'px'; tip.style.opacity = 1;
     });
-    g.addEventListener('mouseleave',()=>{tip.style.opacity=0;});
+    // small grace period before hiding so the cursor can travel from the
+    // row to the (now interactive) tooltip without it disappearing first
+    g.addEventListener('mouseleave',()=>{ scheduleTipHide(tip); });
   });
 }
+
+// tooltip itself: entering it cancels the pending hide (lets the cursor
+// rest on it to select text); leaving it re-schedules the hide. Bound once
+// since #tl-tip is static markup, not rebuilt on every render().
+(function initTipHover(){
+  const tip = document.getElementById('tl-tip');
+  if(!tip || tip.dataset.hoverBound) return;
+  tip.dataset.hoverBound = '1';
+  tip.addEventListener('mouseenter', cancelTipHide);
+  tip.addEventListener('mouseleave', ()=>{ scheduleTipHide(tip); });
+})();
 
 function legend(){
   const el = document.getElementById('tl-legend');
